@@ -15,15 +15,15 @@ from worldcup_predictor.ui.gui_i18n import gui_t
 USER_MODE_V2_NAV_ITEMS: list[tuple[str, str, str]] = [
     ("home", "nav.home", "🏠"),
     ("predict", "nav.predict", "🎯"),
+    ("team_search", "nav.game_search", "🔎"),
     ("match_center", "nav.match_center", "⚽"),
     ("professional_reports", "nav.professional_reports", "📄"),
     ("upgrade", "nav.upgrade", "💳"),
     ("settings", "nav.settings", "⚙️"),
 ]
 
-# Legacy user pages — Developer Mode only
+# Developer Mode only (team_search moved to User Mode)
 LEGACY_USER_NAV_ITEMS: list[tuple[str, str, str]] = [
-    ("team_search", "nav.team_search", "🔎"),
     ("favorites", "nav.favorites", "⭐"),
     ("shortlist", "nav.shortlist", "📋"),
 ]

@@ -36,7 +36,6 @@ def _render(locale: Locale) -> None:
             used = repo.get_usage_count(user.user_id, utc_today())
             label = user.email or user.user_id
             with st.expander(f"{label} · paid={ent.paid} · today={used}", expanded=False):
-                st.code(user.access_token, language=None)
                 st.caption(f"ID: {user.user_id}")
                 c1, c2 = st.columns(2)
                 with c1:

@@ -90,6 +90,62 @@ def format_match_subtitle(fixture: Any, locale: Locale) -> str:
     return f"{gui_t('card.group', locale)}: {gs}"
 
 
+def _fixture_kickoff(fixture: Any) -> datetime | None:
+    raw = _field(fixture, "kickoff_time") or _field(fixture, "kickoff_utc")
+    if raw is None:
+        return None
+    if isinstance(raw, datetime):
+        return raw
+    try:
+        text = str(raw).replace("Z", "+00:00")
+        return datetime.fromisoformat(text)
+    except (TypeError, ValueError):
+        return None
+
+
+def _fixture_status_label(status: str | None, locale: Locale) -> str:
+    code = (status or "NS").upper()
+    if code in {"1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"}:
+        return gui_t("status.live", locale)
+    if code in {"FT", "AET", "PEN", "FINISHED"}:
+        return gui_t("status.finished", locale)
+    return gui_t("status.upcoming", locale)
+
+
+def render_fixture_summary_panel(fixture: Any | None, fixture_id: int | None, locale: Locale) -> None:
+    """Match Prediction header — fixture metadata (no API calls)."""
+    if fixture is None and fixture_id is None:
+        st.info(gui_t("fixture.select_hint", locale))
+        return
+    home = _field(fixture, "home_team") or "—"
+    away = _field(fixture, "away_team") or "—"
+    fid = fixture_id or _field(fixture, "fixture_id") or _field(fixture, "id") or "—"
+    kickoff = _fixture_kickoff(fixture)
+    local_ko, utc_ko = format_kickoff_times(kickoff)
+    league = (
+        _non_empty(_field(fixture, "league"))
+        or _non_empty(_field(fixture, "competition"))
+        or format_group_stage(fixture)
+    )
+    venue = _non_empty(_field(fixture, "venue")) or _non_empty(_field(fixture, "city")) or "—"
+    status = _fixture_status_label(_field(fixture, "status"), locale)
+    source = _non_empty(_field(fixture, "source"))
+
+    with st.container(border=True):
+        st.markdown(f"### {home} vs {away}")
+        fields: list[tuple[str, str]] = [
+            ("card.fixture_id", str(fid)),
+            ("card.kickoff_local", local_ko),
+            ("card.kickoff_utc", utc_ko),
+            ("card.league", league or "—"),
+            ("card.venue", venue),
+            ("card.status", status),
+        ]
+        if source:
+            fields.append(("card.source", source))
+        render_fixture_meta_grid(locale, fields, columns=3)
+
+
 def render_fixture_meta_grid(
     locale: Locale,
     fields: list[tuple[str, str]],

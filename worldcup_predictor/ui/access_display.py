@@ -15,15 +15,15 @@ from worldcup_predictor.access.admin_auth import (
 from worldcup_predictor.access.config import (
     free_daily_prediction_limit,
     paid_unlock_price_eur,
+    public_access_config_debug,
     public_access_enabled,
 )
 from worldcup_predictor.access.identity import (
     current_user,
     init_access_session,
     is_registered_user,
-    login_with_credentials,
+    login_with_invite,
     logout_user,
-    register_or_login_with_email,
 )
 from worldcup_predictor.access.prediction_gate import GateCheckResult, preview_prediction_quota
 from worldcup_predictor.config.settings import Locale
@@ -42,6 +42,21 @@ def render_access_sidebar(locale: Locale) -> None:
     st.sidebar.markdown("---")
     _render_access_panel(st.sidebar, locale, key_prefix="sb")
     _render_admin_sidebar(locale)
+
+
+def render_admin_config_debug() -> None:
+    """Admin-only live config line for Streamlit Cloud diagnosis."""
+    if not is_admin_session():
+        return
+    st.sidebar.caption(public_access_config_debug())
+
+
+def render_public_sign_in_wall(locale: Locale) -> None:
+    """Block protected page content until the user signs in."""
+    if not access_ui_enabled() or is_registered_user():
+        return
+    st.warning(gui_t("access.login_required", locale))
+    render_access_home_panel(locale)
 
 
 def render_access_home_panel(locale: Locale) -> None:
@@ -108,31 +123,17 @@ def _render_access_panel(container: Any, locale: Locale, *, key_prefix: str, sho
                     st.rerun()
             return
 
-        st.caption(gui_t("access.panel_hint", locale))
+        st.caption(gui_t("access.access_code_hint", locale))
         with st.form(f"{key_prefix}_access_login_form"):
-            identity = st.text_input(gui_t("access.email_or_user", locale))
-            token = st.text_input(gui_t("access.token", locale), type="password")
+            email = st.text_input(gui_t("access.email", locale))
+            code = st.text_input(gui_t("access.access_code", locale))
             login_btn = st.form_submit_button(gui_t("access.login", locale), type="primary", use_container_width=True)
         if login_btn:
-            if not token.strip():
-                st.warning(gui_t("access.token_required", locale))
-            elif login_with_credentials(email=identity or None, access_token=token):
+            user, err = login_with_invite(email=email, access_code=code)
+            if user is not None:
                 st.toast(gui_t("access.login_ok", locale))
                 st.rerun()
-            else:
-                st.error(gui_t("access.login_fail", locale))
-
-        st.markdown(f"**{gui_t('access.new_user', locale)}**")
-        with st.form(f"{key_prefix}_access_register_form"):
-            reg_email = st.text_input(gui_t("access.register_email", locale), key=f"{key_prefix}_reg_email")
-            reg_btn = st.form_submit_button(gui_t("access.register", locale), use_container_width=True)
-        if reg_btn and reg_email.strip():
-            created = register_or_login_with_email(reg_email.strip())
-            if created:
-                st.success(gui_t("access.token_created", locale))
-                st.code(created.access_token, language=None)
-                st.caption(gui_t("access.save_token", locale))
-                st.rerun()
+            st.error(gui_t(err or "access.login_fail", locale))
 
 
 def _render_admin_sidebar(locale: Locale) -> None:

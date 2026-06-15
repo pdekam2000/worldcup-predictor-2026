@@ -116,9 +116,11 @@ from worldcup_predictor.ui.professional_reports_page import render_professional_
 from worldcup_predictor.access.identity import init_access_session, is_registered_user
 from worldcup_predictor.access.admin_auth import block_developer_route, enforce_non_admin_restrictions, init_admin_session, is_admin_session
 from worldcup_predictor.access.prediction_gate import acquire_prediction_slot, preview_api_access
+from worldcup_predictor.access.public_guard import blocks_prediction_actions
 from worldcup_predictor.ui.access_display import (
     render_access_home_panel,
     render_access_sidebar,
+    render_admin_config_debug,
     render_gate_block,
     render_quota_banner,
 )
@@ -126,7 +128,11 @@ from worldcup_predictor.ui.admin_entitlements_page import render_admin_entitleme
 from worldcup_predictor.ui.feedback_display import render_feedback_form, render_feedback_viewer_page
 from worldcup_predictor.ui.upgrade_page import render_upgrade_page
 from worldcup_predictor.ui.user_home_dashboard import render_user_home_dashboard
-from worldcup_predictor.ui.fixture_display import format_group_stage, format_match_subtitle
+from worldcup_predictor.ui.fixture_display import (
+    format_group_stage,
+    format_match_subtitle,
+    render_fixture_summary_panel,
+)
 from worldcup_predictor.ui.pattern_discovery_display import render_pattern_discovery_panel
 from worldcup_predictor.ui.match_action_panel import render_match_action_panel
 from worldcup_predictor.ui.match_selector import render_match_selector
@@ -169,7 +175,10 @@ def main() -> None:
     )
     inject_theme()
     _init_state()
-    require_auth(_locale())
+    init_access_session()
+    init_admin_session()
+    locale = _locale()
+    require_auth(locale)
     enforce_non_admin_restrictions()
     _render_sidebar()
     page = st.session_state["gui_page"]
@@ -434,6 +443,7 @@ def _render_sidebar() -> None:
     locale = _locale()
     render_sidebar_branding(locale)
     render_access_sidebar(locale)
+    render_admin_config_debug()
 
     def _locale_label(code: str) -> str:
         flag = GUI_LOCALE_FLAGS.get(code, "")
@@ -1215,7 +1225,7 @@ def page_team_search() -> None:
     t = _translator()
     settings = get_settings()
     comp = _competition_key()
-    render_hero(gui_t("nav.team_search", locale), gui_t("team_search.subtitle", locale))
+    render_hero(gui_t("nav.game_search", locale), gui_t("team_search.subtitle", locale))
 
     st.markdown(
         '<p style="color:#64748B;margin-bottom:0.5rem;">'
@@ -1482,14 +1492,8 @@ def page_upcoming() -> None:
 def page_prediction() -> None:
     locale = _locale()
     t = _translator()
-    fid = _default_fixture_id()
-    fixture = _lookup_fixture(fid)
     subtitle = t.t("cli.predict.header")
-    gs_line = format_match_subtitle(fixture, locale) if fixture else ""
-    if gs_line:
-        subtitle = f"{subtitle} · {gs_line}"
     render_hero(gui_t("nav.predict", locale), subtitle)
-    _render_selected_fixture_banner(locale)
 
     fid = render_match_selector(
         _all_fixtures_for_selector(),
@@ -1501,12 +1505,15 @@ def page_prediction() -> None:
         return
 
     fixture = _lookup_fixture(fid)
-    render_stored_prediction_summary(int(fid), locale, compact=False, fixture=fixture)
-    if is_registered_user():
-        render_quota_banner(locale)
-    else:
+    render_fixture_summary_panel(fixture, int(fid), locale)
+
+    if blocks_prediction_actions():
         st.warning(gui_t("access.login_required", locale))
         render_access_home_panel(locale)
+        return
+
+    render_stored_prediction_summary(int(fid), locale, compact=False, fixture=fixture)
+    render_quota_banner(locale)
 
     with st.spinner("Loading API intelligence…"):
         intel = _get_intelligence_report(int(fid), locale)

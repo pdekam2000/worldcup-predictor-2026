@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import streamlit as st
+
 from worldcup_predictor.access.config import _env_or_secret, public_access_enabled
 from worldcup_predictor.ui.app_shell import DEV_NAV_ITEMS, LEGACY_USER_NAV_ITEMS
 

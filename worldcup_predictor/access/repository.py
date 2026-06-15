@@ -169,6 +169,10 @@ class AccessRepository:
         except sqlite3.Error:
             pass
 
+    def touch_login(self, user_id: str) -> None:
+        """Public wrapper for login timestamp update."""
+        self._touch_login(user_id)
+
     def search_users(self, query: str, *, limit: int = 25) -> list[AppUser]:
         q = f"%{query.strip().lower()}%"
         try:

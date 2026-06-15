@@ -19,8 +19,21 @@ def _env_or_secret(key: str, default: str | None = None) -> str | None:
     try:
         import streamlit as st
 
-        if key in st.secrets:
-            return str(st.secrets[key]).strip()
+        secrets = st.secrets
+        if key in secrets:
+            return str(secrets[key]).strip()
+        key_lower = key.lower()
+        for k in secrets:
+            if str(k).lower() == key_lower:
+                return str(secrets[k]).strip()
+        for section in ("general", "env", "secrets"):
+            if section in secrets:
+                block = secrets[section]
+                if key in block:
+                    return str(block[key]).strip()
+                for k in block:
+                    if str(k).lower() == key_lower:
+                        return str(block[k]).strip()
     except Exception:
         pass
     return default
@@ -28,7 +41,29 @@ def _env_or_secret(key: str, default: str | None = None) -> str | None:
 
 def public_access_enabled() -> bool:
     """When false (default local), limits and paywall are disabled."""
-    return _truthy(_env_or_secret("PUBLIC_ACCESS_ENABLED"), default=False)
+    raw = _env_or_secret("PUBLIC_ACCESS_ENABLED")
+    return _truthy(raw, default=False)
+
+
+def public_access_code() -> str | None:
+    """Shared invite code required for public user login."""
+    raw = _env_or_secret("PUBLIC_ACCESS_CODE")
+    return raw if raw else None
+
+
+def public_access_config_debug() -> str:
+    """Admin-only debug string for live config diagnosis."""
+    raw = _env_or_secret("PUBLIC_ACCESS_ENABLED")
+    enabled = public_access_enabled()
+    source = "env" if os.getenv("PUBLIC_ACCESS_ENABLED") else "secrets/default"
+    try:
+        import streamlit as st
+
+        if "PUBLIC_ACCESS_ENABLED" in st.secrets:
+            source = "st.secrets"
+    except Exception:
+        pass
+    return f"PUBLIC_ACCESS_ENABLED = {str(enabled).lower()} (raw={raw!r}, source={source})"
 
 
 def free_daily_prediction_limit() -> int:

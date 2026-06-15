@@ -24,6 +24,7 @@ python main.py gui
 | `API_FOOTBALL_KEY` | Primary match data (server-side only) |
 | `OPENAI_API_KEY` | Optional reasoning |
 | `PUBLIC_ACCESS_ENABLED` | `true` enables login, limits, paywall |
+| `PUBLIC_ACCESS_CODE` | Shared invite code required for user login |
 | `FREE_DAILY_PREDICTION_LIMIT` | Default `2` for unpaid users |
 | `PAID_UNLOCK_PRICE_EUR` | Display price (default `5`) |
 | `ADMIN_USERNAME` | Developer Mode admin login |
@@ -92,7 +93,7 @@ Uses `.env.production` — add Phase 49 variables there.
 
 - API keys stay in env/secrets — never exposed in UI or client.
 - Prediction gate runs **before** API-Football and pipeline calls.
-- User access tokens are stored hashed in SQLite (`app_users.access_token`).
+- User login uses a shared invite code (`PUBLIC_ACCESS_CODE`) — not per-user tokens.
 
 ## Validation
 
