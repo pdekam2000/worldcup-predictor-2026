@@ -1,0 +1,574 @@
+from __future__ import annotations
+
+import logging
+from datetime import datetime, timezone
+from typing import Any, Callable
+
+import httpx
+
+from worldcup_predictor.cache.api_cache import ApiCache, get_api_cache
+from worldcup_predictor.clients.api_response import ApiCallResult
+from worldcup_predictor.config.competitions import CompetitionConfig
+from worldcup_predictor.config.settings import Settings
+from worldcup_predictor.domain.fixture import Fixture, FixtureCollection
+
+logger = logging.getLogger(__name__)
+
+# Placeholder team IDs for offline development (not real API ids)
+_PLACEHOLDER_TEAM_IDS: dict[str, int] = {
+    "USA": 2380,
+    "Mexico": 2289,
+    "Canada": 2288,
+    "Brazil": 2260,
+    "Germany": 2250,
+    "Japan": 2320,
+    "France": 2240,
+    "Morocco": 2310,
+    "England": 2230,
+    "Argentina": 2270,
+    "Spain": 2220,
+    "Portugal": 2290,
+    "Netherlands": 2300,
+    "Senegal": 2330,
+    "Italy": 2210,
+    "Uruguay": 2340,
+}
+
+
+class ApiFootballClient:
+    """
+    Placeholder-ready client for API-Football (api-sports.io).
+
+    When API_FOOTBALL_KEY is set, calls live endpoints with TTL caching.
+    Otherwise returns structured placeholder data for development.
+    """
+
+    def __init__(
+        self,
+        settings: Settings,
+        cache: ApiCache | None = None,
+    ) -> None:
+        self._settings = settings
+        self._base_url = settings.api_football_base_url.rstrip("/")
+        self._cache = cache or get_api_cache(
+            settings.api_cache_dir,
+            settings.api_cache_ttl_seconds,
+        )
+
+    @property
+    def is_configured(self) -> bool:
+        return self._settings.api_football_configured
+
+    # ------------------------------------------------------------------ #
+    # Phase 1 — fixtures list (unchanged behaviour)
+    # ------------------------------------------------------------------ #
+
+    def fetch_upcoming_fixtures(
+        self,
+        competition: CompetitionConfig,
+        limit: int = 5,
+    ) -> FixtureCollection:
+        if self.is_configured:
+            result = self._safe_get(
+                "fixtures",
+                {**competition.fixture_query_params(), "next": limit},
+                placeholder_factory=lambda: None,
+            )
+            if result.ok and isinstance(result.data, list) and result.data:
+                fixtures = [
+                    self._parse_fixture(item, competition)
+                    for item in result.data
+                ]
+                fixtures = sorted(fixtures, key=lambda f: f.kickoff_utc)[:limit]
+                return FixtureCollection(
+                    fixtures=fixtures,
+                    competition_key=competition.key,
+                    source="api-football",
+                    is_placeholder=False,
+                )
+            logger.warning(
+                "Live fixtures fetch failed or empty (%s); using placeholders",
+                result.error,
+            )
+        return self._placeholder_fixtures(competition, limit)
+
+    # ------------------------------------------------------------------ #
+    # Phase 2 — intelligence endpoints
+    # ------------------------------------------------------------------ #
+
+    def get_fixture_by_id(self, fixture_id: int) -> ApiCallResult:
+        return self._safe_get(
+            "fixtures",
+            {"id": fixture_id},
+            placeholder_factory=lambda: self._placeholder_fixture_payload(fixture_id),
+        )
+
+    def get_team_statistics(
+        self,
+        team_id: int,
+        league_id: int,
+        season: int,
+    ) -> ApiCallResult:
+        return self._safe_get(
+            "teams/statistics",
+            {"team": team_id, "league": league_id, "season": season},
+            placeholder_factory=lambda: self._placeholder_team_statistics(team_id),
+        )
+
+    def get_head_to_head(self, team_a_id: int, team_b_id: int, last: int = 5) -> ApiCallResult:
+        h2h = f"{team_a_id}-{team_b_id}"
+        return self._safe_get(
+            "fixtures/headtohead",
+            {"h2h": h2h, "last": last},
+            placeholder_factory=lambda: self._placeholder_h2h(team_a_id, team_b_id, last),
+        )
+
+    def get_fixture_events(self, fixture_id: int) -> ApiCallResult:
+        return self._safe_get(
+            "fixtures/events",
+            {"fixture": fixture_id},
+            placeholder_factory=lambda: self._placeholder_events(fixture_id),
+        )
+
+    def get_fixture_statistics(self, fixture_id: int) -> ApiCallResult:
+        return self._safe_get(
+            "fixtures/statistics",
+            {"fixture": fixture_id},
+            placeholder_factory=lambda: self._placeholder_fixture_statistics(fixture_id),
+        )
+
+    def get_fixture_lineups(self, fixture_id: int) -> ApiCallResult:
+        return self._safe_get(
+            "fixtures/lineups",
+            {"fixture": fixture_id},
+            placeholder_factory=lambda: self._placeholder_lineups(fixture_id),
+        )
+
+    def get_injuries(
+        self,
+        fixture_id: int,
+        league_id: int | None = None,
+        season: int | None = None,
+    ) -> ApiCallResult:
+        params: dict[str, Any] = {"fixture": fixture_id}
+        if league_id is not None:
+            params["league"] = league_id
+        if season is not None:
+            params["season"] = season
+        return self._safe_get(
+            "injuries",
+            params,
+            placeholder_factory=lambda: self._placeholder_injuries(fixture_id),
+        )
+
+    def get_odds(self, fixture_id: int) -> ApiCallResult:
+        return self._safe_get(
+            "odds",
+            {"fixture": fixture_id},
+            placeholder_factory=lambda: self._placeholder_odds(fixture_id),
+        )
+
+    def get_team_recent_fixtures(self, team_id: int, last: int = 10) -> ApiCallResult:
+        return self._safe_get(
+            "fixtures",
+            {"team": team_id, "last": last},
+            placeholder_factory=lambda: self._placeholder_recent_fixtures(team_id, last),
+        )
+
+    # ------------------------------------------------------------------ #
+    # Phase 6 — schedule / standings
+    # ------------------------------------------------------------------ #
+
+    def get_standings(self, competition: CompetitionConfig) -> ApiCallResult:
+        return self._safe_get(
+            "standings",
+            competition.fixture_query_params(),
+            placeholder_factory=lambda: None,
+        )
+
+    def get_all_fixtures_for_season(
+        self,
+        competition: CompetitionConfig,
+        *,
+        force_refresh: bool = False,
+    ) -> ApiCallResult:
+        return self._safe_get(
+            "fixtures",
+            competition.fixture_query_params(),
+            placeholder_factory=lambda: None,
+            force_refresh=force_refresh,
+        )
+
+    # ------------------------------------------------------------------ #
+    # Phase 9 — historical import
+    # ------------------------------------------------------------------ #
+
+    def get_historical_fixtures(
+        self,
+        *,
+        league_id: int | None = None,
+        season: int | None = None,
+        team_id: int | None = None,
+        from_date: str | None = None,
+        to_date: str | None = None,
+        status: str | None = None,
+    ) -> ApiCallResult:
+        """Fetch completed fixtures for backtest CSV import (no placeholder data)."""
+        params: dict[str, Any] = {}
+        if league_id is not None:
+            params["league"] = league_id
+        if season is not None:
+            params["season"] = season
+        if team_id is not None:
+            params["team"] = team_id
+        if from_date:
+            params["from"] = from_date
+        if to_date:
+            params["to"] = to_date
+        if status:
+            params["status"] = status
+        return self._safe_get(
+            "fixtures",
+            params,
+            placeholder_factory=lambda: None,
+        )
+
+    # ------------------------------------------------------------------ #
+    # Internal request + cache layer
+    # ------------------------------------------------------------------ #
+
+    def _headers(self) -> dict[str, str]:
+        return {
+            "x-apisports-key": self._settings.api_football_key,
+            "Accept": "application/json",
+        }
+
+    def _safe_get(
+        self,
+        endpoint: str,
+        params: dict[str, Any],
+        *,
+        placeholder_factory: Callable[[], Any],
+        force_refresh: bool = False,
+    ) -> ApiCallResult:
+        if not self.is_configured:
+            return ApiCallResult(
+                data=placeholder_factory(),
+                source="placeholder",
+                endpoint=endpoint,
+            )
+
+        if not force_refresh:
+            cached = self._cache.get(endpoint, params)
+            if cached is not None:
+                return ApiCallResult(
+                    data=cached,
+                    source="cache",
+                    endpoint=endpoint,
+                    from_cache=True,
+                )
+
+        try:
+            payload = self._fetch_raw(endpoint, params)
+            response_items = payload.get("response", [])
+            self._cache.set(endpoint, params, response_items)
+            return ApiCallResult(
+                data=response_items,
+                source="live",
+                endpoint=endpoint,
+            )
+        except Exception as exc:
+            logger.exception("API-Football %s failed", endpoint)
+            return ApiCallResult(
+                data=placeholder_factory(),
+                source="placeholder",
+                endpoint=endpoint,
+                error=str(exc),
+            )
+
+    def _fetch_raw(self, endpoint: str, params: dict[str, Any]) -> dict[str, Any]:
+        url = f"{self._base_url}/{endpoint.lstrip('/')}"
+        with httpx.Client(timeout=30.0) as client:
+            response = client.get(url, headers=self._headers(), params=params)
+            response.raise_for_status()
+            payload = response.json()
+
+        errors = payload.get("errors")
+        if errors:
+            raise RuntimeError(f"API-Football error: {errors}")
+        return payload
+
+    def _parse_fixture(
+        self,
+        item: dict[str, Any],
+        competition: CompetitionConfig,
+    ) -> Fixture:
+        fixture = item.get("fixture", {})
+        teams = item.get("teams", {})
+        league = item.get("league", {})
+        venue = fixture.get("venue", {}) or {}
+
+        kickoff_raw = fixture.get("date", "")
+        kickoff = datetime.fromisoformat(kickoff_raw.replace("Z", "+00:00"))
+
+        home = teams.get("home", {})
+        away = teams.get("away", {})
+
+        return Fixture(
+            id=int(fixture.get("id", 0)),
+            competition_key=competition.key,
+            home_team=home.get("name", "TBD"),
+            away_team=away.get("name", "TBD"),
+            kickoff_utc=kickoff.astimezone(timezone.utc).replace(tzinfo=None),
+            venue=venue.get("name") or "TBD",
+            stage=league.get("round") or "Group Stage",
+            league_id=int(league.get("id", competition.league_id)),
+            season=int(league.get("season", competition.season)),
+            status=fixture.get("status", {}).get("short", "NS"),
+            source="api-football",
+            home_team_id=home.get("id"),
+            away_team_id=away.get("id"),
+        )
+
+    def parse_fixture_item(
+        self,
+        item: dict[str, Any],
+        competition_key: str = "world_cup_2026",
+    ) -> Fixture:
+        league = item.get("league", {})
+        return self._parse_fixture(
+            item,
+            CompetitionConfig(
+                key=competition_key,
+                name="FIFA World Cup 2026",
+                league_id=int(league.get("id", 1)),
+                season=int(league.get("season", 2026)),
+            ),
+        )
+
+    # ------------------------------------------------------------------ #
+    # Placeholder payloads
+    # ------------------------------------------------------------------ #
+
+    def _placeholder_fixtures(
+        self,
+        competition: CompetitionConfig,
+        limit: int,
+    ) -> FixtureCollection:
+        placeholders = [
+            ("USA", "Mexico", "MetLife Stadium, East Rutherford", "Group A — Matchday 1", "Michael Oliver"),
+            ("Canada", "Brazil", "BC Place, Vancouver", "Group B — Matchday 1", "Szymon Marciniak"),
+            ("Germany", "Japan", "Mercedes-Benz Stadium, Atlanta", "Group C — Matchday 1", "Clement Turpin"),
+            ("France", "Morocco", "SoFi Stadium, Inglewood", "Group D — Matchday 1", "Slavko Vincic"),
+            ("England", "Argentina", "AT&T Stadium, Arlington", "Group E — Matchday 1", "Daniele Orsato"),
+            ("Spain", "Portugal", "Hard Rock Stadium, Miami", "Group F — Matchday 1", "Anthony Taylor"),
+            ("Netherlands", "Senegal", "Lincoln Financial Field, Philadelphia", "Group G — Matchday 1", "Danny Makkelie"),
+            ("Italy", "Uruguay", "Levi's Stadium, Santa Clara", "Group H — Matchday 1", "Ivan Barton"),
+        ]
+
+        base_id = 2026000
+        base_date = datetime(2026, 6, 11, 18, 0, 0)
+
+        fixtures: list[Fixture] = []
+        for index, (home, away, venue, stage, referee) in enumerate(placeholders[:limit]):
+            kickoff = base_date.replace(day=11 + index)
+            fixtures.append(
+                Fixture(
+                    id=base_id + index + 1,
+                    competition_key=competition.key,
+                    home_team=home,
+                    away_team=away,
+                    kickoff_utc=kickoff,
+                    venue=venue,
+                    stage=stage,
+                    league_id=competition.league_id,
+                    season=competition.season,
+                    status="NS",
+                    source="placeholder",
+                    home_team_id=_PLACEHOLDER_TEAM_IDS.get(home),
+                    away_team_id=_PLACEHOLDER_TEAM_IDS.get(away),
+                    referee=referee,
+                )
+            )
+
+        return FixtureCollection(
+            fixtures=fixtures,
+            competition_key=competition.key,
+            source="placeholder",
+            is_placeholder=True,
+        )
+
+    def resolve_placeholder_fixture(self, fixture_id: int) -> Fixture | None:
+        return self._placeholder_fixture_by_id(fixture_id)
+
+    def _placeholder_fixture_by_id(self, fixture_id: int) -> Fixture | None:
+        collection = self._placeholder_fixtures(
+            CompetitionConfig(
+                key="world_cup_2026",
+                name="FIFA World Cup 2026",
+                league_id=1,
+                season=2026,
+            ),
+            limit=8,
+        )
+        for fixture in collection.fixtures:
+            if fixture.id == fixture_id:
+                return fixture
+        return None
+
+    def _placeholder_fixture_payload(self, fixture_id: int) -> list[dict[str, Any]]:
+        fixture = self._placeholder_fixture_by_id(fixture_id)
+        if fixture is None:
+            return []
+        return [
+            {
+                "fixture": {
+                    "id": fixture.id,
+                    "date": fixture.kickoff_utc.isoformat() + "Z",
+                    "venue": {"name": fixture.venue},
+                    "status": {"short": fixture.status},
+                },
+                "teams": {
+                    "home": {"id": fixture.home_team_id, "name": fixture.home_team},
+                    "away": {"id": fixture.away_team_id, "name": fixture.away_team},
+                },
+                "league": {
+                    "id": fixture.league_id,
+                    "season": fixture.season,
+                    "round": fixture.stage,
+                },
+            }
+        ]
+
+    def _placeholder_team_statistics(self, team_id: int) -> list[dict[str, Any]]:
+        seed = team_id % 5
+        forms = ["WWDLW", "WDWLL", "LWWDD", "WLWDW", "DWWLW"]
+        avg_for = round(1.1 + (team_id % 9) * 0.12, 1)
+        avg_against = round(0.7 + (team_id % 7) * 0.11, 1)
+        return [
+            {
+                "team": {"id": team_id},
+                "form": forms[seed],
+                "fixtures": {
+                    "played": {"total": 5, "home": 3, "away": 2},
+                    "wins": {"total": 2 + seed % 2, "home": 1, "away": 1},
+                    "draws": {"total": 1, "home": 0, "away": 1},
+                    "loses": {"total": 1, "home": 1, "away": 0},
+                },
+                "goals": {
+                    "for": {"total": {"total": int(avg_for * 5), "average": str(avg_for)}},
+                    "against": {"total": {"total": int(avg_against * 5), "average": str(avg_against)}},
+                },
+            }
+        ]
+
+    def _placeholder_recent_fixtures(self, team_id: int, last: int) -> list[dict[str, Any]]:
+        meetings = min(last, 5)
+        results: list[dict[str, Any]] = []
+        for i in range(meetings):
+            home_id = team_id if i % 2 == 0 else 10000 + (team_id % 500)
+            away_id = 10000 + (team_id % 500) if i % 2 == 0 else team_id
+            home_g = 1 + ((team_id + i) % 3)
+            away_g = (team_id + i * 2) % 3
+            results.append(
+                {
+                    "fixture": {"id": 880000 + team_id * 10 + i},
+                    "teams": {"home": {"id": home_id}, "away": {"id": away_id}},
+                    "goals": {"home": home_g, "away": away_g},
+                }
+            )
+        return results
+
+    def _placeholder_h2h(
+        self,
+        team_a_id: int,
+        team_b_id: int,
+        last: int,
+    ) -> list[dict[str, Any]]:
+        meetings = min(last, 3)
+        return [
+            {
+                "fixture": {"id": 900000 + i, "date": f"2024-0{i+1}-15T20:00:00Z"},
+                "teams": {
+                    "home": {"id": team_a_id if i % 2 == 0 else team_b_id},
+                    "away": {"id": team_b_id if i % 2 == 0 else team_a_id},
+                },
+                "goals": {"home": 1 + i, "away": i},
+            }
+            for i in range(meetings)
+        ]
+
+    def _placeholder_events(self, fixture_id: int) -> list[dict[str, Any]]:
+        return [
+            {
+                "time": {"elapsed": 23},
+                "team": {"name": "Home"},
+                "player": {"name": "Sample Player"},
+                "type": "Goal",
+                "detail": "Normal Goal",
+            }
+        ] if fixture_id % 2 == 0 else []
+
+    def _placeholder_fixture_statistics(self, fixture_id: int) -> list[dict[str, Any]]:
+        return [
+            {
+                "team": {"name": "Home"},
+                "statistics": [
+                    {"type": "Shots on Goal", "value": 5},
+                    {"type": "Ball Possession", "value": "54%"},
+                ],
+            },
+            {
+                "team": {"name": "Away"},
+                "statistics": [
+                    {"type": "Shots on Goal", "value": 3},
+                    {"type": "Ball Possession", "value": "46%"},
+                ],
+            },
+        ]
+
+    def _placeholder_lineups(self, fixture_id: int) -> list[dict[str, Any]]:
+        return [
+            {
+                "team": {"name": "Home"},
+                "formation": "4-3-3",
+                "startXI": [{"player": {"name": f"Home Player {i}"}} for i in range(1, 4)],
+                "substitutes": [],
+            },
+            {
+                "team": {"name": "Away"},
+                "formation": "4-4-2",
+                "startXI": [{"player": {"name": f"Away Player {i}"}} for i in range(1, 4)],
+                "substitutes": [],
+            },
+        ]
+
+    def _placeholder_injuries(self, fixture_id: int) -> list[dict[str, Any]]:
+        return [
+            {
+                "team": {"id": 2380, "name": "USA"},
+                "player": {"name": "Sample Doubtful", "type": "Missing Fixture", "reason": "Knock"},
+            }
+        ]
+
+    def _placeholder_odds(self, fixture_id: int) -> list[dict[str, Any]]:
+        return [
+            {
+                "fixture": {"id": fixture_id},
+                "bookmakers": [
+                    {
+                        "name": "Sample Bookmaker",
+                        "bets": [
+                            {
+                                "name": "Match Winner",
+                                "values": [
+                                    {"value": "Home", "odd": "2.10"},
+                                    {"value": "Draw", "odd": "3.40"},
+                                    {"value": "Away", "odd": "3.20"},
+                                ],
+                            }
+                        ],
+                    }
+                ],
+            }
+        ]
