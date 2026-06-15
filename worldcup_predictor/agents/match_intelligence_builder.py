@@ -59,7 +59,7 @@ class MatchIntelligenceBuilder:
     def __init__(self, api_client: ApiFootballClient) -> None:
         self._api = api_client
 
-    def build(self, fixture: Fixture) -> MatchIntelligenceReport:
+    def build(self, fixture: Fixture, *, force_odds_api: bool = False) -> MatchIntelligenceReport:
         missing_data: list[str] = []
         errors: list[str] = []
         available_fields: list[str] = []
@@ -172,7 +172,7 @@ class MatchIntelligenceBuilder:
 
         enrichment = EnrichmentService(get_settings())
         if enrichment.registry.any_enrichment_configured:
-            draft, _outcome = enrichment.apply(draft, fixture)
+            draft, _outcome = enrichment.apply(draft, fixture, force_odds_api=force_odds_api)
 
         from worldcup_predictor.data_quality.transparency import explain_data_quality
 
@@ -204,21 +204,21 @@ class MatchIntelligenceBuilder:
 
         return draft
 
-    def build_by_fixture_id(self, fixture_id: int) -> MatchIntelligenceReport:
+    def build_by_fixture_id(self, fixture_id: int, *, force_odds_api: bool = False) -> MatchIntelligenceReport:
         result = self._api.get_fixture_by_id(fixture_id)
         if result.ok and result.data:
             if result.source == "placeholder":
                 placeholder = self._api.resolve_placeholder_fixture(fixture_id)
                 if placeholder:
-                    return self.build(placeholder)
+                    return self.build(placeholder, force_odds_api=force_odds_api)
             item = self._extract_api_payload(result.data)
             if item is not None:
                 fixture = self._api.parse_fixture_item(item)
-                return self.build(fixture)
+                return self.build(fixture, force_odds_api=force_odds_api)
 
         placeholder = self._api.resolve_placeholder_fixture(fixture_id)
         if placeholder:
-            report = self.build(placeholder)
+            report = self.build(placeholder, force_odds_api=force_odds_api)
             if result.error:
                 report.data_quality.errors.append(result.error)  # type: ignore[union-attr]
             return report

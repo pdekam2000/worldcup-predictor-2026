@@ -1,4 +1,4 @@
-"""Session user identity for public access — email + shared invite code."""
+"""Session user identity for public access — username/email + shared invite code."""
 
 from __future__ import annotations
 
@@ -9,7 +9,11 @@ import streamlit as st
 
 from worldcup_predictor.access.config import public_access_code, public_access_enabled
 from worldcup_predictor.access.models import AppUser
-from worldcup_predictor.access.repository import AccessRepository, get_access_repository
+from worldcup_predictor.access.repository import (
+    AccessRepository,
+    get_access_repository,
+    normalize_user_identity,
+)
 
 
 def _repo() -> AccessRepository:
@@ -70,16 +74,22 @@ def _set_registered_session(user: AppUser) -> None:
     _repo().touch_login(user.user_id)
 
 
-def login_with_invite(*, email: str, access_code: str) -> tuple[AppUser | None, str | None]:
-    """Sign in with email + shared invite code.
+def login_with_invite(
+    *,
+    identity: str,
+    access_code: str,
+    email: str | None = None,
+) -> tuple[AppUser | None, str | None]:
+    """Sign in with username/email + shared PUBLIC_ACCESS_CODE.
 
     Returns (user, error_i18n_key). error is None on success.
     """
-    normalized = (email or "").strip().lower()
+    raw_identity = identity if email is None else email
+    normalized = normalize_user_identity(raw_identity or "")
     code = (access_code or "").strip()
 
-    if not normalized or "@" not in normalized:
-        return None, "access.email_required"
+    if not normalized:
+        return None, "access.username_required"
     if not code:
         return None, "access.access_code_required"
 

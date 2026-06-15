@@ -127,6 +127,7 @@ from worldcup_predictor.ui.access_display import (
 from worldcup_predictor.ui.admin_entitlements_page import render_admin_entitlements_page
 from worldcup_predictor.ui.feedback_display import render_feedback_form, render_feedback_viewer_page
 from worldcup_predictor.ui.upgrade_page import render_upgrade_page
+from worldcup_predictor.ui.odds_api_credit_display import render_odds_api_credit_panel
 from worldcup_predictor.ui.user_home_dashboard import render_user_home_dashboard
 from worldcup_predictor.ui.fixture_display import (
     format_group_stage,
@@ -341,7 +342,14 @@ def _get_intelligence_report(fixture_id: int, locale: Locale | None = None):
     from worldcup_predictor.agents.match_intelligence_builder import MatchIntelligenceBuilder
     from worldcup_predictor.clients.api_football import ApiFootballClient
 
-    report = MatchIntelligenceBuilder(ApiFootballClient(get_settings())).build_by_fixture_id(fixture_id)
+    force_odds = (
+        is_admin_session()
+        and st.session_state.pop("odds_api_force_refresh_id", None) == fixture_id
+    )
+    report = MatchIntelligenceBuilder(ApiFootballClient(get_settings())).build_by_fixture_id(
+        fixture_id,
+        force_odds_api=bool(force_odds),
+    )
     st.session_state["gui_intelligence_cache"] = {"fixture_id": fixture_id, "report": report}
     return report
 
@@ -1517,6 +1525,13 @@ def page_prediction() -> None:
 
     with st.spinner("Loading API intelligence…"):
         intel = _get_intelligence_report(int(fid), locale)
+
+    render_odds_api_credit_panel(
+        locale,
+        fixture_id=int(fid),
+        intel=intel,
+        developer_mode=is_developer_mode(),
+    )
 
     dev_mode = is_developer_mode()
 

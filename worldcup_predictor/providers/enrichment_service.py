@@ -40,6 +40,8 @@ class EnrichmentService:
         self,
         report: MatchIntelligenceReport,
         fixture: Fixture,
+        *,
+        force_odds_api: bool = False,
     ) -> tuple[MatchIntelligenceReport, EnrichmentOutcome]:
         if not self._registry.any_enrichment_configured:
             return report, EnrichmentOutcome(skipped=["no_enrichment_providers_configured"])
@@ -47,7 +49,7 @@ class EnrichmentService:
         outcome = EnrichmentOutcome()
         endpoint_log = list(report.api_inspection.endpoints if report.api_inspection else [])
 
-        report, outcome = self._maybe_enrich_odds(report, fixture, outcome, endpoint_log)
+        report, outcome = self._maybe_enrich_odds(report, fixture, outcome, endpoint_log, force=force_odds_api)
         report, outcome = self._maybe_enrich_weather(report, fixture, outcome, endpoint_log)
         report, outcome = self._maybe_enrich_sportmonks(report, fixture, outcome, endpoint_log)
         report, outcome = self._maybe_enrich_rapid_football_stats(report, fixture, outcome, endpoint_log)
@@ -220,29 +222,69 @@ class EnrichmentService:
         fixture: Fixture,
         outcome: EnrichmentOutcome,
         endpoint_log: list[EndpointInspection],
+        *,
+        force: bool = False,
     ) -> tuple[MatchIntelligenceReport, EnrichmentOutcome]:
-        if report.odds and report.odds.available and report.odds.bookmakers:
-            outcome.skipped.append("odds:primary_present")
-            return report, outcome
+        from worldcup_predictor.providers.odds_api_credit import (
+            attach_guard_metadata,
+            evaluate_odds_api_call,
+            record_odds_api_call,
+        )
+
+        sport = self._settings.the_odds_api_sport
+        endpoint = f"sports/{sport}/odds"
+        decision = evaluate_odds_api_call(report, fixture, self._settings, force=force)
+
+        if not decision.allowed:
+            outcome.skipped.append(f"odds_api:{decision.reason}")
+            return attach_guard_metadata(report, decision), outcome
+
+        if decision.from_cache and decision.cached_event:
+            bookmakers = self._odds_bookmakers_from_event(decision.cached_event)
+            if bookmakers:
+                odds = OddsSnapshot(
+                    fixture_id=fixture.id,
+                    available=True,
+                    bookmakers=bookmakers,
+                    source="cache",
+                    note="Cached The Odds API data (comparison only — not betting advice).",
+                )
+                outcome.applied_providers.append("the_odds_api")
+                outcome.filled_fields.append("odds")
+                missing = [m for m in report.missing_data if m != "odds"]
+                report = attach_guard_metadata(report, decision)
+                return replace(report, odds=odds, missing_data=missing), outcome
+            outcome.skipped.append("odds_api:cache_empty")
+            return attach_guard_metadata(report, decision), outcome
 
         if not self._registry.the_odds_api.is_configured:
             outcome.skipped.append("odds:the_odds_api_not_configured")
-            return report, outcome
+            return attach_guard_metadata(report, decision), outcome
 
         result = self._registry.the_odds_api.get_match_odds(
             home_team=fixture.home_team,
             away_team=fixture.away_team,
         )
         self._log_provider(endpoint_log, result)
+        report = attach_guard_metadata(report, decision, used_live=result.available)
+
         if not result.available:
             if result.error:
                 outcome.errors.append(f"the_odds_api: {result.error}")
+            else:
+                outcome.skipped.append(f"odds_api:{decision.reason}")
             return report, outcome
 
         bookmakers = self._odds_bookmakers_from_event(result.data)
         if not bookmakers:
             outcome.skipped.append("odds:no_matching_event")
             return report, outcome
+
+        record_odds_api_call(
+            fixture_id=fixture.id,
+            endpoint=endpoint,
+            event=result.data if isinstance(result.data, dict) else None,
+        )
 
         odds = OddsSnapshot(
             fixture_id=fixture.id,

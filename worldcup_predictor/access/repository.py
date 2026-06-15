@@ -17,6 +17,14 @@ from worldcup_predictor.database.connection import connect, get_db_path
 _repo_singleton: "AccessRepository | None" = None
 
 
+def normalize_user_identity(value: str) -> str | None:
+    """Normalize username or email for lookup and storage."""
+    text = (value or "").strip().lower()
+    if not text or len(text) > 128:
+        return None
+    return text
+
+
 def get_access_repository(db_path: str | None = None) -> "AccessRepository":
     """Shared repository instance — one DB path per process."""
     global _repo_singleton
@@ -62,9 +70,11 @@ class AccessRepository:
         )
 
     def create_email_user(self, email: str) -> AppUser | None:
-        normalized = email.strip().lower()
-        if not normalized or "@" not in normalized:
+        """Create or fetch a named user (username or email stored in email column)."""
+        normalized = normalize_user_identity(email)
+        if not normalized:
             return None
+        # Internal placeholder — login uses shared PUBLIC_ACCESS_CODE, not per-user secrets.
         token = secrets.token_urlsafe(24)
         user_id = str(uuid.uuid4())
         now = utc_now_iso()

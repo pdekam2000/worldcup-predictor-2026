@@ -60,7 +60,7 @@ def test_registered_user_not_blocked() -> None:
         st.session_state.clear()
 
     init_access_session()
-    user, err = login_with_invite(email="phase49-test@example.com", access_code="test-invite-code")
+    user, err = login_with_invite(identity="phase49-test@example.com", access_code="test-invite-code")
     assert user is not None and err is None
     assert blocks_prediction_actions() is False
     logout_user()

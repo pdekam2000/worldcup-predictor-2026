@@ -100,17 +100,17 @@ def _render_access_panel(container: Any, locale: Locale, *, key_prefix: str, sho
         st.markdown(f"**{gui_t('access.panel_title', locale)}**")
 
         if is_registered_user():
-            email = (user.email if user and user.email else st.session_state.get("access_user_email")) or "—"
-            st.caption(gui_t("access.signed_in_as", locale) + f" **{email}**")
+            display_name = (
+                user.email if user and user.email else st.session_state.get("access_user_email")
+            ) or "—"
+            st.markdown(f"**{gui_t('access.signed_in_as', locale)}** {display_name}")
             if quota.is_paid:
                 st.success(gui_t("access.paid_active", locale))
             else:
-                st.caption(
-                    gui_t("access.quota_line", locale).format(
-                        used=quota.used_today,
-                        limit=quota.daily_limit,
-                        remaining=quota.remaining or 0,
-                    )
+                st.metric(
+                    gui_t("access.remaining_today", locale),
+                    quota.remaining if quota.remaining is not None else 0,
+                    f"{quota.used_today}/{quota.daily_limit} used",
                 )
             c1, c2 = st.columns(2)
             with c1:
@@ -125,11 +125,11 @@ def _render_access_panel(container: Any, locale: Locale, *, key_prefix: str, sho
 
         st.caption(gui_t("access.access_code_hint", locale))
         with st.form(f"{key_prefix}_access_login_form"):
-            email = st.text_input(gui_t("access.email", locale))
+            username = st.text_input(gui_t("access.username_or_email", locale))
             code = st.text_input(gui_t("access.access_code", locale))
             login_btn = st.form_submit_button(gui_t("access.login", locale), type="primary", use_container_width=True)
         if login_btn:
-            user, err = login_with_invite(email=email, access_code=code)
+            user, err = login_with_invite(identity=username, access_code=code)
             if user is not None:
                 st.toast(gui_t("access.login_ok", locale))
                 st.rerun()

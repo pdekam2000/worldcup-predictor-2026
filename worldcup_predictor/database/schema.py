@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 DEFAULT_DB_PATH = "data/football_intelligence.db"
 
 DDL_STATEMENTS: tuple[str, ...] = (
@@ -215,5 +215,33 @@ DDL_STATEMENTS: tuple[str, ...] = (
     """
     CREATE INDEX IF NOT EXISTS idx_learning_records_v2_competition
     ON learning_records_v2(competition_key, created_at)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS odds_api_usage (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        usage_date TEXT NOT NULL,
+        usage_month TEXT NOT NULL,
+        endpoint TEXT NOT NULL,
+        fixture_id INTEGER,
+        credits_used INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_odds_api_usage_date
+    ON odds_api_usage(usage_date)
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_odds_api_usage_month
+    ON odds_api_usage(usage_month)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS odds_api_cache (
+        fixture_id INTEGER NOT NULL,
+        market_key TEXT NOT NULL,
+        response_json TEXT NOT NULL,
+        cached_at TEXT NOT NULL,
+        PRIMARY KEY (fixture_id, market_key)
+    )
     """,
 )
