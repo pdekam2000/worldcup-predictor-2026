@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from worldcup_predictor.access.config import free_daily_prediction_limit, public_access_enabled
-from worldcup_predictor.access.identity import current_user_id
+from worldcup_predictor.access.identity import current_user_id, is_registered_user
 from worldcup_predictor.access.models import utc_today
 from worldcup_predictor.access.repository import AccessRepository, get_access_repository
 
@@ -43,10 +43,25 @@ def _paid_active(user_id: str) -> bool:
         return True
 
 
+def _login_required_result() -> GateCheckResult:
+    limit = free_daily_prediction_limit()
+    return GateCheckResult(
+        allowed=False,
+        reason="login_required",
+        remaining=0,
+        used_today=0,
+        daily_limit=limit,
+        show_upgrade=False,
+    )
+
+
 def preview_prediction_quota(user_id: str | None = None) -> GateCheckResult:
     """Read-only quota check — does not increment."""
     if not public_access_enabled():
         return GateCheckResult(allowed=True, user_id=user_id or "local_dev", is_paid=True, remaining=999)
+
+    if user_id is None and not is_registered_user():
+        return _login_required_result()
 
     uid = user_id or current_user_id()
     limit = free_daily_prediction_limit()
@@ -85,6 +100,8 @@ def acquire_prediction_slot(user_id: str | None = None) -> GateCheckResult:
     """Check quota and atomically consume one prediction slot before pipeline/API."""
     preview = preview_prediction_quota(user_id)
     if not preview.allowed:
+        if preview.reason == "login_required":
+            return preview
         preview.show_upgrade = True
         preview.reason = "daily_limit_reached"
         return preview

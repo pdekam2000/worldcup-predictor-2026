@@ -113,10 +113,15 @@ from worldcup_predictor.ui.gui_mode_v2 import (
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.professional_prediction_card import render_professional_prediction_card
 from worldcup_predictor.ui.professional_reports_page import render_professional_reports_page
-from worldcup_predictor.access.identity import init_access_session
+from worldcup_predictor.access.identity import init_access_session, is_registered_user
 from worldcup_predictor.access.admin_auth import block_developer_route, enforce_non_admin_restrictions, init_admin_session, is_admin_session
 from worldcup_predictor.access.prediction_gate import acquire_prediction_slot, preview_api_access
-from worldcup_predictor.ui.access_display import render_access_sidebar, render_gate_block, render_quota_banner
+from worldcup_predictor.ui.access_display import (
+    render_access_home_panel,
+    render_access_sidebar,
+    render_gate_block,
+    render_quota_banner,
+)
 from worldcup_predictor.ui.admin_entitlements_page import render_admin_entitlements_page
 from worldcup_predictor.ui.feedback_display import render_feedback_form, render_feedback_viewer_page
 from worldcup_predictor.ui.upgrade_page import render_upgrade_page
@@ -428,6 +433,7 @@ def _load_json(path: Path) -> dict[str, Any] | None:
 def _render_sidebar() -> None:
     locale = _locale()
     render_sidebar_branding(locale)
+    render_access_sidebar(locale)
 
     def _locale_label(code: str) -> str:
         flag = GUI_LOCALE_FLAGS.get(code, "")
@@ -459,7 +465,6 @@ def _render_sidebar() -> None:
     _sync_fixture_for_competition()
 
     render_mode_toggle(locale)
-    render_access_sidebar(locale)
 
     st.sidebar.markdown("---")
     dev_mode = is_developer_mode()
@@ -571,6 +576,7 @@ def page_home() -> None:
             st.metric(gui_t("home.verified_today", locale), vstats["verified_predictions_today"])
     else:
         render_hero(gui_t("nav.home", locale), gui_t("home.user_subtitle", locale))
+        render_access_home_panel(locale)
 
         def _goto_predict() -> None:
             st.session_state["gui_page"] = "predict"
@@ -1496,7 +1502,11 @@ def page_prediction() -> None:
 
     fixture = _lookup_fixture(fid)
     render_stored_prediction_summary(int(fid), locale, compact=False, fixture=fixture)
-    render_quota_banner(locale)
+    if is_registered_user():
+        render_quota_banner(locale)
+    else:
+        st.warning(gui_t("access.login_required", locale))
+        render_access_home_panel(locale)
 
     with st.spinner("Loading API intelligence…"):
         intel = _get_intelligence_report(int(fid), locale)

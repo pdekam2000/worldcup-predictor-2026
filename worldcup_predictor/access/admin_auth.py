@@ -2,11 +2,7 @@
 
 from __future__ import annotations
 
-import os
-
-import streamlit as st
-
-from worldcup_predictor.access.config import public_access_enabled
+from worldcup_predictor.access.config import _env_or_secret, public_access_enabled
 from worldcup_predictor.ui.app_shell import DEV_NAV_ITEMS, LEGACY_USER_NAV_ITEMS
 
 _SESSION_ADMIN = "admin_authenticated"
@@ -18,13 +14,13 @@ def _truthy(value: str | None) -> bool:
 
 def admin_credentials() -> tuple[str, str] | None:
     """ADMIN_USERNAME/PASSWORD, else APP_USERNAME/PASSWORD when APP_AUTH enabled."""
-    admin_user = (os.getenv("ADMIN_USERNAME") or "").strip()
-    admin_pass = (os.getenv("ADMIN_PASSWORD") or "").strip()
+    admin_user = (_env_or_secret("ADMIN_USERNAME") or "").strip()
+    admin_pass = (_env_or_secret("ADMIN_PASSWORD") or "").strip()
     if admin_user and admin_pass:
         return admin_user, admin_pass
-    if _truthy(os.getenv("APP_AUTH_ENABLED")):
-        app_user = (os.getenv("APP_USERNAME") or "").strip()
-        app_pass = (os.getenv("APP_PASSWORD") or "").strip()
+    if _truthy(_env_or_secret("APP_AUTH_ENABLED")):
+        app_user = (_env_or_secret("APP_USERNAME") or "").strip()
+        app_pass = (_env_or_secret("APP_PASSWORD") or "").strip()
         if app_user and app_pass:
             return app_user, app_pass
     return None
