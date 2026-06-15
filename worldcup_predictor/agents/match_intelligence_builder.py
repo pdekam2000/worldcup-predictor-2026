@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Any
 
 from worldcup_predictor.clients.api_football import ApiFootballClient
@@ -82,6 +83,40 @@ class MatchIntelligenceBuilder:
         injuries_items: list[dict[str, Any]] = self._non_empty_list(
             injuries_result.data if injuries_result.ok else []
         )
+
+        sidelined_meta: dict[str, Any] | None = None
+        try:
+            from worldcup_predictor.integrations.sidelined_probe import (
+                normalize_sidelined,
+                sidelined_enabled,
+            )
+
+            cache_dir = self._api._settings.api_cache_dir
+            if sidelined_enabled(cache_dir):
+                existing = {
+                    str((i.get("player") or {}).get("name", "")).lower()
+                    for i in injuries_items
+                    if isinstance(i, dict)
+                }
+                sidelined_count = 0
+                for team_id in (fixture.home_team_id, fixture.away_team_id):
+                    if not team_id:
+                        continue
+                    sidelined_result = self._api.get_sidelined(team_id=int(team_id))
+                    self._log_endpoint(endpoint_log, f"sidelined/team/{team_id}", sidelined_result)
+                    sources.add(sidelined_result.source)
+                    if sidelined_result.ok and isinstance(sidelined_result.data, list):
+                        sidelined_rows = normalize_sidelined(sidelined_result.data)
+                        sidelined_count += len(sidelined_rows)
+                        for row in sidelined_rows:
+                            name = str((row.get("player") or {}).get("name", "")).lower()
+                            if name and name not in existing:
+                                injuries_items.append(row)
+                                existing.add(name)
+                if sidelined_count:
+                    sidelined_meta = {"available": True, "count": sidelined_count}
+        except Exception:
+            sidelined_meta = None
 
         home_recent, home_recent_log = self._fetch_recent_fixtures(fixture.home_team_id)
         away_recent, away_recent_log = self._fetch_recent_fixtures(fixture.away_team_id)
@@ -166,6 +201,15 @@ class MatchIntelligenceBuilder:
             referee=referee,
             api_inspection=ApiInspectionReport(endpoints=endpoint_log),
         )
+
+        from worldcup_predictor.integrations.api_sports_deep_data import attach_api_sports_deep_data
+
+        draft = attach_api_sports_deep_data(draft, self._api, competition)
+
+        if sidelined_meta:
+            supplemental = dict(draft.supplemental_sources or {})
+            supplemental["sidelined_audit"] = sidelined_meta
+            draft = replace(draft, supplemental_sources=supplemental)
 
         from worldcup_predictor.config.settings import get_settings
         from worldcup_predictor.providers.enrichment_service import EnrichmentService

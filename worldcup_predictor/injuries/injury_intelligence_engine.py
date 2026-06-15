@@ -256,6 +256,16 @@ def _risk_flags(side: TeamInjurySide, players: list[UnavailablePlayer]) -> list[
     return sorted(set(flags))
 
 
+def _bench_depth_context(report: Any) -> dict[str, Any]:
+    try:
+        from worldcup_predictor.integrations.api_sports_deep_data import API_SPORTS_DEEP_KEY
+
+        deep = (getattr(report, "supplemental_sources", None) or {}).get(API_SPORTS_DEEP_KEY) or {}
+        return deep.get("squad_intelligence") or {}
+    except Exception:
+        return {}
+
+
 def _analyze_team_side(
     injuries: list[dict[str, Any]],
     *,
@@ -264,6 +274,7 @@ def _analyze_team_side(
     team_name: str,
     injuries_missing: bool,
     is_placeholder: bool,
+    bench_depth: dict[str, Any] | None = None,
 ) -> TeamInjurySide:
     starter_map = _starter_map(lineup_items, team_id, team_name)
     playing_ids = {pid for pid, info in starter_map.items() if info.get("in_xi")}
@@ -281,6 +292,14 @@ def _analyze_team_side(
     suspended = sum(1 for p in players if p.status == "suspended")
 
     impact = _team_impact_score(players)
+    if bench_depth and bench_depth.get("available"):
+        missing_impact = float(bench_depth.get("missing_starter_impact") or 0)
+        depth_score = float(bench_depth.get("effective_depth_score") or 50)
+        if missing_impact > 0 and depth_score < 55:
+            impact = round(_clamp(impact + missing_impact * 0.25, 0.0, 100.0), 1)
+        elif depth_score >= 68:
+            impact = round(_clamp(impact - 2.0, 0.0, 100.0), 1)
+
     losses = _position_losses(players)
 
     confidence = 25.0
@@ -377,6 +396,7 @@ def _build_inner(report: Any) -> InjuryIntelligenceResult:
     away_intel = getattr(report, "away_team", None)
     home_inj = _safe_list(home_intel.injuries.players if home_intel and home_intel.injuries else [])
     away_inj = _safe_list(away_intel.injuries.players if away_intel and away_intel.injuries else [])
+    squad_intel = _bench_depth_context(report)
 
     home = _analyze_team_side(
         home_inj,
@@ -385,6 +405,7 @@ def _build_inner(report: Any) -> InjuryIntelligenceResult:
         team_name=getattr(home_intel, "team_name", "Home") if home_intel else "Home",
         injuries_missing=injuries_missing,
         is_placeholder=is_placeholder,
+        bench_depth=((squad_intel.get("home") or {}).get("bench_depth") if squad_intel.get("available") else None),
     )
     away = _analyze_team_side(
         away_inj,
@@ -393,6 +414,7 @@ def _build_inner(report: Any) -> InjuryIntelligenceResult:
         team_name=getattr(away_intel, "team_name", "Away") if away_intel else "Away",
         injuries_missing=injuries_missing,
         is_placeholder=is_placeholder,
+        bench_depth=((squad_intel.get("away") or {}).get("bench_depth") if squad_intel.get("available") else None),
     )
 
     impact = _build_prediction_impact(home, away)

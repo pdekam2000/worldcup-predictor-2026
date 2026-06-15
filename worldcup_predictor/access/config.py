@@ -55,6 +55,7 @@ def public_access_config_debug() -> str:
     """Admin-only debug string for live config diagnosis."""
     raw = _env_or_secret("PUBLIC_ACCESS_ENABLED")
     enabled = public_access_enabled()
+    code_set = bool(public_access_code())
     source = "env" if os.getenv("PUBLIC_ACCESS_ENABLED") else "secrets/default"
     try:
         import streamlit as st
@@ -63,7 +64,10 @@ def public_access_config_debug() -> str:
             source = "st.secrets"
     except Exception:
         pass
-    return f"PUBLIC_ACCESS_ENABLED = {str(enabled).lower()} (raw={raw!r}, source={source})"
+    return (
+        f"PUBLIC_ACCESS_ENABLED = {str(enabled).lower()} (raw={raw!r}, source={source}) · "
+        f"PUBLIC_ACCESS_CODE configured = {str(code_set).lower()}"
+    )
 
 
 def free_daily_prediction_limit() -> int:

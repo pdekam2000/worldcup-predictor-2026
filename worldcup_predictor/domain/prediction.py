@@ -119,6 +119,7 @@ class FirstGoalScorerCandidate:
     score: float
     reason: str
     data_source: str
+    position: str = ""
 
 
 @dataclass

@@ -70,6 +70,16 @@ class PredictPipeline:
         intel = (context.shared.get("intelligence_reports") or {}).get(fixture_id)
         specialist_report = (context.shared.get("specialist_reports") or {}).get(fixture_id)
         try:
+            from worldcup_predictor.intelligence.first_goal_intelligence_v2 import attach_first_goal_v2_to_prediction
+
+            attach_first_goal_v2_to_prediction(
+                prediction,
+                intel,
+                specialist_report=specialist_report,
+            )
+        except Exception:
+            pass
+        try:
             from worldcup_predictor.fusion.fusion_applier import apply_fusion_enrichment
 
             prediction, _ = apply_fusion_enrichment(

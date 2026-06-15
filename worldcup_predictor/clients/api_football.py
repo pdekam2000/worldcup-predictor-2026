@@ -234,6 +234,81 @@ class ApiFootballClient:
         )
 
     # ------------------------------------------------------------------ #
+    # Phase 53 — deep integration endpoints
+    # ------------------------------------------------------------------ #
+
+    def get_live_fixtures(self) -> ApiCallResult:
+        """Live fixtures only — short TTL to avoid full season scans."""
+        return self._safe_get(
+            "fixtures",
+            {"live": "all"},
+            placeholder_factory=lambda: [],
+            ttl_seconds=90,
+        )
+
+    def get_top_scorers(self, league_id: int, season: int) -> ApiCallResult:
+        return self._safe_get(
+            "players/topscorers",
+            {"league": league_id, "season": season},
+            placeholder_factory=lambda: [],
+            ttl_seconds=86400,
+        )
+
+    def get_fixture_players(
+        self,
+        fixture_id: int,
+        *,
+        ttl_seconds: int = 1800,
+    ) -> ApiCallResult:
+        return self._safe_get(
+            "fixtures/players",
+            {"fixture": fixture_id},
+            placeholder_factory=lambda: [],
+            ttl_seconds=ttl_seconds,
+        )
+
+    def get_team_squad(self, team_id: int) -> ApiCallResult:
+        return self._safe_get(
+            "players/squads",
+            {"team": team_id},
+            placeholder_factory=lambda: [],
+            ttl_seconds=604800,
+        )
+
+    def get_predictions(self, fixture_id: int) -> ApiCallResult:
+        """API-Football predictions — reference only; empty if plan unavailable."""
+        return self._safe_get(
+            "predictions",
+            {"fixture": fixture_id},
+            placeholder_factory=lambda: [],
+            ttl_seconds=3600,
+        )
+
+    def get_sidelined(
+        self,
+        *,
+        fixture_id: int | None = None,
+        team_id: int | None = None,
+        player_id: int | None = None,
+        probe_only: bool = False,
+    ) -> ApiCallResult:
+        """Sidelined/suspensions — team or player scoped (fixture param not supported by API)."""
+        params: dict[str, Any] = {}
+        if team_id is not None:
+            params["team"] = team_id
+        if player_id is not None:
+            params["player"] = player_id
+        if not params:
+            return ApiCallResult(data=[], source="placeholder", endpoint="sidelined", error="team_id or player_id required")
+        ttl = 60 if probe_only else 21600
+        return self._safe_get(
+            "sidelined",
+            params,
+            placeholder_factory=lambda: [],
+            ttl_seconds=ttl,
+        )
+
+    # ------------------------------------------------------------------ #
     # Internal request + cache layer
     # ------------------------------------------------------------------ #
 
@@ -250,6 +325,7 @@ class ApiFootballClient:
         *,
         placeholder_factory: Callable[[], Any],
         force_refresh: bool = False,
+        ttl_seconds: int | None = None,
     ) -> ApiCallResult:
         if not self.is_configured:
             return ApiCallResult(
@@ -271,7 +347,7 @@ class ApiFootballClient:
         try:
             payload = self._fetch_raw(endpoint, params)
             response_items = payload.get("response", [])
-            self._cache.set(endpoint, params, response_items)
+            self._cache.set(endpoint, params, response_items, ttl_seconds=ttl_seconds)
             return ApiCallResult(
                 data=response_items,
                 source="live",

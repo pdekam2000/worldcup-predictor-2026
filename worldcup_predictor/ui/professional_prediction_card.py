@@ -11,6 +11,11 @@ from worldcup_predictor.domain.prediction import MatchPrediction
 from worldcup_predictor.domain.specialist import MatchSpecialistReport
 from worldcup_predictor.export.match_report_collector import collect_match_report_bundle
 from worldcup_predictor.export.professional_match_report_exporter_v2 import ProfessionalMatchReportExporterV2
+from worldcup_predictor.ui.first_goal_display import (
+    render_first_goal_intelligence_expander,
+    render_first_goal_pro_card_section,
+    resolve_first_goal_v2,
+)
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.status_badges import (
     confidence_band,
@@ -103,6 +108,10 @@ def _render_card(
             render_status_badge(quality_band, kind="quality", locale=locale)
         with b3:
             render_status_badge(risk_band, kind="risk", locale=locale)
+
+        fg_v2 = resolve_first_goal_v2(prediction, report, specialist_report=specialist_report)
+        render_first_goal_pro_card_section(prediction, fg_v2, locale)
+        render_first_goal_intelligence_expander(fg_v2, locale, key_suffix=str(prediction.fixture_id))
 
         summary = fusion.get("final_summary") or fusion.get("summary")
         if summary:

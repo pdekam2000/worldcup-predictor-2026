@@ -18,6 +18,7 @@ USER_MODE_V2_NAV_ITEMS: list[tuple[str, str, str]] = [
     ("team_search", "nav.game_search", "🔎"),
     ("match_center", "nav.match_center", "⚽"),
     ("professional_reports", "nav.professional_reports", "📄"),
+    ("hall_of_fame", "nav.hall_of_fame", "🏆"),
     ("upgrade", "nav.upgrade", "💳"),
     ("settings", "nav.settings", "⚙️"),
 ]

@@ -39,6 +39,7 @@ def _attack_chance_quality(
     *,
     xg_per_match: float | None,
     xg_available: bool,
+    chance_creation_score: float | None = None,
 ) -> float:
     score = 35.0
     weights = 0.0
@@ -65,6 +66,9 @@ def _attack_chance_quality(
         weights += 1
     if xg_available and xg_per_match is not None:
         score += _clamp(xg_per_match / 2.2, 0, 1) * 25
+        weights += 1
+    if chance_creation_score is not None and chance_creation_score > 0:
+        score += _clamp(chance_creation_score / 100.0, 0, 1) * 8
         weights += 1
 
     if weights == 0:
@@ -238,6 +242,18 @@ def _prediction_impact(
     )
 
 
+def _team_chance_creation(report: MatchIntelligenceReport, side: str) -> float | None:
+    try:
+        from worldcup_predictor.integrations.api_sports_deep_data import API_SPORTS_DEEP_KEY
+
+        deep = (getattr(report, "supplemental_sources", None) or {}).get(API_SPORTS_DEEP_KEY) or {}
+        block = (deep.get("chance_creation") or {}).get(side) or {}
+        val = block.get("chance_creation_score")
+        return float(val) if val is not None else None
+    except Exception:
+        return None
+
+
 def _build_team_side(
     report: MatchIntelligenceReport,
     *,
@@ -257,7 +273,13 @@ def _build_team_side(
         else:
             xg_per_match = xg_val
 
-    attack = _attack_chance_quality(profile, xg_per_match=xg_per_match, xg_available=xg_available and xg_val is not None)
+    cc_score = _team_chance_creation(report, side)
+    attack = _attack_chance_quality(
+        profile,
+        xg_per_match=xg_per_match,
+        xg_available=xg_available and xg_val is not None,
+        chance_creation_score=cc_score,
+    )
     prevention = _defensive_prevention(profile)
     efficiency, label = _conversion_efficiency(profile)
 

@@ -1,28 +1,25 @@
-"""The Odds API provider — optional odds comparison / fill when API-Sports odds empty."""
+"""The Odds API provider — backward-compatible client wrapper (Phase 50B)."""
 
 from __future__ import annotations
 
-import logging
 from typing import Any
 
-import httpx
-
 from worldcup_predictor.config.settings import Settings
+from worldcup_predictor.domain.fixture import Fixture
 from worldcup_predictor.providers.base import ProviderCallResult, ProviderTier
-
-logger = logging.getLogger(__name__)
+from worldcup_predictor.providers.the_odds_api_provider import TheOddsApiProvider
 
 
 class TheOddsApiClient:
-    """Optional odds comparison client (The Odds API v4)."""
+    """Optional odds comparison client — delegates to TheOddsApiProvider."""
 
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
-        self._base_url = settings.the_odds_api_base_url.rstrip("/")
+        self._provider = TheOddsApiProvider(settings)
 
     @property
     def is_configured(self) -> bool:
-        return self._settings.the_odds_api_configured
+        return self._provider.is_configured
 
     def get_match_odds(
         self,
@@ -30,6 +27,7 @@ class TheOddsApiClient:
         home_team: str,
         away_team: str,
         sport_key: str | None = None,
+        kickoff_utc: Any | None = None,
     ) -> ProviderCallResult:
         if not self.is_configured:
             return ProviderCallResult(
@@ -41,53 +39,34 @@ class TheOddsApiClient:
                 error="THE_ODDS_API_KEY not configured",
             )
 
-        sport = sport_key or self._settings.the_odds_api_sport
-        endpoint = f"sports/{sport}/odds"
-        params = {
-            "apiKey": self._settings.the_odds_api_key,
-            "regions": self._settings.the_odds_api_regions,
-            "markets": "h2h,totals",
-            "oddsFormat": "decimal",
-        }
+        from datetime import datetime, timezone
 
-        try:
-            url = f"{self._base_url}/{endpoint}"
-            with httpx.Client(timeout=25.0) as client:
-                response = client.get(url, params=params)
-                response.raise_for_status()
-                events = response.json()
-            matched = self._match_event(events, home_team, away_team)
+        fixture = Fixture(
+            id=0,
+            competition_key="world_cup_2026",
+            home_team=home_team,
+            away_team=away_team,
+            kickoff_utc=kickoff_utc or datetime.now(timezone.utc),
+            venue="TBD",
+            stage="Group",
+            league_id=1,
+            season=2026,
+        )
+        if sport_key:
+            self._settings.the_odds_api_sport = sport_key
+
+        result = self._provider.fetch_for_fixture(fixture, allow_live=True, fallback_sport_odds=True)
+        if result.event:
             return ProviderCallResult(
-                data=matched,
+                data=result.event,
                 provider="the_odds_api",
                 tier=ProviderTier.ENRICHMENT,
-                endpoint=endpoint,
+                endpoint=result.endpoint or "odds",
             )
-        except Exception as exc:
-            logger.exception("The Odds API request failed")
-            return ProviderCallResult(
-                data=None,
-                provider="the_odds_api",
-                tier=ProviderTier.ENRICHMENT,
-                endpoint=endpoint,
-                error=str(exc),
-            )
-
-    @staticmethod
-    def _match_event(
-        events: Any,
-        home_team: str,
-        away_team: str,
-    ) -> dict[str, Any] | None:
-        if not isinstance(events, list):
-            return None
-        home_l = home_team.lower()
-        away_l = away_team.lower()
-        for event in events:
-            if not isinstance(event, dict):
-                continue
-            eh = str(event.get("home_team", "")).lower()
-            ea = str(event.get("away_team", "")).lower()
-            if (home_l in eh or eh in home_l) and (away_l in ea or ea in away_l):
-                return event
-        return None
+        return ProviderCallResult(
+            data=None,
+            provider="the_odds_api",
+            tier=ProviderTier.ENRICHMENT,
+            endpoint=result.endpoint or "odds",
+            error=result.error or "no_matching_event",
+        )

@@ -11,6 +11,7 @@ from worldcup_predictor.config.settings import Settings
 from worldcup_predictor.domain.fixture import Fixture
 from worldcup_predictor.domain.intelligence import MatchIntelligenceReport
 from worldcup_predictor.providers.odds_api_credit.config import (
+    compute_odds_api_credits,
     odds_api_cache_hours,
     odds_api_credits_per_call,
     odds_api_daily_hard_limit,
@@ -140,7 +141,7 @@ def evaluate_odds_api_call(
             base.reason = need_reason
             return base
 
-    credits = odds_api_credits_per_call()
+    credits = compute_odds_api_credits(settings.the_odds_api_regions, DEFAULT_MARKET_KEY)
     if daily_used + credits > daily_hard:
         base.reason = "daily_hard_limit_exceeded"
         return base
@@ -159,13 +160,19 @@ def record_odds_api_call(
     event: dict[str, Any] | None,
     market_key: str = DEFAULT_MARKET_KEY,
     credits: int | None = None,
+    source: str = "live",
+    settings: Settings | None = None,
 ) -> None:
     """Persist usage and cache after a live API call."""
     repo = get_odds_api_repository()
+    used = credits
+    if used is None and settings is not None:
+        used = compute_odds_api_credits(settings.the_odds_api_regions, market_key)
     repo.record_usage(
         endpoint=endpoint,
         fixture_id=fixture_id,
-        credits_used=credits or odds_api_credits_per_call(),
+        credits_used=used or odds_api_credits_per_call(),
+        source=source,
     )
     if event and fixture_id is not None:
         repo.set_cache(fixture_id, market_key, event)

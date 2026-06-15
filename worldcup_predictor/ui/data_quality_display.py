@@ -141,6 +141,18 @@ def render_api_inspector_panel(report: Any, locale: Locale) -> None:
     has_xg = bool(rapid_xg.get("xg") or rapid_xg.get("npxg") or rapid_xg.get("fixture_detail"))
     st.markdown(f"- **xG found:** {'yes' if has_xg else 'no'}")
 
+    st.markdown(f"#### API-Sports deep (Phase 53)")
+    deep = (getattr(report, "supplemental_sources", None) or {}).get("api_sports_deep") or {}
+    st.markdown(f"- **Top scorers:** {'yes' if deep.get('top_scorers') else 'no'}")
+    st.markdown(f"- **Fixture players:** {'yes' if deep.get('fixture_players') else 'no'}")
+    squads = deep.get("squads") or {}
+    if squads:
+        for side, players in squads.items():
+            if isinstance(players, list):
+                st.markdown(f"- **Squad ({side}):** {len(players)} players")
+    pred_ref = deep.get("predictions_reference") or {}
+    st.markdown(f"- **API prediction ref:** {'yes' if pred_ref.get('available') else 'no'}")
+
     st.markdown(f"#### {gui_t('dq.source_rapid_football', locale)}")
     rfs = registry.rapid_football_stats
     rapid = (getattr(report, "supplemental_sources", None) or {}).get("rapid_football_stats") or {}

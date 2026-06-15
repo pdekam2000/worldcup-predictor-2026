@@ -119,6 +119,33 @@ class ProfessionalMatchReportExporterV2:
                 "",
             ]
         )
+        fg_team = pred.get("first_goal_team")
+        fg_band = pred.get("first_goal_minute_band")
+        if fg_team or fg_band:
+            lines.extend(
+                [
+                    f"## {report_t('report.first_goal', loc)}",
+                    "",
+                    f"- **{report_t('report.first_goal_team', loc)}:** {fg_team or '—'}",
+                    f"- **{report_t('report.first_goal_band', loc)}:** {fg_band or '—'}",
+                    f"- **{report_t('report.first_goal_confidence', loc)}:** {pred.get('first_goal_confidence', '—')}/100",
+                    "",
+                ]
+            )
+            for row in pred.get("first_goal_scorer_candidates") or []:
+                if isinstance(row, dict):
+                    name = row.get("player_name") or row.get("player")
+                    if name:
+                        pos = row.get("position") or ""
+                        conf = row.get("confidence") or row.get("score")
+                        pos_txt = f", {pos}" if pos else ""
+                        conf_txt = f" — {conf}/100" if conf is not None else ""
+                        lines.append(f"- Scorer candidate: {name} ({row.get('team', '—')}{pos_txt}){conf_txt}")
+            if pred.get("first_goal_data_limitations"):
+                lines.append(f"_{pred['first_goal_data_limitations']}_")
+            if pred.get("first_goal_disclaimer"):
+                lines.append(f"_{pred['first_goal_disclaimer']}_")
+            lines.append("")
 
         fusion = bundle.fusion or {}
         if fusion:
@@ -140,6 +167,61 @@ class ProfessionalMatchReportExporterV2:
                 lines.append("")
 
         expl = bundle.explainability or {}
+        api_ctx = expl.get("api_sports_context") or {}
+        if api_ctx.get("api_football_prediction", {}).get("available"):
+            ref = api_ctx["api_football_prediction"]
+            lines.extend(
+                [
+                    "## API-Football prediction reference",
+                    "",
+                    f"- **Model 1X2:** {ref.get('model_one_x_two', '—')}",
+                    f"- **API-Football lean:** {ref.get('api_one_x_two_lean', '—')}",
+                    f"- **Agreement:** {ref.get('agreement_pct', '—')}%",
+                    "_External reference only — does not override model prediction._",
+                    "",
+                ]
+            )
+        if api_ctx.get("top_scorers_sample"):
+            lines.append("## Tournament top scorers (API-Sports)")
+            lines.append("")
+            for row in api_ctx["top_scorers_sample"][:5]:
+                if isinstance(row, dict):
+                    lines.append(
+                        f"- {row.get('player', '—')} ({row.get('team', '—')}) — "
+                        f"{row.get('goals', 0)} goals"
+                    )
+            lines.append("")
+
+        if api_ctx.get("player_ratings_sample"):
+            lines.append("## Player ratings & chance creation (API-Sports)")
+            lines.append("")
+            for row in api_ctx["player_ratings_sample"][:5]:
+                if isinstance(row, dict):
+                    parts = [f"- {row.get('player', '—')} ({row.get('team', '—')})"]
+                    if row.get("rating") is not None:
+                        parts.append(f"rating {row.get('rating')}")
+                    if row.get("assists") is not None:
+                        parts.append(f"{row.get('assists')} ast")
+                    if row.get("key_passes") is not None:
+                        parts.append(f"{row.get('key_passes')} kp")
+                    lines.append(" — ".join(parts))
+            lines.append("")
+
+        squad_intel = api_ctx.get("squad_intelligence") or {}
+        if squad_intel.get("available"):
+            lines.append("## Squad depth & experience (Phase 55)")
+            lines.append("")
+            for side in ("home", "away"):
+                block = squad_intel.get(side) or {}
+                depth = block.get("bench_depth") or {}
+                age = block.get("squad_age_profile") or {}
+                if depth.get("available") or age.get("available"):
+                    label = side.title()
+                    depth_score = depth.get("effective_depth_score", "—")
+                    avg_age = age.get("average_age", "—")
+                    lines.append(f"- **{label}:** bench depth {depth_score}/100 · avg age {avg_age}")
+            lines.append("")
+
         if expl.get("executive_summary"):
             lines.extend(
                 [

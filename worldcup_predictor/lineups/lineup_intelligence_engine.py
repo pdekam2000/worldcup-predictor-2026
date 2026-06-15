@@ -398,6 +398,23 @@ def _build_lineup_intelligence_inner(
         previous_rotation_ids=away_prev_ids,
     )
 
+    try:
+        from worldcup_predictor.integrations.api_sports_deep_data import API_SPORTS_DEEP_KEY
+
+        deep = (getattr(report, "supplemental_sources", None) or {}).get(API_SPORTS_DEEP_KEY) or {}
+        squad_intel = deep.get("squad_intelligence") or {}
+        if squad_intel.get("available"):
+            for side_obj, side_key in ((home, "home"), (away, "away")):
+                depth = (squad_intel.get(side_key) or {}).get("bench_depth") or {}
+                flags = list(side_obj.risk_flags)
+                if float(depth.get("effective_depth_score") or 100) < 45:
+                    flags.append("thin_squad_depth")
+                if float(depth.get("missing_starter_impact") or 0) >= 15:
+                    flags.append("key_starter_unavailable")
+                side_obj.risk_flags = sorted(set(flags))
+    except Exception:
+        pass
+
     impact = _build_prediction_impact(home, away)
     summary = _build_summary(home, away)
 

@@ -503,7 +503,33 @@ class PlayerQualityAgent(BaseAgent):
         supplemental = getattr(report, "supplemental_sources", None) or {}
         player_stats = supplemental.get("rapid_football_stats", {}).get("player_statistics") or []
 
+        from worldcup_predictor.integrations.api_sports_deep_data import deep_player_rows_for_team
+        from worldcup_predictor.prediction.player_position_utils import is_goalkeeper
+
         structured_candidates: list[dict[str, Any]] = []
+
+        for team_name in (report.home_team.team_name, report.away_team.team_name):
+            for row in deep_player_rows_for_team(report, team_name):
+                if not isinstance(row, dict):
+                    continue
+                pos = str(row.get("position") or "")
+                if is_goalkeeper(pos):
+                    continue
+                structured_candidates.append(
+                    {
+                        "player": row.get("player"),
+                        "team": row.get("team") or team_name,
+                        "score": float(row.get("score_hint") or 55),
+                        "reason": "API-Sports top scorers / fixture player stats",
+                        "data_source": row.get("data_source") or "api_sports_deep",
+                        "position": pos,
+                        "player_rating": row.get("player_rating") or row.get("average_rating"),
+                        "assists": row.get("assists"),
+                        "key_passes": row.get("key_passes"),
+                        "chance_creation_score": row.get("chance_creation_score"),
+                    }
+                )
+
         for lineup in (report.lineups or {}).get("items") or []:
             team = lineup.get("team", {}).get("name", "")
             for idx, entry in enumerate(lineup.get("startXI") or []):
@@ -511,6 +537,8 @@ class PlayerQualityAgent(BaseAgent):
                 if not name:
                     continue
                 pos = str(entry.get("player", {}).get("pos") or "").upper()
+                if is_goalkeeper(pos):
+                    continue
                 score = 58.0 - idx * 3 + (5 if pos in {"F", "FW", "ST", "CF"} else 0)
                 structured_candidates.append(
                     {
@@ -519,6 +547,7 @@ class PlayerQualityAgent(BaseAgent):
                         "score": score,
                         "reason": "Starting XI attacker/midfielder",
                         "data_source": "api_sports_lineups",
+                        "position": pos,
                     }
                 )
 
@@ -549,6 +578,26 @@ class PlayerQualityAgent(BaseAgent):
             f"{c['player']} ({c['team']})" for c in top_candidates
         ] or ["TBD (lineups pending)"]
 
+        deep = supplemental.get("api_sports_deep") or {}
+        squads = deep.get("squads") or {}
+        home_squad = len(squads.get("home") or [])
+        away_squad = len(squads.get("away") or [])
+
+        def _avg_rating(team_name: str) -> float | None:
+            ratings = []
+            for row in deep_player_rows_for_team(report, team_name):
+                r = row.get("player_rating") or row.get("average_rating")
+                try:
+                    if r is not None:
+                        ratings.append(float(r))
+                except (TypeError, ValueError):
+                    pass
+            return round(sum(ratings) / len(ratings), 2) if ratings else None
+
+        home_avg_rating = _avg_rating(report.home_team.team_name)
+        away_avg_rating = _avg_rating(report.away_team.team_name)
+        squad_intel = deep.get("squad_intelligence") or {}
+
         signal = make_signal(
             self.name,
             self.domain,
@@ -556,12 +605,23 @@ class PlayerQualityAgent(BaseAgent):
             {
                 "star_player_rating_home": home_rating,
                 "star_player_rating_away": away_rating,
+                "avg_player_rating_home": home_avg_rating,
+                "avg_player_rating_away": away_avg_rating,
                 "attacking_quality_score_home": round(home_rating * 0.9, 1),
                 "attacking_quality_score_away": round(away_rating * 0.9, 1),
                 "defensive_quality_score_home": round(home_rating * 0.85, 1),
                 "defensive_quality_score_away": round(away_rating * 0.85, 1),
                 "likely_first_scorer_candidates": legacy_labels,
                 "first_goal_scorer_candidates": top_candidates,
+                "home_squad_size": home_squad,
+                "away_squad_size": away_squad,
+                "api_sports_top_scorers_available": bool(deep.get("top_scorers")),
+                "api_sports_fixture_players_available": bool(deep.get("fixture_players")),
+                "chance_creation": deep.get("chance_creation"),
+                "bench_depth_home": (squad_intel.get("home") or {}).get("bench_depth"),
+                "bench_depth_away": (squad_intel.get("away") or {}).get("bench_depth"),
+                "squad_age_home": (squad_intel.get("home") or {}).get("squad_age_profile"),
+                "squad_age_away": (squad_intel.get("away") or {}).get("squad_age_profile"),
             },
             impact_score=round((home_rating + away_rating) / 2, 1),
         )
@@ -599,17 +659,30 @@ class OddsMarketAgent(BaseAgent):
         if implied:
             favorite = max(implied, key=implied.get)
 
+        deep = (getattr(report, "supplemental_sources", None) or {}).get("api_sports_deep") or {}
+        api_pred = deep.get("predictions_reference") or {}
+
+        signal_payload: dict[str, Any] = {
+            "market_favorite": favorite,
+            "implied_probabilities": implied,
+            "odds_movement_placeholder": "stable",
+            "market_confidence_signal": round(max(implied.values()) * 100, 1) if implied else 50.0,
+            "informational_disclaimer": "Odds are informational only — not betting advice.",
+        }
+        if api_pred.get("available"):
+            signal_payload["api_football_prediction_reference"] = {
+                "api_one_x_two_lean": api_pred.get("api_one_x_two_lean"),
+                "home_win_pct": api_pred.get("home_win_pct"),
+                "draw_pct": api_pred.get("draw_pct"),
+                "away_win_pct": api_pred.get("away_win_pct"),
+                "disclaimer": api_pred.get("disclaimer"),
+            }
+
         signal = make_signal(
             self.name,
             self.domain,
             "placeholder" if report.is_placeholder else "partial",
-            {
-                "market_favorite": favorite,
-                "implied_probabilities": implied,
-                "odds_movement_placeholder": "stable",
-                "market_confidence_signal": round(max(implied.values()) * 100, 1) if implied else 50.0,
-                "informational_disclaimer": "Odds are informational only — not betting advice.",
-            },
+            signal_payload,
             warnings=["Market odds are context signals only — not a betting recommendation."],
             impact_score=round(max(implied.values()) * 100, 1) if implied else 50.0,
         )

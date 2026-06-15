@@ -39,6 +39,10 @@ _STRINGS: dict[str, dict[str, str]] = {
     "report.over_under": {"en": "Over/Under 2.5", "de": "Over/Under 2.5", "fa": "Over/Under 2.5"},
     "report.scoreline": {"en": "Scoreline", "de": "Ergebnis", "fa": "نتیجه"},
     "report.no_bet": {"en": "No-bet flag", "de": "No-Bet-Flag", "fa": "پرچم عدم شرط"},
+    "report.first_goal": {"en": "First goal intelligence", "de": "Erstes Tor", "fa": "گل اول"},
+    "report.first_goal_team": {"en": "First goal team", "de": "Erstes Tor Team", "fa": "تیم گل اول"},
+    "report.first_goal_band": {"en": "Minute band", "de": "Minutenband", "fa": "بازه دقیقه"},
+    "report.first_goal_confidence": {"en": "First goal confidence", "de": "Tor-Konfidenz", "fa": "اطمینان گل اول"},
     "summary.intro": {
         "en": "Analytical match report — not betting advice.",
         "de": "Analytischer Spielbericht — keine Wettberatung.",

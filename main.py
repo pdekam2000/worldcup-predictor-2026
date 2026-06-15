@@ -508,6 +508,13 @@ def build_parser() -> argparse.ArgumentParser:
     learning_report.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
     add_competition_argument(learning_report)
 
+    hall_of_fame = subparsers.add_parser(
+        "hall-of-fame",
+        help="Prediction Accuracy Hall of Fame — read-only trust metrics",
+    )
+    hall_of_fame.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
+    add_competition_argument(hall_of_fame)
+
     agent_perf = subparsers.add_parser(
         "agent-performance",
         help="Specialist agent performance rankings (analysis only)",
@@ -545,6 +552,41 @@ def build_parser() -> argparse.ArgumentParser:
     xg_intel.add_argument("--fixture-id", type=int, required=True)
     xg_intel.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
     add_competition_argument(xg_intel)
+
+    first_goal = subparsers.add_parser(
+        "first-goal",
+        help="Show First Goal Intelligence V2 for a fixture (informational JSON)",
+    )
+    first_goal.add_argument("--fixture-id", type=int, required=True)
+    first_goal.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
+    add_competition_argument(first_goal)
+
+    odds_api_usage = subparsers.add_parser(
+        "odds-api-usage",
+        help="Show The Odds API daily/monthly credit usage",
+    )
+
+    odds_api_reset = subparsers.add_parser(
+        "odds-api-reset-test-usage",
+        help="Remove validation/test Odds API usage rows (dev only)",
+    )
+    odds_api_reset.add_argument("--date", dest="usage_date", default=None, help="YYYY-MM-DD (default: today)")
+    odds_api_reset.add_argument(
+        "--include-unmarked-local",
+        action="store_true",
+        help="Also clear all usage rows for date on local dev DB only",
+    )
+
+    odds_api_diag = subparsers.add_parser(
+        "odds-api-diagnostics",
+        help="Odds API guard and event-match diagnostics for a fixture",
+    )
+    odds_api_diag.add_argument("--fixture-id", type=int, required=True)
+    odds_api_diag.add_argument(
+        "--force",
+        action="store_true",
+        help="Force live Odds API enrichment (respects hard daily limit)",
+    )
 
     fusion_report = subparsers.add_parser(
         "fusion-report",
@@ -604,11 +646,16 @@ def main(argv: list[str] | None = None) -> int:
         run_market_intelligence_command,
         run_explain_prediction_command,
         run_learning_report_command,
+        run_hall_of_fame_command,
         run_agent_performance_command,
         run_calibration_report_command,
         run_tournament_intelligence_command,
         run_elo_intelligence_command,
         run_xg_intelligence_command,
+        run_first_goal_command,
+        run_odds_api_usage_command,
+        run_odds_api_reset_test_usage_command,
+        run_odds_api_diagnostics_command,
         run_fusion_report_command,
         run_export_report_command,
     )
@@ -766,6 +813,12 @@ def main(argv: list[str] | None = None) -> int:
             competition=_competition_arg(args),
         )
 
+    if args.command == "hall-of-fame":
+        return run_hall_of_fame_command(
+            locale=args.locale,
+            competition=_competition_arg(args),
+        )
+
     if args.command == "agent-performance":
         return run_agent_performance_command(
             locale=args.locale,
@@ -797,6 +850,28 @@ def main(argv: list[str] | None = None) -> int:
             fixture_id=args.fixture_id,
             locale=args.locale,
             competition=_competition_arg(args),
+        )
+
+    if args.command == "first-goal":
+        return run_first_goal_command(
+            fixture_id=args.fixture_id,
+            locale=args.locale,
+            competition=_competition_arg(args),
+        )
+
+    if args.command == "odds-api-usage":
+        return run_odds_api_usage_command()
+
+    if args.command == "odds-api-reset-test-usage":
+        return run_odds_api_reset_test_usage_command(
+            usage_date=getattr(args, "usage_date", None),
+            include_unmarked_local=getattr(args, "include_unmarked_local", False),
+        )
+
+    if args.command == "odds-api-diagnostics":
+        return run_odds_api_diagnostics_command(
+            fixture_id=args.fixture_id,
+            force=getattr(args, "force", False),
         )
 
     if args.command == "fusion-report":

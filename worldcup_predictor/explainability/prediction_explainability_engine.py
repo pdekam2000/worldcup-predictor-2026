@@ -632,7 +632,22 @@ def _executive_summary(
     else:
         sentences.append(f"Overall risk is {risk.risk_level.lower()} with confidence at {prediction.confidence_score:.0f}/100.")
 
-    return " ".join(sentences[:5])
+    fg_raw = (prediction.metadata or {}).get("first_goal_intelligence_v2")
+    if fg_raw:
+        try:
+            import json
+
+            fg = json.loads(fg_raw) if isinstance(fg_raw, str) else fg_raw
+            team = fg.get("first_goal_team_display") or fg.get("first_goal_team", "—")
+            band = fg.get("first_goal_minute_band", "—")
+            fg_conf = fg.get("confidence", "—")
+            sentences.append(
+                f"First goal intelligence: {team} in minute band {band} (confidence {fg_conf}/100)."
+            )
+        except Exception:
+            pass
+
+    return " ".join(sentences[:6])
 
 
 def _audit_factor_contributions(prediction: MatchPrediction) -> list[tuple[str, float, str]]:
@@ -750,6 +765,20 @@ def build_prediction_explainability(
         except Exception:
             fusion_report = None
 
+        api_sports_context = None
+        try:
+            from worldcup_predictor.integrations.api_sports_deep_data import build_api_sports_explainability_context
+
+            api_sports_context = build_api_sports_explainability_context(report, prediction) or None
+            if api_sports_context and api_sports_context.get("api_football_prediction", {}).get("available"):
+                ref = api_sports_context["api_football_prediction"]
+                summary += (
+                    f" API-Football reference lean: {ref.get('api_one_x_two_lean')} "
+                    f"(agreement {ref.get('agreement_pct')}%) — reference only."
+                )
+        except Exception:
+            api_sports_context = None
+
         return FinalReportV2(
             prediction=pred_block,
             confidence=confidence,
@@ -763,6 +792,7 @@ def build_prediction_explainability(
             top_negative_factors=top_neg,
             executive_summary=summary + " Analysis only — not betting advice.",
             fusion_report=fusion_report,
+            api_sports_context=api_sports_context,
         )
     except Exception:
         fid = prediction.fixture_id if prediction else 0

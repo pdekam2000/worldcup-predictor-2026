@@ -26,6 +26,27 @@ def _kickoff_str(prediction: MatchPrediction) -> str | None:
 
 
 def _prediction_block(prediction: MatchPrediction) -> dict[str, Any]:
+    fg_v2_raw = (prediction.metadata or {}).get("first_goal_intelligence_v2")
+    fg_v2: dict[str, Any] = {}
+    if fg_v2_raw:
+        try:
+            import json
+
+            fg_v2 = json.loads(fg_v2_raw) if isinstance(fg_v2_raw, str) else dict(fg_v2_raw)
+        except Exception:
+            fg_v2 = {}
+    scorers = fg_v2.get("likely_scorers") or fg_v2.get("likely_first_goal_scorers") or []
+    if not scorers and prediction.first_goal.scorer_candidates:
+        scorers = [
+            {
+                "player_name": c.player,
+                "team": c.team,
+                "position": c.position or "",
+                "confidence": c.score,
+                "reason": c.reason,
+            }
+            for c in prediction.first_goal.scorer_candidates
+        ]
     return {
         "fixture_id": prediction.fixture_id,
         "match_name": prediction.match_name,
@@ -41,6 +62,17 @@ def _prediction_block(prediction: MatchPrediction) -> dict[str, Any]:
         "no_bet_flag": prediction.no_bet_flag,
         "scoreline": prediction.scoreline.label if prediction.scoreline else None,
         "stage": prediction.stage,
+        "first_goal_team": fg_v2.get("first_goal_team_display") or prediction.first_goal.team,
+        "first_goal_minute_band": fg_v2.get("first_goal_minute_band") or prediction.first_goal.minute_range,
+        "first_goal_scorer_candidates": scorers,
+        "first_goal_confidence": fg_v2.get("confidence"),
+        "first_goal_data_available": fg_v2.get("data_available"),
+        "first_goal_disclaimer": fg_v2.get("disclaimer"),
+        "first_goal_data_limitations": fg_v2.get("player_data_message") or (
+            "Player-level scorer data unavailable; team/minute estimate only."
+            if fg_v2.get("player_data_unavailable")
+            else None
+        ),
     }
 
 
@@ -124,7 +156,30 @@ def collect_match_report_bundle(
             except Exception:
                 fusion = {}
 
-        intelligence_v2 = _build_intelligence_v2(report, specialist)
+        intelligence_v2 = _build_intelligence_v2(report, specialist, prediction=prediction)
+        fg_v2 = intelligence_v2.get("first_goal_intelligence_v2")
+        if fg_v2 and explainability.get("executive_summary"):
+            band = fg_v2.get("first_goal_minute_band", "—")
+            team = fg_v2.get("first_goal_team_display", "—")
+            explainability["executive_summary"] = (
+                f"{explainability['executive_summary']} "
+                f"First goal lean: {team} (band {band}, confidence {fg_v2.get('confidence', '—')}/100)."
+            )
+        if fg_v2:
+            explainability["first_goal_intelligence_v2"] = fg_v2
+
+        if report is not None:
+            try:
+                from worldcup_predictor.integrations.api_sports_deep_data import build_api_sports_explainability_context
+
+                api_ctx = build_api_sports_explainability_context(report, prediction)
+                if api_ctx:
+                    explainability["api_sports_context"] = api_ctx
+                    intelligence_v2["api_sports_deep"] = (
+                        (getattr(report, "supplemental_sources", None) or {}).get("api_sports_deep") or {}
+                    )
+            except Exception:
+                pass
 
         return MatchReportBundle(
             fixture_id=prediction.fixture_id,
@@ -158,6 +213,8 @@ def collect_match_report_bundle(
 def _build_intelligence_v2(
     report: MatchIntelligenceReport | None,
     specialist: MatchSpecialistReport | None,
+    *,
+    prediction: MatchPrediction | None = None,
 ) -> dict[str, Any]:
     out: dict[str, Any] = {}
     builders = {
@@ -208,6 +265,25 @@ def _build_intelligence_v2(
             except Exception:
                 fallback = None
         out[key] = _v2_from_signal(specialist, agent_key, fallback_builder=fallback, report=report)
+    if report is not None:
+        try:
+            from worldcup_predictor.intelligence.first_goal_intelligence_v2 import (
+                build_first_goal_intelligence_v2,
+                load_first_goal_v2_from_prediction,
+            )
+
+            fg = None
+            if prediction is not None:
+                fg = load_first_goal_v2_from_prediction(prediction)
+            if fg is None:
+                fg = build_first_goal_intelligence_v2(
+                    report,
+                    prediction=prediction,
+                    specialist_report=specialist,
+                )
+            out["first_goal_intelligence_v2"] = fg.to_dict()
+        except Exception:
+            pass
     return out
 
 
@@ -240,6 +316,12 @@ def collect_match_report_bundle_for_fixture(
         prediction = pred_result.data
         intel = (ctx.shared.get("intelligence_reports") or {}).get(fixture_id)
         specialist = (ctx.shared.get("specialist_reports") or {}).get(fixture_id)
+        try:
+            from worldcup_predictor.intelligence.first_goal_intelligence_v2 import attach_first_goal_v2_to_prediction
+
+            attach_first_goal_v2_to_prediction(prediction, intel, specialist_report=specialist)
+        except Exception:
+            pass
         try:
             prediction, _ = apply_fusion_enrichment(
                 prediction, report=intel, specialist_report=specialist

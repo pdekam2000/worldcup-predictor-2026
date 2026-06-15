@@ -98,6 +98,7 @@ class FinalReportV2:
     top_negative_factors: list[str]
     executive_summary: str
     fusion_report: dict[str, Any] | None = None
+    api_sports_context: dict[str, Any] | None = None
     version: str = "v2"
 
     def to_dict(self) -> dict[str, Any]:
@@ -117,4 +118,6 @@ class FinalReportV2:
         }
         if self.fusion_report:
             out["fusion_report"] = self.fusion_report
+        if self.api_sports_context:
+            out["api_sports_context"] = self.api_sports_context
         return out

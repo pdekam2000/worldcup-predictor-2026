@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 DEFAULT_DB_PATH = "data/football_intelligence.db"
 
 DDL_STATEMENTS: tuple[str, ...] = (

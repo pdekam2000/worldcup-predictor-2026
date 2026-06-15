@@ -72,14 +72,14 @@ def test_daily_15_allows_next() -> None:
     guard_mod = _guard_mod()
     try:
         repo = repo_mod.get_odds_api_repository()
-        for i in range(15):
-            repo.record_usage(endpoint="sports/x/odds", fixture_id=1000 + i, credits_used=1)
+        for i in range(14):
+            repo.record_usage(endpoint="sports/x/odds", fixture_id=1000 + i, credits_used=1, source="validation")
 
         settings = get_settings()
         fixture = _minimal_fixture()
         decision = guard_mod.evaluate_odds_api_call(_minimal_report(), fixture, settings, force=True)
-        assert decision.allowed, "16th call within hard limit should be allowed"
-        assert decision.daily_used == 15
+        assert decision.allowed, "16th credit (14+2) within hard limit should be allowed"
+        assert decision.daily_used == 14
     finally:
         repo_mod._repo = None
         try:
@@ -95,8 +95,8 @@ def test_daily_16_blocks() -> None:
     guard_mod = _guard_mod()
     try:
         repo = repo_mod.get_odds_api_repository()
-        for i in range(16):
-            repo.record_usage(endpoint="sports/x/odds", fixture_id=2000 + i, credits_used=1)
+        for i in range(8):
+            repo.record_usage(endpoint="sports/x/odds", fixture_id=2000 + i, credits_used=2, source="validation")
 
         settings = get_settings()
         fixture = _minimal_fixture()

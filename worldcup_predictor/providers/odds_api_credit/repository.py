@@ -1,10 +1,11 @@
-"""SQLite persistence for The Odds API usage and response cache."""
+"""The Odds API persistence — usage, cache, validation reset (Phase 50B)."""
 
 from __future__ import annotations
 
 import json
 import sqlite3
 from datetime import date, datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from worldcup_predictor.access.config import access_db_path
@@ -35,6 +36,12 @@ def get_odds_api_repository(db_path: str | None = None) -> "OddsApiRepository":
     return _repo
 
 
+def is_local_dev_db(db_path: Path | None = None) -> bool:
+    path = get_db_path(db_path or access_db_path() or DEFAULT_DB_PATH).resolve()
+    default = get_db_path(DEFAULT_DB_PATH).resolve()
+    return path == default
+
+
 class OddsApiRepository:
     def __init__(self, db_path) -> None:
         self.path = get_db_path(db_path)
@@ -51,6 +58,12 @@ class OddsApiRepository:
             conn = self._connection()
             for ddl in DDL_STATEMENTS:
                 conn.execute(ddl)
+            try:
+                conn.execute(
+                    "ALTER TABLE odds_api_usage ADD COLUMN source TEXT NOT NULL DEFAULT 'live'"
+                )
+            except sqlite3.OperationalError:
+                pass
             conn.commit()
         except sqlite3.Error:
             pass
@@ -83,6 +96,7 @@ class OddsApiRepository:
         endpoint: str,
         fixture_id: int | None,
         credits_used: int = 1,
+        source: str = "live",
     ) -> None:
         now = utc_now_iso()
         day = utc_today()
@@ -92,14 +106,64 @@ class OddsApiRepository:
             conn.execute(
                 """
                 INSERT INTO odds_api_usage
-                (usage_date, usage_month, endpoint, fixture_id, credits_used, created_at)
-                VALUES (?, ?, ?, ?, ?, ?)
+                (usage_date, usage_month, endpoint, fixture_id, credits_used, created_at, source)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
-                (day, month, endpoint, fixture_id, credits_used, now),
+                (day, month, endpoint, fixture_id, credits_used, now, source),
             )
             conn.commit()
         except sqlite3.Error:
-            pass
+            try:
+                conn = self._connection()
+                conn.execute(
+                    """
+                    INSERT INTO odds_api_usage
+                    (usage_date, usage_month, endpoint, fixture_id, credits_used, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (day, month, endpoint, fixture_id, credits_used, now),
+                )
+                conn.commit()
+            except sqlite3.Error:
+                pass
+
+    def delete_validation_usage(self, usage_date: str) -> int:
+        try:
+            conn = self._connection()
+            cur = conn.execute(
+                "DELETE FROM odds_api_usage WHERE usage_date = ? AND source = 'validation'",
+                (usage_date,),
+            )
+            conn.commit()
+            return int(cur.rowcount)
+        except sqlite3.Error:
+            return 0
+
+    def delete_unmarked_test_day(self, usage_date: str) -> int:
+        """Local dev only — remove all usage rows for a date (test pollution cleanup)."""
+        if not is_local_dev_db(self.path):
+            return -1
+        try:
+            conn = self._connection()
+            cur = conn.execute("DELETE FROM odds_api_usage WHERE usage_date = ?", (usage_date,))
+            conn.commit()
+            return int(cur.rowcount)
+        except sqlite3.Error:
+            return 0
+
+    def usage_rows_for_date(self, usage_date: str | None = None) -> list[dict[str, Any]]:
+        day = usage_date or utc_today()
+        try:
+            rows = self._connection().execute(
+                """
+                SELECT usage_date, endpoint, fixture_id, credits_used, source, created_at
+                FROM odds_api_usage WHERE usage_date = ? ORDER BY created_at DESC
+                """,
+                (day,),
+            ).fetchall()
+            return [dict(r) for r in rows]
+        except sqlite3.Error:
+            return []
 
     def get_cache(self, fixture_id: int, market_key: str) -> dict[str, Any] | None:
         try:

@@ -230,73 +230,112 @@ class EnrichmentService:
             evaluate_odds_api_call,
             record_odds_api_call,
         )
+        from worldcup_predictor.providers.the_odds_api_provider import (
+            TheOddsApiProvider,
+            build_market_consensus,
+        )
 
+        provider = TheOddsApiProvider(self._settings)
         sport = self._settings.the_odds_api_sport
-        endpoint = f"sports/{sport}/odds"
+        endpoint = f"sports/{sport}/events/{{eventId}}/odds"
         decision = evaluate_odds_api_call(report, fixture, self._settings, force=force)
 
         if not decision.allowed:
             outcome.skipped.append(f"odds_api:{decision.reason}")
             return attach_guard_metadata(report, decision), outcome
 
-        if decision.from_cache and decision.cached_event:
-            bookmakers = self._odds_bookmakers_from_event(decision.cached_event)
-            if bookmakers:
-                odds = OddsSnapshot(
-                    fixture_id=fixture.id,
-                    available=True,
-                    bookmakers=bookmakers,
-                    source="cache",
-                    note="Cached The Odds API data (comparison only — not betting advice).",
-                )
-                outcome.applied_providers.append("the_odds_api")
-                outcome.filled_fields.append("odds")
-                missing = [m for m in report.missing_data if m != "odds"]
-                report = attach_guard_metadata(report, decision)
-                return replace(report, odds=odds, missing_data=missing), outcome
-            outcome.skipped.append("odds_api:cache_empty")
-            return attach_guard_metadata(report, decision), outcome
+        fetch = provider.fetch_for_fixture(
+            fixture,
+            cached_event=decision.cached_event if decision.from_cache else None,
+            allow_live=not decision.from_cache,
+            fallback_sport_odds=force,
+        )
 
-        if not self._registry.the_odds_api.is_configured:
-            outcome.skipped.append("odds:the_odds_api_not_configured")
-            return attach_guard_metadata(report, decision), outcome
+        meta = dict(report.provider_metadata or {})
+        meta["the_odds_api_fetch"] = fetch.to_dict()
+        meta["odds_api_guard"] = {
+            "allowed": decision.allowed,
+            "reason": decision.reason if not fetch.odds_api_called else ("cache_hit" if fetch.used_cache else fetch.error or decision.reason),
+            "from_cache": fetch.used_cache or decision.from_cache,
+            "used_live": fetch.odds_api_called and not fetch.used_cache,
+            "daily_used": decision.daily_used,
+            "monthly_used": decision.monthly_used,
+            "daily_soft_limit": decision.daily_soft_limit,
+            "daily_hard_limit": decision.daily_hard_limit,
+            "monthly_limit": decision.monthly_limit,
+            "credits_used": fetch.credits_used,
+            "sport_key": fetch.sport_key,
+            "event_id": fetch.event_id,
+            "event_matched": fetch.event_matched,
+        }
+        report = attach_guard_metadata(report, decision, used_live=bool(fetch.odds_api_called and not fetch.used_cache))
 
-        result = self._registry.the_odds_api.get_match_odds(
+        if fetch.error and not fetch.event:
+            outcome.skipped.append(f"odds_api:{fetch.error}")
+            return replace(report, provider_metadata=meta), outcome
+
+        if not fetch.event:
+            outcome.skipped.append(f"odds_api:{fetch.error or 'no_event'}")
+            return replace(report, provider_metadata=meta), outcome
+
+        consensus = fetch.consensus or build_market_consensus(
+            fetch.event,
             home_team=fixture.home_team,
             away_team=fixture.away_team,
+            primary_odds=report.odds,
         )
-        self._log_provider(endpoint_log, result)
-        report = attach_guard_metadata(report, decision, used_live=result.available)
+        meta["the_odds_api_consensus"] = consensus.to_dict()
 
-        if not result.available:
-            if result.error:
-                outcome.errors.append(f"the_odds_api: {result.error}")
-            else:
-                outcome.skipped.append(f"odds_api:{decision.reason}")
-            return report, outcome
+        if fetch.odds_api_called and not fetch.used_cache:
+            record_odds_api_call(
+                fixture_id=fixture.id,
+                endpoint=fetch.endpoint or endpoint,
+                event=fetch.event,
+                credits=fetch.credits_used or provider.credits_per_odds_call,
+                source="live",
+                settings=self._settings,
+            )
+            from worldcup_predictor.providers.base import ProviderCallResult, ProviderTier
 
-        bookmakers = self._odds_bookmakers_from_event(result.data)
-        if not bookmakers:
-            outcome.skipped.append("odds:no_matching_event")
-            return report, outcome
+            self._log_provider(
+                endpoint_log,
+                ProviderCallResult(
+                    data=fetch.event,
+                    provider="the_odds_api",
+                    tier=ProviderTier.ENRICHMENT,
+                    endpoint=fetch.endpoint or endpoint,
+                ),
+            )
+            outcome.applied_providers.append("the_odds_api")
+            outcome.filled_fields.append("the_odds_api_consensus")
+        elif fetch.used_cache:
+            outcome.applied_providers.append("the_odds_api")
+            outcome.filled_fields.append("the_odds_api_consensus_cache")
 
-        record_odds_api_call(
-            fixture_id=fixture.id,
-            endpoint=endpoint,
-            event=result.data if isinstance(result.data, dict) else None,
-        )
+        supplemental = dict(report.supplemental_sources or {})
+        supplemental["the_odds_api"] = {
+            "event_id": fetch.event_id,
+            "sport_key": fetch.sport_key,
+            "bookmakers": fetch.event.get("bookmakers") or [],
+            "consensus": consensus.to_dict(),
+            "source": "cache" if fetch.used_cache else "live",
+        }
 
-        odds = OddsSnapshot(
-            fixture_id=fixture.id,
-            available=True,
-            bookmakers=bookmakers,
-            source="live",
-            note="Enriched from The Odds API (comparison only — not betting advice).",
-        )
-        outcome.applied_providers.append("the_odds_api")
-        outcome.filled_fields.append("odds")
-        missing = [m for m in report.missing_data if m != "odds"]
-        return replace(report, odds=odds, missing_data=missing), outcome
+        updated = replace(report, provider_metadata=meta, supplemental_sources=supplemental)
+        if not updated.odds or not updated.odds.available:
+            bookmakers = fetch.event.get("bookmakers") or []
+            updated = replace(
+                updated,
+                odds=OddsSnapshot(
+                    fixture_id=fixture.id,
+                    available=bool(bookmakers),
+                    bookmakers=[b for b in bookmakers if isinstance(b, dict)],
+                    source="live" if fetch.odds_api_called else "cache",
+                    note="The Odds API supplemental odds — comparison only, not betting advice.",
+                ),
+                missing_data=[m for m in updated.missing_data if m != "odds"],
+            )
+        return updated, outcome
 
     def _maybe_enrich_weather(
         self,

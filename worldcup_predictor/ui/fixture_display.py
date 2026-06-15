@@ -122,12 +122,21 @@ def render_fixture_summary_panel(fixture: Any | None, fixture_id: int | None, lo
     fid = fixture_id or _field(fixture, "fixture_id") or _field(fixture, "id") or "—"
     kickoff = _fixture_kickoff(fixture)
     local_ko, utc_ko = format_kickoff_times(kickoff)
+    group_label = format_group_stage(fixture)
     league = (
         _non_empty(_field(fixture, "league"))
         or _non_empty(_field(fixture, "competition"))
-        or format_group_stage(fixture)
+        or "FIFA World Cup"
     )
-    venue = _non_empty(_field(fixture, "venue")) or _non_empty(_field(fixture, "city")) or "—"
+    venue = _non_empty(_field(fixture, "venue")) or "—"
+    city = _non_empty(_field(fixture, "city"))
+    country = _non_empty(_field(fixture, "country"))
+    location = " · ".join(x for x in (city, country) if x) or "—"
+    round_stage = (
+        _non_empty(_field(fixture, "round"))
+        or _non_empty(_field(fixture, "stage"))
+        or group_label
+    )
     status = _fixture_status_label(_field(fixture, "status"), locale)
     source = _non_empty(_field(fixture, "source"))
 
@@ -138,8 +147,11 @@ def render_fixture_summary_panel(fixture: Any | None, fixture_id: int | None, lo
             ("card.kickoff_local", local_ko),
             ("card.kickoff_utc", utc_ko),
             ("card.league", league or "—"),
+            ("card.group", group_label if group_label != "—" else "—"),
             ("card.venue", venue),
+            ("card.location", location),
             ("card.status", status),
+            ("card.round", round_stage or "—"),
         ]
         if source:
             fields.append(("card.source", source))

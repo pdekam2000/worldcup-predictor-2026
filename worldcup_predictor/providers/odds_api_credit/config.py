@@ -57,4 +57,12 @@ def odds_api_low_sharp_score() -> float:
 
 
 def odds_api_credits_per_call() -> int:
-    return max(1, _int_env("ODDS_API_CREDITS_PER_CALL", 1))
+    """Legacy default — prefer compute_odds_api_credits(regions, markets)."""
+    return max(1, _int_env("ODDS_API_CREDITS_PER_CALL", 2))
+
+
+def compute_odds_api_credits(regions: str, markets: str) -> int:
+    """Credits = regions × markets (The Odds API billing model)."""
+    region_count = len([r for r in regions.split(",") if r.strip()])
+    market_count = len([m for m in markets.split(",") if m.strip()])
+    return max(1, region_count * market_count)

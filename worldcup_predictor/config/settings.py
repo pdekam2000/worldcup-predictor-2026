@@ -46,7 +46,7 @@ class Settings(BaseSettings):
         default="soccer_fifa_world_cup",
         alias="THE_ODDS_API_SPORT",
     )
-    the_odds_api_regions: str = Field(default="us,eu", alias="THE_ODDS_API_REGIONS")
+    the_odds_api_regions: str = Field(default="eu", alias="THE_ODDS_API_REGIONS")
 
     weather_provider: WeatherProviderKind = Field(default="weatherapi", alias="WEATHER_PROVIDER")
     weather_api_key: str = Field(default="", alias="WEATHER_API_KEY")

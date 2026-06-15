@@ -169,6 +169,13 @@ def build_match_center(
     finished.sort(key=lambda f: f.kickoff_time, reverse=True)
 
     api = ApiFootballClient(settings)
+    dedicated_live = service.get_live_fixtures_from_api() if api.is_configured else []
+    if dedicated_live:
+        live_ids = {f.fixture_id for f in dedicated_live}
+        live = dedicated_live
+        upcoming = [f for f in upcoming if f.fixture_id not in live_ids]
+        live_api = True
+
     if enrich_live and api.is_configured:
         live = [enrich_fixture(api, f) for f in live]
         finished = [

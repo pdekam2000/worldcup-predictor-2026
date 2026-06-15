@@ -129,6 +129,7 @@ from worldcup_predictor.ui.feedback_display import render_feedback_form, render_
 from worldcup_predictor.ui.upgrade_page import render_upgrade_page
 from worldcup_predictor.ui.odds_api_credit_display import render_odds_api_credit_panel
 from worldcup_predictor.ui.user_home_dashboard import render_user_home_dashboard
+from worldcup_predictor.ui.worldcup_group_browser import render_worldcup_group_browser
 from worldcup_predictor.ui.fixture_display import (
     format_group_stage,
     format_match_subtitle,
@@ -206,6 +207,7 @@ def main() -> None:
         "audit": page_audit,
         "backtest": page_backtest_calibration,
         "professional_reports": page_professional_reports,
+        "hall_of_fame": page_hall_of_fame,
         "upgrade": page_upgrade,
         "admin_entitlements": page_admin_entitlements,
         "feedback_viewer": page_feedback_viewer,
@@ -600,12 +602,17 @@ def page_home() -> None:
             st.session_state["gui_page"] = "predict"
             st.rerun()
 
+        def _goto_reports() -> None:
+            st.session_state["gui_page"] = "professional_reports"
+            st.rerun()
+
         render_user_home_dashboard(
             locale,
             center=center,
             api_ready=api_ready,
             last_prediction=last_prediction,
             goto_predict=_goto_predict,
+            goto_reports=_goto_reports,
         )
 
     render_back_to_top(locale)
@@ -1215,6 +1222,10 @@ def page_api_setup() -> None:
 
     render_api_status_grid(statuses, locale)
 
+    from worldcup_predictor.ui.odds_api_credit_display import render_odds_api_dev_status
+
+    render_odds_api_dev_status(locale)
+
     st.markdown(
         f"**Setup:** {gui_t('api.setup_hint', locale)}\n"
         "- `API_FOOTBALL_KEY` — live fixtures & standings\n"
@@ -1266,6 +1277,11 @@ def page_team_search() -> None:
     st.caption(
         gui_t("team_search.results_count", locale).format(count=total, query=query.strip())
     )
+
+    service_api = create_schedule_service(settings, competition_key=comp)
+    live_from_api = service_api.get_live_fixtures_from_api()
+    if live_from_api:
+        st.caption(f"Live API endpoint: {len(live_from_api)} match(es) in progress")
 
     tab_up, tab_live, tab_fin = st.tabs(
         [
@@ -1503,8 +1519,32 @@ def page_prediction() -> None:
     subtitle = t.t("cli.predict.header")
     render_hero(gui_t("nav.predict", locale), subtitle)
 
+    all_fixtures = _all_fixtures_for_selector()
+    try:
+        overview = _schedule_service().get_tournament_overview()
+        groups = overview.groups if overview else {}
+    except Exception:
+        groups = {}
+
+    def _select_from_browser(fixture_id: int) -> None:
+        st.session_state["selected_fixture_id"] = fixture_id
+        st.session_state["fixture_id"] = fixture_id
+        st.session_state.pop("gui_expand_group_browser", None)
+        st.rerun()
+
+    render_worldcup_group_browser(
+        locale,
+        all_fixtures=all_fixtures,
+        groups=groups,
+        on_select_fixture=_select_from_browser,
+        key_prefix="predict_groups",
+    )
+
+    st.markdown("---")
+    st.markdown(f"#### {gui_t('group_browser.manual_search', locale)}")
+
     fid = render_match_selector(
-        _all_fixtures_for_selector(),
+        all_fixtures,
         locale,
         key_prefix="gui_predict",
         default_fixture_id=_default_fixture_id(),
@@ -2004,6 +2044,15 @@ def page_professional_reports() -> None:
     locale = _locale()
     render_hero(gui_t("nav.professional_reports", locale), gui_t("reports_page.hint", locale))
     render_professional_reports_page(locale)
+    render_back_to_top(locale)
+
+
+def page_hall_of_fame() -> None:
+    locale = _locale()
+    render_hero(gui_t("hall_of_fame.title", locale), gui_t("hall_of_fame.subtitle", locale))
+    from worldcup_predictor.ui.hall_of_fame_page import render_hall_of_fame_page
+
+    render_hall_of_fame_page(locale, competition_key=_competition_key())
     render_back_to_top(locale)
 
 

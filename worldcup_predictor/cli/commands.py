@@ -2760,6 +2760,49 @@ def run_xg_intelligence_command(
     return 0
 
 
+def run_first_goal_command(
+    *,
+    fixture_id: int,
+    locale: str | None = None,
+    competition: str | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI: First Goal Intelligence V2 for a fixture (informational JSON)."""
+    import json
+
+    out = stream or sys.stdout
+    settings = get_settings()
+    active_locale = locale or settings.default_locale
+    translator = get_translator(active_locale)  # type: ignore[arg-type]
+    comp_key = resolve_competition(competition)
+
+    from worldcup_predictor.agents.match_intelligence_builder import MatchIntelligenceBuilder
+    from worldcup_predictor.clients.api_football import ApiFootballClient
+    from worldcup_predictor.intelligence.first_goal_intelligence_v2 import build_first_goal_intelligence_v2
+    from worldcup_predictor.orchestration.predict_pipeline import PredictPipeline
+
+    print_competition_banner(out, translator, comp_key)
+    report = MatchIntelligenceBuilder(ApiFootballClient(settings)).build_by_fixture_id(fixture_id)
+    pipeline = PredictPipeline(settings, competition_key=comp_key, locale=active_locale)
+    pred_result = pipeline.run(fixture_id, record_history=False)
+    prediction = pred_result.prediction if pred_result.success else None
+    result = build_first_goal_intelligence_v2(
+        report,
+        prediction=prediction,
+        specialist_report=getattr(report, "specialist_report", None),
+    )
+
+    out.write("=" * 72 + "\n")
+    out.write("  First Goal Intelligence V2 — analysis only, not betting advice\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(f"  Fixture: {fixture_id}\n")
+    out.write(f"  Summary: {result.summary}\n\n")
+    out.write(json.dumps(result.to_dict(), indent=2, ensure_ascii=False))
+    out.write("\n\n")
+    out.write("=" * 72 + "\n")
+    return 0
+
+
 def run_fusion_report_command(
     *,
     fixture_id: int,
@@ -2886,6 +2929,41 @@ def run_learning_report_command(
     return 0
 
 
+def run_hall_of_fame_command(
+    *,
+    locale: str | None = None,
+    competition: str | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI: Prediction Accuracy Hall of Fame (read-only trust metrics)."""
+    import json
+
+    out = stream or sys.stdout
+    settings = get_settings()
+    active_locale = locale or settings.default_locale
+    translator = get_translator(active_locale)  # type: ignore[arg-type]
+    comp_key = resolve_competition(competition)
+
+    from worldcup_predictor.performance.hall_of_fame import build_hall_of_fame_report
+
+    print_competition_banner(out, translator, comp_key)
+    report = build_hall_of_fame_report(settings=settings, competition_key=comp_key)
+
+    out.write("=" * 72 + "\n")
+    out.write("  Prediction Accuracy Hall of Fame — verified history only\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(
+        f"  Total predictions: {report.total_predictions} · "
+        f"Verified: {report.verified_predictions} · "
+        f"Pending: {report.pending_predictions}\n\n"
+    )
+    out.write(json.dumps(report.to_dict(), indent=2, ensure_ascii=False))
+    out.write("\n\n")
+    out.write(f"  {report.disclaimer}\n")
+    out.write("=" * 72 + "\n")
+    return 0
+
+
 def run_agent_performance_command(
     *,
     locale: str | None = None,
@@ -2948,3 +3026,96 @@ def _format_move(value: float | None) -> str:
     if value is None:
         return "n/a"
     return f"{value:+.2f}%"
+
+
+def run_odds_api_usage_command(*, stream: TextIO | None = None) -> int:
+    """CLI: show The Odds API credit usage summary."""
+    import json
+
+    out = stream or sys.stdout
+    settings = get_settings()
+    from worldcup_predictor.providers.odds_api_credit import usage_summary
+    from worldcup_predictor.providers.odds_api_credit.repository import get_odds_api_repository
+
+    summary = usage_summary(settings)
+    rows = get_odds_api_repository().usage_rows_for_date()
+    out.write("=" * 72 + "\n")
+    out.write("  The Odds API — usage summary\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(f"  Key configured: {settings.the_odds_api_configured}\n")
+    out.write(f"  Daily used: {summary['daily_used']} / {summary['daily_hard_limit']}\n")
+    out.write(f"  Monthly used: {summary['monthly_used']} / {summary['monthly_limit']}\n\n")
+    if rows:
+        out.write("  Today's rows:\n")
+        for row in rows[:30]:
+            out.write(
+                f"    fixture={row.get('fixture_id')} credits={row.get('credits_used')} "
+                f"source={row.get('source', 'live')} endpoint={row.get('endpoint')}\n"
+            )
+    else:
+        out.write("  No usage rows today.\n")
+    out.write("\n" + json.dumps(summary, indent=2) + "\n")
+    out.write("=" * 72 + "\n")
+    return 0
+
+
+def run_odds_api_reset_test_usage_command(
+    *,
+    usage_date: str | None = None,
+    include_unmarked_local: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI: reset validation/test Odds API usage rows (dev only)."""
+    out = stream or sys.stdout
+    from datetime import date
+
+    from worldcup_predictor.providers.odds_api_credit.repository import (
+        get_odds_api_repository,
+        is_local_dev_db,
+        utc_today,
+    )
+
+    day = usage_date or utc_today()
+    repo = get_odds_api_repository()
+    deleted = repo.delete_validation_usage(day)
+    out.write(f"Removed {deleted} validation row(s) for {day}.\n")
+
+    if include_unmarked_local:
+        if not is_local_dev_db():
+            out.write(
+                "ERROR: --include-unmarked-local only allowed on local dev DB "
+                f"({repo.path}). No unmarked rows deleted.\n"
+            )
+            return 1
+        remaining = repo.sum_credits_for_date(day)
+        if remaining > 0:
+            extra = repo.delete_unmarked_test_day(day)
+            out.write(
+                f"Local dev cleanup: removed {extra} unmarked row(s) for {day}. "
+                "Use only for test pollution cleanup.\n"
+            )
+        else:
+            out.write("No unmarked rows remaining after validation cleanup.\n")
+    return 0
+
+
+def run_odds_api_diagnostics_command(
+    *,
+    fixture_id: int,
+    force: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI: Odds API guard + match diagnostics for a fixture."""
+    import json
+
+    out = stream or sys.stdout
+    from worldcup_predictor.providers.odds_api_diagnostics import run_odds_api_diagnostics
+
+    payload = run_odds_api_diagnostics(fixture_id, force=force, dry_run=not force)
+    out.write("=" * 72 + "\n")
+    out.write("  The Odds API Diagnostics — analysis only\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(json.dumps(payload, indent=2, ensure_ascii=False))
+    out.write("\n\n")
+    out.write("=" * 72 + "\n")
+    return 0

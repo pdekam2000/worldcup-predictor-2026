@@ -390,6 +390,27 @@ def build_tournament_intelligence(
         rotation = _rotation_risk(home.qualification_status, away.qualification_status, match_context)
         pressure = _pressure_score(match_context)
 
+        try:
+            from worldcup_predictor.integrations.api_sports_deep_data import API_SPORTS_DEEP_KEY
+
+            deep = (getattr(report, "supplemental_sources", None) or {}).get(API_SPORTS_DEEP_KEY) or {}
+            squad_intel = deep.get("squad_intelligence") or {}
+            if squad_intel.get("available"):
+                for side_key, side_obj in (("home", home), ("away", away)):
+                    side_data = squad_intel.get(side_key) or {}
+                    age = side_data.get("squad_age_profile") or {}
+                    depth = side_data.get("bench_depth") or {}
+                    if age.get("available"):
+                        exp = float(age.get("experience_score") or 50)
+                        pressure += (exp - 50) * 0.04
+                    if depth.get("rotation_risk") == "High":
+                        rotation = "High"
+                    elif depth.get("rotation_risk") == "Medium" and rotation == "Low":
+                        rotation = "Medium"
+                pressure = round(_clamp(pressure, 0, 100), 1)
+        except Exception:
+            pass
+
         data_available = bool(
             group_ctx.get("available")
             or tctx

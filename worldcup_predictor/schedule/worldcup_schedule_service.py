@@ -149,6 +149,16 @@ class WorldCupScheduleService:
                     return list(fixtures)
         return self.get_all_worldcup_fixtures()
 
+    def get_live_fixtures_from_api(self) -> list[TournamentFixture]:
+        """Dedicated live endpoint — 60–120s cache (Phase 53)."""
+        if not self._api.is_configured:
+            return []
+        result = self._api.get_live_fixtures()
+        if not result.ok or not isinstance(result.data, list):
+            return []
+        parsed = [self._parse_api_fixture(item, result.source) for item in result.data]
+        return [p for p in parsed if p is not None]
+
     def get_upcoming_matches(self, limit: int = 5) -> list[TournamentFixture]:
         now = datetime.now(timezone.utc).replace(tzinfo=None)
         upcoming = sorted(
