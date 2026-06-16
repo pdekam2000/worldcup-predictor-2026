@@ -895,6 +895,21 @@ div[data-testid="stMetric"] [data-testid="stMetricValue"] { color: #0F172A !impo
 
 .status-pill { border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
 .phase48-badge { display: inline-block; padding: 0.35rem 0.75rem; margin: 0.15rem 0; }
+
+/* Group browser + match row styling */
+.group-card-header { font-size: 1.05rem; margin-bottom: 0.25rem; }
+.group-card-teams { font-size: 0.82rem; color: #64748b; margin-bottom: 0.35rem; line-height: 1.4; }
+.match-row { padding: 0.35rem 0.5rem; border-radius: 8px; margin: 0.25rem 0; }
+.match-row-finished { background: rgba(239, 68, 68, 0.06); opacity: 0.92; border-left: 3px solid #ef4444; }
+.match-row-upcoming { background: rgba(59, 130, 246, 0.05); border-left: 3px solid #3b82f6; }
+.match-row-live { background: rgba(249, 115, 22, 0.08); border-left: 3px solid #f97316; }
+.match-badge { display: inline-block; padding: 0.2rem 0.55rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; margin-right: 0.35rem; }
+.match-badge-finished { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+.match-badge-upcoming { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.match-badge-live { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+.match-result-text { font-weight: 600; color: #991b1b; font-size: 0.85rem; }
+.match-status-struck { color: #94a3b8; font-size: 0.78rem; }
+.match-row-divider { border: none; border-top: 1px solid #e2e8f0; margin: 0.35rem 0; }
 .pred-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

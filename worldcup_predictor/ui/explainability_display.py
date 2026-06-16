@@ -50,6 +50,22 @@ def _render_card(data: dict[str, Any], locale: Locale) -> None:
             )
             if fusion.get("final_summary"):
                 st.caption(str(fusion["final_summary"]))
+            if fusion.get("fusion_diversity_score") is not None:
+                st.caption(f"Diversity {fusion.get('fusion_diversity_score', 0):.0f}/100")
+
+        sd = data.get("signal_diversity") or {}
+        if sd.get("independent_signals") or sd.get("correlated_signals"):
+            st.markdown("**Signal independence (Phase 56)**")
+            if sd.get("prediction_label"):
+                st.caption(f"Prediction: {sd['prediction_label']}")
+            indep = sd.get("independent_signals") or []
+            corr = sd.get("correlated_signals") or []
+            if indep:
+                st.caption(f"Independent: {', '.join(indep)}")
+            if corr:
+                st.caption(f"Correlated: {', '.join(corr)}")
+            if sd.get("summary"):
+                st.caption(str(sd["summary"]))
 
         conf = data.get("confidence") or {}
         agree = data.get("agreement") or {}

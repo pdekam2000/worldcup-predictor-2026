@@ -765,6 +765,32 @@ def build_prediction_explainability(
         except Exception:
             fusion_report = None
 
+        signal_diversity_block: dict[str, Any] | None = None
+        if fusion_report:
+            sd = fusion_report.get("signal_diversity") or {}
+            x2_label = {
+                "home_win": f"{home_name} Win",
+                "away_win": f"{away_name} Win",
+                "draw": "Draw",
+            }.get(prediction.one_x_two.selection, prediction.one_x_two.selection)
+            indep = list(sd.get("independent_signals") or [])
+            corr = list(sd.get("correlated_signals") or [])
+            div_score = float(fusion_report.get("fusion_diversity_score") or sd.get("fusion_diversity_score") or 50)
+            signal_diversity_block = {
+                "fusion_diversity_score": div_score,
+                "independent_signals": indep,
+                "correlated_signals": corr,
+                "independent_count": sd.get("independent_count", len(indep)),
+                "correlated_count": sd.get("correlated_count", len(corr)),
+                "redundant_agents": sd.get("redundant_agents") or [],
+                "prediction_label": x2_label,
+                "summary": (
+                    f"Prediction lean: {x2_label}. "
+                    f"{len(indep)} independent signal(s) and {len(corr)} correlated signal(s) support the lean. "
+                    f"Fusion diversity {div_score:.0f}/100."
+                ),
+            }
+
         api_sports_context = None
         try:
             from worldcup_predictor.integrations.api_sports_deep_data import build_api_sports_explainability_context
@@ -793,6 +819,7 @@ def build_prediction_explainability(
             executive_summary=summary + " Analysis only — not betting advice.",
             fusion_report=fusion_report,
             api_sports_context=api_sports_context,
+            signal_diversity=signal_diversity_block,
         )
     except Exception:
         fid = prediction.fixture_id if prediction else 0

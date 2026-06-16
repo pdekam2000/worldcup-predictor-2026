@@ -15,6 +15,11 @@ from worldcup_predictor.fusion.models import (
     QualityBand,
     SignalMatrix,
 )
+from worldcup_predictor.fusion.signal_diversity import (
+    apply_correlation_dampening,
+    classify_signals_for_explainability,
+    compute_fusion_diversity_score,
+)
 
 _ADJUSTMENT_CAP = 10.0
 _AGENT_SIGNAL_CAP = 100.0
@@ -274,6 +279,11 @@ def _detect_conflicts(
                 )
             )
 
+    _pair("lineup_intelligence_agent", "lineup_agent", "Lineup V1 vs V2", "medium")
+    _pair("injury_suspension_intelligence_agent", "injury_suspension_agent", "Injury V1 vs V2", "medium")
+    _pair("team_form_agent", "elo_team_strength_intelligence_agent", "Form vs ELO", "medium")
+    _pair("xg_chance_quality_intelligence_agent", "tactics_agent", "xG vs Tactics", "low")
+
     _pair("elo_team_strength_intelligence_agent", "sharp_money_intelligence_agent", "ELO vs Sharp Money", "high")
     _pair("elo_team_strength_intelligence_agent", "market_consensus_agent", "ELO vs Market", "medium")
 
@@ -371,10 +381,12 @@ def _aggregate_matrix(rows: list[AgentSignalRow]) -> SignalMatrix:
     if not rows:
         return SignalMatrix()
 
+    rows, _mults = apply_correlation_dampening(rows)
+
     totals = {"home": 0.0, "away": 0.0, "draw": 0.0, "over": 0.0, "under": 0.0}
     weight_sum = 0.0
     for row in rows:
-        effective = row.weight * row.quality_multiplier
+        effective = row.weight * row.quality_multiplier * row.correlation_multiplier
         capped = _MAX_AGENT_SHARE
         share = min(effective, capped)
         weight_sum += share
@@ -430,7 +442,14 @@ def _risk_flags(
     return flags
 
 
-def _confidence_adjustment(consensus: float, quality: float, conflicts: list[FusionConflict], flags: list[str]) -> float:
+def _confidence_adjustment(
+    consensus: float,
+    quality: float,
+    conflicts: list[FusionConflict],
+    flags: list[str],
+    *,
+    diversity_score: float = 50.0,
+) -> float:
     adj = (consensus - 50.0) / 12.0 + (quality - 50.0) / 20.0
     adj -= sum(2.0 for c in conflicts if c.severity == "high")
     if "severe_agent_conflict" in flags:
@@ -439,6 +458,10 @@ def _confidence_adjustment(consensus: float, quality: float, conflicts: list[Fus
         adj -= 1.5
     if "poor_data_quality" in flags:
         adj -= 2.0
+    if diversity_score >= 72:
+        adj += 1.0
+    elif diversity_score < 40:
+        adj -= 1.0
     return round(_clamp(adj, -_ADJUSTMENT_CAP, _ADJUSTMENT_CAP), 2)
 
 
@@ -512,6 +535,13 @@ def build_final_decision_fusion(
             prediction.over_under.selection,
             specialist,
         )
+        baseline_x2 = {"home_win": "home", "away_win": "away", "draw": "draw"}.get(
+            prediction.one_x_two.selection, "neutral"
+        )
+        diversity_detail = compute_fusion_diversity_score(rows, baseline_1x2_lean=baseline_x2)
+        diversity_detail.update(
+            classify_signals_for_explainability(rows, baseline_1x2_lean=baseline_x2)
+        )
         consensus, quality = _consensus_and_quality(
             rows,
             prediction.one_x_two.selection,
@@ -521,7 +551,15 @@ def build_final_decision_fusion(
         )
         band = _quality_band(quality)
         flags = _risk_flags(consensus, quality, conflicts, report, specialist)
-        conf_adj = _confidence_adjustment(consensus, quality, conflicts, flags)
+        if diversity_detail.get("redundant_agents"):
+            flags.append("correlated_signal_overlap")
+        conf_adj = _confidence_adjustment(
+            consensus,
+            quality,
+            conflicts,
+            flags,
+            diversity_score=float(diversity_detail.get("fusion_diversity_score", 50)),
+        )
         resolution = _conflict_resolution_summary(
             conflicts, prediction.one_x_two.selection, prediction.over_under.selection
         )
@@ -553,7 +591,8 @@ def build_final_decision_fusion(
         away = report.away_team.team_name if report and report.away_team else "Away"
         summary = (
             f"{home} vs {away}: fusion {band} quality ({quality:.0f}/100), "
-            f"consensus {consensus:.0f}/100, {len(rows)} agents blended. "
+            f"consensus {consensus:.0f}/100, diversity {diversity_detail.get('fusion_diversity_score', 50):.0f}/100, "
+            f"{len(rows)} agents blended. "
             f"Baseline retained; confidence adjustment {conf_adj:+.1f}."
         )
 
@@ -569,6 +608,10 @@ def build_final_decision_fusion(
             risk_flags=flags,
             confidence_adjustment=conf_adj,
             final_summary=summary,
+            fusion_diversity_score=float(diversity_detail.get("fusion_diversity_score", 50)),
+            independent_signal_count=int(diversity_detail.get("independent_count", 0)),
+            correlated_signal_count=int(diversity_detail.get("correlated_count", 0)),
+            signal_diversity=diversity_detail,
         )
     except Exception:
         return FinalDecisionFusionReport(
@@ -606,6 +649,7 @@ def load_fusion_from_prediction(prediction: MatchPrediction | None) -> FinalDeci
                     quality_multiplier=float(row.get("quality_multiplier", 1)),
                     lean_1x2=str(row.get("lean_1x2", "neutral")),
                     lean_ou=str(row.get("lean_ou", "neutral")),
+                    correlation_multiplier=float(row.get("correlation_multiplier", 1)),
                 )
             )
         matrix_data = data.get("signal_matrix") or {}
@@ -632,6 +676,10 @@ def load_fusion_from_prediction(prediction: MatchPrediction | None) -> FinalDeci
             risk_flags=list(data.get("risk_flags") or []),
             confidence_adjustment=float(data.get("confidence_adjustment", 0)),
             final_summary=str(data.get("final_summary") or ""),
+            fusion_diversity_score=float(data.get("fusion_diversity_score", 50)),
+            independent_signal_count=int(data.get("independent_signal_count", 0)),
+            correlated_signal_count=int(data.get("correlated_signal_count", 0)),
+            signal_diversity=dict(data.get("signal_diversity") or {}),
         )
     except Exception:
         return None

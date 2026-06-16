@@ -101,6 +101,7 @@ from worldcup_predictor.ui.gui_mode_v2 import (
     all_page_keys,
     apply_primary_nav_selection,
     dev_expander_nav_items,
+    ensure_gui_page_from_sidebar,
     init_gui_mode_state,
     is_developer_mode,
     navigate_to_page,
@@ -125,6 +126,7 @@ from worldcup_predictor.ui.access_display import (
     render_quota_banner,
 )
 from worldcup_predictor.ui.admin_entitlements_page import render_admin_entitlements_page
+from worldcup_predictor.ui.finished_results_page import render_finished_results_page
 from worldcup_predictor.ui.feedback_display import render_feedback_form, render_feedback_viewer_page
 from worldcup_predictor.ui.upgrade_page import render_upgrade_page
 from worldcup_predictor.ui.odds_api_credit_display import render_odds_api_credit_panel
@@ -191,6 +193,7 @@ def main() -> None:
         {
         "home": page_home,
         "match_center": page_match_center,
+        "finished_results": page_finished_results,
         "team_search": page_team_search,
         "favorites": page_favorites,
         "accuracy": page_accuracy_tracker,
@@ -251,6 +254,8 @@ def _init_state() -> None:
     init_admin_session()
     enforce_non_admin_restrictions()
     dev_mode = is_developer_mode()
+    if "sidebar_user_nav" not in st.session_state:
+        st.session_state["sidebar_user_nav"] = st.session_state.get("gui_page", "home")
     st.session_state["gui_page"] = normalize_gui_page(
         st.session_state.get("gui_page"),
         developer_mode=dev_mode,
@@ -507,8 +512,10 @@ def _render_sidebar() -> None:
         key="sidebar_user_nav",
         on_change=apply_primary_nav_selection,
     )
+    ensure_gui_page_from_sidebar(developer_mode=dev_mode)
 
     if dev_mode and is_admin_session():
+        st.sidebar.caption(f"Route: `{st.session_state.get('gui_page', 'home')}`")
         dev_keys = [k for k, _, _ in dev_expander_nav_items()]
         with st.sidebar.expander(
             gui_t("shell.for_developer", locale),
@@ -599,11 +606,15 @@ def page_home() -> None:
         render_access_home_panel(locale)
 
         def _goto_predict() -> None:
-            st.session_state["gui_page"] = "predict"
+            navigate_to_page("predict", developer_mode=False)
             st.rerun()
 
         def _goto_reports() -> None:
-            st.session_state["gui_page"] = "professional_reports"
+            navigate_to_page("professional_reports", developer_mode=False)
+            st.rerun()
+
+        def _goto_match_center() -> None:
+            navigate_to_page("match_center", developer_mode=False)
             st.rerun()
 
         render_user_home_dashboard(
@@ -613,6 +624,7 @@ def page_home() -> None:
             last_prediction=last_prediction,
             goto_predict=_goto_predict,
             goto_reports=_goto_reports,
+            goto_match_center=_goto_match_center,
         )
 
     render_back_to_top(locale)
@@ -825,6 +837,12 @@ def page_match_center() -> None:
             )
 
     render_back_to_top(locale)
+
+
+def page_finished_results() -> None:
+    locale = _locale()
+    center = _get_match_center()
+    render_finished_results_page(locale, center=center)
 
 
 def page_accuracy_tracker() -> None:

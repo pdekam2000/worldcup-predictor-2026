@@ -81,7 +81,7 @@ def all_page_keys(
     if legacy_user_nav:
         keys.extend(k for k, _, _ in legacy_user_nav)
     keys.extend(k for k, _, _ in dev_nav)
-    keys.extend(["opening", "upcoming", "predict"])
+    keys.extend(["opening", "upcoming", "predict", "finished_results"])
     return list(dict.fromkeys(keys))
 
 
@@ -118,15 +118,14 @@ def normalize_gui_page(page: str | None, *, developer_mode: bool) -> str:
 
 
 def sync_primary_nav_widget(*, developer_mode: bool) -> None:
-    """Keep radio widget valid without overriding an active dev-only route."""
+    """Sync radio from gui_page only after explicit programmatic navigation."""
+    if not st.session_state.pop("_nav_programmatic", False):
+        return
     primary = primary_nav_for_mode(developer_mode=developer_mode)
     primary_keys = [k for k, _, _ in primary]
     current_page = st.session_state.get("gui_page", "home")
-    widget_key = "sidebar_user_nav"
     if current_page in primary_keys:
-        st.session_state[widget_key] = current_page
-    elif st.session_state.get(widget_key) not in primary_keys:
-        st.session_state[widget_key] = primary_keys[0]
+        st.session_state["sidebar_user_nav"] = current_page
 
 
 def apply_primary_nav_selection() -> None:
@@ -135,12 +134,26 @@ def apply_primary_nav_selection() -> None:
     st.session_state["gui_page"] = picked
 
 
+def ensure_gui_page_from_sidebar(*, developer_mode: bool) -> None:
+    """After sidebar radio — primary nav routes follow widget selection."""
+    primary_keys = {k for k, _, _ in primary_nav_for_mode(developer_mode=developer_mode)}
+    picked = st.session_state.get("sidebar_user_nav")
+    if picked in primary_keys:
+        st.session_state["gui_page"] = picked
+
+
+def sync_gui_page_from_sidebar(*, developer_mode: bool) -> None:
+    """Alias for post-radio sync."""
+    ensure_gui_page_from_sidebar(developer_mode=developer_mode)
+
+
 def navigate_to_page(page_key: str, *, developer_mode: bool) -> None:
     """Set active route; sync primary radio when target is a primary item."""
     st.session_state["gui_page"] = page_key
     primary_keys = {k for k, _, _ in primary_nav_for_mode(developer_mode=developer_mode)}
     if page_key in primary_keys:
         st.session_state["sidebar_user_nav"] = page_key
+        st.session_state["_nav_programmatic"] = True
 
 
 def render_mode_toggle(locale: Locale) -> None:

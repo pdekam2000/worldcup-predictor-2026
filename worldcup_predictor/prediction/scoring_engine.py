@@ -148,8 +148,15 @@ class ScoringEngine:
 
         expected_goals = self._estimate_goals(report, home_strength, away_strength)
         total_goals = expected_goals[0] + expected_goals[1] + specialist_adj.get("goals_adjustment", 0.0)
-        over_under_selection: OverUnderSelection = "over_2_5" if total_goals > 2.5 else "under_2_5"
-        over_under_prob = self._over_under_probability(total_goals)
+        low_goal_data = (
+            quality_pct < 45
+            or bool(report.missing_data)
+            or all_placeholder
+        )
+        over_under_selection, over_under_prob = self._pick_over_under(
+            total_goals,
+            low_confidence=low_goal_data,
+        )
 
         halftime_total = round(total_goals * 0.45, 2)
         first_goal_team = home_name if home_strength >= away_strength else away_name
@@ -238,6 +245,8 @@ class ScoringEngine:
                 "engine": "deterministic",
                 "data_quality_pct": f"{quality_pct:.0f}",
                 "specialist_score": str(specialist_adj.get("aggregated_score", "")),
+                "expected_total_goals": f"{total_goals:.2f}",
+                "ou_low_confidence": str(low_goal_data).lower(),
             },
         )
 
@@ -279,6 +288,7 @@ class ScoringEngine:
 
         candidates = generate_scoreline_candidates(report)
         h, a = primary_scoreline(candidates)
+        top_prob = candidates[0].probability if candidates else 0.0
         prediction = replace(
             prediction,
             scoreline=ScorelinePrediction(home_goals=float(h), away_goals=float(a)),
@@ -304,6 +314,7 @@ class ScoringEngine:
                 **prediction.metadata,
                 "prediction_quality_pct": f"{pq:.0f}",
                 "consistency_passed": str(consistent).lower(),
+                "scoreline_confidence": f"{top_prob:.2f}",
             },
         )
 
@@ -477,9 +488,65 @@ class ScoringEngine:
         home_against = self._goals_average(report.home_team.statistics, side="against", team_id=report.home_team.team_id)
         away_against = self._goals_average(report.away_team.statistics, side="against", team_id=report.away_team.team_id)
 
-        home_goals = max(0.4, (home_avg + away_against) / 2 * home_strength)
-        away_goals = max(0.4, (away_avg + home_against) / 2 * away_strength)
+        has_real_home = bool(report.home_team.statistics and report.home_team.statistics.get("goals"))
+        has_real_away = bool(report.away_team.statistics and report.away_team.statistics.get("goals"))
+        floor = 0.52 if (has_real_home or has_real_away) else 0.45
+        wc_baseline = 1.32
+
+        home_goals = max(floor, (home_avg + away_against) / 2 * home_strength)
+        away_goals = max(floor, (away_avg + home_against) / 2 * away_strength)
+
+        if not has_real_home:
+            home_goals = home_goals * 0.7 + wc_baseline * 0.3 * home_strength
+        if not has_real_away:
+            away_goals = away_goals * 0.7 + wc_baseline * 0.3 * away_strength
+
+        xg_home, xg_away = self._xg_goal_hints(report)
+        if xg_home is not None:
+            home_goals = home_goals * 0.62 + max(xg_home, floor) * 0.38
+        if xg_away is not None:
+            away_goals = away_goals * 0.62 + max(xg_away, floor) * 0.38
+
         return round(home_goals, 2), round(away_goals, 2)
+
+    @staticmethod
+    def _xg_goal_hints(report: MatchIntelligenceReport) -> tuple[float | None, float | None]:
+        try:
+            from worldcup_predictor.chance_quality.stat_extraction import extract_real_xg
+
+            hx, _ = extract_real_xg(
+                report,
+                side="home",
+                team_stats=report.home_team.statistics or {},
+            )
+            ax, _ = extract_real_xg(
+                report,
+                side="away",
+                team_stats=report.away_team.statistics or {},
+            )
+            return (float(hx) if hx is not None else None, float(ax) if ax is not None else None)
+        except Exception:
+            return None, None
+
+    @staticmethod
+    def _pick_over_under(
+        total_goals: float,
+        *,
+        low_confidence: bool,
+    ) -> tuple[OverUnderSelection, float]:
+        margin = total_goals - 2.5
+        if margin > 0.05:
+            selection: OverUnderSelection = "over_2_5"
+        elif margin < -0.05:
+            selection = "under_2_5"
+        else:
+            selection = "over_2_5" if margin >= 0 else "under_2_5"
+        distance = abs(margin)
+        if low_confidence:
+            probability = min(0.52 + distance * 0.08, 0.62)
+        else:
+            probability = min(0.55 + distance * 0.12, 0.78 if distance > 0.35 else 0.72)
+        return selection, probability
 
     @staticmethod
     def _goals_average(stats: dict[str, Any] | None, side: str, team_id: int | None = None) -> float:

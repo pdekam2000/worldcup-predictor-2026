@@ -113,6 +113,7 @@ def render_user_home_dashboard(
     on_quick_predict: Callable[[], None] | None = None,
     goto_predict: Callable[[], None] | None = None,
     goto_reports: Callable[[], None] | None = None,
+    goto_match_center: Callable[[], None] | None = None,
 ) -> None:
     """Today-only product dashboard — never raises."""
     try:
@@ -124,6 +125,7 @@ def render_user_home_dashboard(
             on_quick_predict,
             goto_predict,
             goto_reports,
+            goto_match_center,
         )
     except Exception:
         st.info(gui_t("home.user_welcome", locale))
@@ -137,6 +139,7 @@ def _render(
     on_quick_predict: Callable[[], None] | None,
     goto_predict: Callable[[], None] | None,
     goto_reports: Callable[[], None] | None,
+    goto_match_center: Callable[[], None] | None,
 ) -> None:
     st.markdown(f"### {gui_t('home.user_welcome', locale)}")
     st.caption(gui_t("home.today_subtitle", locale))
@@ -192,7 +195,7 @@ def _render(
             st.caption(gui_t("home.system_status", locale))
 
     st.markdown(f"#### {gui_t('home.quick_actions', locale)}")
-    q1, q2, q3 = st.columns(3)
+    q1, q2, q3, q4 = st.columns(4)
     with q1:
         if st.button(gui_t("home.predict_today", locale), type="primary", use_container_width=True):
             target = today_matches[0] if today_matches else (live[0] if live else _next_upcoming(center, exclude_today=False))
@@ -204,16 +207,30 @@ def _render(
                 on_quick_predict()
             else:
                 st.session_state["gui_page"] = "predict"
+                st.session_state["_nav_programmatic"] = True
                 st.rerun()
     with q2:
+        if st.button(gui_t("btn.match_center", locale), use_container_width=True):
+            if goto_match_center:
+                goto_match_center()
+            else:
+                st.session_state["gui_page"] = "match_center"
+                st.session_state["_nav_programmatic"] = True
+                st.session_state["sidebar_user_nav"] = "match_center"
+                st.rerun()
+    with q3:
         if st.button(gui_t("home.open_group_browser", locale), use_container_width=True):
             st.session_state["gui_page"] = "predict"
             st.session_state["gui_expand_group_browser"] = True
+            st.session_state["_nav_programmatic"] = True
+            st.session_state["sidebar_user_nav"] = "predict"
             st.rerun()
-    with q3:
+    with q4:
         if st.button(gui_t("home.open_reports", locale), use_container_width=True):
             if goto_reports:
                 goto_reports()
             else:
                 st.session_state["gui_page"] = "professional_reports"
+                st.session_state["_nav_programmatic"] = True
+                st.session_state["sidebar_user_nav"] = "professional_reports"
                 st.rerun()

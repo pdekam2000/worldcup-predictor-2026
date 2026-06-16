@@ -17,6 +17,7 @@ USER_MODE_V2_NAV_ITEMS: list[tuple[str, str, str]] = [
     ("predict", "nav.predict", "🎯"),
     ("team_search", "nav.game_search", "🔎"),
     ("match_center", "nav.match_center", "⚽"),
+    ("finished_results", "nav.finished_results", "✅"),
     ("professional_reports", "nav.professional_reports", "📄"),
     ("hall_of_fame", "nav.hall_of_fame", "🏆"),
     ("upgrade", "nav.upgrade", "💳"),
@@ -232,6 +233,9 @@ def render_performance_cards(locale: Locale, metrics: Any) -> None:
 
 
 def render_quick_action_cards(locale: Locale) -> None:
+    from worldcup_predictor.ui.gui_mode_v2 import navigate_to_page
+
+    dev_mode = st.session_state.get("gui_mode") == "developer"
     actions = [
         ("match_center", gui_t("btn.match_center", locale), "🏟️"),
         ("team_search", gui_t("nav.team_search", locale), "🔎"),
@@ -244,9 +248,9 @@ def render_quick_action_cards(locale: Locale) -> None:
             if st.button(f"{icon} {label}", key=f"qa_{page}", use_container_width=True):
                 if page == "sync":
                     st.session_state["_trigger_sync"] = True
-                    st.session_state["gui_page"] = "settings"
+                    navigate_to_page("settings", developer_mode=dev_mode)
                 else:
-                    st.session_state["gui_page"] = page
+                    navigate_to_page(page, developer_mode=dev_mode)
                 st.rerun()
 
 

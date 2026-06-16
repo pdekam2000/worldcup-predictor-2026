@@ -21,6 +21,7 @@ class AgentSignalRow:
     quality_multiplier: float = 1.0
     lean_1x2: str = "neutral"
     lean_ou: str = "neutral"
+    correlation_multiplier: float = 1.0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -33,6 +34,7 @@ class AgentSignalRow:
             "under25_signal": round(self.under25_signal, 1),
             "weight": round(self.weight, 2),
             "quality_multiplier": round(self.quality_multiplier, 2),
+            "correlation_multiplier": round(self.correlation_multiplier, 2),
             "lean_1x2": self.lean_1x2,
             "lean_ou": self.lean_ou,
         }
@@ -81,6 +83,10 @@ class FinalDecisionFusionReport:
     risk_flags: list[str] = field(default_factory=list)
     confidence_adjustment: float = 0.0
     final_summary: str = ""
+    fusion_diversity_score: float = 50.0
+    independent_signal_count: int = 0
+    correlated_signal_count: int = 0
+    signal_diversity: dict[str, Any] = field(default_factory=dict)
     version: str = "v2"
 
     def to_dict(self) -> dict[str, Any]:
@@ -96,5 +102,9 @@ class FinalDecisionFusionReport:
             "risk_flags": self.risk_flags,
             "confidence_adjustment": round(self.confidence_adjustment, 2),
             "final_summary": self.final_summary,
+            "fusion_diversity_score": round(self.fusion_diversity_score, 1),
+            "independent_signal_count": self.independent_signal_count,
+            "correlated_signal_count": self.correlated_signal_count,
+            "signal_diversity": self.signal_diversity,
             "version": self.version,
         }

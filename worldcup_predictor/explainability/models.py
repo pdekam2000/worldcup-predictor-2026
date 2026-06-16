@@ -85,6 +85,20 @@ class DecisionTimelineStep:
 
 
 @dataclass
+class SignalDiversityExplanation:
+    fusion_diversity_score: float
+    independent_signals: list[str] = field(default_factory=list)
+    correlated_signals: list[str] = field(default_factory=list)
+    independent_count: int = 0
+    correlated_count: int = 0
+    redundant_agents: list[str] = field(default_factory=list)
+    summary: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
 class FinalReportV2:
     prediction: dict[str, Any]
     confidence: ConfidenceExplanation
@@ -99,6 +113,7 @@ class FinalReportV2:
     executive_summary: str
     fusion_report: dict[str, Any] | None = None
     api_sports_context: dict[str, Any] | None = None
+    signal_diversity: dict[str, Any] | None = None
     version: str = "v2"
 
     def to_dict(self) -> dict[str, Any]:
@@ -120,4 +135,6 @@ class FinalReportV2:
             out["fusion_report"] = self.fusion_report
         if self.api_sports_context:
             out["api_sports_context"] = self.api_sports_context
+        if self.signal_diversity:
+            out["signal_diversity"] = self.signal_diversity
         return out

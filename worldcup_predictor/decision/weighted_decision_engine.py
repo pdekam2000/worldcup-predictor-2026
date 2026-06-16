@@ -623,6 +623,12 @@ class WeightedDecisionEngine:
         if severe_weather and selection == "over_2_5":
             return "under_2_5"
         if tactics and tactics.home_edge < -0.05:
+            try:
+                expected_total = float(baseline.metadata.get("expected_total_goals", 0))
+            except (TypeError, ValueError):
+                expected_total = 0.0
+            if expected_total >= 2.58 and selection == "over_2_5":
+                return selection
             return "under_2_5"
         return selection
 

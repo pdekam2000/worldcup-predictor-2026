@@ -67,6 +67,33 @@ def _has_export_report(fixture_id: int) -> bool:
         return False
 
 
+def _match_row_class(fixture: Any) -> str:
+    if _is_live(fixture):
+        return "match-row-live"
+    if _is_finished(fixture):
+        return "match-row-finished"
+    return "match-row-upcoming"
+
+
+def _badge_html(fixture: Any, locale: Locale) -> str:
+    if _is_live(fixture):
+        score = _score_line(fixture)
+        label = gui_t("status.live", locale)
+        if score != "—":
+            label = f"{label} · {score}"
+        return f'<span class="match-badge match-badge-live">{label}</span>'
+    if _is_finished(fixture):
+        home = getattr(fixture, "home_team", "—")
+        away = getattr(fixture, "away_team", "—")
+        score = _score_line(fixture)
+        result = f"{home} {score} {away}" if score != "—" else _score_line(fixture)
+        return (
+            f'<span class="match-badge match-badge-finished">{gui_t("status.finished", locale)}</span> '
+            f'<span class="match-result-text">{result}</span>'
+        )
+    return f'<span class="match-badge match-badge-upcoming">{gui_t("status.upcoming", locale)}</span>'
+
+
 def render_worldcup_group_browser(
     locale: Locale,
     *,
@@ -141,16 +168,21 @@ def _render(
                 teams = [r.get("team_name", "") for r in wc_group.get("standings", [])[:4]]
             fixtures = by_group.get(group_name, [])
             played = sum(1 for f in fixtures if _is_finished(f))
-            upcoming = sum(1 for f in fixtures if not _is_finished(f))
+            live = sum(1 for f in fixtures if _is_live(f))
+            upcoming = sum(1 for f in fixtures if not _is_finished(f) and not _is_live(f))
             label = group_name.replace("Group ", "")
             with st.container(border=True):
-                st.markdown(f"**{group_name}**")
+                st.markdown(f'<div class="group-card-header"><strong>{group_name}</strong></div>', unsafe_allow_html=True)
                 if teams:
-                    st.caption(" · ".join(teams))
+                    st.markdown(
+                        '<div class="group-card-teams">' + " · ".join(teams) + "</div>",
+                        unsafe_allow_html=True,
+                    )
                 else:
                     st.caption(gui_t("group_browser.teams_pending", locale))
                 st.caption(
                     f"{gui_t('group_browser.played', locale)}: {played} · "
+                    f"{gui_t('status.live', locale)}: {live} · "
                     f"{gui_t('group_browser.upcoming', locale)}: {upcoming}"
                 )
                 expand = st.session_state.get("gui_expand_group_browser") and idx == 0
@@ -160,8 +192,13 @@ def _render(
                     if not fixtures:
                         st.caption(gui_t("group_browser.no_fixtures", locale))
                         continue
+                    live_rows = [f for f in fixtures if _is_live(f)]
                     finished_rows = [f for f in fixtures if _is_finished(f)]
-                    open_rows = [f for f in fixtures if not _is_finished(f)]
+                    open_rows = [f for f in fixtures if not _is_finished(f) and not _is_live(f)]
+                    if live_rows:
+                        st.markdown(f"**{gui_t('status.live', locale)}**")
+                        for fixture in live_rows:
+                            _render_fixture_row(fixture, locale, on_select_fixture, key_prefix, show_predict=True)
                     if finished_rows:
                         st.markdown(f"**{gui_t('group_browser.results', locale)}**")
                         for fixture in finished_rows:
@@ -183,20 +220,23 @@ def _render_fixture_row(
     fid = _fixture_id(fixture)
     home = getattr(fixture, "home_team", "—")
     away = getattr(fixture, "away_team", "—")
-    local_ko, _ = format_kickoff_times(getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None))
+    local_ko, utc_ko = format_kickoff_times(getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None))
     status = getattr(fixture, "status", "NS")
-    if _is_live(fixture):
-        badge = gui_t("status.live", locale)
-    elif _is_finished(fixture):
-        badge = f"{gui_t('status.finished', locale)} {_score_line(fixture)}"
-    else:
-        badge = gui_t("status.upcoming", locale)
+    row_class = _match_row_class(fixture)
 
+    st.markdown(
+        f'<div class="match-row {row_class}">{_badge_html(fixture, locale)}</div>',
+        unsafe_allow_html=True,
+    )
     c1, c2 = st.columns([3, 1])
     with c1:
         st.markdown(f"**{home} vs {away}**")
-        st.caption(f"{local_ko} · {badge}")
-        st.caption(f"ID {fid}", help=gui_t("card.fixture_id", locale))
+        if _is_finished(fixture):
+            st.caption(f"{gui_t('card.kickoff_local', locale)}: {local_ko} · ID {fid}")
+            st.caption(f'<span class="match-status-struck">~~{status}~~</span>', unsafe_allow_html=True)
+        else:
+            st.caption(f"{gui_t('card.kickoff_local', locale)}: **{local_ko}** · {gui_t('card.kickoff_utc', locale)}: **{utc_ko}**")
+            st.caption(f"ID {fid}", help=gui_t("card.fixture_id", locale))
     with c2:
         if show_predict and st.button(gui_t("btn.predict_match", locale), key=f"{key_prefix}_pred_{fid}", use_container_width=True):
             on_select_fixture(fid)
@@ -204,6 +244,8 @@ def _render_fixture_row(
             if st.button(gui_t("group_browser.view_report", locale), key=f"{key_prefix}_rep_{fid}", use_container_width=True):
                 st.session_state["gui_page"] = "professional_reports"
                 st.session_state["reports_filter_fixture_id"] = fid
+                st.session_state["_nav_programmatic"] = True
+                st.session_state["sidebar_user_nav"] = "professional_reports"
                 st.rerun()
         elif has_stored_prediction(fid) and st.button(
             gui_t("group_browser.view_prediction", locale),
@@ -211,3 +253,4 @@ def _render_fixture_row(
             use_container_width=True,
         ):
             on_select_fixture(fid)
+    st.markdown('<hr class="match-row-divider"/>', unsafe_allow_html=True)

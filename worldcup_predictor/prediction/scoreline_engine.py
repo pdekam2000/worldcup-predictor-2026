@@ -66,4 +66,8 @@ def primary_scoreline(candidates: list[ScorelineCandidate]) -> tuple[int, int]:
     if not candidates:
         return 1, 1
     top = candidates[0]
+    second_prob = candidates[1].probability if len(candidates) > 1 else 0.0
+    if top.probability < 0.22 and second_prob >= top.probability * 0.85:
+        alt = candidates[1]
+        return alt.home_goals, alt.away_goals
     return top.home_goals, top.away_goals
