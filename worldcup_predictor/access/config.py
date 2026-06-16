@@ -3,6 +3,24 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
+
+_dotenv_loaded = False
+
+
+def _load_dotenv_once() -> None:
+    """Load project .env so PUBLIC_ACCESS_* / ADMIN_* work under Streamlit."""
+    global _dotenv_loaded
+    if _dotenv_loaded:
+        return
+    _dotenv_loaded = True
+    try:
+        from dotenv import load_dotenv
+
+        root = Path(__file__).resolve().parents[2]
+        load_dotenv(root / ".env", override=False)
+    except Exception:
+        pass
 
 
 def _truthy(value: str | None, *, default: bool = False) -> bool:
@@ -13,6 +31,7 @@ def _truthy(value: str | None, *, default: bool = False) -> bool:
 
 def _env_or_secret(key: str, default: str | None = None) -> str | None:
     """Read from os.environ first, then Streamlit secrets (Cloud/Spaces)."""
+    _load_dotenv_once()
     val = os.getenv(key)
     if val is not None and str(val).strip():
         return str(val).strip()
@@ -49,6 +68,19 @@ def public_access_code() -> str | None:
     """Shared invite code required for public user login."""
     raw = _env_or_secret("PUBLIC_ACCESS_CODE")
     return raw if raw else None
+
+
+def credentials_login_available() -> bool:
+    """True when the GUI should show unified username/password login."""
+    if public_access_enabled() or public_access_code():
+        return True
+    if (_env_or_secret("ADMIN_PASSWORD") or "").strip():
+        return True
+    if _truthy(_env_or_secret("APP_AUTH_ENABLED")):
+        user = (_env_or_secret("APP_USERNAME") or "").strip()
+        pwd = (_env_or_secret("APP_PASSWORD") or "").strip()
+        return bool(user and pwd)
+    return False
 
 
 def public_access_config_debug() -> str:

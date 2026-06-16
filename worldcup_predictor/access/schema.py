@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-ACCESS_SCHEMA_VERSION = 3
+ACCESS_SCHEMA_VERSION = 4
 
 ACCESS_DDL_STATEMENTS: tuple[str, ...] = (
     """
@@ -68,5 +68,13 @@ ACCESS_DDL_STATEMENTS: tuple[str, ...] = (
     """
     CREATE INDEX IF NOT EXISTS idx_remember_tokens_user
     ON remember_tokens(user_id)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS admin_session_lock (
+        lock_id INTEGER PRIMARY KEY CHECK (lock_id = 1),
+        holder_token TEXT NOT NULL,
+        holder_label TEXT,
+        locked_at TEXT NOT NULL
+    )
     """,
 )

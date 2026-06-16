@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 from datetime import datetime
 from typing import Any
 
@@ -10,6 +11,7 @@ import streamlit as st
 from worldcup_predictor.config.settings import Locale
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.kickoff_timezone import format_kickoff_display, format_kickoff_times
+from worldcup_predictor.ui.team_display import match_header_html
 
 
 def _non_empty(value: object | None) -> str | None:
@@ -119,6 +121,21 @@ def format_kickoff_caption(fixture: Any | None, locale: Locale) -> str:
     return " · ".join(parts)
 
 
+def format_kickoff_hero(fixture: Any | None, locale: Locale) -> tuple[str, str, str]:
+    """Compact kickoff for dashboard cards — (time, date, venue_line)."""
+    kickoff = _fixture_kickoff(fixture)
+    if kickoff is None:
+        return "—", "", ""
+    local = kickoff.astimezone() if kickoff.tzinfo else kickoff
+    time_line = local.strftime("%H:%M")
+    date_line = local.strftime("%d %b %Y")
+    city = _non_empty(_field(fixture, "city"))
+    country = _non_empty(_field(fixture, "country"))
+    venue_parts = [p for p in (city, country) if p]
+    venue_line = " · ".join(venue_parts) if venue_parts else ""
+    return time_line, date_line, venue_line
+
+
 def render_kickoff_panel(fixture: Any | None, locale: Locale) -> None:
     """Three-line kickoff: user local, venue local, UTC."""
     kickoff = _fixture_kickoff(fixture)
@@ -128,10 +145,10 @@ def render_kickoff_panel(fixture: Any | None, locale: Locale) -> None:
     st.markdown(
         f"""
 <div class="glass-card kickoff-panel">
-  <div><strong>{display.user_local_label}:</strong> {display.user_local}</div>
-  {f'<div><strong>{display.venue_label}:</strong> {display.venue_local}</div>' if display.venue_local else ''}
-  <div><strong>{gui_t('card.kickoff_utc', locale)}:</strong> {display.utc}</div>
-  {f'<div class="kickoff-warn">{gui_t("kickoff.venue_unavailable", locale)}</div>' if display.venue_unavailable and kickoff else ''}
+  <div><strong>{html.escape(display.user_local_label)}:</strong> {html.escape(display.user_local)}</div>
+  {f'<div><strong>{html.escape(display.venue_label or "")}:</strong> {html.escape(display.venue_local or "")}</div>' if display.venue_local else ''}
+  <div><strong>{html.escape(gui_t('card.kickoff_utc', locale))}:</strong> {html.escape(display.utc)}</div>
+  {f'<div class="kickoff-warn">{html.escape(gui_t("kickoff.venue_unavailable", locale))}</div>' if display.venue_unavailable and kickoff else ''}
 </div>
 """,
         unsafe_allow_html=True,
@@ -171,23 +188,52 @@ def render_fixture_summary_panel(fixture: Any | None, fixture_id: int | None, lo
     status = _fixture_status_label(_field(fixture, "status"), locale)
     source = _non_empty(_field(fixture, "source"))
 
-    with st.container(border=True):
-        st.markdown(f"### {home} vs {away}")
-        fields: list[tuple[str, str]] = [
-            ("card.fixture_id", str(fid)),
-            ("kickoff.user_local", local_ko),
-            ("kickoff.venue_local", venue_ko if not ko.venue_unavailable else gui_t("kickoff.venue_unavailable_short", locale)),
-            ("card.kickoff_utc", utc_ko),
-            ("card.league", league or "—"),
-            ("card.group", group_label if group_label != "—" else "—"),
-            ("card.venue", venue),
-            ("card.location", location),
-            ("card.status", status),
-            ("card.round", round_stage or "—"),
-        ]
-        if source:
-            fields.append(("card.source", source))
-        render_fixture_meta_grid(locale, fields, columns=3)
+    fields: list[tuple[str, str]] = [
+        ("card.fixture_id", str(fid)),
+        ("kickoff.user_local", local_ko),
+        ("kickoff.venue_local", venue_ko if not ko.venue_unavailable else gui_t("kickoff.venue_unavailable_short", locale)),
+        ("card.kickoff_utc", utc_ko),
+        ("card.league", league or "—"),
+        ("card.group", group_label if group_label != "—" else "—"),
+        ("card.venue", venue),
+        ("card.location", location),
+        ("card.status", status),
+        ("card.round", round_stage or "—"),
+    ]
+    if source:
+        fields.append(("card.source", source))
+    st.markdown(
+        '<div class="glass-card fixture-summary-panel">'
+        + match_header_html(home, away, fixture=fixture, country_hint=country)
+        + fixture_meta_grid_html(locale, fields, columns=3)
+        + "</div>",
+        unsafe_allow_html=True,
+    )
+
+
+def fixture_meta_grid_html(
+    locale: Locale,
+    fields: list[tuple[str, str]],
+    *,
+    columns: int = 4,
+) -> str:
+    """HTML metadata grid with high contrast on dark theme."""
+    if not fields:
+        return ""
+    width = max(1, min(columns, len(fields)))
+    cells: list[str] = []
+    for label_key, value in fields:
+        if label_key.startswith(("card.", "kickoff.")):
+            label = gui_t(label_key, locale)
+        else:
+            label = label_key
+        cells.append(
+            f'<div class="fixture-meta-cell">'
+            f'<span class="fixture-meta-label">{html.escape(label)}</span>'
+            f'<span class="fixture-meta-value">{html.escape(str(value))}</span>'
+            f"</div>"
+        )
+    return f'<div class="fixture-meta-grid cols-{width}">{"".join(cells)}</div>'
 
 
 def render_fixture_meta_grid(
@@ -196,18 +242,10 @@ def render_fixture_meta_grid(
     *,
     columns: int = 4,
 ) -> None:
-    """Render labeled metadata using Streamlit widgets — never inside button labels."""
-    if not fields:
-        return
-    width = max(1, min(columns, len(fields)))
-    for start in range(0, len(fields), width):
-        row = fields[start : start + width]
-        cols = st.columns(len(row))
-        for col, (label_key, value) in zip(cols, row):
-            with col:
-                label = gui_t(label_key, locale) if label_key.startswith("card.") else label_key
-                st.caption(label)
-                st.markdown(f"**{value}**")
+    """Readable metadata grid — HTML for dark theme contrast."""
+    markup = fixture_meta_grid_html(locale, fields, columns=columns)
+    if markup:
+        st.markdown(markup, unsafe_allow_html=True)
 
 
 def render_match_card_shell(

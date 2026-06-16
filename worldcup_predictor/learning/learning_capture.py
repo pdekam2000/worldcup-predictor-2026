@@ -153,6 +153,14 @@ def _summarize_fusion(prediction: MatchPrediction | None) -> dict[str, Any]:
         return {}
 
 
+def _scoreline_label(prediction: MatchPrediction) -> str | None:
+    if prediction.scoreline_candidates:
+        return prediction.scoreline_candidates[0].label
+    if prediction.scoreline:
+        return f"{int(prediction.scoreline.home_goals)}-{int(prediction.scoreline.away_goals)}"
+    return None
+
+
 def build_learning_payload(
     prediction: MatchPrediction,
     *,
@@ -160,6 +168,27 @@ def build_learning_payload(
     prediction_id: str,
     specialist_report: MatchSpecialistReport | None = None,
 ) -> dict[str, Any]:
+    extended: dict[str, Any] = {}
+    try:
+        from worldcup_predictor.prediction.extended_markets import (
+            build_extended_markets,
+            load_extended_markets_from_prediction,
+        )
+
+        snap = load_extended_markets_from_prediction(prediction) or build_extended_markets(prediction, None)
+        yes_pct, no_pct = snap.btts.as_percent()
+        extended = {
+            "btts_yes_pct": yes_pct,
+            "btts_no_pct": no_pct,
+            "halftime_1x2": snap.halftime_1x2.as_percent(),
+            "first_goal_minute_band": snap.first_goal_time.minute_band,
+            "first_goal_expected_minute": snap.first_goal_time.expected_minute,
+            "likely_scorer": snap.top_scorer.player,
+            "likely_scorer_team": snap.top_scorer.team,
+            "correct_scores_top3": snap.correct_scores,
+        }
+    except Exception:
+        pass
     return {
         "fixture_id": prediction.fixture_id,
         "prediction_id": prediction_id,
@@ -167,6 +196,10 @@ def build_learning_payload(
         "match_name": prediction.match_name,
         "predicted_1x2": prediction.one_x_two.selection,
         "predicted_over_under": prediction.over_under.selection,
+        "predicted_first_goal_team": prediction.first_goal.team,
+        "predicted_first_goal_scorer": prediction.first_goal.player,
+        "predicted_scoreline": _scoreline_label(prediction),
+        "extended_markets": extended,
         "confidence": prediction.confidence_score,
         "risk_level": prediction.risk_level.value if hasattr(prediction.risk_level, "value") else str(prediction.risk_level),
         "no_bet_flag": prediction.no_bet_flag,

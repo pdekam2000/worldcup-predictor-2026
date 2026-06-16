@@ -23,11 +23,11 @@ from worldcup_predictor.ui.gui_components import (
     render_data_quality_breakdown,
     render_prediction_analysis_details,
     render_prediction_card,
-    render_readiness_badge,
 )
 from worldcup_predictor.ui.fixture_display import format_group_stage
 from worldcup_predictor.ui.readiness import analysis_readiness
 from worldcup_predictor.ui.gui_i18n import gui_t
+from worldcup_predictor.ui.professional_prediction_card import render_professional_prediction_card
 from worldcup_predictor.ui.stored_prediction_summary import (
     evaluate_stored_prediction,
     has_stored_prediction,
@@ -35,6 +35,8 @@ from worldcup_predictor.ui.stored_prediction_summary import (
     predict_button_label,
     render_stored_prediction_summary,
 )
+from worldcup_predictor.ui.fixture_display import format_group_stage, format_kickoff_hero
+from worldcup_predictor.ui.team_display import match_showcase_html
 
 
 def _fixture_id(fixture: Any) -> int:
@@ -176,6 +178,7 @@ def render_analyze_summary(
     *,
     prediction: Any | None = None,
     api_configured: bool = True,
+    fixture: Any | None = None,
 ) -> None:
     dq = intel.data_quality
     dq_total = (dq.breakdown_total if dq else 0) or int((dq.score or 0) * 100 if dq else 0)
@@ -188,13 +191,50 @@ def render_analyze_summary(
         intel=intel,
     )
 
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.metric("Data Quality", f"{dq_total}/100")
-    with c2:
-        st.metric("Prediction Quality", f"{pq:.0f}/100" if prediction else "—")
-    with c3:
-        render_readiness_badge(readiness, locale, progress, reason=reason)
+    st.markdown('<div class="analysis-panel-body">', unsafe_allow_html=True)
+
+    if fixture is not None:
+        home = getattr(fixture, "home_team", intel.home_team.team_name)
+        away = getattr(fixture, "away_team", intel.away_team.team_name)
+        st.markdown(
+            match_showcase_html(
+                home,
+                away,
+                fixture=fixture,
+                country_hint=getattr(fixture, "country", None),
+            ),
+            unsafe_allow_html=True,
+        )
+        time_line, date_line, venue_line = format_kickoff_hero(fixture, locale)
+        venue_bit = f" · {venue_line}" if venue_line else ""
+        st.markdown(
+            f'<div class="analysis-kickoff-line"><span class="showcase-time">{time_line}</span>'
+            f'<span class="showcase-date">{date_line}{venue_bit}</span></div>',
+            unsafe_allow_html=True,
+        )
+
+    pq_display = f"{pq:.0f}/100" if prediction else "—"
+    st.markdown(
+        f"""
+<div class="analysis-metric-grid">
+  <div class="analysis-metric">
+    <div class="analysis-metric-label">{gui_t("badge.data_quality", locale)}</div>
+    <div class="analysis-metric-value">{dq_total}/100</div>
+  </div>
+  <div class="analysis-metric">
+    <div class="analysis-metric-label">{gui_t("badge.prediction_quality", locale)}</div>
+    <div class="analysis-metric-value">{pq_display}</div>
+  </div>
+  <div class="analysis-metric">
+    <div class="analysis-metric-label">{gui_t("badge.readiness", locale)}</div>
+    <div class="analysis-metric-value" style="font-size:1rem;">{readiness}</div>
+  </div>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+    if reason:
+        st.caption(reason)
 
     if prediction:
         from worldcup_predictor.ui.adaptive_confidence_display import render_prediction_adaptive_panel
@@ -207,36 +247,46 @@ def render_analyze_summary(
         st.warning(gui_t("watch_only", locale))
 
     if intel.missing_data:
-        st.caption("Missing data: " + ", ".join(intel.missing_data[:12]))
+        missing = ", ".join(intel.missing_data[:12])
+        st.markdown(
+            f'<div class="analysis-missing">{gui_t("analysis.missing_data", locale)}: {missing}</div>',
+            unsafe_allow_html=True,
+        )
 
-    fc1, fc2 = st.columns(2)
-    with fc1:
-        st.markdown(f"**{intel.home_team.team_name}** form: `{intel.home_team.form or '—'}`")
-    with fc2:
-        st.markdown(f"**{intel.away_team.team_name}** form: `{intel.away_team.form or '—'}`")
+    st.markdown(
+        f"""
+<div class="analysis-form-row">
+  <div class="analysis-form-card"><strong>{intel.home_team.team_name}</strong> form: <code>{intel.home_team.form or "—"}</code></div>
+  <div class="analysis-form-card"><strong>{intel.away_team.team_name}</strong> form: <code>{intel.away_team.form or "—"}</code></div>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
 
     if intel.odds and intel.odds.available:
-        st.caption(f"Odds available — {len(intel.odds.bookmakers)} bookmaker snapshot(s).")
+        st.caption(f"✓ Odds — {len(intel.odds.bookmakers)} bookmaker snapshot(s)")
     else:
-        st.caption("Odds: not loaded.")
+        st.caption("Odds: not loaded")
 
     gc = getattr(intel, "group_context", None) or (getattr(prediction, "group_context", None) if prediction else None)
-    fixture = getattr(intel, "fixture", None)
+    fx = fixture or getattr(intel, "fixture", None)
     if gc and gc.get("available"):
         gh = gc.get("home") or {}
         ga = gc.get("away") or {}
-        stage_label = format_group_stage(fixture, gc) if fixture is not None else format_group_stage(gc)
+        stage_label = format_group_stage(fx, gc) if fx is not None else format_group_stage(gc)
         stand_line = format_standings_context(gh, ga, locale)
         caption = f"{gui_t('card.group', locale)}: **{stage_label}**"
         if stand_line:
             caption += f" · {stand_line}"
         st.caption(caption)
     elif getattr(intel, "standings_context", None) and intel.standings_context.get("available"):
-        st.caption("Standings loaded — group positions available in full prediction view.")
-    elif fixture is not None:
-        stage_label = format_group_stage(fixture)
+        st.caption("Standings loaded — group positions in full prediction view.")
+    elif fx is not None:
+        stage_label = format_group_stage(fx)
         if stage_label != "—":
             st.caption(f"{gui_t('card.group', locale)}: **{stage_label}**")
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 def _render_audit_tab(result: Any, locale: Locale, t: Translator) -> None:
@@ -405,7 +455,7 @@ def render_match_action_panel(
 
     hdr, ref = st.columns([4, 1])
     with hdr:
-        st.markdown(f"**{home} vs {away}** — inline analysis")
+        st.markdown(f'<div class="analysis-panel-title">{gui_t("analysis.inline_title", locale)}</div>', unsafe_allow_html=True)
     with ref:
         if st.button("Refresh", key=f"{key_prefix}_refresh", use_container_width=True):
             tab = st.session_state.get("mc_panel_tab", "analyze")
@@ -451,6 +501,7 @@ def render_match_action_panel(
             locale,
             prediction=prediction,
             api_configured=settings.api_football_configured,
+            fixture=fixture,
         )
 
     tab_labels = ["Prediction", "Specialists", "Report", "Audit"]
@@ -477,7 +528,6 @@ def render_match_action_panel(
         elif not pred_result.success:
             st.error("Prediction pipeline failed.")
         else:
-            render_prediction_card(pred_result.prediction, t, locale)
             specialist_report = None
             for ar in pred_result.agent_results:
                 from worldcup_predictor.domain.specialist import MatchSpecialistReport
@@ -487,6 +537,15 @@ def render_match_action_panel(
                     if intel is not None:
                         intel.specialist_report = ar.data
                     break
+            render_professional_prediction_card(
+                pred_result.prediction,
+                intel,
+                locale,
+                specialist_report=specialist_report,
+                fixture=fixture,
+            )
+            with st.expander(gui_t("tech.more_prediction", locale), expanded=False):
+                render_prediction_card(pred_result.prediction, t, locale)
             render_first_goal_sections(
                 pred_result.prediction,
                 intel,

@@ -39,8 +39,8 @@ def generate_scoreline_candidates(
     if home_lambda is None or away_lambda is None:
         home_lambda, away_lambda = _expected_goals_from_report(report)
 
-    home_lambda = max(0.35, min(home_lambda, 3.8))
-    away_lambda = max(0.35, min(away_lambda, 3.8))
+    home_lambda = max(0.55, min(home_lambda, 3.8))
+    away_lambda = max(0.55, min(away_lambda, 3.8))
 
     raw: list[tuple[int, int, float]] = []
     for home in range(0, 6):

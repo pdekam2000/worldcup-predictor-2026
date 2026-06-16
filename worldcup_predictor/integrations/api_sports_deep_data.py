@@ -67,6 +67,11 @@ def normalize_top_scorers(raw: list[Any]) -> list[dict[str, Any]]:
     for block in raw:
         if not isinstance(block, dict):
             continue
+        # API format A — flat {player, statistics[]}
+        if block.get("player") and block.get("statistics") is not None:
+            _append_topscorer_rows(rows, block.get("player"), block.get("statistics"))
+            continue
+        # API format B — nested {team, players[]}
         team = block.get("team") or {}
         team_name = str(team.get("name") or "")
         team_id = team.get("id")
@@ -74,32 +79,63 @@ def normalize_top_scorers(raw: list[Any]) -> list[dict[str, Any]]:
             if not isinstance(entry, dict):
                 continue
             player = entry.get("player") or entry
-            name = str(player.get("name") or entry.get("name") or "")
-            if not name:
-                continue
-            stats_list = entry.get("statistics") or []
-            stats = stats_list[0] if stats_list and isinstance(stats_list[0], dict) else entry.get("statistics") or {}
-            if not isinstance(stats, dict):
-                stats = {}
-            games = stats.get("games") or {}
-            goals_block = stats.get("goals") or {}
-            position = str(games.get("position") or player.get("position") or stats.get("position") or "")
-            goals = _int_val(goals_block.get("total") if isinstance(goals_block, dict) else goals_block) or 0
-            assists = _int_val((stats.get("goals") or {}).get("assists") if isinstance(stats.get("goals"), dict) else None) or 0
-            if is_goalkeeper(position):
-                continue
-            base = {
-                "player": name,
-                "team": team_name,
-                "team_id": team_id,
-                "position": normalize_position(position),
-                "goals": goals,
-                "assists": assists,
-                "data_source": "api_sports_topscorers",
-            }
-            rows.append(enrich_topscorer_row(stats, games, base))
+            stats_raw = entry.get("statistics")
+            if stats_raw is None:
+                stats_raw = [entry.get("statistics") or {}]
+            elif isinstance(stats_raw, dict):
+                stats_raw = [stats_raw]
+            _append_topscorer_rows(
+                rows,
+                player if isinstance(player, dict) else {"name": str(entry.get("name") or "")},
+                stats_raw,
+                default_team_name=team_name,
+                default_team_id=team_id,
+            )
     rows.sort(key=lambda r: (r.get("goals") or 0), reverse=True)
     return rows
+
+
+def _append_topscorer_rows(
+    rows: list[dict[str, Any]],
+    player: Any,
+    statistics: Any,
+    *,
+    default_team_name: str = "",
+    default_team_id: Any = None,
+) -> None:
+    if not isinstance(player, dict):
+        return
+    name = str(player.get("name") or "")
+    if not name:
+        return
+    stats_list = statistics if isinstance(statistics, list) else []
+    if isinstance(statistics, dict):
+        stats_list = [statistics]
+    if not stats_list:
+        stats_list = [{}]
+    for stats in stats_list:
+        if not isinstance(stats, dict):
+            continue
+        team = stats.get("team") or {}
+        team_name = str(team.get("name") or default_team_name or "")
+        team_id = team.get("id") if team.get("id") is not None else default_team_id
+        games = stats.get("games") or {}
+        goals_block = stats.get("goals") or {}
+        position = str(games.get("position") or player.get("position") or stats.get("position") or "")
+        goals = _int_val(goals_block.get("total") if isinstance(goals_block, dict) else goals_block) or 0
+        assists = _int_val((stats.get("goals") or {}).get("assists") if isinstance(stats.get("goals"), dict) else None) or 0
+        if is_goalkeeper(position):
+            continue
+        base = {
+            "player": name,
+            "team": team_name,
+            "team_id": team_id,
+            "position": normalize_position(position),
+            "goals": goals,
+            "assists": assists,
+            "data_source": "api_sports_topscorers",
+        }
+        rows.append(enrich_topscorer_row(stats, games, base))
 
 
 def normalize_fixture_players(raw: list[Any]) -> list[dict[str, Any]]:
@@ -346,6 +382,40 @@ def deep_player_rows_for_team(report: MatchIntelligenceReport, team_name: str) -
     for row in deep.get("fixture_players") or []:
         if isinstance(row, dict) and str(row.get("team", "")).lower() == needle:
             rows.append({**row, "score_hint": compute_conservative_player_score(row)})
+
+    home_name = report.home_team.team_name.lower()
+    away_name = report.away_team.team_name.lower()
+    squads = deep.get("squads") or {}
+    if isinstance(squads, dict):
+        for side, players in squads.items():
+            if not isinstance(players, list):
+                continue
+            side_team = home_name if side == "home" else away_name if side == "away" else ""
+            if side_team != needle:
+                continue
+            for entry in players:
+                if not isinstance(entry, dict):
+                    continue
+                name = str(entry.get("name") or "")
+                position = str(entry.get("position") or "")
+                if not name or is_goalkeeper(position):
+                    continue
+                pos_lower = position.lower()
+                if "attack" in pos_lower or pos_lower in {"f", "fw", "st", "cf"}:
+                    hint = 52.0
+                elif "mid" in pos_lower or pos_lower in {"m", "cm", "am", "dm"}:
+                    hint = 47.0
+                else:
+                    hint = 42.0
+                squad_row = {
+                    "player": name,
+                    "team": str(entry.get("team_name") or team_name),
+                    "position": normalize_position(position),
+                    "data_source": "api_sports_squads",
+                    "goals": 0,
+                    "score_hint": hint,
+                }
+                rows.append(squad_row)
 
     return rows
 

@@ -148,14 +148,12 @@ class ScoringEngine:
 
         expected_goals = self._estimate_goals(report, home_strength, away_strength)
         total_goals = expected_goals[0] + expected_goals[1] + specialist_adj.get("goals_adjustment", 0.0)
-        low_goal_data = (
-            quality_pct < 45
-            or bool(report.missing_data)
-            or all_placeholder
-        )
+        total_goals = self._blend_total_goals_with_market(total_goals, report)
+        low_goal_data = self._ou_low_confidence(report, quality_pct, all_placeholder=all_placeholder)
         over_under_selection, over_under_prob = self._pick_over_under(
             total_goals,
             low_confidence=low_goal_data,
+            report=report,
         )
 
         halftime_total = round(total_goals * 0.45, 2)
@@ -497,15 +495,15 @@ class ScoringEngine:
         has_real_home = bool(report.home_team.statistics and report.home_team.statistics.get("goals"))
         has_real_away = bool(report.away_team.statistics and report.away_team.statistics.get("goals"))
         floor = 0.52 if (has_real_home or has_real_away) else 0.45
-        wc_baseline = 1.32
+        wc_baseline = 1.38
 
         home_goals = max(floor, (home_avg + away_against) / 2 * home_strength)
         away_goals = max(floor, (away_avg + home_against) / 2 * away_strength)
 
         if not has_real_home:
-            home_goals = home_goals * 0.7 + wc_baseline * 0.3 * home_strength
+            home_goals = home_goals * 0.62 + wc_baseline * 0.38 * home_strength
         if not has_real_away:
-            away_goals = away_goals * 0.7 + wc_baseline * 0.3 * away_strength
+            away_goals = away_goals * 0.62 + wc_baseline * 0.38 * away_strength
 
         xg_home, xg_away = self._xg_goal_hints(report)
         if xg_home is not None:
@@ -535,23 +533,83 @@ class ScoringEngine:
             return None, None
 
     @staticmethod
+    def _ou_low_confidence(
+        report: MatchIntelligenceReport,
+        quality_pct: float,
+        *,
+        all_placeholder: bool,
+    ) -> bool:
+        """Only dampen O/U when core inputs are weak — not every optional field."""
+        if all_placeholder or quality_pct < 42:
+            return True
+        missing = {str(x).lower() for x in (report.missing_data or [])}
+        critical_gaps = missing.intersection(
+            {"team_statistics", "odds", "injuries", "head_to_head", "form"}
+        )
+        if len(critical_gaps) >= 3:
+            return True
+        if "odds" in missing and "team_statistics" in missing:
+            return True
+        return False
+
+    @staticmethod
+    def _extract_ou_market_probs(report: MatchIntelligenceReport) -> dict[str, float]:
+        try:
+            from worldcup_predictor.agents.specialists.odds_control_agent import extract_over_under_probs
+
+            supplemental = getattr(report, "supplemental_sources", None) or {}
+            return extract_over_under_probs(report, supplemental)
+        except Exception:
+            return {}
+
+    @classmethod
+    def _blend_total_goals_with_market(cls, total_goals: float, report: MatchIntelligenceReport) -> float:
+        ou_probs = cls._extract_ou_market_probs(report)
+        if not ou_probs:
+            return total_goals
+        over_p = float(ou_probs.get("over_2_5") or 0.5)
+        market_total = 2.5 + (over_p - 0.5) * 1.35
+        return round(total_goals * 0.5 + market_total * 0.5, 2)
+
+    @staticmethod
     def _pick_over_under(
         total_goals: float,
         *,
         low_confidence: bool,
+        report: MatchIntelligenceReport | None = None,
     ) -> tuple[OverUnderSelection, float]:
         margin = total_goals - 2.5
+        ou_probs: dict[str, float] = {}
+        if report is not None:
+            ou_probs = ScoringEngine._extract_ou_market_probs(report)
+
+        if ou_probs and abs(margin) < 0.4:
+            over_p = float(ou_probs.get("over_2_5") or 0.0)
+            under_p = float(ou_probs.get("under_2_5") or 0.0)
+            if over_p or under_p:
+                if over_p >= under_p:
+                    selection: OverUnderSelection = "over_2_5"
+                    probability = over_p or 0.55
+                else:
+                    selection = "under_2_5"
+                    probability = under_p or 0.55
+                if low_confidence:
+                    probability = min(max(probability, 0.52), 0.66)
+                else:
+                    probability = min(max(probability, 0.55), 0.78)
+                return selection, probability
+
         if margin > 0.05:
-            selection: OverUnderSelection = "over_2_5"
+            selection = "over_2_5"
         elif margin < -0.05:
             selection = "under_2_5"
         else:
             selection = "over_2_5" if margin >= 0 else "under_2_5"
         distance = abs(margin)
         if low_confidence:
-            probability = min(0.52 + distance * 0.08, 0.62)
+            probability = min(0.54 + distance * 0.1, 0.64)
         else:
-            probability = min(0.55 + distance * 0.12, 0.78 if distance > 0.35 else 0.72)
+            probability = min(0.56 + distance * 0.12, 0.78 if distance > 0.35 else 0.72)
         return selection, probability
 
     @staticmethod

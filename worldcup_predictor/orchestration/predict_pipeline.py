@@ -80,6 +80,20 @@ class PredictPipeline:
         except Exception:
             pass
         try:
+            from worldcup_predictor.intelligence.first_goal_intelligence_v2 import (
+                load_first_goal_v2_from_prediction,
+            )
+            from worldcup_predictor.prediction.extended_markets import attach_extended_markets_to_prediction
+
+            fg_v2 = load_first_goal_v2_from_prediction(prediction)
+            attach_extended_markets_to_prediction(
+                prediction,
+                intel,
+                fg_v2=fg_v2,
+            )
+        except Exception:
+            pass
+        try:
             from worldcup_predictor.fusion.fusion_applier import apply_fusion_enrichment
 
             prediction, _ = apply_fusion_enrichment(

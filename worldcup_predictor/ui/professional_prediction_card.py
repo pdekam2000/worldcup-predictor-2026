@@ -11,8 +11,10 @@ from worldcup_predictor.domain.prediction import MatchPrediction
 from worldcup_predictor.domain.specialist import MatchSpecialistReport
 from worldcup_predictor.export.match_report_collector import collect_match_report_bundle
 from worldcup_predictor.export.professional_match_report_exporter_v2 import ProfessionalMatchReportExporterV2
+from worldcup_predictor.ui.extended_prediction_display import render_extended_prediction_markets
 from worldcup_predictor.ui.first_goal_display import render_first_goal_sections
 from worldcup_predictor.ui.gui_i18n import gui_t
+from worldcup_predictor.ui.team_display import match_header_html
 from worldcup_predictor.ui.status_badges import (
     confidence_band,
     decision_quality_display,
@@ -50,10 +52,17 @@ def render_professional_prediction_card(
     locale: Locale,
     *,
     specialist_report: MatchSpecialistReport | None = None,
+    fixture: Any | None = None,
 ) -> None:
     """Top summary card — first goal sections always render separately."""
     try:
-        _render_core_card(prediction, report, locale, specialist_report=specialist_report)
+        _render_core_card(
+            prediction,
+            report,
+            locale,
+            specialist_report=specialist_report,
+            fixture=fixture,
+        )
     except Exception:
         st.caption(gui_t("pro_card.unavailable", locale))
 
@@ -72,6 +81,7 @@ def _render_core_card(
     locale: Locale,
     *,
     specialist_report: MatchSpecialistReport | None,
+    fixture: Any | None = None,
 ) -> None:
     ou_label = (
         prediction.over_under.label.get(locale)
@@ -91,25 +101,36 @@ def _render_core_card(
     conf_band = confidence_band(prediction.confidence_score)
     risk_band = risk_display(prediction.risk_level)
 
+    home_name, away_name = prediction.match_name.split(" vs ", 1) if " vs " in prediction.match_name else (
+        prediction.match_name,
+        "",
+    )
+    country_hint = getattr(fixture, "country", None) if fixture else None
+
     st.markdown(f"### {gui_t('pro_card.title', locale)}")
     with st.container(border=True):
-        st.markdown(f"## {prediction.match_name}")
+        st.markdown(
+            match_header_html(home_name, away_name, fixture=fixture, country_hint=country_hint),
+            unsafe_allow_html=True,
+        )
         gs = getattr(prediction, "group_context", None)
         if gs and isinstance(gs, dict) and gs.get("group"):
             st.caption(f"{gui_t('card.group', locale)}: {gs.get('group')}")
 
-        c1, c2 = st.columns(2)
-        with c1:
-            st.metric(gui_t("pro_card.one_x_two", locale), x2_label)
-        with c2:
-            st.metric(gui_t("pro_card.over_under", locale), ou_label)
+        render_extended_prediction_markets(
+            prediction,
+            report,
+            locale,
+            specialist_report=specialist_report,
+        )
 
         b1, b2, b3 = st.columns(3)
         with b1:
             render_status_badge(conf_band, kind="confidence", locale=locale)
-            st.caption(f"{prediction.confidence_score:.0f}/100")
+            st.caption(f"{prediction.confidence_score:.0f}/100 · {x2_label}")
         with b2:
             render_status_badge(quality_band, kind="quality", locale=locale)
+            st.caption(ou_label)
         with b3:
             render_status_badge(risk_band, kind="risk", locale=locale)
 

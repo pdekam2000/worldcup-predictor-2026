@@ -30,6 +30,11 @@ FLAG_CODE_BY_CANONICAL: dict[str, str] = {
     "curacao": "cw",
     "netherlands": "nl",
     "spain": "es",
+    "senegal": "sn",
+    "cameroon": "cm",
+    "ghana": "gh",
+    "nigeria": "ng",
+    "algeria": "dz",
     "france": "fr",
     "england": "gb-eng",
     "wales": "gb-wls",
@@ -94,7 +99,9 @@ ALIAS_TO_CANONICAL: dict[str, str] = {
     "saudi arabia": "saudi_arabia",
     "new zealand": "new_zealand",
     "north macedonia": "north_macedonia",
-    "northern ireland": "northern_ireland",
+    "senegal": "senegal",
+    "senegal republic": "senegal",
+    "republic of senegal": "senegal",
     "united arab emirates": "uae",
 }
 
@@ -115,8 +122,11 @@ INITIALS_BY_CANONICAL: dict[str, str] = {
     "north_macedonia": "MKD",
     "uae": "UAE",
     "turkey": "TUR",
-    "haiti": "HAI",
-    "australia": "AUS",
+    "senegal": "SEN",
+    "cameroon": "CMR",
+    "ghana": "GHA",
+    "nigeria": "NGA",
+    "algeria": "ALG",
 }
 
 
@@ -172,9 +182,20 @@ def flag_image_url(code: str, *, width: int = 160) -> str:
     return f"https://flagcdn.com/w{width}/{code}.png"
 
 
-def flag_html_for_team(team_name: str, *, country_hint: str | None = None) -> str:
+def flag_html_for_team(
+    team_name: str,
+    *,
+    country_hint: str | None = None,
+    logo_url: str | None = None,
+) -> str:
     """Return HTML for flag image or small initials badge — never large ISO letters."""
     safe_name = html.escape(team_name)
+    if logo_url and str(logo_url).startswith("http"):
+        url = html.escape(str(logo_url), quote=True)
+        return (
+            f'<img src="{url}" alt="{safe_name} flag" class="imc-flag-img" '
+            f'loading="lazy" title="{safe_name}" />'
+        )
     code = flag_code_for_team(team_name, country_hint=country_hint)
     if code:
         url = flag_image_url(code)

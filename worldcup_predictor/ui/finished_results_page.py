@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 from typing import Any
 
 import streamlit as st
@@ -153,8 +154,13 @@ def _render_finished_row(fixture: Any, locale: Locale) -> None:
         )
         col_a, col_b, col_c = st.columns([3, 2, 2])
         with col_a:
-            st.markdown(f"**{home} {score} {away}**")
-            st.caption(f"{group} · {ko_caption}")
+            st.markdown(
+                f'<div class="finished-result-head">'
+                f'<div class="finished-result-score">{html.escape(home)} {html.escape(score)} {html.escape(away)}</div>'
+                f'<div class="finished-result-meta">{html.escape(group)} · {html.escape(ko_caption)}</div>'
+                f"</div>",
+                unsafe_allow_html=True,
+            )
         with col_b:
             st.caption(gui_t("card.status", locale))
             st.markdown(f"~~{status}~~" if status else gui_t("status.finished", locale))

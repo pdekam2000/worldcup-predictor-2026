@@ -62,6 +62,21 @@ def record_from_match_prediction(
     dq = prediction.confidence_breakdown.data_quality_score if prediction.confidence_breakdown else 0.0
     lineups_ok = lineups_available if lineups_available is not None else prediction.lineup_warning is None
     created_at = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+    extended_json: str | None = None
+    try:
+        from worldcup_predictor.prediction.extended_markets import (
+            build_extended_markets,
+            load_extended_markets_from_prediction,
+        )
+
+        snap = load_extended_markets_from_prediction(prediction) or build_extended_markets(prediction, None)
+        extended_json = json.dumps(snap.to_dict(), ensure_ascii=False)
+        prediction.metadata = dict(prediction.metadata or {})
+        prediction.metadata["extended_markets"] = extended_json
+    except Exception:
+        extended_json = (prediction.metadata or {}).get("extended_markets")
+        if extended_json and not isinstance(extended_json, str):
+            extended_json = json.dumps(extended_json, ensure_ascii=False)
     return PredictionHistoryRecord(
         fixture_id=prediction.fixture_id,
         date=date_str,
@@ -85,6 +100,7 @@ def record_from_match_prediction(
         reason_for_refresh=reason_for_refresh,
         lineups_available=lineups_ok,
         is_preliminary=not lineups_ok,
+        extended_markets_json=extended_json,
     )
 
 

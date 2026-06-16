@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 import streamlit as st
 import streamlit.components.v1 as components
 
-from worldcup_predictor.access.config import public_access_enabled
+from worldcup_predictor.access.config import credentials_login_available
 from worldcup_predictor.access.repository import AccessRepository, get_access_repository
 
 _REMEMBER_DAYS = 30
@@ -81,7 +81,7 @@ def inject_remember_restore_probe() -> None:
 
 def try_restore_remembered_login(*, repo: AccessRepository | None = None) -> bool:
     """Restore registered session from ?rt= query param — never raises."""
-    if not public_access_enabled():
+    if not credentials_login_available():
         return False
     if st.session_state.get("access_user_id"):
         return False

@@ -30,6 +30,7 @@ class PredictionHistoryRecord:
     is_preliminary: bool = True
     predicted_scoreline: str | None = None
     predicted_first_goal_scorer: str | None = None
+    extended_markets_json: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -60,6 +61,7 @@ class PredictionHistoryRecord:
             is_preliminary=bool(data.get("is_preliminary", True)),
             predicted_scoreline=data.get("predicted_scoreline"),
             predicted_first_goal_scorer=data.get("predicted_first_goal_scorer"),
+            extended_markets_json=data.get("extended_markets_json"),
         )
 
 

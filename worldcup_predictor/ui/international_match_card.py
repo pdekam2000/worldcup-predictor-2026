@@ -7,10 +7,10 @@ from typing import Any, Literal
 import streamlit as st
 
 from worldcup_predictor.config.settings import Locale
-from worldcup_predictor.ui.country_flags import flag_html_for_team
 from worldcup_predictor.ui.fixture_display import format_group_stage
 from worldcup_predictor.ui.fixture_list_helpers import is_kickoff_today, local_kickoff_time_display
 from worldcup_predictor.ui.gui_i18n import gui_t
+from worldcup_predictor.ui.team_display import team_flag_html
 
 CardVariant = Literal["upcoming", "live", "finished"]
 
@@ -116,8 +116,8 @@ def render_international_match_card(
     group_label = format_group_stage(fixture, tournament_context)
 
     country_hint = getattr(fixture, "country", None)
-    home_flag = flag_html_for_team(home, country_hint=country_hint)
-    away_flag = flag_html_for_team(away)
+    home_flag = team_flag_html(home, fixture=fixture, side="home", country_hint=country_hint)
+    away_flag = team_flag_html(away, fixture=fixture, side="away")
 
     is_today = is_kickoff_today(fixture)
     local_time_only = local_kickoff_time_display(fixture)

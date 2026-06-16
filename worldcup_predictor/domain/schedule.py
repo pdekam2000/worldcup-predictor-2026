@@ -63,6 +63,8 @@ class TournamentFixture:
     red_cards_away: int = 0
     goal_scorers: list[str] = field(default_factory=list)
     stats_summary: dict[str, str] = field(default_factory=dict)
+    home_team_logo: str | None = None
+    away_team_logo: str | None = None
 
 
 @dataclass

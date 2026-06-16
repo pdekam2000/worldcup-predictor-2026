@@ -93,14 +93,22 @@ def pages_for_mode(*, developer_mode: bool) -> set[str]:
         legacy = {k for k, _, _ in LEGACY_USER_NAV_ITEMS}
         dev = {k for k, _, _ in DEV_NAV_ITEMS}
         return user_keys | legacy | dev | hidden
-    return user_keys | hidden
+    if is_admin_session():
+        return user_keys | hidden
+    from worldcup_predictor.access.admin_auth import ADMIN_ONLY_NAV_KEYS
+
+    return (user_keys - ADMIN_ONLY_NAV_KEYS) | hidden
 
 
 def primary_nav_for_mode(*, developer_mode: bool) -> list[tuple[str, str, str]]:
     """Sidebar primary radio items for the active mode."""
     if developer_mode:
         return USER_MODE_V2_NAV_ITEMS + LEGACY_USER_NAV_ITEMS
-    return list(USER_MODE_V2_NAV_ITEMS)
+    if is_admin_session():
+        return list(USER_MODE_V2_NAV_ITEMS)
+    from worldcup_predictor.access.admin_auth import ADMIN_ONLY_NAV_KEYS
+
+    return [item for item in USER_MODE_V2_NAV_ITEMS if item[0] not in ADMIN_ONLY_NAV_KEYS]
 
 
 def dev_expander_nav_items() -> list[tuple[str, str, str]]:
@@ -166,5 +174,4 @@ def render_mode_toggle(locale: Locale) -> None:
             st.session_state.get("gui_page"),
             developer_mode=(picked == "developer"),
         )
-        sync_primary_nav_widget(developer_mode=(picked == "developer"))
         st.rerun()

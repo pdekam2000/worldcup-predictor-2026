@@ -119,11 +119,10 @@ from worldcup_predictor.access.prediction_gate import acquire_prediction_slot, p
 from worldcup_predictor.access.public_guard import blocks_prediction_actions
 from worldcup_predictor.ui.accuracy_display import render_developer_accuracy_table, render_user_accuracy_card
 from worldcup_predictor.ui.access_display import (
-    render_access_home_panel,
     render_access_sidebar,
-    render_admin_bottom_sidebar,
     render_admin_config_debug,
     render_gate_block,
+    render_login_required_hint,
     render_quota_banner,
 )
 from worldcup_predictor.ui.admin_entitlements_page import render_admin_entitlements_page
@@ -131,8 +130,7 @@ from worldcup_predictor.ui.finished_results_page import render_finished_results_
 from worldcup_predictor.ui.feedback_display import render_feedback_form, render_feedback_viewer_page
 from worldcup_predictor.ui.upgrade_page import render_upgrade_page
 from worldcup_predictor.ui.odds_api_credit_display import render_odds_api_credit_panel
-from worldcup_predictor.ui.user_home_dashboard import render_user_home_dashboard
-from worldcup_predictor.ui.worldcup_group_browser import render_worldcup_group_browser
+from worldcup_predictor.ui.user_home_dashboard import render_user_home_dashboard, render_home_match_showcase
 from worldcup_predictor.ui.fixture_display import (
     format_group_stage,
     format_match_subtitle,
@@ -186,8 +184,9 @@ def main() -> None:
     require_auth(locale)
     enforce_non_admin_restrictions()
     _render_sidebar()
-    page = st.session_state["gui_page"]
     locale = _locale()
+    render_page_top_anchor()
+    page = st.session_state["gui_page"]
     if block_developer_route(page, locale):
         page_home()
     else:
@@ -217,6 +216,7 @@ def main() -> None:
         "feedback_viewer": page_feedback_viewer,
         "settings": page_settings,
         }[page]()
+    render_back_to_top(locale)
     st.sidebar.markdown("---")
     st.sidebar.caption(gui_t("disclaimer", _locale()))
 
@@ -518,9 +518,8 @@ def _render_sidebar() -> None:
         format_func=_locale_label,
     )
     locale = _locale()
-    render_access_sidebar(locale)
     render_premium_upgrade_card(locale)
-    render_admin_bottom_sidebar(locale)
+    render_access_sidebar(locale)
     render_creator_footer(locale)
 
 
@@ -562,12 +561,15 @@ def page_home() -> None:
         from worldcup_predictor.ui.fixture_list_helpers import is_kickoff_today
 
         today_fixtures = [f for f in center.upcoming if is_kickoff_today(f)]
-        if today_fixtures:
-            for fixture in today_fixtures[:4]:
-                render_match_card(fixture, locale, source=fixture.source)
+        live_today = [f for f in center.live if is_kickoff_today(f)]
+        live_ids = {int(getattr(f, "fixture_id", 0) or 0) for f in live_today}
+        today_all = live_today + [
+            f for f in today_fixtures if int(getattr(f, "fixture_id", 0) or 0) not in live_ids
+        ]
+        if today_all:
+            render_home_match_showcase(today_all, locale, key_prefix="dev_today", show_predict=True)
         elif center.upcoming:
-            for fixture in center.upcoming[:3]:
-                render_match_card(fixture, locale, source=fixture.source)
+            render_home_match_showcase(center.upcoming[:3], locale, key_prefix="dev_next", show_predict=True)
         else:
             st.info(gui_t("no_fixture", locale))
 
@@ -613,8 +615,6 @@ def page_home() -> None:
             goto_match_center=lambda: _goto("match_center"),
         )
         render_user_accuracy_card(locale, center=center)
-
-    render_back_to_top(locale)
 
 
 def _accuracy_service() -> AccuracyTrackerService:
@@ -672,12 +672,10 @@ def page_favorites() -> None:
             source=getattr(fixture, "source", None),
             key_prefix=f"fav_{fixture.fixture_id}",
         )
-    render_back_to_top(locale)
 
 
 def page_match_center() -> None:
     locale = _locale()
-    render_page_top_anchor()
 
     header_left, header_right = st.columns([3, 2])
     with header_left:
@@ -822,9 +820,6 @@ def page_match_center() -> None:
                 source=getattr(fixture, "source", center.source_label),
                 key_prefix=f"mc_fin_{fixture.fixture_id}",
             )
-
-    render_back_to_top(locale)
-
 
 def page_finished_results() -> None:
     locale = _locale()
@@ -1478,7 +1473,6 @@ def page_opening_match() -> None:
 def page_upcoming() -> None:
     locale = _locale()
     t = _translator()
-    render_page_top_anchor()
     render_hero(gui_t("nav.upcoming", locale), t.t("cli.upcoming.header"))
     render_source_badge(st.session_state.get("fixture_source"), locale)
 
@@ -1527,7 +1521,6 @@ def page_upcoming() -> None:
         filter_key=filter_key,
         empty_message=gui_t("no_fixture", locale),
     )
-    render_back_to_top(locale)
 
 
 def page_prediction() -> None:
@@ -1536,38 +1529,9 @@ def page_prediction() -> None:
     subtitle = t.t("cli.predict.header")
     render_hero(gui_t("nav.predict", locale), subtitle)
 
-    fid_top = _default_fixture_id()
-    fixture_top = _lookup_fixture(fid_top)
-    if fixture_top:
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        render_fixture_summary_panel(fixture_top, int(fid_top), locale)
-        from worldcup_predictor.ui.fixture_display import render_kickoff_panel
-        render_kickoff_panel(fixture_top, locale)
-        st.markdown("</div>", unsafe_allow_html=True)
-
     all_fixtures = _all_fixtures_for_selector()
-    try:
-        overview = _schedule_service().get_tournament_overview()
-        groups = overview.groups if overview else {}
-    except Exception:
-        groups = {}
-
-    def _select_from_browser(fixture_id: int) -> None:
-        st.session_state["selected_fixture_id"] = fixture_id
-        st.session_state["fixture_id"] = fixture_id
-        st.session_state.pop("gui_expand_group_browser", None)
-        st.rerun()
-
-    render_worldcup_group_browser(
-        locale,
-        all_fixtures=all_fixtures,
-        groups=groups,
-        on_select_fixture=_select_from_browser,
-        key_prefix="predict_groups",
-    )
-
-    st.markdown("---")
-    st.markdown(f"#### {gui_t('group_browser.manual_search', locale)}")
+    st.markdown(f"### {gui_t('predict.pick_match', locale)}")
+    st.caption(gui_t("predict.pick_match_hint", locale))
 
     fid = render_match_selector(
         all_fixtures,
@@ -1580,10 +1544,11 @@ def page_prediction() -> None:
 
     fixture = _lookup_fixture(fid)
     render_fixture_summary_panel(fixture, int(fid), locale)
+    from worldcup_predictor.ui.fixture_display import render_kickoff_panel
+    render_kickoff_panel(fixture, locale)
 
     if blocks_prediction_actions():
-        st.warning(gui_t("access.login_required", locale))
-        render_access_home_panel(locale)
+        render_login_required_hint(locale)
         return
 
     render_stored_prediction_summary(int(fid), locale, compact=False, fixture=fixture)
@@ -1651,6 +1616,7 @@ def page_prediction() -> None:
             intel,
             locale,
             specialist_report=specialist_report,
+            fixture=fixture,
         )
 
         if dev_mode:
@@ -2073,7 +2039,6 @@ def page_professional_reports() -> None:
     locale = _locale()
     render_hero(gui_t("nav.professional_reports", locale), gui_t("reports_page.hint", locale))
     render_professional_reports_page(locale)
-    render_back_to_top(locale)
 
 
 def page_hall_of_fame() -> None:
@@ -2082,14 +2047,12 @@ def page_hall_of_fame() -> None:
     from worldcup_predictor.ui.hall_of_fame_page import render_hall_of_fame_page
 
     render_hall_of_fame_page(locale, competition_key=_competition_key())
-    render_back_to_top(locale)
 
 
 def page_upgrade() -> None:
     locale = _locale()
     render_hero(gui_t("nav.upgrade", locale), gui_t("upgrade.disclaimer", locale))
     render_upgrade_page(locale)
-    render_back_to_top(locale)
 
 
 def page_admin_entitlements() -> None:
@@ -2099,7 +2062,6 @@ def page_admin_entitlements() -> None:
         return
     render_hero(gui_t("nav.admin_entitlements", locale), gui_t("admin.hint", locale))
     render_admin_entitlements_page(locale)
-    render_back_to_top(locale)
 
 
 def page_feedback_viewer() -> None:
@@ -2109,7 +2071,6 @@ def page_feedback_viewer() -> None:
         return
     render_hero(gui_t("nav.feedback_viewer", locale), "")
     render_feedback_viewer_page(locale)
-    render_back_to_top(locale)
 
 
 def page_settings() -> None:

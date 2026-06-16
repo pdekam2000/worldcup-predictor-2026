@@ -10,9 +10,11 @@ import streamlit as st
 from worldcup_predictor.config.settings import Locale
 from worldcup_predictor.schedule.match_center import FINISHED_STATUSES, LIVE_STATUSES
 from worldcup_predictor.ui.fixture_display import format_kickoff_caption
+from worldcup_predictor.ui.kickoff_timezone import format_kickoff_times
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.professional_reports_page import list_exported_reports
 from worldcup_predictor.ui.stored_prediction_summary import has_stored_prediction
+from worldcup_predictor.ui.team_display import match_header_html
 
 
 GROUP_KEYS = tuple(f"Group {letter}" for letter in "ABCDEFGH")
@@ -235,7 +237,15 @@ def _render_fixture_row(
     )
     c1, c2 = st.columns([3, 1])
     with c1:
-        st.markdown(f"**{home} vs {away}**")
+        st.markdown(
+            match_header_html(
+                home,
+                away,
+                fixture=fixture,
+                country_hint=getattr(fixture, "country", None),
+            ),
+            unsafe_allow_html=True,
+        )
         if _is_finished(fixture):
             st.caption(f"{ko_caption} · ID {fid}")
             st.caption(f'<span class="match-status-struck">~~{status}~~</span>', unsafe_allow_html=True)

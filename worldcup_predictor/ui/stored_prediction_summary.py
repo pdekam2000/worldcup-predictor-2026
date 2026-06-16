@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import html
+import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Literal
@@ -12,6 +14,8 @@ from worldcup_predictor.accuracy.history_store import PredictionHistoryStore
 from worldcup_predictor.accuracy.models import EvaluatedPrediction, PredictionHistoryRecord
 from worldcup_predictor.config.settings import Locale
 from worldcup_predictor.database.repository import FootballIntelligenceRepository
+from worldcup_predictor.domain.prediction import MatchPrediction
+from worldcup_predictor.prediction.extended_markets import is_reliable_player_name
 from worldcup_predictor.schedule.match_center import classify_status
 from worldcup_predictor.ui.gui_i18n import gui_t
 
@@ -65,8 +69,10 @@ class StoredPredictionView:
     created_at: str
     lineups_available: bool
     is_preliminary: bool
+    predicted_first_goal_scorer: str | None = None
     source: str = "stored"
     verifications: tuple[dict[str, str], ...] = ()
+    extended_markets_json: str | None = None
 
     @property
     def match_name(self) -> str:
@@ -89,7 +95,9 @@ class StoredPredictionView:
             created_at=record.created_at,
             lineups_available=record.lineups_available,
             is_preliminary=record.is_preliminary,
+            predicted_first_goal_scorer=getattr(record, "predicted_first_goal_scorer", None),
             source=record.source,
+            extended_markets_json=getattr(record, "extended_markets_json", None),
         )
 
     @classmethod
@@ -113,8 +121,10 @@ class StoredPredictionView:
             created_at=str(pred.get("created_at") or ""),
             lineups_available=bool(pred.get("lineups_available")),
             is_preliminary=bool(pred.get("is_preliminary")),
+            predicted_first_goal_scorer=markets.get("first_goal_scorer") or markets.get("likely_scorer"),
             source=str(pred.get("source") or "live"),
             verifications=verifications,
+            extended_markets_json=markets.get("extended_markets_json") or pred.get("extended_markets_json"),
         )
 
 
@@ -175,6 +185,274 @@ def format_time_ago(iso_ts: str) -> str:
         return f"{hours}h ago"
     days = hours // 24
     return f"{days}d ago"
+
+
+def _live_prediction_for_fixture(fixture_id: int) -> MatchPrediction | None:
+    """In-session live prediction if user ran Predict on this fixture."""
+    try:
+        cache = st.session_state.get("match_center_action_cache", {}).get(str(int(fixture_id)), {})
+        pred_result = cache.get("predict")
+        if pred_result and getattr(pred_result, "success", False):
+            p = getattr(pred_result, "prediction", None)
+            if p and int(getattr(p, "fixture_id", 0)) == int(fixture_id):
+                return p
+        last = st.session_state.get("gui_last_prediction")
+        if last and getattr(last, "success", False):
+            p = getattr(last, "prediction", None)
+            if p and int(getattr(p, "fixture_id", 0)) == int(fixture_id):
+                return p
+    except Exception:
+        pass
+    return None
+
+
+def _minimal_prediction_from_stored(stored: StoredPredictionView) -> MatchPrediction:
+    """Rebuild a lightweight MatchPrediction so extended markets can be computed for old saves."""
+    from worldcup_predictor.domain.prediction import (
+        ConfidenceLevel,
+        FirstGoalPrediction,
+        HalftimePrediction,
+        MarketPrediction,
+        MatchPrediction,
+        PredictionConfidenceBreakdown,
+        ScorelineCandidate,
+    )
+
+    home, away = stored.home_team, stored.away_team
+    dq = stored.data_quality_score
+    if dq <= 1.0:
+        dq *= 100.0
+    candidates: list[ScorelineCandidate] = []
+    if stored.predicted_scoreline:
+        parts = stored.predicted_scoreline.replace(":", "-").split("-")
+        if len(parts) == 2:
+            try:
+                candidates = [ScorelineCandidate(int(parts[0]), int(parts[1]), 0.22)]
+            except ValueError:
+                pass
+    return MatchPrediction(
+        fixture_id=stored.fixture_id,
+        competition_key="world_cup_2026",
+        match_name=f"{home} vs {away}",
+        one_x_two=MarketPrediction("1x2", stored.predicted_1x2, stored.confidence_score / 100.0),
+        over_under=MarketPrediction("over_under_2_5", stored.predicted_over_under, 0.55),
+        halftime=HalftimePrediction(estimated_total_goals=1.05),
+        first_goal=FirstGoalPrediction(
+            team=stored.predicted_first_goal_team or home,
+            player=stored.predicted_first_goal_scorer,
+            minute_range="16-30",
+        ),
+        confidence_score=stored.confidence_score,
+        confidence_level=ConfidenceLevel.MEDIUM,
+        confidence_breakdown=PredictionConfidenceBreakdown(
+            form_score=50.0,
+            h2h_score=50.0,
+            injuries_score=50.0,
+            lineups_score=50.0,
+            odds_score=50.0,
+            data_quality_score=dq,
+            total=stored.confidence_score,
+        ),
+        risk_level="medium",
+        scoreline_candidates=candidates,
+        is_placeholder=False,
+        metadata={"extended_markets": stored.extended_markets_json or ""},
+    )
+
+
+def _load_extended_snapshot(
+    stored: StoredPredictionView,
+    live_prediction: MatchPrediction | None = None,
+) -> Any | None:
+    from worldcup_predictor.prediction.extended_markets import (
+        ExtendedMarketsSnapshot,
+        FirstGoalTimeEstimate,
+        GoalscorerPick,
+        ThreeWayProbabilities,
+        TwoWayProbabilities,
+        build_extended_markets,
+        load_extended_markets_from_prediction,
+    )
+
+    if live_prediction is not None:
+        try:
+            return load_extended_markets_from_prediction(live_prediction) or build_extended_markets(
+                live_prediction, None
+            )
+        except Exception:
+            pass
+    raw = stored.extended_markets_json
+    if raw:
+        try:
+            data = json.loads(raw) if isinstance(raw, str) else raw
+            return ExtendedMarketsSnapshot(
+                full_time_1x2=ThreeWayProbabilities(**(data.get("full_time_1x2") or {})),
+                over_under_2_5=TwoWayProbabilities(**(data.get("over_under_2_5") or {})),
+                btts=TwoWayProbabilities(**(data.get("btts") or {})),
+                halftime_1x2=ThreeWayProbabilities(**(data.get("halftime_1x2") or {})),
+                first_goal_time=FirstGoalTimeEstimate(**(data.get("first_goal_time") or {})),
+                top_scorer=GoalscorerPick(**(data.get("top_scorer") or {})),
+                home_scorer=GoalscorerPick(**(data.get("home_scorer") or {})),
+                away_scorer=GoalscorerPick(**(data.get("away_scorer") or {})),
+                correct_scores=list(data.get("correct_scores") or []),
+                confidence_score=float(data.get("confidence_score") or 0),
+                data_quality_score=float(data.get("data_quality_score") or 0),
+                has_player_data=bool(data.get("has_player_data")),
+            )
+        except Exception:
+            pass
+    try:
+        rebuilt = _minimal_prediction_from_stored(stored)
+        return build_extended_markets(rebuilt, None)
+    except Exception:
+        pass
+    return None
+
+
+def _ht_pick_label(ht: Any, home: str, away: str, locale: Locale) -> str:
+    if ht is None:
+        return "—"
+    try:
+        probs = ht.as_percent()
+        best = max(probs, key=probs.get)
+        pct = probs[best]
+        if best == "home":
+            return f"{home} {pct:.0f}%"
+        if best == "away":
+            return f"{away} {pct:.0f}%"
+        return f"{gui_t('markets.draw', locale)} {pct:.0f}%"
+    except Exception:
+        return "—"
+
+
+def _scorer_display(snap: Any, stored: StoredPredictionView, locale: Locale) -> str:
+    fallback = gui_t("markets.not_enough_player_data", locale)
+    if snap is not None:
+        try:
+            if is_reliable_player_name(getattr(snap.top_scorer, "player", None)):
+                name = str(snap.top_scorer.player)
+                team = snap.top_scorer.team
+                return f"{name} ({team})" if team else name
+            if snap.has_player_data:
+                for pick in (snap.home_scorer, snap.away_scorer):
+                    if is_reliable_player_name(getattr(pick, "player", None)):
+                        name = str(pick.player)
+                        team = pick.team
+                        return f"{name} ({team})" if team else name
+        except Exception:
+            pass
+    if is_reliable_player_name(stored.predicted_first_goal_scorer):
+        return str(stored.predicted_first_goal_scorer)
+    return fallback
+
+
+def _ou_confidence(snap: Any | None, stored: StoredPredictionView) -> str:
+    if snap is None:
+        return "—"
+    try:
+        sel = (stored.predicted_over_under or "").lower()
+        a, b = snap.over_under_2_5.as_percent()
+        pct = a if "over" in sel else b
+        return f"{pct:.0f}%"
+    except Exception:
+        return "—"
+
+
+def _score_confidence(snap: Any | None, stored: StoredPredictionView) -> str:
+    if snap is None or not stored.predicted_scoreline:
+        return "—"
+    try:
+        target = stored.predicted_scoreline.replace(":", "-")
+        for row in snap.correct_scores or []:
+            if str(row.get("label", "")).replace(":", "-") == target:
+                return f"{float(row.get('probability', 0)):.0f}%"
+        if snap.correct_scores:
+            return f"{float(snap.correct_scores[0].get('probability', 0)):.0f}%"
+    except Exception:
+        pass
+    return "—"
+
+
+def _market_grid_cells(
+    stored: StoredPredictionView,
+    snap: Any | None,
+    *,
+    home: str,
+    away: str,
+    locale: Locale,
+    conf: str,
+) -> list[tuple[str, str, str]]:
+    """Label, value, confidence line for each prediction market card."""
+    x2 = _format_1x2(stored.predicted_1x2, home, away)
+    ou = _format_ou(stored.predicted_over_under)
+    score = _format_scoreline(stored.predicted_scoreline)
+
+    btts_val = "—"
+    ht_val = "—"
+    fg_val = gui_t("markets.fg_time_unavailable", locale)
+    scorer_val = _scorer_display(None, stored, locale)
+    ou_conf = "—"
+    score_conf = "—"
+
+    if snap is not None:
+        try:
+            yes_pct, no_pct = snap.btts.as_percent()
+            btts_val = f"{gui_t('markets.yes', locale)} {yes_pct:.0f}% / {gui_t('markets.no', locale)} {no_pct:.0f}%"
+            ht_val = _ht_pick_label(snap.halftime_1x2, home, away, locale)
+            fg = snap.first_goal_time
+            minute = fg.expected_minute
+            band = fg.minute_band or "—"
+            if minute and band not in {"—", ""}:
+                fg_val = f"{gui_t('markets.minute_label', locale).format(minute=minute)} ({band})"
+            elif band not in {"—", ""}:
+                fg_val = str(band)
+            scorer_val = _scorer_display(snap, stored, locale)
+            ou_conf = _ou_confidence(snap, stored)
+            score_conf = _score_confidence(snap, stored)
+        except Exception:
+            pass
+
+    return [
+        ("1X2", x2, f"{gui_t('stored.confidence', locale)} {conf}"),
+        ("O/U 2.5", ou, f"{gui_t('stored.confidence', locale)} {ou_conf}"),
+        (gui_t("markets.btts", locale), btts_val, ""),
+        (gui_t("markets.ht_result", locale), ht_val, ""),
+        (gui_t("markets.first_goal_time", locale), fg_val, ""),
+        (gui_t("markets.likely_scorer", locale), scorer_val, ""),
+        (gui_t("stored.correct_score", locale), score, f"{gui_t('stored.confidence', locale)} {score_conf}"),
+    ]
+
+
+def _render_market_grid_html(
+    cells: list[tuple[str, str, str]],
+    *,
+    correctness: dict[str, bool | None] | None = None,
+) -> str:
+    parts: list[str] = ['<div class="stored-pred-grid stored-pred-grid-extended">']
+    for label, value, meta in cells:
+        safe_label = html.escape(str(label))
+        safe_value = html.escape(str(value))
+        safe_meta = html.escape(str(meta)) if meta else ""
+        meta_html = f'<div class="stored-pred-conf">{safe_meta}</div>' if meta else ""
+        cell_class = "stored-pred-cell"
+        result_html = ""
+        if correctness and label in correctness:
+            verdict = correctness[label]
+            if verdict is True:
+                cell_class += " stored-pred-cell-correct"
+                result_html = '<span class="stored-pred-verdict stored-pred-verdict-ok">✓</span>'
+            elif verdict is False:
+                cell_class += " stored-pred-cell-wrong"
+                result_html = '<span class="stored-pred-verdict stored-pred-verdict-bad">✗</span>'
+        parts.append(
+            f'<div class="{cell_class}">'
+            f'<div class="stored-pred-label">{safe_label}</div>'
+            f'<div class="stored-pred-value">{safe_value}{result_html}</div>'
+            f"{meta_html}"
+            f"</div>"
+        )
+    parts.append("</div>")
+    return "".join(parts)
 
 
 def _format_1x2(selection: str, home: str, away: str) -> str:
@@ -239,6 +517,47 @@ def _result_badge(correct: bool | None) -> str:
     if correct is False:
         return "❌"
     return "—"
+
+
+def _evaluated_prediction(
+    evaluation: EvaluatedPrediction | StoredPredictionEvaluation | None,
+) -> EvaluatedPrediction | None:
+    if evaluation is None:
+        return None
+    if isinstance(evaluation, StoredPredictionEvaluation):
+        return evaluation.raw if evaluation.status == "evaluated" else None
+    return evaluation
+
+
+def _market_correctness(
+    ev: EvaluatedPrediction,
+    snap: Any | None,
+    locale: Locale,
+) -> dict[str, bool | None]:
+    """Map market grid labels to correct / wrong / not evaluated."""
+    mapping: dict[str, bool | None] = {
+        "1X2": ev.one_x_two_correct,
+        "O/U 2.5": ev.over_under_correct,
+        gui_t("stored.correct_score", locale): (
+            ev.scoreline_exact_correct if ev.predicted_scoreline else None
+        ),
+    }
+    if ev.halftime_evaluated:
+        mapping[gui_t("markets.ht_result", locale)] = ev.halftime_bucket_correct
+    if ev.first_goal_evaluated and not ev.first_goal_skipped:
+        mapping[gui_t("markets.likely_scorer", locale)] = ev.first_goal_correct
+
+    if ev.final_score and "-" in str(ev.final_score):
+        try:
+            home_g, away_g = [int(x.strip()) for x in str(ev.final_score).split("-", 1)]
+            actual_btts = home_g > 0 and away_g > 0
+            if snap is not None:
+                yes_pct, no_pct = snap.btts.as_percent()
+                pred_yes = yes_pct >= no_pct
+                mapping[gui_t("markets.btts", locale)] = pred_yes == actual_btts
+        except (TypeError, ValueError):
+            pass
+    return mapping
 
 
 def _evaluation_rows(
@@ -484,21 +803,8 @@ def render_stored_prediction_summary(
     if lineup_key and not _is_match_started(fixture):
         warnings.append(gui_t(lineup_key, locale))
 
-    st.markdown(
-        f"""
-<div class="stored-prediction-summary{' stored-prediction-compact' if compact else ''}">
-  <div class="stored-pred-header">
-    <div class="stored-pred-title">✅ {gui_t('stored.title', locale)}</div>
-    <div class="stored-pred-meta">
-      <span class="stored-pred-badge">{gui_t('card.prediction_stored', locale)}</span>
-      {f'<span class="stored-pred-updated">{gui_t("stored.updated", locale)}: {updated}</span>' if updated else ''}
-    </div>
-  </div>
-""",
-        unsafe_allow_html=True,
-    )
-
     eval_rows: list[tuple[str, str, str, str]] = []
+    evaluated_raw = _evaluated_prediction(evaluation)
     if evaluation is not None:
         if isinstance(evaluation, StoredPredictionEvaluation):
             if evaluation.status == "evaluated":
@@ -506,47 +812,78 @@ def render_stored_prediction_summary(
         elif isinstance(evaluation, EvaluatedPrediction):
             eval_rows = _evaluation_rows(evaluation)
 
-    if eval_rows and not compact:
+    live_pred = _live_prediction_for_fixture(fixture_id)
+    snap = _load_extended_snapshot(stored, live_pred)
+    correctness = (
+        _market_correctness(evaluated_raw, snap, locale) if evaluated_raw is not None else None
+    )
+    has_verdicts = bool(correctness and any(v is not None for v in correctness.values()))
+
+    summary_class = "stored-prediction-summary"
+    if compact:
+        summary_class += " stored-prediction-compact"
+    if has_verdicts:
+        summary_class += " stored-prediction-evaluated"
+
+    title_icon = "📊" if has_verdicts else "✅"
+    final_score_html = ""
+    if evaluated_raw and evaluated_raw.final_score:
+        final_score_html = (
+            f'<span class="stored-pred-final-score">'
+            f'{gui_t("stored.actual_result", locale)}: {html.escape(evaluated_raw.final_score)}'
+            f"</span>"
+        )
+
+    st.markdown(
+        f"""
+<div class="{summary_class}">
+  <div class="stored-pred-header">
+    <div class="stored-pred-title">{title_icon} {gui_t('stored.title', locale)}</div>
+    <div class="stored-pred-meta">
+      <span class="stored-pred-badge">{gui_t('card.prediction_stored', locale)}</span>
+      {final_score_html}
+      {f'<span class="stored-pred-updated">{gui_t("stored.updated", locale)}: {updated}</span>' if updated and not has_verdicts else ''}
+    </div>
+  </div>
+""",
+        unsafe_allow_html=True,
+    )
+
+    if eval_rows and not compact and not has_verdicts:
         for market, predicted, actual, badge in eval_rows:
+            row_class = "stored-pred-eval-row"
+            if badge == "✅":
+                row_class += " stored-pred-eval-row-correct"
+            elif badge == "❌":
+                row_class += " stored-pred-eval-row-wrong"
             st.markdown(
                 f"""
-<div class="stored-pred-eval-row">
+<div class="{row_class}">
   <span class="stored-pred-market">{market}</span>
   <span class="stored-pred-predicted">{predicted} {badge}</span>
-  <span class="stored-pred-actual">Actual: {actual}</span>
+  <span class="stored-pred-actual">{gui_t("stored.actual", locale)}: {actual}</span>
 </div>
 """,
                 unsafe_allow_html=True,
             )
     else:
+        cells = _market_grid_cells(stored, snap, home=home, away=away, locale=locale, conf=conf)
+        if snap is not None and not stored.extended_markets_json and live_pred is None:
+            st.caption(gui_t("stored.markets_estimated", locale))
         quality_html = ""
-        if pq is not None and not compact:
+        if pq is not None and not compact and not has_verdicts:
             quality_html = (
                 f'<div class="stored-pred-quality">'
                 f'{gui_t("stored.prediction_quality", locale)}: {pq:.0f}/100</div>'
             )
         st.markdown(
-            f"""
-<div class="stored-pred-grid">
-  <div class="stored-pred-cell">
-    <div class="stored-pred-label">1X2</div>
-    <div class="stored-pred-value">{x2}</div>
-    <div class="stored-pred-conf">{gui_t('stored.confidence', locale)} {conf}</div>
-  </div>
-  <div class="stored-pred-cell">
-    <div class="stored-pred-label">O/U 2.5</div>
-    <div class="stored-pred-value">{ou}</div>
-    <div class="stored-pred-conf">{gui_t('stored.confidence', locale)} —</div>
-  </div>
-  <div class="stored-pred-cell">
-    <div class="stored-pred-label">{gui_t('stored.correct_score', locale)}</div>
-    <div class="stored-pred-value">{score}</div>
-    <div class="stored-pred-conf">{gui_t('stored.confidence', locale)} —</div>
-  </div>
-</div>
-{quality_html}
-<div class="stored-pred-version">{gui_t('stored.version', locale)}: {version}</div>
-""",
+            _render_market_grid_html(cells, correctness=correctness if has_verdicts else None)
+            + quality_html
+            + (
+                f'<div class="stored-pred-version">{gui_t("stored.version", locale)}: {version}</div>'
+                if not has_verdicts
+                else ""
+            ),
             unsafe_allow_html=True,
         )
 

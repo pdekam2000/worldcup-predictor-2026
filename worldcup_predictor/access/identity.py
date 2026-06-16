@@ -7,7 +7,11 @@ import uuid
 
 import streamlit as st
 
-from worldcup_predictor.access.config import public_access_code, public_access_enabled
+from worldcup_predictor.access.config import (
+    credentials_login_available,
+    public_access_code,
+    public_access_enabled,
+)
 from worldcup_predictor.access.models import AppUser
 from worldcup_predictor.access.repository import (
     AccessRepository,
@@ -20,9 +24,14 @@ def _repo() -> AccessRepository:
     return get_access_repository()
 
 
+def _local_dev_bypass() -> bool:
+    """Skip login when no credentials are configured."""
+    return not credentials_login_available()
+
+
 def init_access_session() -> None:
     """Ensure session keys exist — never raises."""
-    if not public_access_enabled():
+    if _local_dev_bypass():
         st.session_state.setdefault("access_user_id", "local_dev")
         return
     st.session_state.setdefault("anonymous_user_id", str(uuid.uuid4()))
@@ -38,7 +47,7 @@ def init_access_session() -> None:
 
 def current_user_id() -> str:
     init_access_session()
-    if not public_access_enabled():
+    if _local_dev_bypass():
         return "local_dev"
     registered = st.session_state.get("access_user_id")
     if registered:
@@ -51,7 +60,7 @@ def current_user_id() -> str:
 
 
 def current_user() -> AppUser | None:
-    if not public_access_enabled():
+    if _local_dev_bypass():
         return None
     uid = st.session_state.get("access_user_id")
     if not uid:
@@ -63,7 +72,10 @@ def current_user() -> AppUser | None:
 
 
 def is_registered_user() -> bool:
-    return bool(st.session_state.get("access_user_id")) and public_access_enabled()
+    uid = st.session_state.get("access_user_id")
+    if not uid or uid == "local_dev":
+        return False
+    return credentials_login_available()
 
 
 def verify_invite_access_code(access_code: str) -> bool:

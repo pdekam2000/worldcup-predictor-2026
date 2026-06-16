@@ -452,3 +452,56 @@ class AccessRepository:
             conn.commit()
         except sqlite3.Error:
             pass
+
+    def get_admin_session_lock(self) -> dict[str, Any] | None:
+        try:
+            row = self._connection().execute(
+                "SELECT holder_token, holder_label, locked_at FROM admin_session_lock WHERE lock_id = 1"
+            ).fetchone()
+            if row is None:
+                return None
+            return {
+                "holder_token": row["holder_token"],
+                "holder_label": row["holder_label"],
+                "locked_at": row["locked_at"],
+            }
+        except sqlite3.Error:
+            return None
+
+    def set_admin_session_lock(self, token: str, label: str, locked_at: str) -> None:
+        try:
+            conn = self._connection()
+            conn.execute(
+                """
+                INSERT INTO admin_session_lock (lock_id, holder_token, holder_label, locked_at)
+                VALUES (1, ?, ?, ?)
+                ON CONFLICT(lock_id) DO UPDATE SET
+                    holder_token = excluded.holder_token,
+                    holder_label = excluded.holder_label,
+                    locked_at = excluded.locked_at
+                """,
+                (token, label, locked_at),
+            )
+            conn.commit()
+        except sqlite3.Error:
+            pass
+
+    def clear_admin_session_lock(self, token: str) -> None:
+        try:
+            conn = self._connection()
+            row = conn.execute(
+                "SELECT holder_token FROM admin_session_lock WHERE lock_id = 1"
+            ).fetchone()
+            if row and str(row["holder_token"]) == token:
+                conn.execute("DELETE FROM admin_session_lock WHERE lock_id = 1")
+                conn.commit()
+        except sqlite3.Error:
+            pass
+
+    def force_clear_admin_session_lock(self) -> None:
+        try:
+            conn = self._connection()
+            conn.execute("DELETE FROM admin_session_lock WHERE lock_id = 1")
+            conn.commit()
+        except sqlite3.Error:
+            pass

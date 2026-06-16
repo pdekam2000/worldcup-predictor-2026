@@ -334,11 +334,15 @@ class WorldCupScheduleService:
             ht_home = halftime.get("home")
             ht_away = halftime.get("away")
             elapsed = status_obj.get("elapsed")
+            home_logo = teams.get("home", {}).get("logo")
+            away_logo = teams.get("away", {}).get("logo")
             return TournamentFixture(
                 fixture_id=int(fixture.get("id", 0)),
                 kickoff_time=kickoff,
                 home_team=teams.get("home", {}).get("name", "TBD"),
                 away_team=teams.get("away", {}).get("name", "TBD"),
+                home_team_logo=str(home_logo) if home_logo else None,
+                away_team_logo=str(away_logo) if away_logo else None,
                 venue=venue_name,
                 city=city,
                 country=country,
