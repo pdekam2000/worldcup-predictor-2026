@@ -529,6 +529,28 @@ def build_parser() -> argparse.ArgumentParser:
     calibration_report.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
     add_competition_argument(calibration_report)
 
+    recent_audit = subparsers.add_parser(
+        "recent-accuracy-audit",
+        help="Audit recent verified prediction errors (analysis only)",
+    )
+    recent_audit.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
+    add_competition_argument(recent_audit)
+
+    recalibration = subparsers.add_parser(
+        "recalibration-report",
+        help="Build conservative recalibration recommendations from recent errors",
+    )
+    recalibration.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
+    add_competition_argument(recalibration)
+
+    replay_recent = subparsers.add_parser(
+        "replay-recent-predictions",
+        help="Diagnostic replay of stored predictions vs finished results (read-only)",
+    )
+    replay_recent.add_argument("--limit", type=int, default=50)
+    replay_recent.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
+    add_competition_argument(replay_recent)
+
     tournament_intel = subparsers.add_parser(
         "tournament-intelligence",
         help="Show Tournament Intelligence V2 for a fixture (analysis only)",
@@ -649,6 +671,9 @@ def main(argv: list[str] | None = None) -> int:
         run_hall_of_fame_command,
         run_agent_performance_command,
         run_calibration_report_command,
+        run_recent_accuracy_audit_command,
+        run_recalibration_report_command,
+        run_replay_recent_predictions_command,
         run_tournament_intelligence_command,
         run_elo_intelligence_command,
         run_xg_intelligence_command,
@@ -827,6 +852,25 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "calibration-report":
         return run_calibration_report_command(
+            locale=args.locale,
+            competition=_competition_arg(args),
+        )
+
+    if args.command == "recent-accuracy-audit":
+        return run_recent_accuracy_audit_command(
+            locale=args.locale,
+            competition=_competition_arg(args),
+        )
+
+    if args.command == "recalibration-report":
+        return run_recalibration_report_command(
+            locale=args.locale,
+            competition=_competition_arg(args),
+        )
+
+    if args.command == "replay-recent-predictions":
+        return run_replay_recent_predictions_command(
+            limit=getattr(args, "limit", 50),
             locale=args.locale,
             competition=_competition_arg(args),
         )

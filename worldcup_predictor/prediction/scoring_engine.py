@@ -289,6 +289,12 @@ class ScoringEngine:
         candidates = generate_scoreline_candidates(report)
         h, a = primary_scoreline(candidates)
         top_prob = candidates[0].probability if candidates else 0.0
+        try:
+            from worldcup_predictor.accuracy.live_calibration import apply_scoreline_cap
+
+            top_prob = apply_scoreline_cap(top_prob)
+        except Exception:
+            pass
         prediction = replace(
             prediction,
             scoreline=ScorelinePrediction(home_goals=float(h), away_goals=float(a)),

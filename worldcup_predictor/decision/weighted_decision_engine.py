@@ -191,7 +191,12 @@ class WeightedDecisionEngine:
         analysis_ready_min = self._thresholds["analysis_ready_confidence_minimum"]
         watch_only = no_bet or confidence < analysis_ready_min
 
-        one_x_two_selection = self._resolve_1x2(home_edge_total, baseline_selection)
+        one_x_two_selection = self._resolve_1x2(
+            home_edge_total,
+            baseline_selection,
+            specialist=specialist,
+            factors=factors,
+        )
         over_selection = self._resolve_over_under(baseline, factors, severe_weather)
 
         markets = {
@@ -603,7 +608,40 @@ class WeightedDecisionEngine:
         return None
 
     @staticmethod
-    def _resolve_1x2(home_edge_total: float, baseline: str) -> str:
+    def _draw_implied_probability(
+        specialist: MatchSpecialistReport | None,
+    ) -> float | None:
+        if not specialist:
+            return None
+        sig = specialist.signal("market_consensus_agent")
+        if not sig or not sig.signals:
+            return None
+        raw = sig.signals.get("draw_implied_probability")
+        if raw is None:
+            return None
+        try:
+            val = float(raw)
+            return val / 100.0 if val > 1.0 else val
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _resolve_1x2(
+        home_edge_total: float,
+        baseline: str,
+        *,
+        specialist: MatchSpecialistReport | None = None,
+        factors: dict[str, WeightedFactor] | None = None,
+    ) -> str:
+        try:
+            from worldcup_predictor.accuracy.live_calibration import should_prefer_draw
+
+            draw_prob = WeightedDecisionEngine._draw_implied_probability(specialist)
+            if should_prefer_draw(home_edge_total, draw_implied_probability=draw_prob):
+                if baseline == "draw" or abs(home_edge_total) < 0.02:
+                    return "draw"
+        except Exception:
+            pass
         if home_edge_total > 0.03:
             return "home_win"
         if home_edge_total < -0.03:
@@ -627,7 +665,13 @@ class WeightedDecisionEngine:
                 expected_total = float(baseline.metadata.get("expected_total_goals", 0))
             except (TypeError, ValueError):
                 expected_total = 0.0
-            if expected_total >= 2.58 and selection == "over_2_5":
+            try:
+                from worldcup_predictor.accuracy.live_calibration import ou_expected_goals_threshold
+
+                threshold = ou_expected_goals_threshold(2.58)
+            except Exception:
+                threshold = 2.58
+            if expected_total >= threshold and selection == "over_2_5":
                 return selection
             return "under_2_5"
         return selection

@@ -462,6 +462,12 @@ def _confidence_adjustment(
         adj += 1.0
     elif diversity_score < 40:
         adj -= 1.0
+    try:
+        from worldcup_predictor.accuracy.live_calibration import fusion_diversity_penalty
+
+        adj = fusion_diversity_penalty(diversity_score, adj)
+    except Exception:
+        pass
     return round(_clamp(adj, -_ADJUSTMENT_CAP, _ADJUSTMENT_CAP), 2)
 
 

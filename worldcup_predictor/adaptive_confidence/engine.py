@@ -349,6 +349,12 @@ class AdaptiveConfidenceEngine:
             1,
         )
         final_confidence = round(_clamp(base_confidence + total_bonus, 0.0, 100.0), 1)
+        try:
+            from worldcup_predictor.accuracy.live_calibration import apply_confidence_correction
+
+            final_confidence = apply_confidence_correction(final_confidence)
+        except Exception:
+            pass
         patterns_learned = count_patterns_learned(snap.pattern_report)
         final_pq = _adaptive_prediction_quality(
             base_prediction_quality,

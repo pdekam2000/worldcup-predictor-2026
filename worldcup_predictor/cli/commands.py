@@ -3022,6 +3022,120 @@ def run_calibration_report_command(
     return 0
 
 
+def run_recent_accuracy_audit_command(
+    *,
+    locale: str | None = None,
+    competition: str | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI: audit recent verified prediction errors and write markdown report."""
+    out = stream or sys.stdout
+    settings = get_settings()
+    active_locale = locale or settings.default_locale
+    translator = get_translator(active_locale)  # type: ignore[arg-type]
+    comp_key = resolve_competition(competition)
+
+    from worldcup_predictor.accuracy.recent_error_audit import (
+        build_recent_error_audit,
+        fetch_fixtures_for_audit,
+        write_recent_error_audit_markdown,
+    )
+
+    print_competition_banner(out, translator, comp_key)
+    fixtures = fetch_fixtures_for_audit(settings=settings, competition_key=comp_key)
+    audit = build_recent_error_audit(fixtures, competition_key=comp_key, settings=settings)
+    path = write_recent_error_audit_markdown(audit)
+
+    out.write("=" * 72 + "\n")
+    out.write("  Recent Prediction Error Audit\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(f"  Verified predictions: {audit.total_verified}\n")
+    out.write(f"  Sample adequate: {audit.sample_adequate}\n\n")
+    for w in audit.warnings:
+        out.write(f"  WARNING: {w}\n")
+    if audit.windows:
+        w0 = audit.windows[0]
+        out.write(f"\n  Latest window 1X2: {_format_pct(w0.one_x_two)} · O/U: {_format_pct(w0.over_under)}\n")
+    out.write("\n  Root causes:\n")
+    for cause in audit.root_causes:
+        out.write(f"    - {cause}\n")
+    out.write(f"\n  Report: {path}\n")
+    out.write("\n" + "=" * 72 + "\n")
+    return 0
+
+
+def run_recalibration_report_command(
+    *,
+    locale: str | None = None,
+    competition: str | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI: build recalibration recommendations from recent error audit."""
+    import json
+
+    out = stream or sys.stdout
+    settings = get_settings()
+    active_locale = locale or settings.default_locale
+    translator = get_translator(active_locale)  # type: ignore[arg-type]
+    comp_key = resolve_competition(competition)
+
+    from worldcup_predictor.accuracy.recalibration_engine import run_full_recalibration_pipeline
+
+    print_competition_banner(out, translator, comp_key)
+    audit, rec = run_full_recalibration_pipeline(competition_key=comp_key, write_audit=True)
+
+    out.write("=" * 72 + "\n")
+    out.write("  Recent Recalibration Report\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(f"  Verified sample: {rec.verified_sample}\n")
+    out.write(f"  Confidence correction factor: {rec.confidence_correction_factor}\n")
+    out.write(f"  Scoreline cap: {rec.scoreline_probability_cap}\n\n")
+    out.write("  Fixes (live calibration config only — not factor weights):\n")
+    for fix in rec.fixes_applied:
+        out.write(f"    - {fix}\n")
+    for w in rec.warnings:
+        out.write(f"  WARNING: {w}\n")
+    out.write("\n  reports/calibration/recent_recalibration_report.json\n")
+    out.write("  reports/calibration/recent_live_calibration.json\n")
+    out.write("\n  Distribution:\n")
+    out.write(json.dumps({"before": rec.before_distribution, "after": rec.after_distribution}, indent=2))
+    out.write("\n\n" + "=" * 72 + "\n")
+    return 0
+
+
+def run_replay_recent_predictions_command(
+    *,
+    limit: int = 50,
+    locale: str | None = None,
+    competition: str | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI: diagnostic replay — does not rewrite stored predictions."""
+    import json
+
+    out = stream or sys.stdout
+    settings = get_settings()
+    active_locale = locale or settings.default_locale
+    translator = get_translator(active_locale)  # type: ignore[arg-type]
+    comp_key = resolve_competition(competition)
+
+    from worldcup_predictor.accuracy.recent_error_audit import (
+        fetch_fixtures_for_audit,
+        replay_recent_predictions,
+    )
+
+    print_competition_banner(out, translator, comp_key)
+    fixtures = fetch_fixtures_for_audit(settings=settings, competition_key=comp_key)
+    rows = replay_recent_predictions(fixtures, limit=limit, competition_key=comp_key)
+
+    out.write("=" * 72 + "\n")
+    out.write("  Replay Recent Predictions (diagnostic)\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(json.dumps(rows, indent=2, ensure_ascii=False))
+    out.write("\n\n" + "=" * 72 + "\n")
+    return 0
+
+
 def _format_move(value: float | None) -> str:
     if value is None:
         return "n/a"

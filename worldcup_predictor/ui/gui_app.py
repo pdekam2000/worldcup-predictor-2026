@@ -869,6 +869,12 @@ def page_accuracy_tracker() -> None:
     dash = build_accuracy_dashboard(center.finished + center.live + center.upcoming, competition_key=_competition_key())
     render_developer_accuracy_table(locale, dash)
 
+    from worldcup_predictor.ui.gui_mode_v2 import is_developer_mode
+    from worldcup_predictor.ui.recent_accuracy_diagnostics import render_recent_accuracy_diagnostics
+
+    if is_developer_mode():
+        render_recent_accuracy_diagnostics(locale, center=center, competition_key=_competition_key())
+
     metrics = snapshot.metrics
     c1, c2, c3, c4, c5, c6 = st.columns(6)
     with c1:
