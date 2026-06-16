@@ -1632,6 +1632,9 @@ def page_prediction() -> None:
         if not result.success:
             st.error("Prediction pipeline failed.")
             return
+        if getattr(result.prediction, "fixture_id", None) not in (None, int(fid)):
+            st.info(gui_t("stored.refresh_help", locale))
+            return
 
         specialist_report = None
         for ar in result.agent_results:

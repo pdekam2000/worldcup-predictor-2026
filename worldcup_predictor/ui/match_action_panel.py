@@ -17,6 +17,7 @@ from worldcup_predictor.orchestration.predict_pipeline import PredictPipeline
 from worldcup_predictor.orchestration.specialists_pipeline import SpecialistsPipeline
 from worldcup_predictor.reasoning.openai_reasoning_service import OpenAIReasoningService
 from worldcup_predictor.ui.access_display import render_gate_block
+from worldcup_predictor.ui.first_goal_display import render_first_goal_sections
 from worldcup_predictor.ui.gui_components import (
     format_standings_context,
     render_data_quality_breakdown,
@@ -361,6 +362,7 @@ def render_match_action_panel(
                         cache["predict"] = _run_predict(fid, settings, locale, competition_key)
                     if cache.get("predict") and getattr(cache["predict"], "success", False):
                         invalidate_stored_prediction_cache()
+                        st.session_state["gui_last_prediction"] = cache["predict"]
                         _cache_phase36_odds_from_cache(fid, cache)
                         st.toast(gui_t("stored.toast_refreshed", locale).format(match=f"{home} vs {away}"))
                 elif action == "specialists":
@@ -417,6 +419,7 @@ def render_match_action_panel(
                     cache["predict"] = _run_predict(fid, settings, locale, competition_key)
                 if cache.get("predict") and getattr(cache["predict"], "success", False):
                     invalidate_stored_prediction_cache()
+                    st.session_state["gui_last_prediction"] = cache["predict"]
                     _cache_phase36_odds_from_cache(fid, cache)
                     st.toast(gui_t("stored.toast_refreshed", locale).format(match=f"{home} vs {away}"))
             elif tab == "specialists":
@@ -484,6 +487,13 @@ def render_match_action_panel(
                     if intel is not None:
                         intel.specialist_report = ar.data
                     break
+            render_first_goal_sections(
+                pred_result.prediction,
+                intel,
+                locale,
+                specialist_report=specialist_report,
+                key_suffix=f"mc_{fid}",
+            )
             from worldcup_predictor.ui.odds_display import render_phase36_odds_section
 
             render_phase36_odds_section(

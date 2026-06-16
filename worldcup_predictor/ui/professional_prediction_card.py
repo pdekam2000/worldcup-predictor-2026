@@ -11,13 +11,7 @@ from worldcup_predictor.domain.prediction import MatchPrediction
 from worldcup_predictor.domain.specialist import MatchSpecialistReport
 from worldcup_predictor.export.match_report_collector import collect_match_report_bundle
 from worldcup_predictor.export.professional_match_report_exporter_v2 import ProfessionalMatchReportExporterV2
-from worldcup_predictor.ui.first_goal_display import (
-    render_first_goal_intelligence_expander,
-    render_first_goal_prediction_card,
-    render_first_goal_pro_card_section,
-    render_likely_goal_scorers_card,
-    resolve_first_goal_v2,
-)
+from worldcup_predictor.ui.first_goal_display import render_first_goal_sections
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.status_badges import (
     confidence_band,
@@ -57,14 +51,22 @@ def render_professional_prediction_card(
     *,
     specialist_report: MatchSpecialistReport | None = None,
 ) -> None:
-    """Top summary card — never raises."""
+    """Top summary card — first goal sections always render separately."""
     try:
-        _render_card(prediction, report, locale, specialist_report=specialist_report)
+        _render_core_card(prediction, report, locale, specialist_report=specialist_report)
     except Exception:
         st.caption(gui_t("pro_card.unavailable", locale))
 
+    render_first_goal_sections(
+        prediction,
+        report,
+        locale,
+        specialist_report=specialist_report,
+        key_suffix=str(prediction.fixture_id),
+    )
 
-def _render_card(
+
+def _render_core_card(
     prediction: MatchPrediction,
     report: Any,
     locale: Locale,
@@ -111,18 +113,16 @@ def _render_card(
         with b3:
             render_status_badge(risk_band, kind="risk", locale=locale)
 
-        fg_v2 = resolve_first_goal_v2(prediction, report, specialist_report=specialist_report)
-        render_first_goal_prediction_card(prediction, fg_v2, locale)
-        render_likely_goal_scorers_card(prediction, fg_v2, locale)
-        render_first_goal_pro_card_section(prediction, fg_v2, locale)
-        render_first_goal_intelligence_expander(fg_v2, locale, key_suffix=str(prediction.fixture_id))
-
         summary = fusion.get("final_summary") or fusion.get("summary")
         if summary:
             st.info(str(summary))
         elif prediction.reasons:
             first = prediction.reasons[0]
-            desc = first.description.get(locale) if first.description else first.key
+            desc = (
+                first.description.get(locale)
+                if first.description and hasattr(first.description, "get")
+                else getattr(first, "key", "")
+            )
             st.caption(desc)
 
         export_col, _ = st.columns([1, 2])

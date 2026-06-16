@@ -1023,6 +1023,16 @@ _STRINGS: dict[str, dict[str, str]] = {
         "de": "Nur Minutenband-Schätzung — kein garantiertes exaktes Minute.",
         "fa": "فقط تخمین بازه دقیقه — نه دقیقه قطعی.",
     },
+    "first_goal.no_reliable_scorers": {
+        "en": "No reliable scorer data available",
+        "de": "Keine verlässlichen Torschützendaten verfügbar",
+        "fa": "داده گلزن قابل اعتماد در دسترس نیست",
+    },
+    "first_goal.fallback_unavailable": {
+        "en": "First goal estimate unavailable — team and minute band shown when data allows.",
+        "de": "Ersttor-Schätzung nicht verfügbar.",
+        "fa": "تخمین گل اول در دسترس نیست.",
+    },
     "first_goal.expander_title": {"en": "First Goal Intelligence V2", "de": "Erstes Tor Intelligence V2", "fa": "هوش گل اول V2"},
     "first_goal.reasoning": {"en": "Reasoning", "de": "Begründung", "fa": "استدلال"},
     "first_goal.scorer_candidates": {"en": "Scorer candidates", "de": "Torschützen-Kandidaten", "fa": "کاندیدهای گلزن"},

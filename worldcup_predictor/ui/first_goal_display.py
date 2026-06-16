@@ -37,6 +37,40 @@ def resolve_first_goal_v2(
         return None
 
 
+def render_first_goal_sections(
+    prediction: MatchPrediction,
+    report: Any | None,
+    locale: Locale,
+    *,
+    specialist_report: Any | None = None,
+    key_suffix: str = "",
+) -> None:
+    """Always show First Goal + Likely Scorers — never silently hide."""
+    fg_v2: FirstGoalIntelligenceV2Result | None = None
+    try:
+        fg_v2 = resolve_first_goal_v2(prediction, report, specialist_report=specialist_report)
+    except Exception:
+        fg_v2 = None
+    try:
+        render_first_goal_prediction_card(prediction, fg_v2, locale)
+    except Exception:
+        st.markdown(f"### {gui_t('first_goal.card_title', locale)}")
+        with st.container(border=True):
+            st.info(gui_t("first_goal.fallback_unavailable", locale))
+    try:
+        render_likely_goal_scorers_card(prediction, fg_v2, locale)
+    except Exception:
+        st.markdown(f"### {gui_t('first_goal.scorers_title', locale)}")
+        with st.container(border=True):
+            st.info(gui_t("first_goal.no_reliable_scorers", locale))
+    try:
+        render_first_goal_intelligence_expander(
+            fg_v2, locale, key_suffix=key_suffix or str(prediction.fixture_id)
+        )
+    except Exception:
+        pass
+
+
 def render_first_goal_prediction_card(
     prediction: MatchPrediction,
     fg_v2: FirstGoalIntelligenceV2Result | None,
@@ -76,7 +110,10 @@ def render_likely_goal_scorers_card(
     st.markdown(f"### {gui_t('first_goal.scorers_title', locale)}")
     with st.container(border=True):
         if not scorers:
-            msg = prediction.first_goal.player_data_message or gui_t("first_goal.player_unavailable", locale)
+            msg = (
+                prediction.first_goal.player_data_message
+                or gui_t("first_goal.no_reliable_scorers", locale)
+            )
             st.info(msg)
             return
         for idx, cand in enumerate(scorers, start=1):
@@ -146,8 +183,18 @@ def render_first_goal_intelligence_expander(
     key_suffix: str = "",
 ) -> None:
     if fg_v2 is None:
+        with st.expander(
+            gui_t("first_goal.expander_title", locale),
+            expanded=False,
+            key=f"fg_intel_exp_{key_suffix or 'default'}",
+        ):
+            st.info(gui_t("first_goal.fallback_unavailable", locale))
         return
-    with st.expander(gui_t("first_goal.expander_title", locale), expanded=False):
+    with st.expander(
+        gui_t("first_goal.expander_title", locale),
+        expanded=False,
+        key=f"fg_intel_exp_{key_suffix or 'default'}",
+    ):
         st.caption(fg_v2.summary)
         st.progress(min(max(fg_v2.confidence / 100.0, 0.0), 1.0))
         st.caption(f"{gui_t('badge.confidence', locale)}: {fg_v2.confidence:.0f}/100")
