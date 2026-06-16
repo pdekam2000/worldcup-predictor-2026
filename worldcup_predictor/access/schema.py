@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-ACCESS_SCHEMA_VERSION = 2
+ACCESS_SCHEMA_VERSION = 3
 
 ACCESS_DDL_STATEMENTS: tuple[str, ...] = (
     """
@@ -55,5 +55,18 @@ ACCESS_DDL_STATEMENTS: tuple[str, ...] = (
     """
     CREATE INDEX IF NOT EXISTS idx_user_feedback_created
     ON user_feedback(created_at DESC)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS remember_tokens (
+        token_hash TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES app_users(user_id)
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_remember_tokens_user
+    ON remember_tokens(user_id)
     """,
 )

@@ -201,6 +201,20 @@ div[data-testid="stMetric"] [data-testid="stMetricValue"] { color: var(--dash-te
     box-shadow: 0 8px 32px rgba(0,0,0,0.25);
 }
 
+.kickoff-panel {
+    margin: 0.75rem 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+.kickoff-panel div {
+    margin: 0.15rem 0;
+}
+.kickoff-warn {
+    color: #fbbf24;
+    font-size: 0.85rem;
+    margin-top: 0.35rem;
+}
+
 .dash-section-title {
     font-size: 1.05rem;
     font-weight: 700;

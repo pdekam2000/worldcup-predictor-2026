@@ -2,22 +2,14 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
 
 import streamlit as st
 
 from worldcup_predictor.config.settings import Locale
 from worldcup_predictor.ui.gui_i18n import gui_t
-
-
-def format_kickoff_times(kickoff: datetime | None) -> tuple[str, str]:
-    if kickoff is None:
-        return "—", "—"
-    aware = kickoff if kickoff.tzinfo else kickoff.replace(tzinfo=timezone.utc)
-    local = aware.astimezone().strftime("%d %b %Y %H:%M")
-    utc = aware.astimezone(timezone.utc).strftime("%d %b %Y %H:%M UTC")
-    return local, utc
+from worldcup_predictor.ui.kickoff_timezone import format_kickoff_display, format_kickoff_times
 
 
 def _non_empty(value: object | None) -> str | None:
@@ -112,6 +104,40 @@ def _fixture_status_label(status: str | None, locale: Locale) -> str:
     return gui_t("status.upcoming", locale)
 
 
+def format_kickoff_caption(fixture: Any | None, locale: Locale) -> str:
+    """Single-line kickoff caption: user local · venue · UTC."""
+    kickoff = _fixture_kickoff(fixture)
+    city = _non_empty(_field(fixture, "city"))
+    country = _non_empty(_field(fixture, "country"))
+    display = format_kickoff_display(kickoff, venue_city=city, venue_country=country, locale=locale)
+    parts = [f"{gui_t('kickoff.user_local', locale)}: {display.user_local}"]
+    if display.venue_local and display.venue_label:
+        parts.append(f"{display.venue_label}: {display.venue_local}")
+    parts.append(f"UTC: {display.utc}")
+    if display.venue_unavailable and kickoff:
+        parts.append(gui_t("kickoff.venue_unavailable_short", locale))
+    return " · ".join(parts)
+
+
+def render_kickoff_panel(fixture: Any | None, locale: Locale) -> None:
+    """Three-line kickoff: user local, venue local, UTC."""
+    kickoff = _fixture_kickoff(fixture)
+    city = _non_empty(_field(fixture, "city"))
+    country = _non_empty(_field(fixture, "country"))
+    display = format_kickoff_display(kickoff, venue_city=city, venue_country=country, locale=locale)
+    st.markdown(
+        f"""
+<div class="glass-card kickoff-panel">
+  <div><strong>{display.user_local_label}:</strong> {display.user_local}</div>
+  {f'<div><strong>{display.venue_label}:</strong> {display.venue_local}</div>' if display.venue_local else ''}
+  <div><strong>{gui_t('card.kickoff_utc', locale)}:</strong> {display.utc}</div>
+  {f'<div class="kickoff-warn">{gui_t("kickoff.venue_unavailable", locale)}</div>' if display.venue_unavailable and kickoff else ''}
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
 def render_fixture_summary_panel(fixture: Any | None, fixture_id: int | None, locale: Locale) -> None:
     """Match Prediction header — fixture metadata (no API calls)."""
     if fixture is None and fixture_id is None:
@@ -121,7 +147,12 @@ def render_fixture_summary_panel(fixture: Any | None, fixture_id: int | None, lo
     away = _field(fixture, "away_team") or "—"
     fid = fixture_id or _field(fixture, "fixture_id") or _field(fixture, "id") or "—"
     kickoff = _fixture_kickoff(fixture)
-    local_ko, utc_ko = format_kickoff_times(kickoff)
+    city = _non_empty(_field(fixture, "city"))
+    country = _non_empty(_field(fixture, "country"))
+    ko = format_kickoff_display(kickoff, venue_city=city, venue_country=country, locale=locale)
+    local_ko = ko.user_local
+    utc_ko = ko.utc
+    venue_ko = ko.venue_local or "—"
     group_label = format_group_stage(fixture)
     league = (
         _non_empty(_field(fixture, "league"))
@@ -144,7 +175,8 @@ def render_fixture_summary_panel(fixture: Any | None, fixture_id: int | None, lo
         st.markdown(f"### {home} vs {away}")
         fields: list[tuple[str, str]] = [
             ("card.fixture_id", str(fid)),
-            ("card.kickoff_local", local_ko),
+            ("kickoff.user_local", local_ko),
+            ("kickoff.venue_local", venue_ko if not ko.venue_unavailable else gui_t("kickoff.venue_unavailable_short", locale)),
             ("card.kickoff_utc", utc_ko),
             ("card.league", league or "—"),
             ("card.group", group_label if group_label != "—" else "—"),

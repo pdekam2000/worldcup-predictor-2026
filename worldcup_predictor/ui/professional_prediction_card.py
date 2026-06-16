@@ -13,7 +13,9 @@ from worldcup_predictor.export.match_report_collector import collect_match_repor
 from worldcup_predictor.export.professional_match_report_exporter_v2 import ProfessionalMatchReportExporterV2
 from worldcup_predictor.ui.first_goal_display import (
     render_first_goal_intelligence_expander,
+    render_first_goal_prediction_card,
     render_first_goal_pro_card_section,
+    render_likely_goal_scorers_card,
     resolve_first_goal_v2,
 )
 from worldcup_predictor.ui.gui_i18n import gui_t
@@ -110,6 +112,8 @@ def _render_card(
             render_status_badge(risk_band, kind="risk", locale=locale)
 
         fg_v2 = resolve_first_goal_v2(prediction, report, specialist_report=specialist_report)
+        render_first_goal_prediction_card(prediction, fg_v2, locale)
+        render_likely_goal_scorers_card(prediction, fg_v2, locale)
         render_first_goal_pro_card_section(prediction, fg_v2, locale)
         render_first_goal_intelligence_expander(fg_v2, locale, key_suffix=str(prediction.fixture_id))
 

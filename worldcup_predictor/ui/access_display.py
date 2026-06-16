@@ -35,13 +35,34 @@ def access_ui_enabled() -> bool:
 
 
 def render_access_sidebar(locale: Locale) -> None:
-    """Prominent account / login block at top of sidebar."""
+    """Account / login block in sidebar (user login — not admin)."""
     if not access_ui_enabled():
         return
     init_access_session()
-    st.sidebar.markdown("---")
     _render_access_panel(st.sidebar, locale, key_prefix="sb")
-    _render_admin_sidebar(locale)
+
+
+def render_admin_bottom_sidebar(locale: Locale) -> None:
+    """Collapsed admin login at bottom-left of sidebar — not prominent."""
+    if not admin_credentials_configured():
+        return
+    with st.sidebar.expander(gui_t("admin.login_expand", locale), expanded=False):
+        if is_admin_session():
+            st.caption(gui_t("admin.signed_in", locale))
+            if st.button(gui_t("admin.logout", locale), key="admin_logout_bottom"):
+                logout_admin()
+                st.rerun()
+            return
+        with st.form("admin_login_form_bottom"):
+            admin_user = st.text_input(gui_t("auth.username", locale), key="admin_login_user_bottom")
+            admin_pass = st.text_input(gui_t("auth.password", locale), type="password", key="admin_login_pass_bottom")
+            admin_btn = st.form_submit_button(gui_t("admin.login", locale))
+        if admin_btn:
+            if login_admin(admin_user, admin_pass):
+                st.toast(gui_t("admin.login_ok", locale))
+                st.rerun()
+            else:
+                st.error(gui_t("admin.login_fail", locale))
 
 
 def render_admin_config_debug() -> None:
@@ -126,37 +147,15 @@ def _render_access_panel(container: Any, locale: Locale, *, key_prefix: str, sho
         st.caption(gui_t("access.access_code_hint", locale))
         with st.form(f"{key_prefix}_access_login_form"):
             username = st.text_input(gui_t("access.username_or_email", locale))
-            code = st.text_input(gui_t("access.access_code", locale))
+            code = st.text_input(gui_t("access.access_code", locale), type="password")
+            remember = st.checkbox(gui_t("access.remember_me", locale), value=False)
             login_btn = st.form_submit_button(gui_t("access.login", locale), type="primary", use_container_width=True)
         if login_btn:
-            user, err = login_with_invite(identity=username, access_code=code)
+            user, err = login_with_invite(identity=username, access_code=code, remember_me=remember)
             if user is not None:
                 st.toast(gui_t("access.login_ok", locale))
                 st.rerun()
             st.error(gui_t(err or "access.login_fail", locale))
-
-
-def _render_admin_sidebar(locale: Locale) -> None:
-    if not admin_credentials_configured() or not access_ui_enabled():
-        return
-    if is_admin_session():
-        with st.sidebar.expander(gui_t("admin.login_expand", locale), expanded=False):
-            st.caption(gui_t("admin.signed_in", locale))
-            if st.button(gui_t("admin.logout", locale), key="admin_logout"):
-                logout_admin()
-                st.rerun()
-        return
-    with st.sidebar.expander(gui_t("admin.login_expand", locale), expanded=False):
-        with st.form("admin_login_form"):
-            admin_user = st.text_input(gui_t("auth.username", locale), key="admin_login_user")
-            admin_pass = st.text_input(gui_t("auth.password", locale), type="password", key="admin_login_pass")
-            admin_btn = st.form_submit_button(gui_t("admin.login", locale))
-        if admin_btn:
-            if login_admin(admin_user, admin_pass):
-                st.toast(gui_t("admin.login_ok", locale))
-                st.rerun()
-            else:
-                st.error(gui_t("admin.login_fail", locale))
 
 
 def render_gate_block(result: GateCheckResult, locale: Locale) -> None:

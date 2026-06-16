@@ -7,7 +7,7 @@ from typing import Any
 import streamlit as st
 
 from worldcup_predictor.config.settings import Locale
-from worldcup_predictor.ui.fixture_display import format_group_stage, format_kickoff_times
+from worldcup_predictor.ui.fixture_display import format_group_stage, format_kickoff_caption, format_kickoff_times
 from worldcup_predictor.ui.gui_components import render_hero
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.professional_reports_page import list_exported_reports
@@ -142,9 +142,7 @@ def _render_finished_row(fixture: Any, locale: Locale) -> None:
     score = _score_text(fixture)
     status = getattr(fixture, "status", "FT")
     group = format_group_stage(fixture)
-    local_ko, utc_ko = format_kickoff_times(
-        getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None)
-    )
+    ko_caption = format_kickoff_caption(fixture, locale)
 
     with st.container(border=True):
         st.markdown(
@@ -156,7 +154,7 @@ def _render_finished_row(fixture: Any, locale: Locale) -> None:
         col_a, col_b, col_c = st.columns([3, 2, 2])
         with col_a:
             st.markdown(f"**{home} {score} {away}**")
-            st.caption(f"{group} · {local_ko} · {utc_ko} UTC")
+            st.caption(f"{group} · {ko_caption}")
         with col_b:
             st.caption(gui_t("card.status", locale))
             st.markdown(f"~~{status}~~" if status else gui_t("status.finished", locale))

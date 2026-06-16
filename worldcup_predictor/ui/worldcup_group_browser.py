@@ -9,7 +9,7 @@ import streamlit as st
 
 from worldcup_predictor.config.settings import Locale
 from worldcup_predictor.schedule.match_center import FINISHED_STATUSES, LIVE_STATUSES
-from worldcup_predictor.ui.fixture_display import format_kickoff_times
+from worldcup_predictor.ui.fixture_display import format_kickoff_caption
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.professional_reports_page import list_exported_reports
 from worldcup_predictor.ui.stored_prediction_summary import has_stored_prediction
@@ -220,7 +220,12 @@ def _render_fixture_row(
     fid = _fixture_id(fixture)
     home = getattr(fixture, "home_team", "—")
     away = getattr(fixture, "away_team", "—")
-    local_ko, utc_ko = format_kickoff_times(getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None))
+    local_ko, utc_ko = format_kickoff_times(
+        getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None),
+        venue_city=getattr(fixture, "city", None),
+        venue_country=getattr(fixture, "country", None),
+    )
+    ko_caption = format_kickoff_caption(fixture, locale)
     status = getattr(fixture, "status", "NS")
     row_class = _match_row_class(fixture)
 
@@ -232,10 +237,10 @@ def _render_fixture_row(
     with c1:
         st.markdown(f"**{home} vs {away}**")
         if _is_finished(fixture):
-            st.caption(f"{gui_t('card.kickoff_local', locale)}: {local_ko} · ID {fid}")
+            st.caption(f"{ko_caption} · ID {fid}")
             st.caption(f'<span class="match-status-struck">~~{status}~~</span>', unsafe_allow_html=True)
         else:
-            st.caption(f"{gui_t('card.kickoff_local', locale)}: **{local_ko}** · {gui_t('card.kickoff_utc', locale)}: **{utc_ko}**")
+            st.caption(ko_caption)
             st.caption(f"ID {fid}", help=gui_t("card.fixture_id", locale))
     with c2:
         if show_predict and st.button(gui_t("btn.predict_match", locale), key=f"{key_prefix}_pred_{fid}", use_container_width=True):

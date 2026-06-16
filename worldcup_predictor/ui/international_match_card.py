@@ -8,7 +8,7 @@ import streamlit as st
 
 from worldcup_predictor.config.settings import Locale
 from worldcup_predictor.ui.country_flags import flag_html_for_team
-from worldcup_predictor.ui.fixture_display import format_group_stage, format_kickoff_times
+from worldcup_predictor.ui.fixture_display import format_group_stage
 from worldcup_predictor.ui.fixture_list_helpers import is_kickoff_today, local_kickoff_time_display
 from worldcup_predictor.ui.gui_i18n import gui_t
 
@@ -113,7 +113,6 @@ def render_international_match_card(
     status = getattr(fixture, "status", "NS")
     venue = getattr(fixture, "venue", "") or "—"
     kickoff = getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None)
-    local_ko, utc_ko = format_kickoff_times(kickoff)
     group_label = format_group_stage(fixture, tournament_context)
 
     country_hint = getattr(fixture, "country", None)
@@ -200,20 +199,30 @@ def render_international_match_card(
             )
         st.markdown(f'<div class="imc-badges">{badge_html}</div>', unsafe_allow_html=True)
 
+        from worldcup_predictor.ui.kickoff_timezone import format_kickoff_display
+
+        ko_display = format_kickoff_display(
+            kickoff,
+            venue_city=getattr(fixture, "city", None),
+            venue_country=getattr(fixture, "country", None),
+            locale=locale,
+        )
         m1, m2, m3, m4 = st.columns(4)
         with m1:
-            st.caption(gui_t("card.kickoff_local", locale))
-            kickoff_display = f"**{local_time_only}** · {local_ko}" if is_today else f"**{local_ko}**"
-            st.markdown(kickoff_display)
+            st.caption(gui_t("kickoff.user_local", locale))
+            st.markdown(f"**{ko_display.user_local}**")
         with m2:
-            st.caption(gui_t("card.kickoff", locale))
-            st.markdown(f"**{utc_ko}**")
+            st.caption(gui_t("kickoff.venue_local", locale))
+            if ko_display.venue_local:
+                st.markdown(f"**{ko_display.venue_local}**")
+            else:
+                st.caption(gui_t("kickoff.venue_unavailable_short", locale))
         with m3:
+            st.caption(gui_t("card.kickoff_utc", locale))
+            st.markdown(f"**{ko_display.utc}**")
+        with m4:
             st.caption(gui_t("card.venue", locale))
             st.markdown(f"**{venue}**")
-        with m4:
-            st.caption(gui_t("card.status", locale))
-            st.markdown(f"**{status}**")
 
         mc1, mc2 = st.columns(2)
         with mc1:

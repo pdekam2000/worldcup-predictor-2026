@@ -7,6 +7,7 @@ import io
 import secrets
 import sqlite3
 import uuid
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from worldcup_predictor.access.config import access_db_path
@@ -401,3 +402,53 @@ class AccessRepository:
                 ]
             )
         return buf.getvalue()
+
+    def save_remember_token(self, user_id: str, token_hash: str, *, days: int = 30) -> bool:
+        try:
+            now = datetime.now(timezone.utc)
+            expires = now + timedelta(days=days)
+            conn = self._connection()
+            conn.execute("DELETE FROM remember_tokens WHERE user_id = ?", (user_id,))
+            conn.execute(
+                """
+                INSERT INTO remember_tokens (token_hash, user_id, created_at, expires_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (token_hash, user_id, now.isoformat(), expires.isoformat()),
+            )
+            conn.commit()
+            return True
+        except sqlite3.Error:
+            return False
+
+    def get_user_id_for_remember_token(self, token_hash: str) -> str | None:
+        try:
+            row = self._connection().execute(
+                """
+                SELECT user_id, expires_at FROM remember_tokens WHERE token_hash = ?
+                """,
+                (token_hash,),
+            ).fetchone()
+            if row is None:
+                return None
+            expires = datetime.fromisoformat(str(row["expires_at"]).replace("Z", "+00:00"))
+            if expires.tzinfo is None:
+                expires = expires.replace(tzinfo=timezone.utc)
+            if datetime.now(timezone.utc) > expires:
+                self._connection().execute(
+                    "DELETE FROM remember_tokens WHERE token_hash = ?",
+                    (token_hash,),
+                )
+                self._connection().commit()
+                return None
+            return str(row["user_id"])
+        except (sqlite3.Error, ValueError, TypeError):
+            return None
+
+    def revoke_remember_tokens(self, user_id: str) -> None:
+        try:
+            conn = self._connection()
+            conn.execute("DELETE FROM remember_tokens WHERE user_id = ?", (user_id,))
+            conn.commit()
+        except sqlite3.Error:
+            pass

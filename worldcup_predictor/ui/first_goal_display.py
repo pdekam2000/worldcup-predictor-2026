@@ -37,6 +37,72 @@ def resolve_first_goal_v2(
         return None
 
 
+def render_first_goal_prediction_card(
+    prediction: MatchPrediction,
+    fg_v2: FirstGoalIntelligenceV2Result | None,
+    locale: Locale,
+) -> None:
+    """Visible First Goal Prediction card on Match Prediction page."""
+    st.markdown(f"### {gui_t('first_goal.card_title', locale)}")
+    with st.container(border=True):
+        team_label = fg_v2.first_goal_team_display if fg_v2 else prediction.first_goal.team
+        band = fg_v2.first_goal_minute_band if fg_v2 else (prediction.first_goal.minute_range or "—")
+        prob = fg_v2.confidence if fg_v2 else None
+        st.markdown(f"**{gui_t('pro_card.first_goal_team', locale)}:** {team_label}")
+        st.markdown(f"**{gui_t('pro_card.first_goal_band', locale)}:** {band}")
+        st.caption(gui_t("first_goal.band_disclaimer", locale))
+        if prob is not None:
+            st.progress(min(max(prob / 100.0, 0.0), 1.0))
+            st.caption(f"{gui_t('badge.confidence', locale)}: {prob:.0f}/100")
+        if fg_v2 and fg_v2.reasoning:
+            for line in fg_v2.reasoning[:3]:
+                st.caption(f"• {line}")
+        if fg_v2 and not fg_v2.data_available:
+            st.info(gui_t("first_goal.limited_data", locale))
+
+
+def render_likely_goal_scorers_card(
+    prediction: MatchPrediction,
+    fg_v2: FirstGoalIntelligenceV2Result | None,
+    locale: Locale,
+) -> None:
+    """Top 3–5 likely goal scorers — never invents names."""
+    scorers = []
+    if fg_v2 and fg_v2.likely_first_goal_scorers:
+        scorers = fg_v2.likely_first_goal_scorers[:5]
+    elif prediction.first_goal.scorer_candidates:
+        scorers = prediction.first_goal.scorer_candidates[:5]
+
+    st.markdown(f"### {gui_t('first_goal.scorers_title', locale)}")
+    with st.container(border=True):
+        if not scorers:
+            msg = prediction.first_goal.player_data_message or gui_t("first_goal.player_unavailable", locale)
+            st.info(msg)
+            return
+        for idx, cand in enumerate(scorers, start=1):
+            if hasattr(cand, "player"):
+                name = cand.player or "—"
+                team = getattr(cand, "team", "") or ""
+                pos = getattr(cand, "position", "") or ""
+                conf = getattr(cand, "confidence", None) or getattr(cand, "score", None)
+                reason = getattr(cand, "reason", "") or ""
+            else:
+                name = cand.get("player_name") or cand.get("player", "—")
+                team = cand.get("team", "")
+                pos = cand.get("position", "")
+                conf = cand.get("confidence") or cand.get("score")
+                reason = cand.get("reason", "")
+            if pos.upper() in {"G", "GK", "GOALKEEPER"}:
+                continue
+            conf_txt = f"{conf:.0f}/100" if isinstance(conf, (int, float)) else "—"
+            st.markdown(
+                f"**{idx}. {name}** ({team}{f' · {pos}' if pos else ''}) — "
+                f"{gui_t('badge.confidence', locale)} {conf_txt}"
+            )
+            if reason:
+                st.caption(reason)
+
+
 def render_first_goal_pro_card_section(
     prediction: MatchPrediction,
     fg_v2: FirstGoalIntelligenceV2Result | None,

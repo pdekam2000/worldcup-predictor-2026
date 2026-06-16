@@ -10,7 +10,7 @@ import streamlit as st
 from worldcup_predictor.config.settings import Locale
 from worldcup_predictor.schedule.match_center import FINISHED_STATUSES, LIVE_STATUSES
 from worldcup_predictor.ui.app_shell import render_dashboard_footer
-from worldcup_predictor.ui.fixture_display import format_group_stage, format_kickoff_times
+from worldcup_predictor.ui.fixture_display import format_group_stage, format_kickoff_caption, format_kickoff_times
 from worldcup_predictor.ui.fixture_list_helpers import is_kickoff_today
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.gui_mode_v2 import navigate_to_page
@@ -122,7 +122,7 @@ def _render_match_card_html(fixture: Any, locale: Locale) -> str:
     home = getattr(fixture, "home_team", "—")
     away = getattr(fixture, "away_team", "—")
     kickoff = getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None)
-    local_ko, _ = format_kickoff_times(kickoff)
+    ko_line = format_kickoff_caption(fixture, locale)
     group = format_group_stage(fixture)
     status = _status_key(fixture)
     badge = gui_t("status.live", locale) if status == "live" else gui_t("status.upcoming", locale)
@@ -132,7 +132,7 @@ def _render_match_card_html(fixture: Any, locale: Locale) -> str:
   <div class="dash-match-teams">{home} vs {away}</div>
   <div class="dash-match-meta">
     <span class="dash-match-group">{group}</span><br/>
-    {local_ko}<br/>
+    {ko_line}<br/>
     <span class="dash-badge {badge_class}">{badge}</span>
   </div>
 </div>

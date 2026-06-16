@@ -117,9 +117,11 @@ from worldcup_predictor.access.identity import init_access_session, is_registere
 from worldcup_predictor.access.admin_auth import block_developer_route, enforce_non_admin_restrictions, init_admin_session, is_admin_session
 from worldcup_predictor.access.prediction_gate import acquire_prediction_slot, preview_api_access
 from worldcup_predictor.access.public_guard import blocks_prediction_actions
+from worldcup_predictor.ui.accuracy_display import render_developer_accuracy_table, render_user_accuracy_card
 from worldcup_predictor.ui.access_display import (
     render_access_home_panel,
     render_access_sidebar,
+    render_admin_bottom_sidebar,
     render_admin_config_debug,
     render_gate_block,
     render_quota_banner,
@@ -518,6 +520,7 @@ def _render_sidebar() -> None:
     locale = _locale()
     render_access_sidebar(locale)
     render_premium_upgrade_card(locale)
+    render_admin_bottom_sidebar(locale)
     render_creator_footer(locale)
 
 
@@ -609,6 +612,7 @@ def page_home() -> None:
             goto_reports=lambda: _goto("professional_reports"),
             goto_match_center=lambda: _goto("match_center"),
         )
+        render_user_accuracy_card(locale, center=center)
 
     render_back_to_top(locale)
 
@@ -858,6 +862,12 @@ def page_accuracy_tracker() -> None:
 
     snapshot = _performance_snapshot()
     st.session_state["accuracy_snapshot"] = snapshot
+
+    from worldcup_predictor.accuracy.dashboard_metrics import build_accuracy_dashboard
+
+    center = _get_match_center()
+    dash = build_accuracy_dashboard(center.finished + center.live + center.upcoming, competition_key=_competition_key())
+    render_developer_accuracy_table(locale, dash)
 
     metrics = snapshot.metrics
     c1, c2, c3, c4, c5, c6 = st.columns(6)
@@ -1525,6 +1535,8 @@ def page_prediction() -> None:
     if fixture_top:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         render_fixture_summary_panel(fixture_top, int(fid_top), locale)
+        from worldcup_predictor.ui.fixture_display import render_kickoff_panel
+        render_kickoff_panel(fixture_top, locale)
         st.markdown("</div>", unsafe_allow_html=True)
 
     all_fixtures = _all_fixtures_for_selector()
