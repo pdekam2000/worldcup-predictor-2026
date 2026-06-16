@@ -34,88 +34,15 @@ READINESS_COLORS = {
 }
 
 
+from worldcup_predictor.ui.dashboard_theme import inject_dashboard_theme
+
+
 def inject_theme() -> None:
+    inject_dashboard_theme()
     st.markdown(
         """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-    color: #0F172A;
-}
-
-/* ── Light main content (Phase 34) ── */
-html { scroll-behavior: smooth; }
-.stApp {
-    background: #F8FAFC;
-}
-.main .block-container {
-    padding-top: 1.5rem;
-    max-width: 1200px;
-}
-header[data-testid="stHeader"] {
-    background: transparent;
-    border: none;
-}
-#MainMenu, footer { visibility: hidden; }
-
-/* ── Dark premium sidebar ── */
-section[data-testid="stSidebar"] {
-    background: #081220 !important;
-    border-right: 1px solid rgba(255,255,255,0.06);
-}
-section[data-testid="stSidebar"] * {
-    color: #E2E8F0;
-}
-section[data-testid="stSidebar"] .stSelectbox label,
-section[data-testid="stSidebar"] .stExpander label {
-    color: #94A3B8 !important;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-section[data-testid="stSidebar"] [data-baseweb="select"] > div {
-    background: rgba(255,255,255,0.06) !important;
-    border-color: rgba(255,255,255,0.12) !important;
-    color: #F8FAFC !important;
-    border-radius: 12px !important;
-}
-section[data-testid="stSidebar"] .stRadio > div {
-    gap: 0.35rem;
-}
-section[data-testid="stSidebar"] .stRadio label {
-    background: transparent;
-    border-radius: 12px;
-    padding: 0.55rem 0.75rem;
-    font-weight: 600;
-    color: #CBD5E1 !important;
-    border: 1px solid transparent;
-}
-section[data-testid="stSidebar"] .stRadio label:hover {
-    background: rgba(255,255,255,0.05);
-}
-section[data-testid="stSidebar"] .stRadio label[data-checked="true"],
-section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:has(input:checked) {
-    background: rgba(22, 163, 74, 0.18) !important;
-    border-color: rgba(22, 163, 74, 0.45) !important;
-    color: #4ADE80 !important;
-}
-
-.sidebar-brand { padding: 0.25rem 0 1rem; }
-.sidebar-brand-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: #F8FAFC;
-    letter-spacing: -0.02em;
-}
-.sidebar-brand-sub {
-    font-size: 0.78rem;
-    color: #94A3B8;
-    line-height: 1.45;
-    margin-top: 0.35rem;
-}
+/* Component-specific overrides (dark dashboard base in dashboard_theme.py) */
 
 .creator-card {
     background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(22,163,74,0.08) 100%);

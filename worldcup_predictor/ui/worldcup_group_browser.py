@@ -172,7 +172,7 @@ def _render(
             upcoming = sum(1 for f in fixtures if not _is_finished(f) and not _is_live(f))
             label = group_name.replace("Group ", "")
             with st.container(border=True):
-                st.markdown(f'<div class="group-card-header"><strong>{group_name}</strong></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="group-card-glass"><div class="group-card-header">{group_name}</div>', unsafe_allow_html=True)
                 if teams:
                     st.markdown(
                         '<div class="group-card-teams">' + " · ".join(teams) + "</div>",
@@ -244,8 +244,6 @@ def _render_fixture_row(
             if st.button(gui_t("group_browser.view_report", locale), key=f"{key_prefix}_rep_{fid}", use_container_width=True):
                 st.session_state["gui_page"] = "professional_reports"
                 st.session_state["reports_filter_fixture_id"] = fid
-                st.session_state["_nav_programmatic"] = True
-                st.session_state["sidebar_user_nav"] = "professional_reports"
                 st.rerun()
         elif has_stored_prediction(fid) and st.button(
             gui_t("group_browser.view_prediction", locale),

@@ -1,18 +1,20 @@
-"""Today-focused User Mode home dashboard — Phase Product UX."""
+"""Premium User Mode home dashboard — dark sports analytics style."""
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime, timezone
 from typing import Any, Callable
 
 import streamlit as st
 
 from worldcup_predictor.config.settings import Locale
 from worldcup_predictor.schedule.match_center import FINISHED_STATUSES, LIVE_STATUSES
+from worldcup_predictor.ui.app_shell import render_dashboard_footer
 from worldcup_predictor.ui.fixture_display import format_group_stage, format_kickoff_times
 from worldcup_predictor.ui.fixture_list_helpers import is_kickoff_today
 from worldcup_predictor.ui.gui_i18n import gui_t
-from worldcup_predictor.ui.status_badges import render_status_badge
+from worldcup_predictor.ui.gui_mode_v2 import navigate_to_page
+from worldcup_predictor.ui.worldcup_group_browser import render_worldcup_group_browser
 
 
 def _fixture_id(fixture: Any) -> int:
@@ -28,31 +30,18 @@ def _status_key(fixture: Any) -> str:
     return "upcoming"
 
 
-def _today_fixtures(center: Any) -> list[Any]:
+def _next_matches(center: Any, *, limit: int = 4) -> list[Any]:
     pools = list(getattr(center, "live", []) or []) + list(getattr(center, "upcoming", []) or [])
-    pools += list(getattr(center, "finished", []) or [])
     seen: set[int] = set()
-    today_list: list[Any] = []
+    out: list[Any] = []
     for fixture in pools:
         fid = _fixture_id(fixture)
-        if fid in seen or not is_kickoff_today(fixture):
+        if fid in seen:
             continue
         seen.add(fid)
-        today_list.append(fixture)
-    today_list.sort(key=lambda f: getattr(f, "kickoff_time", None) or getattr(f, "kickoff_utc", None))
-    return today_list
-
-
-def _next_upcoming(center: Any, *, exclude_today: bool) -> Any | None:
-    upcoming = sorted(
-        getattr(center, "upcoming", []) or [],
-        key=lambda f: getattr(f, "kickoff_time", None) or getattr(f, "kickoff_utc", None),
-    )
-    for fixture in upcoming:
-        if exclude_today and is_kickoff_today(fixture):
-            continue
-        return fixture
-    return None
+        out.append(fixture)
+    out.sort(key=lambda f: getattr(f, "kickoff_time", None) or getattr(f, "kickoff_utc", None))
+    return out[:limit]
 
 
 def _select_fixture(fixture_id: int) -> None:
@@ -62,46 +51,29 @@ def _select_fixture(fixture_id: int) -> None:
     st.rerun()
 
 
-def _render_today_card(
-    fixture: Any,
-    locale: Locale,
-    *,
-    key_prefix: str,
-    on_predict: Callable[[int], None] | None,
-) -> None:
-    home = getattr(fixture, "home_team", "—")
-    away = getattr(fixture, "away_team", "—")
-    kickoff = getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None)
-    local_ko, utc_ko = format_kickoff_times(kickoff)
-    group = format_group_stage(fixture)
-    status_key = _status_key(fixture)
-    fid = _fixture_id(fixture)
+def _nav(page: str) -> None:
+    navigate_to_page(page, developer_mode=False)
+    st.rerun()
 
-    with st.container(border=True):
-        st.markdown(f"**{home} vs {away}**")
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.caption(gui_t("card.kickoff_local", locale))
-            st.markdown(f"**{local_ko}**")
-        with c2:
-            st.caption(gui_t("card.kickoff_utc", locale))
-            st.markdown(f"**{utc_ko}**")
-        with c3:
-            st.caption(gui_t("card.group", locale))
-            st.markdown(f"**{group}**")
-        venue = getattr(fixture, "venue", None) or ""
-        if venue and str(venue).strip() not in {"", "—", "TBD"}:
-            st.caption(f"{gui_t('card.venue', locale)}: **{venue}**")
-        render_status_badge(
-            gui_t("status.live", locale) if status_key == "live" else (
-                gui_t("status.finished", locale) if status_key == "finished" else gui_t("status.upcoming", locale)
-            ),
-            kind=gui_t("card.status", locale),
-            locale=locale,
-        )
-        if status_key != "finished" and on_predict and fid:
-            if st.button(gui_t("home.predict_match", locale), key=f"{key_prefix}_pred_{fid}", use_container_width=True):
-                on_predict(fid)
+
+def _format_ou(selection: str) -> str:
+    key = (selection or "").lower()
+    if "over" in key:
+        return "Over 2.5"
+    if "under" in key:
+        return "Under 2.5"
+    return selection.replace("_", " ").title()
+
+
+def _format_1x2(selection: str, home: str, away: str) -> str:
+    key = (selection or "").lower().replace(" ", "_")
+    if key == "home_win":
+        return f"{home} Win"
+    if key == "away_win":
+        return f"{away} Win"
+    if key == "draw":
+        return "Draw"
+    return selection.replace("_", " ").title()
 
 
 def render_user_home_dashboard(
@@ -110,19 +82,22 @@ def render_user_home_dashboard(
     center: Any,
     api_ready: bool,
     last_prediction: Any | None,
+    all_fixtures: list[Any] | None = None,
+    groups: dict[str, Any] | None = None,
     on_quick_predict: Callable[[], None] | None = None,
     goto_predict: Callable[[], None] | None = None,
     goto_reports: Callable[[], None] | None = None,
     goto_match_center: Callable[[], None] | None = None,
 ) -> None:
-    """Today-only product dashboard — never raises."""
+    """Premium home dashboard — never raises."""
     try:
         _render(
             locale,
             center,
             api_ready,
             last_prediction,
-            on_quick_predict,
+            all_fixtures or [],
+            groups,
             goto_predict,
             goto_reports,
             goto_match_center,
@@ -131,106 +106,152 @@ def render_user_home_dashboard(
         st.info(gui_t("home.user_welcome", locale))
 
 
+def _render_welcome_header(locale: Locale) -> None:
+    st.markdown(
+        f"""
+<div class="dash-welcome-header">
+  <h1>{gui_t("home.dashboard_title", locale)}</h1>
+  <p>{gui_t("home.dashboard_subtitle", locale)}</p>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+def _render_match_card_html(fixture: Any, locale: Locale) -> str:
+    home = getattr(fixture, "home_team", "—")
+    away = getattr(fixture, "away_team", "—")
+    kickoff = getattr(fixture, "kickoff_time", None) or getattr(fixture, "kickoff_utc", None)
+    local_ko, _ = format_kickoff_times(kickoff)
+    group = format_group_stage(fixture)
+    status = _status_key(fixture)
+    badge = gui_t("status.live", locale) if status == "live" else gui_t("status.upcoming", locale)
+    badge_class = "dash-badge-live" if status == "live" else "dash-badge-user"
+    return f"""
+<div class="dash-match-card">
+  <div class="dash-match-teams">{home} vs {away}</div>
+  <div class="dash-match-meta">
+    <span class="dash-match-group">{group}</span><br/>
+    {local_ko}<br/>
+    <span class="dash-badge {badge_class}">{badge}</span>
+  </div>
+</div>
+"""
+
+
 def _render(
     locale: Locale,
     center: Any,
     api_ready: bool,
     last_prediction: Any | None,
-    on_quick_predict: Callable[[], None] | None,
+    all_fixtures: list[Any],
+    groups: dict[str, Any] | None,
     goto_predict: Callable[[], None] | None,
     goto_reports: Callable[[], None] | None,
     goto_match_center: Callable[[], None] | None,
 ) -> None:
-    st.markdown(f"### {gui_t('home.user_welcome', locale)}")
-    st.caption(gui_t("home.today_subtitle", locale))
+    _render_welcome_header(locale)
 
-    live = list(getattr(center, "live", []) or [])
-    today_matches = _today_fixtures(center)
+    top_left, top_right = st.columns([3, 1])
+    with top_right:
+        st.markdown(
+            f'<span class="dash-badge dash-badge-user">{gui_t("mode.user", locale)}</span>',
+            unsafe_allow_html=True,
+        )
 
-    if live:
-        st.markdown(f"#### {gui_t('home.live_now', locale)}")
-        for fixture in live:
-            _render_today_card(fixture, locale, key_prefix="home_live", on_predict=_select_fixture)
+    st.markdown(f'<div class="dash-section-title">📅 {gui_t("home.next_matches", locale)}</div>', unsafe_allow_html=True)
+    next_rows = _next_matches(center, limit=4)
+    if next_rows:
+        cols = st.columns(min(len(next_rows), 4))
+        for col, fixture in zip(cols, next_rows):
+            with col:
+                st.markdown(_render_match_card_html(fixture, locale), unsafe_allow_html=True)
+                fid = _fixture_id(fixture)
+                if _status_key(fixture) != "finished" and fid:
+                    if st.button(gui_t("btn.predict_match", locale), key=f"home_nm_{fid}", use_container_width=True):
+                        _select_fixture(fid)
+    else:
+        st.info(gui_t("no_fixture", locale))
 
-    st.markdown(f"#### {gui_t('home.today_matches', locale)}")
-    if today_matches:
-        for fixture in today_matches:
-            if fixture in live:
-                continue
-            _render_today_card(fixture, locale, key_prefix="home_today", on_predict=_select_fixture)
-    elif not live:
-        nxt = _next_upcoming(center, exclude_today=False)
-        if nxt:
-            st.info(gui_t("home.no_match_today_next", locale))
-            _render_today_card(nxt, locale, key_prefix="home_next", on_predict=_select_fixture)
-        else:
-            st.info(gui_t("no_fixture", locale))
+    st.markdown(f'<div class="dash-section-title">⚡ {gui_t("home.quick_actions", locale)}</div>', unsafe_allow_html=True)
+    actions = [
+        ("match_center", "btn.match_center", "🏟️", goto_match_center),
+        ("team_search", "nav.game_search", "🔎", None),
+        ("finished_results", "nav.finished_results", "✅", None),
+        ("professional_reports", "nav.professional_reports", "📄", goto_reports),
+        ("hall_of_fame", "nav.hall_of_fame", "🏆", None),
+        ("settings", "nav.settings", "⚙️", None),
+    ]
+    qcols = st.columns(3)
+    for idx, (page, i18n, icon, callback) in enumerate(actions):
+        with qcols[idx % 3]:
+            if st.button(f"{icon} {gui_t(i18n, locale)}", key=f"home_qa_{page}", use_container_width=True):
+                if callback:
+                    callback()
+                else:
+                    _nav(page)
 
-    st.markdown("---")
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.markdown(f"**{gui_t('home.last_prediction', locale)}**")
-        if last_prediction and getattr(last_prediction, "success", False):
-            pred = last_prediction.prediction
-            st.metric(pred.match_name, f"{pred.one_x_two.selection} · {pred.over_under.selection}")
-            st.caption(f"{gui_t('badge.confidence', locale)}: {pred.confidence_score:.0f}/100")
-            if pred.first_goal and pred.first_goal.team:
-                fg_band = pred.first_goal.minute_range or "—"
-                st.caption(f"{gui_t('pro_card.first_goal_team', locale)}: {pred.first_goal.team} · {fg_band}")
-        else:
-            st.caption(gui_t("home.no_prediction_yet", locale))
+    if all_fixtures:
+        st.markdown(f'<div class="dash-section-title">🌍 {gui_t("group_browser.title", locale)}</div>', unsafe_allow_html=True)
+        render_worldcup_group_browser(
+            locale,
+            all_fixtures=all_fixtures,
+            groups=groups,
+            on_select_fixture=_select_fixture,
+            key_prefix="home_groups",
+        )
 
-    with col_b:
-        st.markdown(f"**{gui_t('home.quota_status', locale)}**")
-        try:
-            from worldcup_predictor.access.identity import is_registered_user
-            from worldcup_predictor.access.prediction_gate import preview_prediction_quota
+    st.markdown(f'<div class="dash-section-title">🤖 {gui_t("home.ai_insights", locale)}</div>', unsafe_allow_html=True)
+    if last_prediction and getattr(last_prediction, "success", False):
+        pred = last_prediction.prediction
+        score = f"{int(pred.scoreline.home_goals)}-{int(pred.scoreline.away_goals)}"
+        ou_prob = f"{pred.over_under.probability * 100:.0f}%" if pred.over_under.probability else "—"
+        ic1, ic2, ic3, ic4 = st.columns(4)
+        with ic1:
+            st.markdown(
+                f'<div class="dash-insight-card"><div class="dash-insight-label">{gui_t("home.top_prediction", locale)}</div>'
+                f'<div class="dash-insight-value">{_format_1x2(pred.one_x_two.selection, pred.match_name.split(" vs ")[0] if " vs " in pred.match_name else "", "")}</div></div>',
+                unsafe_allow_html=True,
+            )
+        with ic2:
+            st.markdown(
+                f'<div class="dash-insight-card"><div class="dash-insight-label">{gui_t("home.likely_score", locale)}</div>'
+                f'<div class="dash-insight-value">{score}</div></div>',
+                unsafe_allow_html=True,
+            )
+        with ic3:
+            st.markdown(
+                f'<div class="dash-insight-card"><div class="dash-insight-label">O/U 2.5</div>'
+                f'<div class="dash-insight-value">{_format_ou(pred.over_under.selection)}</div>'
+                f'<div class="dash-insight-label">{ou_prob}</div></div>',
+                unsafe_allow_html=True,
+            )
+        with ic4:
+            st.markdown(
+                f'<div class="dash-insight-card"><div class="dash-insight-label">{gui_t("badge.confidence", locale)}</div>'
+                f'<div class="dash-insight-value">{pred.confidence_score:.0f}</div></div>',
+                unsafe_allow_html=True,
+            )
+    else:
+        st.caption(gui_t("home.no_prediction_yet", locale))
 
-            if is_registered_user():
-                quota = preview_prediction_quota()
-                st.caption(f"{gui_t('access.quota_line', locale).format(used=quota.used_today, limit=quota.daily_limit, remaining=quota.remaining or 0)}")
-            else:
-                st.caption(gui_t("access.panel_hint", locale))
-        except Exception:
-            st.caption(gui_t("home.system_status", locale))
+    st.markdown(f'<div class="dash-section-title">📊 {gui_t("home.recent_predictions", locale)}</div>', unsafe_allow_html=True)
+    if last_prediction and getattr(last_prediction, "success", False):
+        pred = last_prediction.prediction
+        score = f"{int(pred.scoreline.home_goals)}-{int(pred.scoreline.away_goals)}"
+        st.markdown(
+            f"""
+<div class="glass-card">
+  <strong>{pred.match_name}</strong><br/>
+  <span class="dash-badge dash-badge-user">{_format_1x2(pred.one_x_two.selection, "", "")}</span>
+  <span class="dash-badge dash-badge-user">{_format_ou(pred.over_under.selection)}</span>
+  <span class="dash-badge dash-badge-user">{score}</span><br/>
+  <span style="color:#94a3b8;font-size:0.8rem;">{gui_t("badge.confidence", locale)}: {pred.confidence_score:.0f}/100</span>
+</div>
+""",
+            unsafe_allow_html=True,
+        )
+    else:
+        st.caption(gui_t("home.no_prediction_yet", locale))
 
-    st.markdown(f"#### {gui_t('home.quick_actions', locale)}")
-    q1, q2, q3, q4 = st.columns(4)
-    with q1:
-        if st.button(gui_t("home.predict_today", locale), type="primary", use_container_width=True):
-            target = today_matches[0] if today_matches else (live[0] if live else _next_upcoming(center, exclude_today=False))
-            if target:
-                _select_fixture(_fixture_id(target))
-            elif goto_predict:
-                goto_predict()
-            elif on_quick_predict:
-                on_quick_predict()
-            else:
-                st.session_state["gui_page"] = "predict"
-                st.session_state["_nav_programmatic"] = True
-                st.rerun()
-    with q2:
-        if st.button(gui_t("btn.match_center", locale), use_container_width=True):
-            if goto_match_center:
-                goto_match_center()
-            else:
-                st.session_state["gui_page"] = "match_center"
-                st.session_state["_nav_programmatic"] = True
-                st.session_state["sidebar_user_nav"] = "match_center"
-                st.rerun()
-    with q3:
-        if st.button(gui_t("home.open_group_browser", locale), use_container_width=True):
-            st.session_state["gui_page"] = "predict"
-            st.session_state["gui_expand_group_browser"] = True
-            st.session_state["_nav_programmatic"] = True
-            st.session_state["sidebar_user_nav"] = "predict"
-            st.rerun()
-    with q4:
-        if st.button(gui_t("home.open_reports", locale), use_container_width=True):
-            if goto_reports:
-                goto_reports()
-            else:
-                st.session_state["gui_page"] = "professional_reports"
-                st.session_state["_nav_programmatic"] = True
-                st.session_state["sidebar_user_nav"] = "professional_reports"
-                st.rerun()
+    render_dashboard_footer(locale, live_status=gui_t("footer.live", locale) if api_ready else "Demo")

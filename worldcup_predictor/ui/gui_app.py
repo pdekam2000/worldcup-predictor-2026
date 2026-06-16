@@ -92,6 +92,7 @@ from worldcup_predictor.ui.app_shell import (
     render_main_disclaimer,
     render_performance_cards,
     render_model_experience_section,
+    render_premium_upgrade_card,
     render_promo_banner,
     render_quick_action_cards,
     render_sidebar_branding,
@@ -99,17 +100,15 @@ from worldcup_predictor.ui.app_shell import (
 )
 from worldcup_predictor.ui.gui_mode_v2 import (
     all_page_keys,
-    apply_primary_nav_selection,
     dev_expander_nav_items,
-    ensure_gui_page_from_sidebar,
     init_gui_mode_state,
     is_developer_mode,
     navigate_to_page,
     normalize_gui_page,
     primary_nav_for_mode,
     render_mode_toggle,
+    render_sidebar_navigation,
     save_default_gui_mode,
-    sync_primary_nav_widget,
 )
 from worldcup_predictor.ui.gui_i18n import gui_t
 from worldcup_predictor.ui.professional_prediction_card import render_professional_prediction_card
@@ -254,8 +253,6 @@ def _init_state() -> None:
     init_admin_session()
     enforce_non_admin_restrictions()
     dev_mode = is_developer_mode()
-    if "sidebar_user_nav" not in st.session_state:
-        st.session_state["sidebar_user_nav"] = st.session_state.get("gui_page", "home")
     st.session_state["gui_page"] = normalize_gui_page(
         st.session_state.get("gui_page"),
         developer_mode=dev_mode,
@@ -457,22 +454,13 @@ def _load_json(path: Path) -> dict[str, Any] | None:
 def _render_sidebar() -> None:
     locale = _locale()
     render_sidebar_branding(locale)
-    render_access_sidebar(locale)
     render_admin_config_debug()
 
     def _locale_label(code: str) -> str:
         flag = GUI_LOCALE_FLAGS.get(code, "")
         return f"{flag} {GUI_LOCALE_LABELS[code]}".strip()
 
-    st.session_state["locale"] = st.sidebar.selectbox(
-        gui_t("locale", locale),
-        options=GUI_LOCALES,
-        index=GUI_LOCALES.index(st.session_state["locale"])
-        if st.session_state["locale"] in GUI_LOCALES
-        else 0,
-        format_func=_locale_label,
-    )
-    locale = _locale()
+    render_mode_toggle(locale)
 
     comp_service = CompetitionService()
     comps = comp_service.list_competitions()
@@ -489,38 +477,24 @@ def _render_sidebar() -> None:
     )
     _sync_fixture_for_competition()
 
-    render_mode_toggle(locale)
-
     st.sidebar.markdown("---")
     dev_mode = is_developer_mode()
     st.session_state["gui_page"] = normalize_gui_page(
         st.session_state.get("gui_page"),
         developer_mode=dev_mode,
     )
-    sync_primary_nav_widget(developer_mode=dev_mode)
 
-    primary_nav = primary_nav_for_mode(developer_mode=dev_mode)
-    user_keys = [k for k, _, _ in primary_nav]
-    user_labels = {k: f"{icon} {gui_t(i18n, locale)}" for k, i18n, icon in primary_nav}
+    render_sidebar_navigation(locale, developer_mode=dev_mode)
     current_page = st.session_state["gui_page"]
 
-    st.sidebar.radio(
-        gui_t("mode.user", locale) if not dev_mode else "Navigation",
-        user_keys,
-        format_func=lambda k: user_labels[k],
-        label_visibility="collapsed",
-        key="sidebar_user_nav",
-        on_change=apply_primary_nav_selection,
-    )
-    ensure_gui_page_from_sidebar(developer_mode=dev_mode)
-
     if dev_mode and is_admin_session():
-        st.sidebar.caption(f"Route: `{st.session_state.get('gui_page', 'home')}`")
+        st.sidebar.caption(f"Route: `{current_page}`")
         dev_keys = [k for k, _, _ in dev_expander_nav_items()]
         with st.sidebar.expander(
             gui_t("shell.for_developer", locale),
             expanded=current_page in dev_keys,
         ):
+            st.markdown(f'<div class="sidebar-nav-label">{gui_t("shell.developer_tools", locale)}</div>', unsafe_allow_html=True)
             for key, i18n, icon in dev_expander_nav_items():
                 is_active = current_page == key
                 if st.button(
@@ -533,6 +507,17 @@ def _render_sidebar() -> None:
                     st.rerun()
 
     st.sidebar.markdown("---")
+    st.session_state["locale"] = st.sidebar.selectbox(
+        gui_t("locale", locale),
+        options=GUI_LOCALES,
+        index=GUI_LOCALES.index(st.session_state["locale"])
+        if st.session_state["locale"] in GUI_LOCALES
+        else 0,
+        format_func=_locale_label,
+    )
+    locale = _locale()
+    render_access_sidebar(locale)
+    render_premium_upgrade_card(locale)
     render_creator_footer(locale)
 
 
@@ -602,19 +587,15 @@ def page_home() -> None:
             vstats = _verification_agent().today_stats()
             st.metric(gui_t("home.verified_today", locale), vstats["verified_predictions_today"])
     else:
-        render_hero(gui_t("nav.home", locale), gui_t("home.user_subtitle", locale))
-        render_access_home_panel(locale)
+        all_fixtures = _all_fixtures_for_selector()
+        try:
+            overview = _schedule_service().get_tournament_overview()
+            groups = overview.groups if overview else {}
+        except Exception:
+            groups = {}
 
-        def _goto_predict() -> None:
-            navigate_to_page("predict", developer_mode=False)
-            st.rerun()
-
-        def _goto_reports() -> None:
-            navigate_to_page("professional_reports", developer_mode=False)
-            st.rerun()
-
-        def _goto_match_center() -> None:
-            navigate_to_page("match_center", developer_mode=False)
+        def _goto(page: str) -> None:
+            navigate_to_page(page, developer_mode=False)
             st.rerun()
 
         render_user_home_dashboard(
@@ -622,9 +603,11 @@ def page_home() -> None:
             center=center,
             api_ready=api_ready,
             last_prediction=last_prediction,
-            goto_predict=_goto_predict,
-            goto_reports=_goto_reports,
-            goto_match_center=_goto_match_center,
+            all_fixtures=all_fixtures,
+            groups=groups,
+            goto_predict=lambda: _goto("predict"),
+            goto_reports=lambda: _goto("professional_reports"),
+            goto_match_center=lambda: _goto("match_center"),
         )
 
     render_back_to_top(locale)
@@ -1536,6 +1519,13 @@ def page_prediction() -> None:
     t = _translator()
     subtitle = t.t("cli.predict.header")
     render_hero(gui_t("nav.predict", locale), subtitle)
+
+    fid_top = _default_fixture_id()
+    fixture_top = _lookup_fixture(fid_top)
+    if fixture_top:
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        render_fixture_summary_panel(fixture_top, int(fid_top), locale)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     all_fixtures = _all_fixtures_for_selector()
     try:

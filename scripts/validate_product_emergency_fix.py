@@ -13,6 +13,22 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 
+def test_button_nav_module() -> None:
+    from worldcup_predictor.ui.gui_mode_v2 import render_sidebar_navigation, navigate_to_page
+    from worldcup_predictor.ui.dashboard_theme import inject_dashboard_theme
+
+    assert callable(render_sidebar_navigation)
+    assert callable(navigate_to_page)
+    assert callable(inject_dashboard_theme)
+
+
+def test_nav_order() -> None:
+    from worldcup_predictor.ui.app_shell import USER_MODE_V2_NAV_ITEMS
+
+    keys = [k for k, _, _ in USER_MODE_V2_NAV_ITEMS]
+    assert keys.index("match_center") < keys.index("team_search")
+
+
 def test_nav_keys() -> None:
     from worldcup_predictor.ui.app_shell import USER_MODE_V2_NAV_ITEMS
     from worldcup_predictor.ui.gui_mode_v2 import pages_for_mode, primary_nav_for_mode
@@ -41,7 +57,8 @@ def test_nav_keys() -> None:
 def test_modules_import() -> None:
     importlib.import_module("worldcup_predictor.ui.finished_results_page")
     importlib.import_module("worldcup_predictor.ui.worldcup_group_browser")
-    importlib.import_module("worldcup_predictor.ui.gui_mode_v2")
+    importlib.import_module("worldcup_predictor.ui.user_home_dashboard")
+    importlib.import_module("worldcup_predictor.ui.dashboard_theme")
 
 
 def test_group_browser_helpers() -> None:
@@ -90,6 +107,8 @@ def test_cli_smoke() -> None:
 def main() -> int:
     tests = [
         test_modules_import,
+        test_button_nav_module,
+        test_nav_order,
         test_nav_keys,
         test_group_browser_helpers,
         test_scoring_pick_over_under,

@@ -179,8 +179,6 @@ def _render_finished_row(fixture: Any, locale: Locale) -> None:
                     ):
                         st.session_state["gui_page"] = "professional_reports"
                         st.session_state["reports_filter_fixture_id"] = fid
-                        st.session_state["_nav_programmatic"] = True
-                        st.session_state["sidebar_user_nav"] = "professional_reports"
                         st.rerun()
 
         stored = get_latest_stored_prediction(fid)

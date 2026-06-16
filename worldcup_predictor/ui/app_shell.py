@@ -15,8 +15,8 @@ from worldcup_predictor.ui.gui_i18n import gui_t
 USER_MODE_V2_NAV_ITEMS: list[tuple[str, str, str]] = [
     ("home", "nav.home", "🏠"),
     ("predict", "nav.predict", "🎯"),
-    ("team_search", "nav.game_search", "🔎"),
     ("match_center", "nav.match_center", "⚽"),
+    ("team_search", "nav.game_search", "🔎"),
     ("finished_results", "nav.finished_results", "✅"),
     ("professional_reports", "nav.professional_reports", "📄"),
     ("hall_of_fame", "nav.hall_of_fame", "🏆"),
@@ -161,8 +161,35 @@ def render_sidebar_branding(locale: Locale) -> None:
     st.sidebar.markdown(
         f"""
 <div class="sidebar-brand">
-  <div class="sidebar-brand-title">⚽ WorldCup Predictor Pro</div>
-  <div class="sidebar-brand-sub">{gui_t("shell.tagline", locale)}</div>
+  <div class="sidebar-brand-logo">🏆</div>
+  <div class="sidebar-brand-title">World Cup Predictor 2026</div>
+  <div class="sidebar-brand-sub">{gui_t("shell.ai_tagline", locale)}</div>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+def render_premium_upgrade_card(locale: Locale) -> None:
+    st.sidebar.markdown(
+        f"""
+<div class="premium-upgrade-card">
+  <h4>✨ {gui_t("upgrade.card_title", locale)}</h4>
+  <p>{gui_t("upgrade.card_subtitle", locale)}</p>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+def render_dashboard_footer(locale: Locale, *, engine_version: str = "v2", live_status: str = "Live") -> None:
+    st.markdown(
+        f"""
+<div class="dash-footer">
+  {gui_t("footer.data_api", locale)} · {gui_t("footer.odds_api", locale)} ·
+  {gui_t("footer.engine", locale)} {engine_version} ·
+  {gui_t("footer.last_updated", locale)} ·
+  <span class="dash-badge dash-badge-live">{live_status}</span>
 </div>
 """,
         unsafe_allow_html=True,

@@ -117,43 +117,29 @@ def normalize_gui_page(page: str | None, *, developer_mode: bool) -> str:
     return "home"
 
 
-def sync_primary_nav_widget(*, developer_mode: bool) -> None:
-    """Sync radio from gui_page only after explicit programmatic navigation."""
-    if not st.session_state.pop("_nav_programmatic", False):
-        return
-    primary = primary_nav_for_mode(developer_mode=developer_mode)
-    primary_keys = [k for k, _, _ in primary]
-    current_page = st.session_state.get("gui_page", "home")
-    if current_page in primary_keys:
-        st.session_state["sidebar_user_nav"] = current_page
-
-
-def apply_primary_nav_selection() -> None:
-    """Radio on_change — user picked a primary nav item."""
-    picked = st.session_state.get("sidebar_user_nav", "home")
-    st.session_state["gui_page"] = picked
-
-
-def ensure_gui_page_from_sidebar(*, developer_mode: bool) -> None:
-    """After sidebar radio — primary nav routes follow widget selection."""
-    primary_keys = {k for k, _, _ in primary_nav_for_mode(developer_mode=developer_mode)}
-    picked = st.session_state.get("sidebar_user_nav")
-    if picked in primary_keys:
-        st.session_state["gui_page"] = picked
-
-
-def sync_gui_page_from_sidebar(*, developer_mode: bool) -> None:
-    """Alias for post-radio sync."""
-    ensure_gui_page_from_sidebar(developer_mode=developer_mode)
-
-
 def navigate_to_page(page_key: str, *, developer_mode: bool) -> None:
-    """Set active route; sync primary radio when target is a primary item."""
+    """Set active route — single source of truth is gui_page."""
+    _ = developer_mode
     st.session_state["gui_page"] = page_key
-    primary_keys = {k for k, _, _ in primary_nav_for_mode(developer_mode=developer_mode)}
-    if page_key in primary_keys:
-        st.session_state["sidebar_user_nav"] = page_key
-        st.session_state["_nav_programmatic"] = True
+
+
+def render_sidebar_navigation(locale: Locale, *, developer_mode: bool) -> None:
+    """Button-based primary nav — avoids Streamlit radio session_state conflicts."""
+    primary_nav = primary_nav_for_mode(developer_mode=developer_mode)
+    current = st.session_state.get("gui_page", "home")
+    st.sidebar.markdown(f'<div class="sidebar-nav-label">{gui_t("shell.navigation", locale)}</div>', unsafe_allow_html=True)
+    for key, i18n, icon in primary_nav:
+        label = f"{icon}  {gui_t(i18n, locale)}"
+        is_active = current == key
+        if st.sidebar.button(
+            label,
+            key=f"sidebar_nav_{key}",
+            use_container_width=True,
+            type="primary" if is_active else "secondary",
+        ):
+            if key != current:
+                navigate_to_page(key, developer_mode=developer_mode)
+                st.rerun()
 
 
 def render_mode_toggle(locale: Locale) -> None:
