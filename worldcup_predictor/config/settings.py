@@ -30,6 +30,15 @@ class Settings(BaseSettings):
     upcoming_fixture_limit: int = Field(default=5, alias="UPCOMING_FIXTURE_LIMIT")
     api_cache_dir: str = Field(default=".cache/api_football", alias="API_CACHE_DIR")
     api_cache_ttl_seconds: int = Field(default=3600, alias="API_CACHE_TTL_SECONDS")
+    api_sync_mode: str = Field(default="fast", alias="API_SYNC_MODE")
+    api_throttle_delay_seconds: float = Field(default=1.0, alias="API_THROTTLE_DELAY_SECONDS")
+    api_throttle_warning_delay_seconds: float = Field(default=2.0, alias="API_THROTTLE_WARNING_DELAY_SECONDS")
+    api_throttle_rate_limit_delay_seconds: float = Field(default=5.0, alias="API_THROTTLE_RATE_LIMIT_DELAY_SECONDS")
+
+    # Database engine (Phase B) — SQLite remains default when DATABASE_URL is unset
+    database_url: str | None = Field(default=None, alias="DATABASE_URL")
+    sqlite_path: str = Field(default="data/football_intelligence.db", alias="SQLITE_PATH")
+    database_fallback_enabled: bool = Field(default=True, alias="DATABASE_FALLBACK_ENABLED")
 
     # Optional enrichment providers (not required — API-Sports remains primary)
     sportmonks_api_key: str = Field(default="", alias="SPORTMONKS_API_KEY")
