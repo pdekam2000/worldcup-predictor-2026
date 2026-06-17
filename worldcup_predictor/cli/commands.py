@@ -3233,3 +3233,59 @@ def run_odds_api_diagnostics_command(
     out.write("\n\n")
     out.write("=" * 72 + "\n")
     return 0
+
+
+def run_import_league_history_command(
+    *,
+    league: int | None = None,
+    season: int | None = None,
+    all_enabled: bool = False,
+    from_season: int | None = None,
+    to_season: int | None = None,
+    enrich: bool = True,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI: import European league history into SQLite (Phase 39B)."""
+    out = stream or sys.stdout
+    from worldcup_predictor.ingestion.league_history_importer import LeagueHistoryImporter
+
+    importer = LeagueHistoryImporter(enrich=enrich)
+    out.write("=" * 72 + "\n")
+    out.write("  Phase 39 — League History Import (SQLite)\n")
+    out.write("=" * 72 + "\n\n")
+
+    if not importer.is_configured:
+        out.write("  API_FOOTBALL_KEY not configured.\n\n")
+        out.write("=" * 72 + "\n")
+        return 1
+
+    results = []
+    if all_enabled and from_season is not None and to_season is not None:
+        results = importer.import_all_enabled_range(from_season=from_season, to_season=to_season)
+    elif all_enabled:
+        if season is None:
+            out.write("  --season required with --all-enabled (unless using --from-season/--to-season).\n")
+            return 1
+        results = importer.import_all_enabled(season=season)
+    elif league is not None:
+        if season is None:
+            out.write("  --season required with --league.\n")
+            return 1
+        results = [importer.import_league_season(league_id=league, season=season)]
+    else:
+        out.write("  Specify --league ID, or --all-enabled with --season or season range.\n")
+        return 1
+
+    exit_code = 0
+    for result in results:
+        out.write(
+            f"  {result.competition_key} (league {result.league_id}, {result.season}): "
+            f"{result.message}\n"
+        )
+        if not result.success:
+            exit_code = 1
+        for err in result.errors:
+            out.write(f"    ! {err}\n")
+
+    out.write("\n" + "=" * 72 + "\n")
+    return exit_code
