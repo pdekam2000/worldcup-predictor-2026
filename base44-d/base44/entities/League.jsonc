@@ -1,0 +1,34 @@
+{
+  "name": "League",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "League name"
+    },
+    "country": {
+      "type": "string",
+      "description": "Country of the league"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "URL to league logo"
+    },
+    "season": {
+      "type": "string",
+      "description": "Current season e.g. 2025-2026"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "external_id": {
+      "type": "string",
+      "description": "External API league ID for future integration"
+    }
+  },
+  "required": [
+    "name",
+    "country"
+  ]
+}

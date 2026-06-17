@@ -1,0 +1,28 @@
+{
+  "name": "SystemSettings",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string"
+    },
+    "value": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "api",
+        "general",
+        "maintenance",
+        "billing"
+      ]
+    }
+  },
+  "required": [
+    "key",
+    "value"
+  ]
+}

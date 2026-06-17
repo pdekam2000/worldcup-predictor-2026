@@ -1,0 +1,33 @@
+{
+  "name": "Favorite",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "team",
+        "league",
+        "match"
+      ]
+    },
+    "item_id": {
+      "type": "string"
+    },
+    "item_name": {
+      "type": "string"
+    },
+    "item_meta": {
+      "type": "string",
+      "description": "Extra info e.g. league name for a team"
+    }
+  },
+  "required": [
+    "user_id",
+    "type",
+    "item_id",
+    "item_name"
+  ]
+}

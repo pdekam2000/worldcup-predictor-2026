@@ -7,5 +7,9 @@ pandas>=2.0.0
 plotly>=5.18.0
 openai>=1.0.0
 scikit-learn>=1.4.0
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+sqlalchemy>=2.0.0
+psycopg[binary]>=3.1.0
 # Optional — Stripe Checkout via REST uses httpx; native SDK optional:
 # stripe>=8.0.0

@@ -1,0 +1,69 @@
+{
+  "name": "Prediction",
+  "type": "object",
+  "properties": {
+    "match_id": {
+      "type": "string",
+      "description": "Reference to Match entity"
+    },
+    "prediction_1x2": {
+      "type": "string",
+      "enum": [
+        "home",
+        "draw",
+        "away"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Confidence percentage 0-100"
+    },
+    "home_win_prob": {
+      "type": "number"
+    },
+    "draw_prob": {
+      "type": "number"
+    },
+    "away_win_prob": {
+      "type": "number"
+    },
+    "over_2_5": {
+      "type": "boolean"
+    },
+    "over_2_5_confidence": {
+      "type": "number"
+    },
+    "btts": {
+      "type": "boolean",
+      "description": "Both teams to score"
+    },
+    "btts_confidence": {
+      "type": "number"
+    },
+    "ai_report": {
+      "type": "string",
+      "description": "Full AI match report text"
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "correct",
+        "incorrect",
+        "pending"
+      ],
+      "default": "pending"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false
+    },
+    "external_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "match_id",
+    "prediction_1x2",
+    "confidence"
+  ]
+}

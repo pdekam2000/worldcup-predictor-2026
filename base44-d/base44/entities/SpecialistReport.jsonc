@@ -1,0 +1,61 @@
+{
+  "name": "SpecialistReport",
+  "type": "object",
+  "properties": {
+    "prediction_id": {
+      "type": "string",
+      "description": "Reference to Prediction entity"
+    },
+    "match_id": {
+      "type": "string"
+    },
+    "specialist_type": {
+      "type": "string",
+      "enum": [
+        "form",
+        "injury",
+        "lineup",
+        "weather",
+        "motivation",
+        "odds",
+        "tactics",
+        "referee",
+        "venue",
+        "player_quality"
+      ]
+    },
+    "score": {
+      "type": "number",
+      "description": "Specialist score 0-100"
+    },
+    "impact": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "details": {
+      "type": "string"
+    },
+    "recommendation": {
+      "type": "string",
+      "enum": [
+        "home",
+        "draw",
+        "away"
+      ]
+    }
+  },
+  "required": [
+    "prediction_id",
+    "specialist_type",
+    "score",
+    "summary"
+  ]
+}

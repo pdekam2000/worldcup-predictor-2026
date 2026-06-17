@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from typing import TextIO
 
 
 def _configure_stdio() -> None:
@@ -274,6 +275,45 @@ def build_parser() -> argparse.ArgumentParser:
     )
     add_competition_argument(import_history)
 
+    import_league_history = subparsers.add_parser(
+        "import-league-history",
+        help="Import European league history from API-Football into SQLite",
+    )
+    import_league_history.add_argument(
+        "--league",
+        type=int,
+        default=None,
+        help="API-Football league ID (e.g. 39 for Premier League)",
+    )
+    import_league_history.add_argument(
+        "--season",
+        type=int,
+        default=None,
+        help="Season year (e.g. 2023)",
+    )
+    import_league_history.add_argument(
+        "--all-enabled",
+        action="store_true",
+        help="Import all enabled European leagues",
+    )
+    import_league_history.add_argument(
+        "--from-season",
+        type=int,
+        default=None,
+        help="Start season for range import with --all-enabled",
+    )
+    import_league_history.add_argument(
+        "--to-season",
+        type=int,
+        default=None,
+        help="End season for range import with --all-enabled",
+    )
+    import_league_history.add_argument(
+        "--no-enrich",
+        action="store_true",
+        help="Skip events/lineups/stats/odds enrichment per fixture",
+    )
+
     validate_csv = subparsers.add_parser(
         "validate-csv",
         help="Validate historical CSV quality before backtest or calibration",
@@ -299,6 +339,16 @@ def build_parser() -> argparse.ArgumentParser:
     gui = subparsers.add_parser(
         "gui",
         help="Launch the beautiful Streamlit GUI (Phase 14 — recommended)",
+    )
+
+    subparsers.add_parser(
+        "api",
+        help="Launch the FastAPI HTTP bridge (Phase A — Base44 / SaaS integration)",
+    )
+
+    subparsers.add_parser(
+        "db-test",
+        help="Test database engine connectivity (SQLite default, PostgreSQL when DATABASE_URL is set)",
     )
 
     test_apis = subparsers.add_parser(
@@ -629,6 +679,56 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def run_api_command(*, stream: TextIO | None = None) -> int:
+    """CLI handler: launch the FastAPI bridge via uvicorn."""
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    out = stream or sys.stdout
+    project_root = Path(__file__).resolve().parent
+
+    try:
+        import uvicorn  # noqa: F401
+    except ImportError:
+        out.write(
+            "uvicorn is not installed. Install dependencies:\n"
+            "  pip install -r requirements.txt\n"
+        )
+        return 1
+
+    out.write("=" * 72 + "\n")
+    out.write("  WorldCup Predictor Pro 2026 — FastAPI Bridge\n")
+    out.write("=" * 72 + "\n\n")
+    out.write("  Starting API server at: worldcup_predictor.api.main:app\n")
+    out.write("  Health:  http://127.0.0.1:8000/api/health\n")
+    out.write("  Docs:    http://127.0.0.1:8000/docs\n")
+    out.write("  Press Ctrl+C in this terminal to stop the API.\n\n")
+
+    try:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "uvicorn",
+                "worldcup_predictor.api.main:app",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                "8000",
+                "--reload",
+            ],
+            cwd=str(project_root),
+        )
+        return int(result.returncode or 0)
+    except FileNotFoundError:
+        out.write(
+            "Failed to start uvicorn. Install dependencies:\n"
+            "  pip install -r requirements.txt\n"
+        )
+        return 1
+
+
 def main(argv: list[str] | None = None) -> int:
     _configure_stdio()
 
@@ -643,6 +743,7 @@ def main(argv: list[str] | None = None) -> int:
         run_test_apis_command,
         run_groups_command,
         run_import_history_command,
+        run_import_league_history_command,
         run_inspect_command,
         run_list_competitions_command,
         run_live_opening_command,
@@ -985,6 +1086,16 @@ def main(argv: list[str] | None = None) -> int:
             locale=args.locale,
         )
 
+    if args.command == "import-league-history":
+        return run_import_league_history_command(
+            league=args.league,
+            season=args.season,
+            all_enabled=args.all_enabled,
+            from_season=args.from_season,
+            to_season=args.to_season,
+            enrich=not args.no_enrich,
+        )
+
     if args.command == "validate-csv":
         return run_validate_csv_command(csv_path=args.csv, locale=args.locale)
 
@@ -993,6 +1104,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "gui":
         return run_gui_command()
+
+    if args.command == "api":
+        return run_api_command()
+
+    if args.command == "db-test":
+        from worldcup_predictor.database.engine import run_db_test
+
+        return run_db_test()
 
     if args.command == "test-apis":
         return run_test_apis_command(locale=args.locale)

@@ -1,0 +1,58 @@
+{
+  "name": "PredictionHistory",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "match_id": {
+      "type": "string"
+    },
+    "prediction_id": {
+      "type": "string"
+    },
+    "home_team": {
+      "type": "string"
+    },
+    "away_team": {
+      "type": "string"
+    },
+    "league": {
+      "type": "string"
+    },
+    "match_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "prediction_1x2": {
+      "type": "string",
+      "enum": [
+        "home",
+        "draw",
+        "away"
+      ]
+    },
+    "confidence": {
+      "type": "number"
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "correct",
+        "incorrect",
+        "pending"
+      ],
+      "default": "pending"
+    },
+    "viewed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "match_id",
+    "prediction_1x2",
+    "confidence"
+  ]
+}

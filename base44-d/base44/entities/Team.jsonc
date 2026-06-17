@@ -1,0 +1,29 @@
+{
+  "name": "Team",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "short_name": {
+      "type": "string"
+    },
+    "logo_url": {
+      "type": "string"
+    },
+    "league_id": {
+      "type": "string",
+      "description": "Reference to League entity"
+    },
+    "country": {
+      "type": "string"
+    },
+    "external_id": {
+      "type": "string",
+      "description": "External API team ID"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "AccuracyHistory",
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "string",
+      "description": "e.g. 2026-01, 2026-W24"
+    },
+    "period_type": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ]
+    },
+    "total_predictions": {
+      "type": "number"
+    },
+    "correct_predictions": {
+      "type": "number"
+    },
+    "accuracy_rate": {
+      "type": "number"
+    },
+    "league": {
+      "type": "string"
+    },
+    "league_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "period",
+    "total_predictions",
+    "correct_predictions",
+    "accuracy_rate"
+  ]
+}
