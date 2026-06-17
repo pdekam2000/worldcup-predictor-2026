@@ -115,6 +115,15 @@ class WorldCupScheduleService:
         self._groups_cache: dict[str, WorldCupGroup] | None = None
         self._health: ScheduleHealthReport | None = None
 
+    def set_season(self, season: int) -> None:
+        """Override competition season and clear cached schedule data."""
+        from dataclasses import replace
+
+        self._competition = replace(self._competition, season=season)
+        self._fixtures_cache = None
+        self._groups_cache = None
+        self._health = None
+
     def get_all_worldcup_fixtures(self) -> list[TournamentFixture]:
         if self._fixtures_cache is not None:
             return list(self._fixtures_cache)
@@ -230,7 +239,10 @@ class WorldCupScheduleService:
         source: ScheduleSource = "placeholder"
         is_placeholder = True
         if self._api.is_configured:
-            result = self._api.get_all_fixtures_for_season(self._competition)
+            result = self._api.get_all_fixtures_for_season(
+                self._competition,
+                sync_mode=self._settings.api_sync_mode,
+            )
             if result.ok and result.data:
                 parsed = [self._parse_api_fixture(item, result.source) for item in result.data]
                 parsed = [p for p in parsed if p is not None]
