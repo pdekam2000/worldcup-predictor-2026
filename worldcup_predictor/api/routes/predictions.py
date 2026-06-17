@@ -188,10 +188,7 @@ def predict_fixture(
             competition_key=comp.key,
             locale=locale,
         )
-        result = pipeline.run(
-            fixture_id=fixture_id,
-            season=comp.season if season is not None else None,
-        )
+        result = pipeline.run(fixture_id=fixture_id)
     except RuntimeError as exc:
         logger.warning("Predict API runtime error for fixture %s: %s", fixture_id, exc)
         raise HTTPException(
