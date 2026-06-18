@@ -711,3 +711,28 @@ class FootballIntelligenceRepository:
         )
         self._conn.commit()
         return True
+
+    def fixture_exists(self, fixture_id: int) -> bool:
+        row = self._conn.execute(
+            "SELECT 1 FROM fixtures WHERE fixture_id = ? AND is_placeholder = 0 LIMIT 1",
+            (fixture_id,),
+        ).fetchone()
+        return row is not None
+
+    def get_fixture_row(self, fixture_id: int) -> dict[str, Any] | None:
+        row = self._conn.execute("SELECT * FROM fixtures WHERE fixture_id = ?", (fixture_id,)).fetchone()
+        return dict(row) if row else None
+
+    def get_fixture_result_row(self, fixture_id: int) -> dict[str, Any] | None:
+        row = self._conn.execute(
+            "SELECT * FROM fixture_results WHERE fixture_id = ?",
+            (fixture_id,),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def get_fixture_enrichment_row(self, fixture_id: int) -> dict[str, Any] | None:
+        row = self._conn.execute(
+            "SELECT * FROM fixture_enrichment WHERE fixture_id = ?",
+            (fixture_id,),
+        ).fetchone()
+        return dict(row) if row else None

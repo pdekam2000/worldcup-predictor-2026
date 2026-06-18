@@ -38,6 +38,7 @@ class PredictPipeline:
             competition_key=self._competition_key,
             locale=self._locale,
         )
+        context.shared["smart_prediction_fetch"] = True
         load_tournament_context(context)
         results: list[AgentResult] = []
 

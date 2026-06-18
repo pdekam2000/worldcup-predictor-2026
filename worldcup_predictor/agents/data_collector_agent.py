@@ -33,7 +33,12 @@ class DataCollectorAgent(BaseAgent):
         fixture_id = kwargs.get("fixture_id")
 
         if fixture_id is not None:
-            report = self._builder.build_by_fixture_id(int(fixture_id))
+            if self.context.shared.get("smart_prediction_fetch"):
+                from worldcup_predictor.quota.smart_prediction_fetch import SmartPredictionFetcher
+
+                report = SmartPredictionFetcher(self._api, self._builder).build(int(fixture_id))
+            else:
+                report = self._builder.build_by_fixture_id(int(fixture_id))
             self.context.shared["intelligence_reports"] = {report.fixture_id: report}
             self.context.shared["collected_data"] = {
                 report.fixture_id: self._legacy_summary(report),
