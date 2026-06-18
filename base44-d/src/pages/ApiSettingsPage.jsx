@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Server, Globe, CheckCircle, AlertCircle, XCircle, Save, RefreshCw, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,24 +17,11 @@ const defaultSettings = {
 export default function ApiSettingsPage() {
   const { toast } = useToast();
   const [settings, setSettings] = useState(defaultSettings);
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(false);
   const [checking, setChecking] = useState(false);
 
-  useEffect(() => {
-    base44.entities.SystemSettings.filter({ category: "api" }).then(data => {
-      const map = {};
-      data.forEach(s => { map[s.key] = s.value; });
-      if (Object.keys(map).length > 0) setSettings(prev => ({ ...prev, ...map }));
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
-
   const handleSave = async () => {
-    try {
-      await base44.entities.SystemSettings.create({ key: "api_base_url", value: settings.api_base_url, category: "api" });
-      toast({ title: "API settings saved", description: "Configuration updated successfully." });
-    } catch {
-      toast({ title: "Saved locally", description: "Settings saved (backend sync pending)." });
-    }
+    toast({ title: "Saved locally", description: "API settings sync coming in a later release." });
   };
 
   const checkStatus = () => {

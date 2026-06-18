@@ -772,6 +772,80 @@ def run_test_apis_command(*, locale: str | None = None, stream: TextIO | None = 
     return 0 if primary_ok else 1
 
 
+def run_sportmonks_test_command(*, stream: TextIO | None = None) -> int:
+    """CLI handler: one cheap Sportmonks World Cup 2026 connectivity probe."""
+    from worldcup_predictor.providers.sportmonks_provider import (
+        SportmonksProvider,
+        WORLD_CUP_2026_COMPETITION_KEY,
+        WORLD_CUP_2026_LEAGUE_ID,
+    )
+
+    out = stream or sys.stdout
+    settings = get_settings()
+    provider = SportmonksProvider(settings)
+    result = provider.run_world_cup_connectivity_test()
+
+    out.write("=" * 72 + "\n")
+    out.write("  Sportmonks World Cup 2026 — connectivity test\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(f"  competition:     {WORLD_CUP_2026_COMPETITION_KEY}\n")
+    out.write(f"  league_id:       {WORLD_CUP_2026_LEAGUE_ID}\n")
+    out.write(f"  configured:      {result.configured}\n")
+    out.write(f"  connected:       {result.connected}\n")
+    if result.status_code is not None:
+        out.write(f"  status_code:     {result.status_code}\n")
+    out.write(f"  endpoint_path:   {result.endpoint_path}\n")
+    if result.sample_count is not None:
+        out.write(f"  sample_count:    {result.sample_count}\n")
+    out.write(f"  message:         {result.message}\n")
+    out.write("\n")
+    return 0 if result.connected else 1
+
+
+def run_sportmonks_fixture_test_command(
+    *,
+    fixture_id: int,
+    force_refresh: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    """CLI handler: fetch/cache one Sportmonks World Cup fixture enrichment payload."""
+    from worldcup_predictor.providers.sportmonks_enrichment import (
+        WORLD_CUP_FIXTURE_INCLUDES,
+        fetch_worldcup_fixture_enrichment,
+    )
+    from worldcup_predictor.providers.sportmonks_provider import (
+        WORLD_CUP_2026_LEAGUE_ID,
+        WORLD_CUP_2026_SEASON_ID,
+    )
+
+    out = stream or sys.stdout
+    result = fetch_worldcup_fixture_enrichment(
+        fixture_id,
+        force_refresh=force_refresh,
+    )
+
+    out.write("=" * 72 + "\n")
+    out.write("  Sportmonks World Cup 2026 — fixture enrichment test\n")
+    out.write("=" * 72 + "\n\n")
+    out.write(f"  league_id:             {WORLD_CUP_2026_LEAGUE_ID}\n")
+    out.write(f"  season_id:             {WORLD_CUP_2026_SEASON_ID}\n")
+    out.write(f"  configured:            {result.configured}\n")
+    out.write(f"  source:                {result.source}\n")
+    out.write(f"  sportmonks_fixture_id: {result.sportmonks_fixture_id}\n")
+    if result.status_code is not None:
+        out.write(f"  status_code:           {result.status_code}\n")
+    out.write(f"  endpoint_path:         {result.endpoint_path}\n")
+    out.write(f"  includes:              {';'.join(WORLD_CUP_FIXTURE_INCLUDES)}\n")
+    if result.keys_present:
+        out.write(f"  keys_present:          {', '.join(result.keys_present)}\n")
+    else:
+        out.write("  keys_present:          (none)\n")
+    out.write(f"  raw_json_size:         {result.raw_json_size}\n")
+    out.write(f"  message:               {result.message}\n")
+    out.write("\n")
+    return 0 if result.success else 1
+
+
 def run_calibrate_command(
     *,
     csv_path: str,

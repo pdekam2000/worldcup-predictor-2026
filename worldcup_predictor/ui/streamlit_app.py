@@ -29,7 +29,7 @@ from worldcup_predictor.orchestration.pipeline import UpcomingPipeline
 from worldcup_predictor.orchestration.predict_pipeline import PredictPipeline
 from worldcup_predictor.orchestration.specialists_pipeline import SpecialistsPipeline
 from worldcup_predictor.reasoning.openai_reasoning_service import OpenAIReasoningService
-from worldcup_predictor.schedule.competition_schedule import create_schedule_service
+from worldcup_predictor.schedule.competition_schedule import build_schedule_service
 
 REPORT_PATHS = {
     "backtest": ROOT / "reports" / "backtests" / "backtest_summary.json",
@@ -612,7 +612,7 @@ def page_schedule() -> None:
     st.title("Schedule & Groups")
     _render_safety_banner()
     _render_competition_info()
-    service = create_schedule_service(get_settings(), competition_key=_competition_key())
+    service = build_schedule_service(get_settings(), competition_key=_competition_key())
 
     st.subheader("Next 5 Matches")
     upcoming = service.get_upcoming_matches(5)

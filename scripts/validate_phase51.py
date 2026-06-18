@@ -1,6 +1,9 @@
-"""Phase 51 validation — Tournament UX V3 + First Goal Intelligence visibility."""
-
 from __future__ import annotations
+
+from pathlib import Path
+import runpy
+
+runpy.run_path(str(Path(__file__).resolve().with_name('bootstrap_path.py')))
 
 import importlib
 import json

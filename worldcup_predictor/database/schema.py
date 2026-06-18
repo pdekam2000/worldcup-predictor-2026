@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 6
 DEFAULT_DB_PATH = "data/football_intelligence.db"
 
 DDL_STATEMENTS: tuple[str, ...] = (
@@ -242,6 +242,123 @@ DDL_STATEMENTS: tuple[str, ...] = (
         response_json TEXT NOT NULL,
         cached_at TEXT NOT NULL,
         PRIMARY KEY (fixture_id, market_key)
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS fixture_enrichment (
+        fixture_id INTEGER PRIMARY KEY,
+        competition_key TEXT NOT NULL,
+        league_id INTEGER,
+        season INTEGER,
+        events_json TEXT,
+        lineups_json TEXT,
+        statistics_json TEXT,
+        players_json TEXT,
+        odds_json TEXT,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (fixture_id) REFERENCES fixtures(fixture_id)
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS league_import_runs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        competition_key TEXT NOT NULL,
+        league_id INTEGER NOT NULL,
+        season INTEGER NOT NULL,
+        fixtures_imported INTEGER NOT NULL DEFAULT 0,
+        fixtures_skipped INTEGER NOT NULL DEFAULT 0,
+        enrichment_errors INTEGER NOT NULL DEFAULT 0,
+        status TEXT NOT NULL,
+        message TEXT,
+        started_at TEXT NOT NULL,
+        finished_at TEXT
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_league_import_runs_comp_season
+    ON league_import_runs(competition_key, season)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS api_response_cache (
+        cache_key TEXT PRIMARY KEY,
+        endpoint TEXT NOT NULL,
+        params_json TEXT NOT NULL,
+        payload_json TEXT NOT NULL,
+        cached_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_api_response_cache_expires
+    ON api_response_cache(expires_at)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS league_sync_state (
+        competition_key TEXT NOT NULL,
+        season INTEGER NOT NULL,
+        last_imported_fixture_id INTEGER,
+        last_imported_date TEXT,
+        last_sync_at TEXT,
+        sync_mode TEXT NOT NULL DEFAULT 'fast',
+        PRIMARY KEY (competition_key, season)
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS api_quota_stats (
+        stat_date TEXT PRIMARY KEY,
+        live_requests INTEGER NOT NULL DEFAULT 0,
+        cache_hits INTEGER NOT NULL DEFAULT 0,
+        local_hits INTEGER NOT NULL DEFAULT 0,
+        calls_saved INTEGER NOT NULL DEFAULT 0,
+        rate_limit_retries INTEGER NOT NULL DEFAULT 0,
+        last_sync_at TEXT,
+        updated_at TEXT NOT NULL
+    )
+    """,
+)
+
+MIGRATION_V4_COLUMNS: tuple[tuple[str, str], ...] = (
+    ("fixtures", "league_id INTEGER"),
+    ("fixtures", "season INTEGER"),
+    ("learning_records_v2", "learning_profile_key TEXT"),
+)
+
+PHASE40_DDL: tuple[str, ...] = (
+    """
+    CREATE TABLE IF NOT EXISTS api_response_cache (
+        cache_key TEXT PRIMARY KEY,
+        endpoint TEXT NOT NULL,
+        params_json TEXT NOT NULL,
+        payload_json TEXT NOT NULL,
+        cached_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_api_response_cache_expires
+    ON api_response_cache(expires_at)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS league_sync_state (
+        competition_key TEXT NOT NULL,
+        season INTEGER NOT NULL,
+        last_imported_fixture_id INTEGER,
+        last_imported_date TEXT,
+        last_sync_at TEXT,
+        sync_mode TEXT NOT NULL DEFAULT 'fast',
+        PRIMARY KEY (competition_key, season)
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS api_quota_stats (
+        stat_date TEXT PRIMARY KEY,
+        live_requests INTEGER NOT NULL DEFAULT 0,
+        cache_hits INTEGER NOT NULL DEFAULT 0,
+        local_hits INTEGER NOT NULL DEFAULT 0,
+        calls_saved INTEGER NOT NULL DEFAULT 0,
+        rate_limit_retries INTEGER NOT NULL DEFAULT 0,
+        last_sync_at TEXT,
+        updated_at TEXT NOT NULL
     )
     """,
 )

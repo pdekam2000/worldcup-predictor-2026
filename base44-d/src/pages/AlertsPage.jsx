@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Bell, Zap, Target, CheckCircle, Settings2, BellOff } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-
-const mockAlerts = [
-  { id: "1", type: "high_confidence", title: "High Confidence Pick", message: "Bayern Munich vs Dortmund — 82% confidence prediction available", confidence: 82, is_read: false, created_date: new Date().toISOString() },
-  { id: "2", type: "match_result", title: "Match Result In", message: "Arsenal vs Chelsea — Your prediction was CORRECT ✅", is_read: false, created_date: new Date(Date.now() - 3600000).toISOString() },
-  { id: "3", type: "new_prediction", title: "New Prediction", message: "PSG vs Marseille — New AI prediction ready to view", is_read: true, created_date: new Date(Date.now() - 7200000).toISOString() },
-];
+import { fetchAlerts, markAlertRead, fetchSettings, updateSettings } from "@/api/saasApi";
 
 const alertConfig = {
   high_confidence: { icon: Zap, color: "text-accent", bg: "bg-yellow-500/10" },
@@ -17,32 +11,68 @@ const alertConfig = {
   system: { icon: Bell, color: "text-muted-foreground", bg: "bg-white/5" },
 };
 
+const PREF_KEYS = {
+  newPredictions: "alertNewPredictions",
+  highConfidence: "alertHighConfidence",
+  matchResults: "alertMatchResults",
+};
+
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [prefs, setPrefs] = useState({ newPredictions: true, highConfidence: true, matchResults: true });
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const user = await base44.auth.me();
-        const data = await base44.entities.Alert.filter({ user_id: user.id }, "-created_date", 30);
-        setAlerts(data.length > 0 ? data : mockAlerts);
-      } catch {
-        setAlerts(mockAlerts);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [alertsData, settingsData] = await Promise.all([fetchAlerts(), fetchSettings()]);
+      setAlerts(alertsData.alerts || []);
+      const p = settingsData.settings?.preferences || {};
+      setPrefs({
+        newPredictions: p[PREF_KEYS.newPredictions] ?? true,
+        highConfidence: p[PREF_KEYS.highConfidence] ?? true,
+        matchResults: p[PREF_KEYS.matchResults] ?? true,
+      });
+    } catch (err) {
+      setAlerts([]);
+      setError(err instanceof Error ? err.message : "Failed to load alerts");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    load();
+  }, [load]);
+
   const markRead = async (id) => {
-    try { await base44.entities.Alert.update(id, { is_read: true }); } catch {}
-    setAlerts(prev => prev.map(a => a.id === id ? { ...a, is_read: true } : a));
+    try {
+      await markAlertRead(id);
+      setAlerts((prev) => prev.map((a) => (a.id === id ? { ...a, is_read: true } : a)));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to mark alert read");
+    }
   };
 
-  const unreadCount = alerts.filter(a => !a.is_read).length;
+  const savePref = async (key, value) => {
+    const next = { ...prefs, [key]: value };
+    setPrefs(next);
+    try {
+      await updateSettings({
+        preferences: {
+          [PREF_KEYS.newPredictions]: next.newPredictions,
+          [PREF_KEYS.highConfidence]: next.highConfidence,
+          [PREF_KEYS.matchResults]: next.matchResults,
+        },
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save alert preferences");
+    }
+  };
+
+  const unreadCount = alerts.filter((a) => !a.is_read).length;
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
@@ -56,7 +86,8 @@ export default function AlertsPage() {
         </div>
       </div>
 
-      {/* Alert preferences */}
+      {error && <div className="glass rounded-xl p-3 text-sm text-red-300">{error}</div>}
+
       <div className="glass rounded-xl p-5">
         <h2 className="font-semibold text-sm mb-4 flex items-center gap-2"><Settings2 className="w-4 h-4 text-primary" /> Alert Preferences</h2>
         <div className="space-y-3">
@@ -64,19 +95,18 @@ export default function AlertsPage() {
             { key: "newPredictions", label: "New Predictions", desc: "When a new AI prediction is available" },
             { key: "highConfidence", label: "High Confidence Matches", desc: "When confidence is above 75%" },
             { key: "matchResults", label: "Match Results", desc: "When a predicted match ends" },
-          ].map(item => (
+          ].map((item) => (
             <div key={item.key} className="flex items-center justify-between">
               <div>
                 <div className="text-sm font-medium">{item.label}</div>
                 <div className="text-xs text-muted-foreground">{item.desc}</div>
               </div>
-              <Switch checked={prefs[item.key]} onCheckedChange={v => setPrefs(p => ({ ...p, [item.key]: v }))} />
+              <Switch checked={prefs[item.key]} onCheckedChange={(v) => savePref(item.key, v)} />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Alert list */}
       {loading ? (
         <div className="flex justify-center py-10"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>
       ) : alerts.length === 0 ? (
@@ -98,10 +128,12 @@ export default function AlertsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <p className={`text-sm font-medium ${!alert.is_read ? "" : "text-muted-foreground"}`}>{alert.title}</p>
-                    <span className="text-xs text-muted-foreground flex-shrink-0">{new Date(alert.created_date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                    <span className="text-xs text-muted-foreground flex-shrink-0">
+                      {alert.created_date ? new Date(alert.created_date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}
+                    </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">{alert.message}</p>
-                  {alert.confidence && <span className="text-xs font-semibold text-accent mt-1 inline-block">{alert.confidence}% confidence</span>}
+                  {alert.confidence != null && <span className="text-xs font-semibold text-accent mt-1 inline-block">{Math.round(alert.confidence)}% confidence</span>}
                 </div>
                 {!alert.is_read && <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />}
               </motion.div>

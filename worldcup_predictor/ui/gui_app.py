@@ -34,7 +34,7 @@ from worldcup_predictor.orchestration.pipeline import UpcomingPipeline
 from worldcup_predictor.orchestration.predict_pipeline import PredictPipeline
 from worldcup_predictor.orchestration.specialists_pipeline import SpecialistsPipeline
 from worldcup_predictor.reasoning.openai_reasoning_service import OpenAIReasoningService
-from worldcup_predictor.schedule.competition_schedule import create_schedule_service
+from worldcup_predictor.schedule.competition_schedule import build_schedule_service
 from worldcup_predictor.results.match_results_store import save_finished_fixtures
 from worldcup_predictor.performance.grades import market_league_table
 from worldcup_predictor.verification.auto_verification_agent import AutoVerificationAgent
@@ -200,6 +200,9 @@ def main() -> None:
         "shortlist": page_daily_shortlist,
         "learning": page_learning_agent,
         "learning_center_v2": page_learning_center_v2,
+        "european_leagues": page_european_leagues,
+        "league_learning_center": page_league_learning_center,
+        "import_center": page_import_center,
         "automation": page_automation_center,
         "api": page_api_setup,
         "opening": page_opening_match,
@@ -429,7 +432,13 @@ def _competition_key() -> str:
 
 
 def _schedule_service():
-    return create_schedule_service(get_settings(), competition_key=_competition_key())
+    from worldcup_predictor.ui.competition_selector import competition_season
+
+    return build_schedule_service(
+        get_settings(),
+        competition_key=_competition_key(),
+        season=competition_season(),
+    )
 
 
 def _placeholder_data_quality(pred: Any) -> float | None:
@@ -464,19 +473,9 @@ def _render_sidebar() -> None:
 
     render_mode_toggle(locale)
 
-    comp_service = CompetitionService()
-    comps = comp_service.list_competitions()
-    comp_keys = [c.key for c in comps]
-    comp_labels = {c.key: f"🏆 {c.display_name}" for c in comps}
-    current = _competition_key()
-    if current not in comp_keys:
-        current = DEFAULT_COMPETITION_KEY
-    st.session_state["competition"] = st.sidebar.selectbox(
-        gui_t("competition", locale),
-        comp_keys,
-        index=comp_keys.index(current),
-        format_func=lambda k: comp_labels[k],
-    )
+    from worldcup_predictor.ui.competition_selector import render_competition_mode_selector
+
+    render_competition_mode_selector(locale)
     _sync_fixture_for_competition()
 
     st.sidebar.markdown("---")
@@ -1281,7 +1280,7 @@ def page_team_search() -> None:
         st.info(gui_t("team_search.hint", locale))
         return
 
-    service = create_schedule_service(settings, competition_key=comp)
+    service = _schedule_service()
     fixtures = service.get_all_worldcup_fixtures()
     results = search_team_matches(fixtures, query)
 
@@ -1290,7 +1289,7 @@ def page_team_search() -> None:
         gui_t("team_search.results_count", locale).format(count=total, query=query.strip())
     )
 
-    service_api = create_schedule_service(settings, competition_key=comp)
+    service_api = _schedule_service()
     live_from_api = service_api.get_live_fixtures_from_api()
     if live_from_api:
         st.caption(f"Live API endpoint: {len(live_from_api)} match(es) in progress")
@@ -1879,7 +1878,7 @@ def page_daily_shortlist() -> None:
     if st.button("Refresh shortlist", type="primary"):
         st.session_state.pop("shortlist_snapshot", None)
 
-    schedule = create_schedule_service(settings, competition_key=comp)
+    schedule = _schedule_service()
     fixtures = schedule.get_all_worldcup_fixtures()
     engine = MatchSelectionEngine()
     shortlist = st.session_state.get("shortlist_snapshot")
@@ -2033,6 +2032,28 @@ def page_learning_center_v2() -> None:
     from worldcup_predictor.ui.self_learning_display import render_learning_accuracy_center_v2
 
     render_learning_accuracy_center_v2(locale, competition_key=comp)
+
+
+def page_european_leagues() -> None:
+    from worldcup_predictor.ui.european_leagues_page import render_european_leagues_dashboard
+
+    render_european_leagues_dashboard(
+        _locale(),
+        get_settings(),
+        competition_key=_competition_key(),
+    )
+
+
+def page_league_learning_center() -> None:
+    from worldcup_predictor.ui.league_learning_center_page import render_league_learning_center
+
+    render_league_learning_center(_locale(), repository=_db_repo())
+
+
+def page_import_center() -> None:
+    from worldcup_predictor.ui.league_import_center_page import render_league_import_center
+
+    render_league_import_center(_locale(), get_settings(), repository=_db_repo())
 
 
 def page_professional_reports() -> None:

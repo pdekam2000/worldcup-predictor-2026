@@ -1,18 +1,9 @@
 /**
- * WorldCup Predictor FastAPI client — UI layer only (not Base44 cloud).
+ * WorldCup Predictor FastAPI client — matches, predictions, health.
  */
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
-
-function buildUrl(path, params = {}) {
-  const url = new URL(path, API_BASE);
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      url.searchParams.set(key, String(value));
-    }
-  });
-  return url.toString();
-}
+import { getAuthToken } from "@/api/authApi";
+import { buildApiUrl } from "@/lib/config";
 
 async function parseJsonResponse(response) {
   let payload;
@@ -46,7 +37,7 @@ export function mapUpcomingMatch(row) {
 }
 
 export async function fetchHealth() {
-  const response = await fetch(buildUrl("/api/health"));
+  const response = await fetch(buildApiUrl("/api/health"));
   return parseJsonResponse(response);
 }
 
@@ -54,7 +45,7 @@ export async function fetchHealth() {
  * @param {{ competition?: string, season?: number, limit?: number }} params
  */
 export async function fetchUpcomingMatches(params = {}) {
-  const response = await fetch(buildUrl("/api/matches/upcoming", params));
+  const response = await fetch(buildApiUrl("/api/matches/upcoming", params));
   const payload = await parseJsonResponse(response);
   const rows = Array.isArray(payload?.matches) ? payload.matches : [];
   return {
@@ -69,11 +60,16 @@ export async function fetchUpcomingMatches(params = {}) {
  * @param {{ competition?: string, season?: number, locale?: string }} params
  */
 export async function runPrediction(fixtureId, params = {}) {
-  const response = await fetch(
-    buildUrl(`/api/predict/${fixtureId}`, params),
-    { method: "POST", headers: { Accept: "application/json" } },
-  );
+  const token = getAuthToken();
+  const headers = { Accept: "application/json" };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await fetch(buildApiUrl(`/api/predict/${fixtureId}`, params), {
+    method: "POST",
+    headers,
+  });
   return parseJsonResponse(response);
 }
 
-export { API_BASE };
+export { buildApiUrl as buildUrl };

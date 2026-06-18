@@ -44,6 +44,7 @@ class ScoringEngine:
         use_weighted_decision: bool = True,
         factor_weights: dict[str, float] | None = None,
         thresholds: dict[str, float] | None = None,
+        league_context: dict[str, Any] | None = None,
     ) -> MatchPrediction:
         tb = text_builder or self._default_text
 
@@ -148,6 +149,7 @@ class ScoringEngine:
 
         expected_goals = self._estimate_goals(report, home_strength, away_strength)
         total_goals = expected_goals[0] + expected_goals[1] + specialist_adj.get("goals_adjustment", 0.0)
+        total_goals = self._apply_league_context_goals(total_goals, league_context)
         total_goals = self._blend_total_goals_with_market(total_goals, report)
         low_goal_data = self._ou_low_confidence(report, quality_pct, all_placeholder=all_placeholder)
         over_under_selection, over_under_prob = self._pick_over_under(
@@ -702,3 +704,38 @@ class ScoringEngine:
                 )
             )
         return reasons
+
+    @staticmethod
+    def _apply_league_context_goals(
+        total_goals: float,
+        league_context: dict[str, Any] | None,
+    ) -> float:
+        """Nudge expected goals using stored league tendencies (Phase 39)."""
+        if not league_context:
+            return total_goals
+        tendencies = league_context.get("league_tendencies") or {}
+        home_form = league_context.get("home_form") or {}
+        away_form = league_context.get("away_form") or {}
+        avg = tendencies.get("avg_total_goals")
+        if avg is not None:
+            try:
+                total_goals = total_goals * 0.7 + float(avg) * 0.3
+            except (TypeError, ValueError):
+                pass
+        hf = home_form.get("goals_for_avg")
+        af = away_form.get("goals_for_avg")
+        if hf is not None and af is not None:
+            try:
+                total_goals = total_goals * 0.85 + (float(hf) + float(af)) * 0.075
+            except (TypeError, ValueError):
+                pass
+        over_rate = tendencies.get("over_2_5_rate")
+        if over_rate is not None:
+            try:
+                if float(over_rate) > 0.55:
+                    total_goals += 0.15
+                elif float(over_rate) < 0.45:
+                    total_goals -= 0.15
+            except (TypeError, ValueError):
+                pass
+        return max(0.5, round(total_goals, 2))

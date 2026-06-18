@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,8 @@ import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 
 export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,17 +21,13 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
-      window.location.href = "/dashboard";
+      await login(email, password);
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", "/dashboard");
   };
 
   return (
@@ -39,7 +37,7 @@ export default function Login() {
       subtitle="Log in to your account"
       footer={
         <>
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link to="/register" className="text-primary font-medium hover:underline">
             Create one
           </Link>
@@ -47,9 +45,11 @@ export default function Login() {
       }
     >
       <Button
+        type="button"
         variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6"
-        onClick={handleGoogle}
+        className="w-full h-12 text-sm font-medium mb-6 opacity-60 cursor-not-allowed"
+        disabled
+        title="Coming soon"
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
         Continue with Google

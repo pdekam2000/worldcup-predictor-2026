@@ -167,6 +167,7 @@ class SharpMoneyIntelligenceResult:
 class LeagueLearningProfile:
     competition_key: str
     competition_name: str
+    learning_profile_key: str
     evaluated_matches: int
     strongest_market: str | None
     weakest_market: str | None
@@ -176,6 +177,8 @@ class LeagueLearningProfile:
     recommended_rules: list[str]
     recommended_confidence_thresholds: dict[str, float]
     sample_size_warning: str | None = None
+    last_updated_at: str | None = None
+    total_market_rows: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

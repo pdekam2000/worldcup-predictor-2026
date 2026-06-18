@@ -1,11 +1,12 @@
-"""Competition-specific learning profiles from verified predictions — Phase 36."""
+"""Competition-specific learning profiles from verified predictions — Phase 39."""
 
 from __future__ import annotations
 
 from collections import defaultdict
 from typing import Any
 
-from worldcup_predictor.config.competitions import get_competition, list_competition_keys
+from worldcup_predictor.config.competitions import get_competition
+from worldcup_predictor.config.league_registry import LEARNING_PROFILE_KEYS, learning_profile_for
 from worldcup_predictor.database.repository import FootballIntelligenceRepository
 from worldcup_predictor.odds.models import LeagueLearningProfile
 
@@ -15,9 +16,16 @@ MIN_MARKET_ROWS = 3
 MARKET_LABELS = {
     "1x2": "1X2",
     "over_under_2_5": "Over/Under 2.5",
-    "halftime_bucket": "Halftime bucket",
-    "scoreline_exact": "Exact scoreline",
-    "first_goal_team": "First goal team",
+    "btts": "BTTS",
+    "halftime_bucket": "Half Time Result",
+    "halftime_result": "Half Time Result",
+    "scoreline_exact": "Correct Score",
+    "correct_score": "Correct Score",
+    "first_goal_team": "First Goal Team",
+    "first_goal_minute": "First Goal Minute",
+    "first_goal_minute_band": "First Goal Minute",
+    "goalscorer": "Likely Goalscorer",
+    "likely_goalscorer": "Likely Goalscorer",
 }
 
 
@@ -54,14 +62,17 @@ class LeagueLearningEngine:
         self._repo = repository or FootballIntelligenceRepository()
 
     def build_profile(self, competition_key: str) -> LeagueLearningProfile:
+        profile_key = learning_profile_for(competition_key)
         rows = self._repo.fetch_pattern_analysis_rows(competition_key=competition_key)
         comp = get_competition(competition_key)
         comp_name = comp.display_name if comp else competition_key
+        last_updated = self._repo.latest_learning_update(competition_key=competition_key)
 
         if not rows:
             return LeagueLearningProfile(
                 competition_key=competition_key,
                 competition_name=comp_name,
+                learning_profile_key=profile_key,
                 evaluated_matches=0,
                 strongest_market=None,
                 weakest_market=None,
@@ -71,6 +82,8 @@ class LeagueLearningEngine:
                 recommended_rules=["Insufficient verified data — continue collecting predictions."],
                 recommended_confidence_thresholds={"watch_only_below": 45.0, "analysis_ready_above": 60.0},
                 sample_size_warning=f"No verified rows for {comp_name}.",
+                last_updated_at=last_updated,
+                total_market_rows=0,
             )
 
         fixture_ids = {int(r["fixture_id"]) for r in rows}
@@ -110,7 +123,11 @@ class LeagueLearningEngine:
         }
 
         ranked = sorted(
-            ((m, _winrate(v["correct"], v["total"]) or 0.0) for m, v in market_stats.items() if v["total"] >= MIN_MARKET_ROWS),
+            (
+                (m, _winrate(v["correct"], v["total"]) or 0.0)
+                for m, v in market_stats.items()
+                if v["total"] >= MIN_MARKET_ROWS
+            ),
             key=lambda x: x[1],
             reverse=True,
         )
@@ -148,6 +165,7 @@ class LeagueLearningEngine:
         return LeagueLearningProfile(
             competition_key=competition_key,
             competition_name=comp_name,
+            learning_profile_key=profile_key,
             evaluated_matches=len(fixture_ids),
             strongest_market=strongest,
             weakest_market=weakest,
@@ -157,12 +175,29 @@ class LeagueLearningEngine:
             recommended_rules=rules,
             recommended_confidence_thresholds=thresholds,
             sample_size_warning=sample_warning,
+            last_updated_at=last_updated,
+            total_market_rows=len(rows),
         )
 
     def build_all_profiles(self) -> list[LeagueLearningProfile]:
         profiles: list[LeagueLearningProfile] = []
-        for key in list_competition_keys():
-            profile = self.build_profile(key)
-            if profile.evaluated_matches > 0 or profile.sample_size_warning:
-                profiles.append(profile)
+        for key in LEARNING_PROFILE_KEYS:
+            try:
+                comp = get_competition(key)
+            except KeyError:
+                continue
+            if not comp.enabled and key != "world_cup_2026":
+                continue
+            profile = self.build_profile(comp.key)
+            profiles.append(profile)
         return profiles
+
+    def build_profile_by_learning_key(self, learning_profile_key: str) -> LeagueLearningProfile | None:
+        for comp_key in LEARNING_PROFILE_KEYS:
+            try:
+                comp = get_competition(comp_key)
+            except KeyError:
+                continue
+            if (comp.learning_profile_key or comp.key) == learning_profile_key:
+                return self.build_profile(comp.key)
+        return None

@@ -761,3 +761,75 @@ class FootballIntelligenceRepository:
         params.append(int(limit))
         rows = self._conn.execute(query, params).fetchall()
         return [dict(row) for row in rows]
+
+    def get_sportmonks_fixture_enrichment_cache(
+        self,
+        sportmonks_fixture_id: int,
+    ) -> dict[str, Any] | None:
+        row = self._conn.execute(
+            """
+            SELECT *
+            FROM sportmonks_fixture_enrichment
+            WHERE sportmonks_fixture_id = ?
+              AND status = 'ok'
+              AND expires_at_utc > ?
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (sportmonks_fixture_id, _utc_now()),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def save_sportmonks_fixture_enrichment(
+        self,
+        *,
+        sportmonks_fixture_id: int,
+        fixture_id_api_football: int | None,
+        league_id: int,
+        season_id: int,
+        endpoint: str,
+        include_params: str,
+        raw_json: str,
+        fetched_at_utc: str,
+        expires_at_utc: str,
+        status: str = "ok",
+    ) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO sportmonks_fixture_enrichment (
+                fixture_id_api_football,
+                sportmonks_fixture_id,
+                league_id,
+                season_id,
+                endpoint,
+                include_params,
+                raw_json,
+                fetched_at_utc,
+                expires_at_utc,
+                status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(sportmonks_fixture_id) DO UPDATE SET
+                fixture_id_api_football = excluded.fixture_id_api_football,
+                league_id = excluded.league_id,
+                season_id = excluded.season_id,
+                endpoint = excluded.endpoint,
+                include_params = excluded.include_params,
+                raw_json = excluded.raw_json,
+                fetched_at_utc = excluded.fetched_at_utc,
+                expires_at_utc = excluded.expires_at_utc,
+                status = excluded.status
+            """,
+            (
+                fixture_id_api_football,
+                sportmonks_fixture_id,
+                league_id,
+                season_id,
+                endpoint,
+                include_params,
+                raw_json,
+                fetched_at_utc,
+                expires_at_utc,
+                status,
+            ),
+        )
+        self._conn.commit()

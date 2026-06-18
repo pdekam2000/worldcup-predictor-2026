@@ -18,6 +18,10 @@ def connect(path: str | Path | None = None) -> sqlite3.Connection:
     conn = sqlite3.connect(str(db_path), check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    if db_path.exists() and db_path.stat().st_size > 0:
+        from worldcup_predictor.database.migrations import ensure_schema_compat
+
+        ensure_schema_compat(conn)
     return conn
 
 
@@ -29,6 +33,9 @@ def init_database(path: str | Path | None = None) -> sqlite3.Connection:
         conn.execute(ddl)
     for ddl in ACCESS_DDL_STATEMENTS:
         conn.execute(ddl)
+    from worldcup_predictor.database.migrations import apply_migrations
+
+    apply_migrations(conn)
     version = max(SCHEMA_VERSION, ACCESS_SCHEMA_VERSION)
     conn.execute(
         "INSERT OR REPLACE INTO schema_meta(key, value) VALUES (?, ?)",

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
+import { fetchDashboard } from "@/api/saasApi";
 import { fetchUpcomingMatches } from "@/api/worldcupApi";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -10,23 +11,14 @@ import {
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Button } from "@/components/ui/button";
 
-const mockChartData = [
-  { month: "Jan", accuracy: 68 }, { month: "Feb", accuracy: 71 }, { month: "Mar", accuracy: 69 },
-  { month: "Apr", accuracy: 74 }, { month: "May", accuracy: 72 }, { month: "Jun", accuracy: 76 },
-];
-
-const mockRecentPredictions = [
-  { home: "Man City", away: "Liverpool", league: "Premier League", prediction: "home", confidence: 72, result: "correct" },
-  { home: "Barcelona", away: "Real Madrid", league: "La Liga", prediction: "away", confidence: 58, result: "incorrect" },
-  { home: "Bayern", away: "Dortmund", league: "Bundesliga", prediction: "home", confidence: 81, result: "correct" },
-  { home: "PSG", away: "Marseille", league: "Ligue 1", prediction: "home", confidence: 77, result: "pending" },
-];
-
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const [matches, setMatches] = useState([]);
   const [matchesLoading, setMatchesLoading] = useState(true);
   const [matchesError, setMatchesError] = useState(null);
+  const [dashboard, setDashboard] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState(null);
 
   const loadMatches = useCallback(async () => {
     setMatchesLoading(true);
@@ -42,18 +34,35 @@ export default function Dashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
-    loadMatches();
-  }, [loadMatches]);
+  const loadDashboard = useCallback(async () => {
+    setDashboardLoading(true);
+    setDashboardError(null);
+    try {
+      const data = await fetchDashboard();
+      setDashboard(data);
+    } catch (err) {
+      setDashboard(null);
+      setDashboardError(err instanceof Error ? err.message : "Failed to load dashboard data.");
+    } finally {
+      setDashboardLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
+    loadMatches();
+    loadDashboard();
+  }, [loadMatches, loadDashboard]);
+
+  const statsData = dashboard?.stats;
   const stats = [
-    { label: "Today's Predictions", value: "12", icon: Target, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Win Rate", value: "73.2%", icon: TrendingUp, color: "text-green-400", bg: "bg-green-500/10" },
-    { label: "Matches Analyzed", value: "148", icon: Trophy, color: "text-accent", bg: "bg-yellow-500/10" },
-    { label: "Streak", value: "5W", icon: Activity, color: "text-purple-400", bg: "bg-purple-500/10" },
+    { label: "Predictions Viewed", value: String(statsData?.predictions_viewed ?? 0), icon: Target, color: "text-primary", bg: "bg-primary/10" },
+    { label: "Win Rate", value: statsData?.settled ? `${statsData.win_rate}%` : "—", icon: TrendingUp, color: "text-green-400", bg: "bg-green-500/10" },
+    { label: "Matches Analyzed", value: String(statsData?.matches_analyzed ?? 0), icon: Trophy, color: "text-accent", bg: "bg-yellow-500/10" },
+    { label: "Streak", value: statsData?.streak ?? "0", icon: Activity, color: "text-purple-400", bg: "bg-purple-500/10" },
   ];
 
+  const chartData = dashboard?.performance_trend?.length ? dashboard.performance_trend : [];
+  const recentPredictions = dashboard?.recent_predictions ?? [];
   const matchesEmpty = !matchesLoading && !matchesError && matches.length === 0;
 
   return (
@@ -63,7 +72,13 @@ export default function Dashboard() {
         <p className="text-sm text-muted-foreground mt-1">Here's your prediction overview for today.</p>
       </div>
 
-      {/* Stats */}
+      {dashboardError && (
+        <div className="glass rounded-xl p-4 flex items-center justify-between gap-3 text-sm text-red-300">
+          <span>{dashboardError}</span>
+          <Button type="button" variant="outline" size="sm" onClick={loadDashboard}>Retry</Button>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => (
           <motion.div
@@ -79,39 +94,47 @@ export default function Dashboard() {
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
             </div>
-            <div className="text-2xl font-display font-bold">{s.value}</div>
+            <div className="text-2xl font-display font-bold">{dashboardLoading ? "…" : s.value}</div>
           </motion.div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-5 gap-6">
-        {/* Performance chart */}
         <div className="lg:col-span-3 glass rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display font-semibold">Performance Trend</h2>
-            <span className="text-xs text-muted-foreground">Last 6 months</span>
+            <span className="text-xs text-muted-foreground">From your prediction history</span>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={mockChartData}>
-              <defs>
-                <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="month" tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }} axisLine={false} tickLine={false} />
-              <YAxis domain={[60, 85]} tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }} axisLine={false} tickLine={false} />
-              <Tooltip
-                contentStyle={{ background: "hsl(222, 47%, 9%)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", fontSize: "12px" }}
-                itemStyle={{ color: "hsl(210, 40%, 98%)" }}
-                labelStyle={{ color: "hsl(215, 20%, 55%)" }}
-              />
-              <Area type="monotone" dataKey="accuracy" stroke="hsl(217, 91%, 60%)" fill="url(#blueGrad)" strokeWidth={2} />
-            </AreaChart>
-          </ResponsiveContainer>
+          {dashboardLoading ? (
+            <div className="flex items-center justify-center h-[220px]">
+              <div className="w-6 h-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+            </div>
+          ) : chartData.length === 0 ? (
+            <div className="flex items-center justify-center h-[220px] text-sm text-muted-foreground text-center px-4">
+              No settled predictions yet. View matches to build your performance trend.
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis domain={[0, 100]} tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ background: "hsl(222, 47%, 9%)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", fontSize: "12px" }}
+                  itemStyle={{ color: "hsl(210, 40%, 98%)" }}
+                  labelStyle={{ color: "hsl(215, 20%, 55%)" }}
+                />
+                <Area type="monotone" dataKey="accuracy" stroke="hsl(217, 91%, 60%)" fill="url(#blueGrad)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
-        {/* Today's top matches */}
         <div className="lg:col-span-2 glass rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display font-semibold">Today's Matches</h2>
@@ -179,7 +202,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Recent predictions — no backend endpoint yet */}
       <div className="glass rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display font-semibold">Recent Predictions</h2>
@@ -187,42 +209,52 @@ export default function Dashboard() {
             View History <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-muted-foreground text-xs">
-                <th className="pb-3 font-medium">Match</th>
-                <th className="pb-3 font-medium">League</th>
-                <th className="pb-3 font-medium">Prediction</th>
-                <th className="pb-3 font-medium">Confidence</th>
-                <th className="pb-3 font-medium">Result</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {mockRecentPredictions.map((p, i) => (
-                <tr key={i} className="hover:bg-white/5">
-                  <td className="py-3 font-medium">{p.home} vs {p.away}</td>
-                  <td className="py-3 text-muted-foreground">{p.league}</td>
-                  <td className="py-3">
-                    <span className="px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary uppercase">
-                      {p.prediction === "home" ? "1" : p.prediction === "draw" ? "X" : "2"}
-                    </span>
-                  </td>
-                  <td className="py-3">{p.confidence}%</td>
-                  <td className="py-3">
-                    <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                      p.result === "correct" ? "bg-green-500/10 text-green-400" :
-                      p.result === "incorrect" ? "bg-red-500/10 text-red-400" :
-                      "bg-yellow-500/10 text-yellow-400"
-                    }`}>
-                      {p.result.charAt(0).toUpperCase() + p.result.slice(1)}
-                    </span>
-                  </td>
+        {dashboardLoading ? (
+          <div className="flex justify-center py-10">
+            <div className="w-6 h-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          </div>
+        ) : recentPredictions.length === 0 ? (
+          <div className="text-center py-10 text-muted-foreground text-sm">
+            No predictions viewed yet. Open a match from Match Center to run your first prediction.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-muted-foreground text-xs">
+                  <th className="pb-3 font-medium">Match</th>
+                  <th className="pb-3 font-medium">League</th>
+                  <th className="pb-3 font-medium">Prediction</th>
+                  <th className="pb-3 font-medium">Confidence</th>
+                  <th className="pb-3 font-medium">Result</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {recentPredictions.map((p) => (
+                  <tr key={p.id} className="hover:bg-white/5">
+                    <td className="py-3 font-medium">{p.home_team} vs {p.away_team}</td>
+                    <td className="py-3 text-muted-foreground">{p.league || "—"}</td>
+                    <td className="py-3">
+                      <span className="px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary uppercase">
+                        {p.prediction_1x2 === "home" ? "1" : p.prediction_1x2 === "draw" ? "X" : "2"}
+                      </span>
+                    </td>
+                    <td className="py-3">{p.confidence != null ? `${Math.round(p.confidence)}%` : "—"}</td>
+                    <td className="py-3">
+                      <span className={`px-2 py-1 rounded-md text-xs font-medium ${
+                        p.result === "correct" ? "bg-green-500/10 text-green-400" :
+                        p.result === "incorrect" ? "bg-red-500/10 text-red-400" :
+                        "bg-yellow-500/10 text-yellow-400"
+                      }`}>
+                        {p.result ? p.result.charAt(0).toUpperCase() + p.result.slice(1) : "Pending"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

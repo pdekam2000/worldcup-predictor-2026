@@ -1,6 +1,12 @@
 # Secrets
 .env
 .env.*
+!.env*.example
+
+# Local databases and dev data (copy to server via scp, not git)
+data/*.db
+data/pgembed_dev/
+data/predictions/
 
 # Python
 __pycache__/
@@ -31,3 +37,6 @@ Thumbs.db
 
 # Large generated outputs
 reports/
+
+# Accidental local junk
+datetime

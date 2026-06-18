@@ -7,11 +7,16 @@ import logging
 from dataclasses import replace
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import JSONResponse
+
+from worldcup_predictor.api.deps import get_optional_current_user
+from worldcup_predictor.api.web_auth import WebAuthUser
 
 from worldcup_predictor.config.competitions import DEFAULT_COMPETITION_KEY, get_competition
 from worldcup_predictor.config.settings import Locale, get_settings
+from worldcup_predictor.database.postgres.enums import Prediction1x2, PredictionResult
+from worldcup_predictor.database.saas_factory import saas_uow
 from worldcup_predictor.domain.prediction import MatchPrediction
 from worldcup_predictor.domain.specialist import MatchSpecialistReport
 from worldcup_predictor.orchestration.predict_pipeline import PredictPipeline, PredictPipelineResult
@@ -159,12 +164,35 @@ def _failure_payload(fixture_id: int, result: PredictPipelineResult) -> dict[str
     }
 
 
+def _record_user_history(user: WebAuthUser | None, payload: dict[str, Any]) -> None:
+    if user is None or payload.get("status") != "ok":
+        return
+    try:
+        import uuid
+        from decimal import Decimal
+
+        pick = Prediction1x2(payload.get("prediction", "home"))
+        with saas_uow() as uow:
+            uow.prediction_history.add(
+                uuid.UUID(user.id),
+                fixture_id=int(payload["fixture_id"]),
+                home_team=str(payload.get("home_team", "")),
+                away_team=str(payload.get("away_team", "")),
+                prediction_1x2=pick,
+                confidence=Decimal(str(payload["confidence"])) if payload.get("confidence") is not None else None,
+                result=PredictionResult.PENDING,
+            )
+    except Exception:
+        logger.exception("Failed to record user prediction history for fixture %s", payload.get("fixture_id"))
+
+
 @router.post("/predict/{fixture_id}")
 def predict_fixture(
     fixture_id: int,
     competition: str = Query(default=DEFAULT_COMPETITION_KEY, description="Competition registry key"),
     season: int | None = Query(default=None, description="Season year override"),
     locale: Locale = Query(default="en", description="Output locale"),
+    user: WebAuthUser | None = Depends(get_optional_current_user),
 ) -> dict[str, Any]:
     """
     Run the full prediction pipeline for one fixture.
@@ -215,4 +243,6 @@ def predict_fixture(
     if not result.success:
         return JSONResponse(status_code=422, content=_failure_payload(fixture_id, result))
 
-    return _success_payload(result)
+    payload = _success_payload(result)
+    _record_user_history(user, payload)
+    return payload

@@ -40,16 +40,29 @@ class DataSyncService:
         self._repo = repository or FootballIntelligenceRepository()
         self._repo.seed_competitions()
 
-    def sync_competition(self, competition_key: str, *, enrich: bool = True) -> SyncResult:
+    def sync_competition(
+        self,
+        competition_key: str,
+        *,
+        enrich: bool = True,
+        sync_mode: str | None = None,
+    ) -> SyncResult:
+        from worldcup_predictor.quota.sync_modes import normalize_sync_mode
+        from worldcup_predictor.quota.quota_tracker import get_quota_tracker
+
         comp = get_competition(competition_key)
         self._repo.upsert_competition(comp)
         result = SyncResult(competition_key=comp.key)
+        mode = normalize_sync_mode(sync_mode or self._settings.api_sync_mode)
 
         if not comp.league_id_configured:
             result.warnings.append(f"{comp.key}: league_id not configured — skipped.")
             return result
 
-        schedule = create_schedule_service(self._settings, competition_key=comp.key)
+        schedule = create_schedule_service(
+            self._settings,
+            competition_key=comp.key,
+        )
         try:
             fixtures = schedule.get_all_worldcup_fixtures()
         except Exception as exc:  # noqa: BLE001
@@ -60,7 +73,15 @@ class DataSyncService:
             if fixture.is_placeholder or fixture.source == "placeholder":
                 result.skipped_placeholder += 1
                 continue
-            if self._repo.upsert_fixture(fixture, competition_key=comp.key):
+            if self._repo.fixture_exists(fixture.fixture_id):
+                result.skipped_placeholder += 1
+                continue
+            if self._repo.upsert_fixture(
+                fixture,
+                competition_key=comp.key,
+                league_id=comp.league_id,
+                season=comp.season,
+            ):
                 result.fixtures_synced += 1
             if classify_status(fixture.status) == "finished":
                 if self._repo.upsert_fixture_result(fixture, competition_key=comp.key):
@@ -68,6 +89,12 @@ class DataSyncService:
             if enrich:
                 self._enrich_fixture(fixture, comp.key, result)
 
+        self._repo.upsert_league_sync_state(
+            competition_key=comp.key,
+            season=comp.season,
+            sync_mode=mode,
+        )
+        get_quota_tracker().mark_sync()
         return result
 
     def sync_all_active(self) -> list[SyncResult]:

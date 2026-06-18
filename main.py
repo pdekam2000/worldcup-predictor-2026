@@ -351,6 +351,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="Test database engine connectivity (SQLite default, PostgreSQL when DATABASE_URL is set)",
     )
 
+    subparsers.add_parser(
+        "sportmonks-test",
+        help="Test Sportmonks World Cup 2026 API connectivity (one cheap metadata request)",
+    )
+
+    sportmonks_fixture = subparsers.add_parser(
+        "sportmonks-fixture-test",
+        help="Fetch/cache one Sportmonks World Cup fixture enrichment payload",
+    )
+    sportmonks_fixture.add_argument(
+        "--fixture-id",
+        type=int,
+        required=True,
+        help="Sportmonks fixture ID (World Cup 2026 only)",
+    )
+    sportmonks_fixture.add_argument(
+        "--force-refresh",
+        action="store_true",
+        help="Ignore cache and make one live Sportmonks request",
+    )
+
     test_apis = subparsers.add_parser(
         "test-apis",
         help="Test API connectivity (API-Football primary + optional enrichment)",
@@ -741,6 +762,8 @@ def main(argv: list[str] | None = None) -> int:
         run_dashboard_command,
         run_gui_command,
         run_test_apis_command,
+        run_sportmonks_test_command,
+        run_sportmonks_fixture_test_command,
         run_groups_command,
         run_import_history_command,
         run_import_league_history_command,
@@ -1112,6 +1135,15 @@ def main(argv: list[str] | None = None) -> int:
         from worldcup_predictor.database.engine import run_db_test
 
         return run_db_test()
+
+    if args.command == "sportmonks-test":
+        return run_sportmonks_test_command()
+
+    if args.command == "sportmonks-fixture-test":
+        return run_sportmonks_fixture_test_command(
+            fixture_id=args.fixture_id,
+            force_refresh=bool(getattr(args, "force_refresh", False)),
+        )
 
     if args.command == "test-apis":
         return run_test_apis_command(locale=args.locale)

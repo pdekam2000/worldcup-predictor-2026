@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Heart, Trophy, Users, Calendar, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-const mockFavorites = [
-  { id: "1", type: "team", item_name: "Arsenal", item_meta: "Premier League" },
-  { id: "2", type: "team", item_name: "Barcelona", item_meta: "La Liga" },
-  { id: "3", type: "league", item_name: "Premier League", item_meta: "England" },
-  { id: "4", type: "league", item_name: "Bundesliga", item_meta: "Germany" },
-];
+import { fetchFavorites, removeFavorite } from "@/api/saasApi";
 
 const typeConfig = {
   team: { icon: Users, color: "text-primary", bg: "bg-primary/10", label: "Team" },
@@ -20,33 +12,37 @@ const typeConfig = {
 export default function FavoritesPage() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const user = await base44.auth.me();
-        const data = await base44.entities.Favorite.filter({ user_id: user.id }, "-created_date", 50);
-        setFavorites(data.length > 0 ? data : mockFavorites);
-      } catch {
-        setFavorites(mockFavorites);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await fetchFavorites();
+      setFavorites(data.favorites || []);
+    } catch (err) {
+      setFavorites([]);
+      setError(err instanceof Error ? err.message : "Failed to load favorites");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const handleRemove = async (id) => {
     try {
-      await base44.entities.Favorite.delete(id);
-      setFavorites(prev => prev.filter(f => f.id !== id));
-    } catch {
-      setFavorites(prev => prev.filter(f => f.id !== id));
+      await removeFavorite(id);
+      setFavorites((prev) => prev.filter((f) => f.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to remove favorite");
     }
   };
 
-  const filtered = filter === "all" ? favorites : favorites.filter(f => f.type === filter);
+  const filtered = filter === "all" ? favorites : favorites.filter((f) => f.type === filter);
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -55,8 +51,10 @@ export default function FavoritesPage() {
         <p className="text-sm text-muted-foreground mt-1">Your followed teams, leagues, and matches.</p>
       </div>
 
+      {error && <div className="glass rounded-xl p-3 text-sm text-red-300">{error}</div>}
+
       <div className="flex gap-2">
-        {["all", "team", "league", "match"].map(f => (
+        {["all", "team", "league", "match"].map((f) => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all capitalize ${filter === f ? "bg-primary text-primary-foreground" : "glass text-muted-foreground hover:text-foreground"}`}>
             {f}
@@ -84,7 +82,7 @@ export default function FavoritesPage() {
                   </div>
                   <div>
                     <div className="font-medium text-sm">{fav.item_name}</div>
-                    <div className="text-xs text-muted-foreground">{fav.item_meta}</div>
+                    <div className="text-xs text-muted-foreground">{fav.item_meta || "—"}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

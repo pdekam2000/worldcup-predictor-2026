@@ -1,6 +1,9 @@
-"""Phase 55 — High-value feature extraction validation."""
-
 from __future__ import annotations
+
+from pathlib import Path
+import runpy
+
+runpy.run_path(str(Path(__file__).resolve().with_name('bootstrap_path.py')))
 
 import json
 import sys

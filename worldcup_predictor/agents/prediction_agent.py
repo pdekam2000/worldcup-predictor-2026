@@ -96,10 +96,12 @@ class PredictionAgent(BaseAgent):
     def _predict_from_report(self, report: MatchIntelligenceReport) -> MatchPrediction:
         specialist_reports = self.context.shared.get("specialist_reports") or {}
         specialist = specialist_reports.get(report.fixture_id) or report.specialist_report
+        league_ctx = self.context.shared.get("league_context")
         prediction = self._engine.predict(
             report,
             specialist_report=specialist,
             text_builder=self._text_builder,
+            league_context=league_ctx,
         )
         prediction = self._apply_labels(prediction, report)
         prediction.explanation = self._resolve_explanation(prediction, report)

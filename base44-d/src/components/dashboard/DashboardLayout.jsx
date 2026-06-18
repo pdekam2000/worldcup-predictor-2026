@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 import {
   LayoutDashboard, BarChart3, CreditCard, Bell, Settings,
   Zap, Menu, LogOut, ChevronLeft, Shield, Trophy, History,
@@ -31,9 +31,10 @@ export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    base44.auth.logout("/");
+    logout(true);
   };
 
   const SidebarContent = ({ mobile = false }) => (

@@ -1,6 +1,9 @@
-"""Emergency product fix validation — navigation, group browser, bias audit artifacts."""
-
 from __future__ import annotations
+
+from pathlib import Path
+import runpy
+
+runpy.run_path(str(Path(__file__).resolve().with_name('bootstrap_path.py')))
 
 import importlib
 import json

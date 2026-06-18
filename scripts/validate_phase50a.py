@@ -1,6 +1,9 @@
-"""Phase 50A validation — Odds API credit guard."""
-
 from __future__ import annotations
+
+from pathlib import Path
+import runpy
+
+runpy.run_path(str(Path(__file__).resolve().with_name('bootstrap_path.py')))
 
 import os
 import sys

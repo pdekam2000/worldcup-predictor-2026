@@ -40,9 +40,17 @@ class CompetitionService:
 
     def get_default_season(self, key: str | None = None) -> int:
         comp = self.get_competition(key)
-        if comp.default:
-            return comp.default[-1]
+        if comp.default_seasons:
+            return comp.default_seasons[-1]
         return comp.season
+
+    def list_enabled_competitions(self) -> list[CompetitionConfig]:
+        return [c for c in self.list_competitions() if c.enabled]
+
+    def list_european_leagues(self) -> list[CompetitionConfig]:
+        from worldcup_predictor.config.league_registry import list_enabled_european_leagues
+
+        return list_enabled_european_leagues()
 
     def requires_league_setup(self, key: str | None = None) -> bool:
         return self.resolve_league_id(key) is None

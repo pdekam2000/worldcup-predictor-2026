@@ -1,11 +1,13 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 Locale = Literal["en", "de", "fa", "sr", "bs", "hr"]
 WeatherProviderKind = Literal["weatherapi", "openweather"]
+AppEnv = Literal["local", "production"]
 
 
 class Settings(BaseSettings):
@@ -35,17 +37,25 @@ class Settings(BaseSettings):
     api_throttle_warning_delay_seconds: float = Field(default=2.0, alias="API_THROTTLE_WARNING_DELAY_SECONDS")
     api_throttle_rate_limit_delay_seconds: float = Field(default=5.0, alias="API_THROTTLE_RATE_LIMIT_DELAY_SECONDS")
 
-    # Database engine (Phase B) — SQLite remains default when DATABASE_URL is unset
+    # Database — PostgreSQL primary for SaaS; SQLite for intelligence (legacy/local)
+    app_env: AppEnv = Field(default="local", alias="APP_ENV")
     database_url: str | None = Field(default=None, alias="DATABASE_URL")
     sqlite_path: str = Field(default="data/football_intelligence.db", alias="SQLITE_PATH")
     database_fallback_enabled: bool = Field(default=True, alias="DATABASE_FALLBACK_ENABLED")
 
+    # JWT auth (Phase 2)
+    jwt_secret: str = Field(default="dev-only-change-in-production", alias="JWT_SECRET")
+    jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
+    jwt_access_token_expire_minutes: int = Field(default=10080, alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
+
     # Optional enrichment providers (not required — API-Sports remains primary)
     sportmonks_api_key: str = Field(default="", alias="SPORTMONKS_API_KEY")
+    sportmonks_api_token: str = Field(default="", alias="SPORTMONKS_API_TOKEN")
     sportmonks_base_url: str = Field(
         default="https://api.sportmonks.com/v3/football",
         alias="SPORTMONKS_BASE_URL",
     )
+    sportmonks_timeout_seconds: float = Field(default=20.0, alias="SPORTMONKS_TIMEOUT_SECONDS")
     the_odds_api_key: str = Field(default="", alias="THE_ODDS_API_KEY")
     the_odds_api_base_url: str = Field(
         default="https://api.the-odds-api.com/v4",
@@ -102,8 +112,12 @@ class Settings(BaseSettings):
         return bool(self.api_football_key.strip())
 
     @property
+    def sportmonks_effective_token(self) -> str:
+        return (self.sportmonks_api_token or self.sportmonks_api_key).strip()
+
+    @property
     def sportmonks_configured(self) -> bool:
-        return bool(self.sportmonks_api_key.strip())
+        return bool(self.sportmonks_effective_token)
 
     @property
     def the_odds_api_configured(self) -> bool:
@@ -142,6 +156,32 @@ class Settings(BaseSettings):
     @property
     def rapid_open_weather_configured(self) -> bool:
         return bool(self.rapid_open_weather_enabled and self.rapid_open_weather_key.strip())
+
+    @property
+    def is_production(self) -> bool:
+        return self.app_env == "production"
+
+    @property
+    def postgres_configured(self) -> bool:
+        return bool((self.database_url or "").strip())
+
+    @property
+    def postgres_required(self) -> bool:
+        """Production and SaaS layers require PostgreSQL."""
+        return self.is_production or self.postgres_configured
+
+    @model_validator(mode="after")
+    def _prefer_local_pgembed_url(self) -> "Settings":
+        """Use pgembed URL file in local dev — port changes each embedded PG start."""
+        if self.is_production:
+            return self
+        url_file = Path(__file__).resolve().parents[2] / "data" / "pgembed_dev" / "database.url"
+        if not url_file.exists():
+            return self
+        file_url = url_file.read_text(encoding="utf-8").strip()
+        if file_url:
+            object.__setattr__(self, "database_url", file_url)
+        return self
 
 
 @lru_cache

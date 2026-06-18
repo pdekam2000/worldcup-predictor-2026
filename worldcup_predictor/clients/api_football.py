@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+import threading
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
 import httpx
@@ -11,8 +12,36 @@ from worldcup_predictor.clients.api_response import ApiCallResult
 from worldcup_predictor.config.competitions import CompetitionConfig
 from worldcup_predictor.config.settings import Settings
 from worldcup_predictor.domain.fixture import Fixture, FixtureCollection
+from worldcup_predictor.quota.cache_policy import ttl_for_endpoint
+from worldcup_predictor.quota.quota_tracker import get_quota_tracker
+from worldcup_predictor.quota.request_throttle import ApiRequestThrottle
 
 logger = logging.getLogger(__name__)
+
+_throttle_lock = threading.Lock()
+_throttle_singleton: ApiRequestThrottle | None = None
+
+
+def _get_throttle(settings: Settings) -> ApiRequestThrottle:
+    global _throttle_singleton
+    with _throttle_lock:
+        if _throttle_singleton is None:
+            _throttle_singleton = ApiRequestThrottle(
+                base_delay_seconds=settings.api_throttle_delay_seconds,
+                warning_delay_seconds=settings.api_throttle_warning_delay_seconds,
+                rate_limit_delay_seconds=settings.api_throttle_rate_limit_delay_seconds,
+            )
+        return _throttle_singleton
+
+
+def _int_or_default(value: Any, default: int) -> int:
+    """Coerce API scalar to int; use default when missing or invalid."""
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
 
 # Placeholder team IDs for offline development (not real API ids)
 _PLACEHOLDER_TEAM_IDS: dict[str, int] = {
@@ -191,10 +220,17 @@ class ApiFootballClient:
         competition: CompetitionConfig,
         *,
         force_refresh: bool = False,
+        sync_mode: str | None = None,
     ) -> ApiCallResult:
+        from worldcup_predictor.quota.sync_modes import fixture_query_params_for_mode, normalize_sync_mode
+
+        params = fixture_query_params_for_mode(
+            competition.fixture_query_params(),
+            normalize_sync_mode(sync_mode or self._settings.api_sync_mode),
+        )
         return self._safe_get(
             "fixtures",
-            competition.fixture_query_params(),
+            params,
             placeholder_factory=lambda: None,
             force_refresh=force_refresh,
         )
@@ -334,9 +370,36 @@ class ApiFootballClient:
                 endpoint=endpoint,
             )
 
+        tracker = get_quota_tracker()
+        effective_ttl = ttl_for_endpoint(endpoint, override=ttl_seconds)
+        cache_key = ApiCache.build_key(endpoint, params)
+
+        # Local-first for single-fixture lookups
+        local_payload = self._local_first_payload(endpoint, params)
+        if local_payload is not None and not force_refresh:
+            tracker.record_local_hit()
+            return ApiCallResult(
+                data=local_payload,
+                source="local",
+                endpoint=endpoint,
+                from_cache=True,
+            )
+
         if not force_refresh:
+            sqlite_cached = self._sqlite_cache_get(cache_key)
+            if sqlite_cached is not None:
+                tracker.record_cache_hit()
+                return ApiCallResult(
+                    data=sqlite_cached,
+                    source="cache",
+                    endpoint=endpoint,
+                    from_cache=True,
+                )
+
             cached = self._cache.get(endpoint, params)
             if cached is not None:
+                tracker.record_cache_hit()
+                self._sqlite_cache_set(cache_key, endpoint, params, cached, effective_ttl)
                 return ApiCallResult(
                     data=cached,
                     source="cache",
@@ -345,9 +408,16 @@ class ApiFootballClient:
                 )
 
         try:
-            payload = self._fetch_raw(endpoint, params)
-            response_items = payload.get("response", [])
-            self._cache.set(endpoint, params, response_items, ttl_seconds=ttl_seconds)
+            throttle = _get_throttle(self._settings)
+
+            def _do_fetch() -> list[Any]:
+                payload = self._fetch_raw(endpoint, params)
+                return payload.get("response", [])
+
+            response_items = throttle.execute(_do_fetch, quota_tracker=tracker)
+            tracker.record_live()
+            self._cache.set(endpoint, params, response_items, ttl_seconds=effective_ttl)
+            self._sqlite_cache_set(cache_key, endpoint, params, response_items, effective_ttl)
             return ApiCallResult(
                 data=response_items,
                 source="live",
@@ -362,15 +432,67 @@ class ApiFootballClient:
                 error=str(exc),
             )
 
+    def _local_first_payload(self, endpoint: str, params: dict[str, Any]) -> Any | None:
+        if endpoint != "fixtures" or "id" not in params:
+            return None
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+            from worldcup_predictor.quota.local_first import load_fixture_api_item_from_db
+
+            fixture_id = int(params["id"])
+            repo = FootballIntelligenceRepository()
+            if not repo.fixture_exists(fixture_id):
+                return None
+            return load_fixture_api_item_from_db(repo, fixture_id)
+        except Exception:
+            return None
+
+    def _sqlite_cache_get(self, cache_key: str) -> Any | None:
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+            return FootballIntelligenceRepository().get_api_cache_payload(cache_key)
+        except Exception:
+            return None
+
+    def _sqlite_cache_set(
+        self,
+        cache_key: str,
+        endpoint: str,
+        params: dict[str, Any],
+        payload: Any,
+        ttl_seconds: int,
+    ) -> None:
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+            expires = (
+                datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(seconds=ttl_seconds)
+            ).isoformat()
+            FootballIntelligenceRepository().set_api_cache_payload(
+                cache_key=cache_key,
+                endpoint=endpoint,
+                params=params,
+                payload=payload,
+                expires_at=expires,
+            )
+        except Exception:
+            pass
+
     def _fetch_raw(self, endpoint: str, params: dict[str, Any]) -> dict[str, Any]:
         url = f"{self._base_url}/{endpoint.lstrip('/')}"
         with httpx.Client(timeout=30.0) as client:
             response = client.get(url, headers=self._headers(), params=params)
+            if response.status_code == 429:
+                raise RuntimeError(f"API-Football HTTP 429 rate limit: {endpoint}")
             response.raise_for_status()
             payload = response.json()
 
         errors = payload.get("errors")
         if errors:
+            err_text = str(errors).lower()
+            if "429" in err_text or "rate limit" in err_text or "request limit" in err_text:
+                raise RuntimeError(f"API-Football rate limit: {errors}")
             raise RuntimeError(f"API-Football error: {errors}")
         return payload
 
@@ -398,8 +520,8 @@ class ApiFootballClient:
             kickoff_utc=kickoff.astimezone(timezone.utc).replace(tzinfo=None),
             venue=venue.get("name") or "TBD",
             stage=league.get("round") or "Group Stage",
-            league_id=int(league.get("id", competition.league_id)),
-            season=int(league.get("season", competition.season)),
+            league_id=_int_or_default(league.get("id"), competition.league_id),
+            season=_int_or_default(league.get("season"), competition.season),
             status=fixture.get("status", {}).get("short", "NS"),
             source="api-football",
             home_team_id=home.get("id"),
@@ -411,14 +533,17 @@ class ApiFootballClient:
         item: dict[str, Any],
         competition_key: str = "world_cup_2026",
     ) -> Fixture:
-        league = item.get("league", {})
+        league = item.get("league") or {}
+        league_name = str(league.get("name") or "").strip() or "Unknown League"
+        league_id = _int_or_default(league.get("id"), 0)
+        season = _int_or_default(league.get("season"), 2026)
         return self._parse_fixture(
             item,
             CompetitionConfig(
                 key=competition_key,
-                name="FIFA World Cup 2026",
-                league_id=int(league.get("id", 1)),
-                season=int(league.get("season", 2026)),
+                name=league_name,
+                league_id=league_id,
+                season=season,
             ),
         )
 
