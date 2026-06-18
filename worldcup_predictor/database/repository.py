@@ -736,3 +736,28 @@ class FootballIntelligenceRepository:
             (fixture_id,),
         ).fetchone()
         return dict(row) if row else None
+
+    def list_upcoming_fixtures(
+        self,
+        competition_key: str,
+        *,
+        season: int | None = None,
+        limit: int = 50,
+    ) -> list[dict[str, Any]]:
+        now_utc = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+        query = """
+            SELECT *
+            FROM fixtures
+            WHERE competition_key = ?
+              AND is_placeholder = 0
+              AND status IN ('NS', 'TBD', 'SCHEDULED', 'TIMED')
+              AND kickoff_utc > ?
+        """
+        params: list[Any] = [competition_key, now_utc]
+        if season is not None:
+            query += " AND (season = ? OR season IS NULL)"
+            params.append(season)
+        query += " ORDER BY kickoff_utc ASC LIMIT ?"
+        params.append(int(limit))
+        rows = self._conn.execute(query, params).fetchall()
+        return [dict(row) for row in rows]

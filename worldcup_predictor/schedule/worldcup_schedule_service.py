@@ -238,6 +238,26 @@ class WorldCupScheduleService:
         warnings: list[str] = []
         source: ScheduleSource = "placeholder"
         is_placeholder = True
+
+        from worldcup_predictor.quota.local_first import load_upcoming_fixtures_from_db
+
+        local_fixtures = load_upcoming_fixtures_from_db(
+            self._competition.key,
+            season=self._competition.season,
+            limit=200,
+        )
+        if local_fixtures:
+            health = ScheduleHealthReport(
+                source="cache",
+                is_placeholder=False,
+                warnings=warnings,
+                fixtures_count=len(local_fixtures),
+                standings_available=False,
+                groups_available=False,
+                api_configured=self._api.is_configured,
+            )
+            return list(local_fixtures), health
+
         if self._api.is_configured:
             result = self._api.get_all_fixtures_for_season(
                 self._competition,

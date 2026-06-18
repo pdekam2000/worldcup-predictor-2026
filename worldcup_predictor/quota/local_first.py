@@ -7,6 +7,58 @@ from datetime import datetime, timezone
 from typing import Any
 
 from worldcup_predictor.database.repository import FootballIntelligenceRepository
+from worldcup_predictor.domain.schedule import TournamentFixture
+
+
+def _parse_kickoff_utc(value: str | None) -> datetime:
+    raw = (value or "").strip()
+    if not raw:
+        return datetime.now(timezone.utc).replace(tzinfo=None)
+    if raw.endswith("Z"):
+        return datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone(timezone.utc).replace(tzinfo=None)
+    if "+" in raw[10:] or raw.count("-") > 2:
+        return datetime.fromisoformat(raw).astimezone(timezone.utc).replace(tzinfo=None)
+    return datetime.fromisoformat(raw)
+
+
+def _fixture_row_to_tournament_fixture(row: dict[str, Any]) -> TournamentFixture:
+    venue = str(row.get("venue") or "TBD")
+    city = str(row.get("city") or "TBD")
+    group = str(row.get("group_name") or "TBD")
+    round_name = str(row.get("round_name") or "TBD")
+    return TournamentFixture(
+        fixture_id=int(row["fixture_id"]),
+        kickoff_time=_parse_kickoff_utc(row.get("kickoff_utc")),
+        home_team=str(row.get("home_team") or "TBD"),
+        away_team=str(row.get("away_team") or "TBD"),
+        venue=venue.split(",")[0].strip() if "," in venue else venue,
+        city=city,
+        country="TBD",
+        group=group,
+        round=round_name,
+        status=str(row.get("status") or "NS"),
+        is_placeholder=False,
+        source="cache",
+    )
+
+
+def load_upcoming_fixtures_from_db(
+    competition_key: str,
+    *,
+    season: int | None = None,
+    limit: int = 50,
+) -> list[TournamentFixture]:
+    """Load upcoming fixtures from SQLite (local-first schedule path)."""
+    try:
+        repo = FootballIntelligenceRepository()
+        rows = repo.list_upcoming_fixtures(
+            competition_key,
+            season=season,
+            limit=limit,
+        )
+        return [_fixture_row_to_tournament_fixture(row) for row in rows]
+    except Exception:
+        return []
 
 
 def fixture_exists(repo: FootballIntelligenceRepository, fixture_id: int) -> bool:
