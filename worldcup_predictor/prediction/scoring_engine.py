@@ -251,7 +251,13 @@ class ScoringEngine:
         )
 
         if not use_weighted_decision:
-            return self._finalize_prediction(baseline, report, home_name, away_name)
+            return self._finalize_prediction(
+                baseline,
+                report,
+                home_name,
+                away_name,
+                specialist_report=specialist_report or report.specialist_report,
+            )
 
         from worldcup_predictor.decision.weighted_decision_engine import (
             DecisionInput,
@@ -270,7 +276,13 @@ class ScoringEngine:
             )
         )
         merged = decision_engine.apply_decision(baseline, decision_output)
-        return self._finalize_prediction(merged, report, home_name, away_name)
+        return self._finalize_prediction(
+            merged,
+            report,
+            home_name,
+            away_name,
+            specialist_report=specialist_report or report.specialist_report,
+        )
 
     def _finalize_prediction(
         self,
@@ -278,6 +290,8 @@ class ScoringEngine:
         report: MatchIntelligenceReport,
         home_name: str,
         away_name: str,
+        *,
+        specialist_report: MatchSpecialistReport | None = None,
     ) -> MatchPrediction:
         from dataclasses import replace
 
@@ -285,6 +299,8 @@ class ScoringEngine:
         from worldcup_predictor.prediction.explanation_builder import build_prediction_explanation
         from worldcup_predictor.prediction.prediction_quality import compute_prediction_quality
         from worldcup_predictor.prediction.scoreline_engine import generate_scoreline_candidates, primary_scoreline
+
+        wde_selection = prediction.one_x_two.selection
 
         candidates = generate_scoreline_candidates(report)
         h, a = primary_scoreline(candidates)
@@ -311,7 +327,7 @@ class ScoringEngine:
             base_prediction_quality=pq,
         )
         pq = prediction.prediction_quality_score
-        return replace(
+        final_prediction = replace(
             prediction,
             prediction_quality_score=pq,
             group_context=report.group_context,
@@ -323,6 +339,53 @@ class ScoringEngine:
                 "scoreline_confidence": f"{top_prob:.2f}",
             },
         )
+        try:
+            from worldcup_predictor.config.settings import get_settings
+            from worldcup_predictor.prediction.lambda_bridge.shadow_runner import maybe_record_shadow
+
+            settings = get_settings()
+            maybe_record_shadow(
+                production=final_prediction,
+                report=report,
+                specialist_report=specialist_report,
+                home_name=home_name,
+                away_name=away_name,
+                wde_selection=wde_selection,
+                mode=settings.lambda_bridge_mode,
+                shadow_path=settings.lambda_bridge_shadow_path,
+                config_version=settings.lambda_bridge_config_version,
+            )
+        except Exception:
+            pass
+        try:
+            from worldcup_predictor.config.settings import get_settings
+            from worldcup_predictor.prediction.rule_a_gate.live_validation_runner import (
+                maybe_record_rule_a_live,
+            )
+            from worldcup_predictor.prediction.rule_a_gate.shadow_runner import maybe_record_rule_a_shadow
+
+            settings = get_settings()
+            maybe_record_rule_a_shadow(
+                production=final_prediction,
+                report=report,
+                wde_selection=wde_selection,
+                scoreline_home=h,
+                scoreline_away=a,
+                mode=settings.rule_a_gate_mode,
+                shadow_path=settings.rule_a_shadow_path,
+            )
+            maybe_record_rule_a_live(
+                production=final_prediction,
+                report=report,
+                wde_selection=wde_selection,
+                scoreline_home=h,
+                scoreline_away=a,
+                enabled=settings.rule_a_live_mode == "shadow",
+                live_path=settings.rule_a_live_path,
+            )
+        except Exception:
+            pass
+        return final_prediction
 
     def _apply_specialist_signals(
         self,

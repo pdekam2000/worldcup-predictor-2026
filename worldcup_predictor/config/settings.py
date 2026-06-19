@@ -41,6 +41,40 @@ class Settings(BaseSettings):
     prediction_cache_dir: str = Field(default=".cache/predictions", alias="PREDICTION_CACHE_DIR")
     prediction_refresh_cooldown_seconds: int = Field(default=300, alias="PREDICTION_REFRESH_COOLDOWN_SECONDS")
 
+    # Phase 12B — specialist lambda bridge (shadow parallel path; production unchanged)
+    lambda_bridge_mode: Literal["off", "shadow", "limited", "full"] = Field(
+        default="shadow",
+        alias="LAMBDA_BRIDGE_MODE",
+    )
+    lambda_bridge_shadow_path: str = Field(
+        default="data/shadow/lambda_bridge_shadow.jsonl",
+        alias="LAMBDA_BRIDGE_SHADOW_PATH",
+    )
+    lambda_bridge_config_version: str = Field(
+        default="12b-v1",
+        alias="LAMBDA_BRIDGE_CONFIG_VERSION",
+    )
+
+    # Phase 21A — Rule A harmonization gate (shadow only; production unchanged)
+    rule_a_gate_mode: Literal["off", "shadow"] = Field(
+        default="shadow",
+        alias="RULE_A_GATE_MODE",
+    )
+    rule_a_shadow_path: str = Field(
+        default="data/shadow/rule_a_shadow.jsonl",
+        alias="RULE_A_SHADOW_PATH",
+    )
+
+    # Phase 21A-LIVE — forward-only Rule A validation (no historical bootstrap)
+    rule_a_live_mode: Literal["off", "shadow"] = Field(
+        default="shadow",
+        alias="RULE_A_LIVE_MODE",
+    )
+    rule_a_live_path: str = Field(
+        default="data/shadow/rule_a_live_validation.jsonl",
+        alias="RULE_A_LIVE_PATH",
+    )
+
     # Database — PostgreSQL primary for SaaS; SQLite for intelligence (legacy/local)
     app_env: AppEnv = Field(default="local", alias="APP_ENV")
     database_url: str | None = Field(default=None, alias="DATABASE_URL")
