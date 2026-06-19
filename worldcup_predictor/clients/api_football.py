@@ -178,16 +178,66 @@ class ApiFootballClient:
         fixture_id: int,
         league_id: int | None = None,
         season: int | None = None,
+        *,
+        force_refresh: bool = False,
     ) -> ApiCallResult:
-        params: dict[str, Any] = {"fixture": fixture_id}
-        if league_id is not None:
-            params["league"] = league_id
-        if season is not None:
-            params["season"] = season
+        valid_league = int(league_id) if league_id is not None and int(league_id) > 0 else None
+        valid_season = int(season) if season is not None and int(season) > 0 else None
+
+        if valid_league is None:
+            return self._injuries_skip_result(fixture_id, force_refresh=force_refresh)
+
+        params: dict[str, Any] = {"fixture": fixture_id, "league": valid_league}
+        if valid_season is not None:
+            params["season"] = valid_season
         return self._safe_get(
             "injuries",
             params,
             placeholder_factory=lambda: self._placeholder_injuries(fixture_id),
+            force_refresh=force_refresh,
+        )
+
+    def _injuries_skip_result(self, fixture_id: int, *, force_refresh: bool = False) -> ApiCallResult:
+        """Skip injuries API when league_id is unknown — cache the skip to avoid repeat attempts."""
+        from worldcup_predictor.quota.cache_policy import INJURIES_TTL_SECONDS
+
+        tracker = get_quota_tracker()
+        skip_endpoint = "injuries/skip"
+        skip_params = {"fixture": fixture_id, "reason": "missing_league_id"}
+        cache_key = ApiCache.build_key(skip_endpoint, skip_params)
+
+        if not force_refresh:
+            sqlite_cached = self._sqlite_cache_get(cache_key)
+            if sqlite_cached is not None:
+                tracker.record_cache_hit()
+                return ApiCallResult(
+                    data=sqlite_cached,
+                    source="cache",
+                    endpoint="injuries",
+                    from_cache=True,
+                    skip_reason="missing_league_id",
+                )
+            cached = self._cache.get(skip_endpoint, skip_params)
+            if cached is not None:
+                tracker.record_cache_hit()
+                self._sqlite_cache_set(cache_key, skip_endpoint, skip_params, cached, INJURIES_TTL_SECONDS)
+                return ApiCallResult(
+                    data=cached,
+                    source="cache",
+                    endpoint="injuries",
+                    from_cache=True,
+                    skip_reason="missing_league_id",
+                )
+
+        tracker.record_local_hit()
+        payload: list[Any] = []
+        self._cache.set(skip_endpoint, skip_params, payload, ttl_seconds=INJURIES_TTL_SECONDS)
+        self._sqlite_cache_set(cache_key, skip_endpoint, skip_params, payload, INJURIES_TTL_SECONDS)
+        return ApiCallResult(
+            data=payload,
+            source="local",
+            endpoint="injuries",
+            skip_reason="missing_league_id",
         )
 
     def get_odds(self, fixture_id: int) -> ApiCallResult:

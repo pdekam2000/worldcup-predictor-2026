@@ -31,6 +31,7 @@ def make_signal(
     missing_data: list[str] | None = None,
     impact_score: float | None = None,
     notes: str | None = None,
+    status_reason: str | None = None,
 ) -> SpecialistSignal:
     return SpecialistSignal(
         agent_name=agent_name,
@@ -41,4 +42,5 @@ def make_signal(
         missing_data=missing_data or [],
         impact_score=impact_score,
         notes=notes,
+        status_reason=status_reason,
     )

@@ -79,6 +79,7 @@ class EndpointInspection:
     source: str = "placeholder"
     error: str | None = None
     status: str = "unavailable"
+    skip_reason: str | None = None
 
     @property
     def status_label(self) -> str:

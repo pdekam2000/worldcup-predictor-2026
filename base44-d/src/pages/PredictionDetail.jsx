@@ -189,6 +189,7 @@ export default function PredictionDetail() {
     name,
     domain: agent?.domain ?? "—",
     status: agent?.status ?? "—",
+    status_reason: agent?.status_reason ?? null,
     impact_score: agent?.impact_score,
   }));
 
@@ -345,6 +346,11 @@ export default function PredictionDetail() {
                         <div className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${getStatusColor(s.status)}`}>
                           {s.status}
                         </div>
+                        {s.status_reason && (
+                          <div className="text-[10px] text-muted-foreground mt-1 font-mono">
+                            {s.status_reason.replace(/_/g, " ")}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="text-right">

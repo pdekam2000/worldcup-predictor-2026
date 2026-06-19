@@ -15,6 +15,7 @@ class ApiCallResult:
     endpoint: str
     error: str | None = None
     from_cache: bool = False
+    skip_reason: str | None = None
 
     @property
     def ok(self) -> bool:

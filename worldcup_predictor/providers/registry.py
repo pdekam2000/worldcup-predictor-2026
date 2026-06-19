@@ -59,7 +59,7 @@ class ProviderRegistry:
                 tier=ProviderTier.ENRICHMENT,
                 configured=self.sportmonks.is_configured,
                 label="Sportmonks",
-                env_var="SPORTMONKS_API_KEY",
+                env_var="SPORTMONKS_API_TOKEN or SPORTMONKS_API_KEY",
                 note="Optional backup/enrichment for fixtures, stats, squads.",
             ),
             ProviderStatus(

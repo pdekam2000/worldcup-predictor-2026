@@ -44,11 +44,12 @@ class SportmonksClient:
                 tier=ProviderTier.ENRICHMENT,
                 endpoint="fixtures/search",
                 configured=False,
-                error="SPORTMONKS_API_KEY not configured",
+                error="SPORTMONKS_API_TOKEN or SPORTMONKS_API_KEY not configured",
             )
 
+        token = self._settings.sportmonks_effective_token
         params: dict[str, Any] = {
-            "api_token": self._settings.sportmonks_api_key,
+            "api_token": token,
             "include": "participants;statistics;scores",
         }
         if kickoff_date:
@@ -70,12 +71,14 @@ class SportmonksClient:
             )
         except Exception as exc:
             logger.exception("Sportmonks fixture lookup failed")
+            from worldcup_predictor.providers.sportmonks_provider import redact_sportmonks_secrets
+
             return ProviderCallResult(
                 data=None,
                 provider="sportmonks",
                 tier=ProviderTier.ENRICHMENT,
                 endpoint="fixtures/search",
-                error=str(exc),
+                error=redact_sportmonks_secrets(str(exc), self._settings.sportmonks_effective_token),
             )
 
     @staticmethod

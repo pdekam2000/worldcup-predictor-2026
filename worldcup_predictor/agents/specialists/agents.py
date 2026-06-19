@@ -13,6 +13,12 @@ class WeatherAgent(BaseAgent):
     domain = "weather"
 
     def run(self, **kwargs: Any) -> AgentResult:
+        from worldcup_predictor.agents.specialists.status_reasons import (
+            DATA_NOT_PUBLISHED_YET,
+            PROVIDER_NOT_CONFIGURED,
+            weather_status_reason,
+        )
+
         report = require_intelligence(self.context, kwargs.get("fixture_id"))
         if report is None or report.fixture is None:
             return self._fail("No fixture intelligence available.")
@@ -21,6 +27,7 @@ class WeatherAgent(BaseAgent):
         weather = report.weather or {}
         warnings: list[str] = []
         missing: list[str] = []
+        provider_configured = self.context.settings.weather_provider_configured
 
         if weather.get("available"):
             temp = weather.get("temperature_c")
@@ -30,6 +37,7 @@ class WeatherAgent(BaseAgent):
             impact = weather.get("weather_impact_score")
             source = weather.get("source") or weather.get("provider") or "live"
             status = "available"
+            status_reason = weather_status_reason(report, provider_configured=provider_configured)
             notes = f"Venue weather from {source} (backup enrichment when primary missing)."
             signal = make_signal(
                 self.name,
@@ -50,12 +58,22 @@ class WeatherAgent(BaseAgent):
                 missing_data=missing,
                 impact_score=float(impact) if impact is not None else 50.0,
                 notes=notes,
+                status_reason=status_reason,
             )
             self._store(signal)
             return self._ok(data=signal, message="Weather signals prepared from live data")
 
         missing.append("weather")
-        warnings.append("Weather data unavailable — prediction continues without weather factor.")
+        if not provider_configured:
+            status_reason = PROVIDER_NOT_CONFIGURED
+            warnings.append(
+                "Weather provider not configured — set WEATHER_API_KEY or OPENWEATHER_API_KEY."
+            )
+            notes = "Weather enrichment disabled until a provider key is configured."
+        else:
+            status_reason = DATA_NOT_PUBLISHED_YET
+            warnings.append("Weather data unavailable — prediction continues without weather factor.")
+            notes = "No weather data published for this venue yet."
         signal = make_signal(
             self.name,
             self.domain,
@@ -69,10 +87,11 @@ class WeatherAgent(BaseAgent):
             warnings=warnings,
             missing_data=missing,
             impact_score=50.0,
-            notes="No weather provider data available for this venue.",
+            notes=notes,
+            status_reason=status_reason,
         )
         self._store(signal)
-        return self._ok(data=signal, message="Weather unavailable")
+        return self._ok(data=signal, message=notes)
 
     def _store(self, signal) -> None:
         self.context.shared.setdefault("specialist_signals", {})[self.name] = signal
@@ -89,6 +108,8 @@ class RefereeAgent(BaseAgent):
 
         referee = report.fixture.referee
         if not referee:
+            from worldcup_predictor.agents.specialists.status_reasons import DATA_NOT_PUBLISHED_YET
+
             signal = make_signal(
                 self.name,
                 self.domain,
@@ -96,6 +117,7 @@ class RefereeAgent(BaseAgent):
                 {},
                 warnings=["Referee not assigned or not available in fixture data."],
                 missing_data=["referee"],
+                status_reason=DATA_NOT_PUBLISHED_YET,
             )
             self._store(signal)
             return self._ok(data=signal, message="Referee unavailable")
@@ -150,12 +172,33 @@ class LineupAgent(BaseAgent):
                     key_starting.append(name)
 
         status = "unavailable"
+        status_reason = None
         if official_available:
             status = "available"
+            from worldcup_predictor.agents.specialists.status_reasons import LIVE_DATA_AVAILABLE
+
+            status_reason = LIVE_DATA_AVAILABLE
         elif predicted_available:
             status = "partial" if report.is_placeholder else "available"
+            from worldcup_predictor.agents.specialists.status_reasons import (
+                DATA_NOT_PUBLISHED_YET,
+                HEURISTIC_PARTIAL,
+                LIVE_DATA_AVAILABLE,
+            )
+
+            status_reason = HEURISTIC_PARTIAL if report.is_placeholder else LIVE_DATA_AVAILABLE
         elif report.is_placeholder:
             status = "placeholder"
+            from worldcup_predictor.agents.specialists.status_reasons import HEURISTIC_PARTIAL
+
+            status_reason = HEURISTIC_PARTIAL
+        else:
+            from worldcup_predictor.agents.specialists.status_reasons import (
+                DATA_NOT_PUBLISHED_YET,
+                lineup_status_reason,
+            )
+
+            status_reason = lineup_status_reason(report)
 
         confidence = 75.0 if official_available else (55.0 if predicted_available else 25.0)
         warnings = []
@@ -176,6 +219,7 @@ class LineupAgent(BaseAgent):
             },
             warnings=warnings,
             impact_score=confidence,
+            status_reason=status_reason,
         )
         self._store(signal)
         return self._ok(data=signal, message="Lineup signals prepared")
@@ -205,8 +249,20 @@ class InjurySuspensionAgent(BaseAgent):
 
         absence_score = min(90.0, 30.0 + len(injured) * 12 + len(suspended) * 15)
         status = "placeholder" if report.is_placeholder else "partial"
+        status_reason = None
         if "injuries" in report.missing_data:
             status = "unavailable"
+            from worldcup_predictor.agents.specialists.status_reasons import (
+                HEURISTIC_PARTIAL,
+                MISSING_LEAGUE_ID,
+                injuries_status_reason,
+            )
+
+            status_reason = injuries_status_reason(report) or MISSING_LEAGUE_ID
+        elif status == "partial":
+            from worldcup_predictor.agents.specialists.status_reasons import HEURISTIC_PARTIAL
+
+            status_reason = HEURISTIC_PARTIAL
 
         signal = make_signal(
             self.name,
@@ -222,6 +278,7 @@ class InjurySuspensionAgent(BaseAgent):
             missing_data=["injuries"] if "injuries" in report.missing_data else [],
             impact_score=absence_score,
             notes="Higher key_absence_score indicates more squad disruption.",
+            status_reason=status_reason,
         )
         self._store(signal)
         return self._ok(data=signal, message="Injury/suspension signals prepared")

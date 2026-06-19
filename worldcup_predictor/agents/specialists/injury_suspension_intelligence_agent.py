@@ -27,6 +27,21 @@ class InjurySuspensionIntelligenceAgent(BaseAgent):
         has_absences = bool(result.home.unavailable_players or result.away.unavailable_players)
         status = "unavailable" if not has_data else ("partial" if not has_absences else "available")
 
+        from worldcup_predictor.agents.specialists.status_reasons import (
+            HEURISTIC_PARTIAL,
+            LIVE_DATA_AVAILABLE,
+            MISSING_LEAGUE_ID,
+            injuries_status_reason,
+        )
+
+        status_reason = None
+        if not has_data:
+            status_reason = injuries_status_reason(report) or MISSING_LEAGUE_ID
+        elif status == "partial":
+            status_reason = HEURISTIC_PARTIAL
+        else:
+            status_reason = LIVE_DATA_AVAILABLE
+
         warnings: list[str] = []
         if not has_data:
             warnings.append("Injury/suspension data unavailable — adjustments remain minimal.")
@@ -45,6 +60,7 @@ class InjurySuspensionIntelligenceAgent(BaseAgent):
             missing_data=["injuries"] if not has_data else [],
             impact_score=round(100.0 - avg_impact, 1),
             notes=result.summary,
+            status_reason=status_reason,
         )
         self.context.shared.setdefault("specialist_signals", {})[self.name] = signal
         return self._ok(data=signal, message="Injury & Suspension Intelligence V2 complete")

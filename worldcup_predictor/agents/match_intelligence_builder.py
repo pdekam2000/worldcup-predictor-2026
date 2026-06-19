@@ -70,15 +70,19 @@ class MatchIntelligenceBuilder:
         fixture = self._resolve_fixture(fixture, missing_data, errors, sources, endpoint_log)
 
         competition = get_competition(fixture.competition_key)
+        fixture = self._ensure_fixture_league_season(fixture, competition)
+        injuries_league_id, injuries_season = self._resolve_injuries_league_season(fixture, competition)
 
         injuries_result = self._api.get_injuries(
             fixture_id=fixture.id,
-            league_id=fixture.league_id,
-            season=fixture.season,
+            league_id=injuries_league_id,
+            season=injuries_season,
         )
         self._log_endpoint(endpoint_log, "injuries", injuries_result)
         sources.add(injuries_result.source)
-        if injuries_result.error:
+        if injuries_result.skip_reason == "missing_league_id":
+            missing_data.append("injuries")
+        elif injuries_result.error:
             errors.append(f"injuries: {injuries_result.error}")
         injuries_items: list[dict[str, Any]] = self._non_empty_list(
             injuries_result.data if injuries_result.ok else []
@@ -331,11 +335,56 @@ class MatchIntelligenceBuilder:
         weather_raw = fix.get("weather") or {}
         weather_note = weather_raw if weather_raw else None
         _ = weather_note
+        league = item.get("league") or {}
+        try:
+            league_id = int(league.get("id") or 0)
+        except (TypeError, ValueError):
+            league_id = 0
+        try:
+            season = int(league.get("season") or 0)
+        except (TypeError, ValueError):
+            season = 0
         return replace(
             fixture,
             referee=referee or fixture.referee,
             venue=venue.get("name") or fixture.venue,
+            league_id=league_id if league_id > 0 else fixture.league_id,
+            season=season if season > 0 else fixture.season,
         )
+
+    @staticmethod
+    def _ensure_fixture_league_season(fixture: Fixture, competition) -> Fixture:
+        from dataclasses import replace
+
+        league_id = fixture.league_id if fixture.league_id and fixture.league_id > 0 else competition.league_id
+        season = fixture.season if fixture.season and fixture.season > 0 else competition.season
+        if league_id != fixture.league_id or season != fixture.season:
+            return replace(fixture, league_id=league_id, season=season)
+        return fixture
+
+    @staticmethod
+    def _resolve_injuries_league_season(fixture: Fixture, competition) -> tuple[int | None, int | None]:
+        league_id = fixture.league_id if fixture.league_id and fixture.league_id > 0 else None
+        season = fixture.season if fixture.season and fixture.season > 0 else None
+        if league_id is None and competition.league_id and competition.league_id > 0:
+            league_id = int(competition.league_id)
+        if season is None and competition.season:
+            season = int(competition.season)
+        if league_id is None:
+            try:
+                from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+                row = FootballIntelligenceRepository().get_fixture_row(fixture.id)
+                if row:
+                    raw_league = row.get("league_id")
+                    if raw_league is not None and int(raw_league) > 0:
+                        league_id = int(raw_league)
+                    raw_season = row.get("season")
+                    if season is None and raw_season is not None and int(raw_season) > 0:
+                        season = int(raw_season)
+            except Exception:
+                pass
+        return league_id, season
 
     def _log_endpoint(
         self,
@@ -346,7 +395,10 @@ class MatchIntelligenceBuilder:
         loaded: bool | None = None,
     ) -> None:
         api_configured = self._api.is_configured
-        if result.error:
+        if getattr(result, "skip_reason", None):
+            status = "skipped"
+            is_loaded = False
+        elif result.error:
             status = "error"
             is_loaded = False
         elif not api_configured and result.source == "placeholder":
@@ -374,6 +426,7 @@ class MatchIntelligenceBuilder:
                 source=result.source,
                 error=result.error,
                 status=status,
+                skip_reason=getattr(result, "skip_reason", None),
             )
         )
 

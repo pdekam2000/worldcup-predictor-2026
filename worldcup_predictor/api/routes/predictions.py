@@ -117,6 +117,7 @@ def _specialist_summary(
             agents[name] = {
                 "domain": signal.domain,
                 "status": signal.status,
+                "status_reason": signal.status_reason,
                 "impact_score": signal.impact_score,
             }
         return {

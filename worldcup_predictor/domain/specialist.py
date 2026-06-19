@@ -18,6 +18,7 @@ class SpecialistSignal:
     missing_data: list[str] = field(default_factory=list)
     impact_score: float | None = None
     notes: str | None = None
+    status_reason: str | None = None
 
     @property
     def is_usable(self) -> bool:
