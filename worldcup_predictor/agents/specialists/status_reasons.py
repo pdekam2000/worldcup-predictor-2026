@@ -27,10 +27,10 @@ def endpoint_skip_reason(report: MatchIntelligenceReport | None, endpoint: str) 
 
 def injuries_status_reason(report: MatchIntelligenceReport) -> str | None:
     skip = endpoint_skip_reason(report, "injuries")
-    if skip == MISSING_LEAGUE_ID:
-        return MISSING_LEAGUE_ID
+    if skip:
+        return skip
     if "injuries" in (report.missing_data or []):
-        return None
+        return DATA_NOT_PUBLISHED_YET
     if report.home_team.injuries and report.home_team.injuries.available:
         src = report.home_team.injuries.source
         if src == "cache":

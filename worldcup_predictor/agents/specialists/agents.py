@@ -258,7 +258,7 @@ class InjurySuspensionAgent(BaseAgent):
                 injuries_status_reason,
             )
 
-            status_reason = injuries_status_reason(report) or MISSING_LEAGUE_ID
+            status_reason = injuries_status_reason(report)
         elif status == "partial":
             from worldcup_predictor.agents.specialists.status_reasons import HEURISTIC_PARTIAL
 

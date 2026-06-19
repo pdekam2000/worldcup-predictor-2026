@@ -36,7 +36,7 @@ class InjurySuspensionIntelligenceAgent(BaseAgent):
 
         status_reason = None
         if not has_data:
-            status_reason = injuries_status_reason(report) or MISSING_LEAGUE_ID
+            status_reason = injuries_status_reason(report)
         elif status == "partial":
             status_reason = HEURISTIC_PARTIAL
         else:
