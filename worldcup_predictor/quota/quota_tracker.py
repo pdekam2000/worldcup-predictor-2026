@@ -24,6 +24,9 @@ class QuotaSnapshot:
     local_hits: int = 0
     calls_saved: int = 0
     rate_limit_retries: int = 0
+    prediction_cache_hits: int = 0
+    prediction_cache_misses: int = 0
+    provider_live: dict[str, int] = field(default_factory=dict)
     last_sync_at: str | None = None
 
     @property
@@ -53,6 +56,9 @@ class QuotaSnapshot:
             "local_hits": self.local_hits,
             "calls_saved": self.calls_saved,
             "rate_limit_retries": self.rate_limit_retries,
+            "prediction_cache_hits": self.prediction_cache_hits,
+            "prediction_cache_misses": self.prediction_cache_misses,
+            "provider_live": dict(self.provider_live),
             "cache_hit_rate": self.cache_hit_rate,
             "quota_efficiency": self.quota_efficiency,
             "last_sync_at": self.last_sync_at,
@@ -82,10 +88,25 @@ class QuotaTracker:
         if self._snapshot.stat_date != today:
             self._snapshot = QuotaSnapshot(stat_date=today)
 
-    def record_live(self) -> None:
+    def record_live(self, *, provider: str = "api_football") -> None:
         with self._lock:
             self._roll_date()
             self._snapshot.live_requests += 1
+            key = provider or "api_football"
+            self._snapshot.provider_live[key] = self._snapshot.provider_live.get(key, 0) + 1
+            self._persist()
+
+    def record_prediction_cache_hit(self) -> None:
+        with self._lock:
+            self._roll_date()
+            self._snapshot.prediction_cache_hits += 1
+            self._snapshot.calls_saved += 1
+            self._persist()
+
+    def record_prediction_cache_miss(self) -> None:
+        with self._lock:
+            self._roll_date()
+            self._snapshot.prediction_cache_misses += 1
             self._persist()
 
     def record_cache_hit(self) -> None:
@@ -125,6 +146,9 @@ class QuotaTracker:
                 local_hits=s.local_hits,
                 calls_saved=s.calls_saved,
                 rate_limit_retries=s.rate_limit_retries,
+                prediction_cache_hits=s.prediction_cache_hits,
+                prediction_cache_misses=s.prediction_cache_misses,
+                provider_live=dict(s.provider_live),
                 last_sync_at=s.last_sync_at,
             )
 

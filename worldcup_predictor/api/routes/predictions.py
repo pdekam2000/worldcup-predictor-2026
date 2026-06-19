@@ -20,6 +20,12 @@ from worldcup_predictor.database.saas_factory import saas_uow
 from worldcup_predictor.domain.prediction import MatchPrediction
 from worldcup_predictor.domain.specialist import MatchSpecialistReport
 from worldcup_predictor.orchestration.predict_pipeline import PredictPipeline, PredictPipelineResult
+from worldcup_predictor.quota.prediction_cache import get_cached_prediction, kickoff_from_payload, store_prediction
+from worldcup_predictor.quota.quota_guard import (
+    QuotaGuardError,
+    assert_force_refresh_allowed,
+    check_daily_live_budget,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -164,6 +170,20 @@ def _failure_payload(fixture_id: int, result: PredictPipelineResult) -> dict[str
     }
 
 
+def _kickoff_for_fixture(fixture_id: int):
+    try:
+        from datetime import datetime
+
+        from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+        row = FootballIntelligenceRepository().get_fixture_row(fixture_id)
+        if row and row.get("kickoff_utc"):
+            return datetime.fromisoformat(str(row["kickoff_utc"]).replace("Z", "+00:00"))
+    except Exception:
+        pass
+    return None
+
+
 def _record_user_history(user: WebAuthUser | None, payload: dict[str, Any]) -> None:
     if user is None or payload.get("status") != "ok":
         return
@@ -186,29 +206,105 @@ def _record_user_history(user: WebAuthUser | None, payload: dict[str, Any]) -> N
         logger.exception("Failed to record user prediction history for fixture %s", payload.get("fixture_id"))
 
 
+def _resolve_competition(competition: str, season: int | None):
+    try:
+        comp = get_competition(competition)
+    except KeyError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if season is not None:
+        comp = replace(comp, season=season)
+    return comp
+
+
+def _cache_lookup(
+    fixture_id: int,
+    *,
+    competition_key: str,
+    season: int,
+    locale: Locale,
+) -> dict[str, Any] | None:
+    return get_cached_prediction(
+        fixture_id,
+        competition_key=competition_key,
+        season=season,
+        locale=locale,
+    )
+
+
+@router.get("/predict/{fixture_id}")
+def get_cached_prediction_endpoint(
+    fixture_id: int,
+    competition: str = Query(default=DEFAULT_COMPETITION_KEY, description="Competition registry key"),
+    season: int | None = Query(default=None, description="Season year override"),
+    locale: Locale = Query(default="en", description="Output locale"),
+) -> dict[str, Any]:
+    """Return a cached prediction payload when fresh; does not run the pipeline."""
+    comp = _resolve_competition(competition, season)
+    cached = _cache_lookup(
+        fixture_id,
+        competition_key=comp.key,
+        season=comp.season,
+        locale=locale,
+    )
+    if cached is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "status": "not_cached",
+                "fixture_id": fixture_id,
+                "message": "No fresh cached prediction. Use Run Prediction to generate one.",
+            },
+        )
+    return cached
+
+
 @router.post("/predict/{fixture_id}")
 def predict_fixture(
     fixture_id: int,
     competition: str = Query(default=DEFAULT_COMPETITION_KEY, description="Competition registry key"),
     season: int | None = Query(default=None, description="Season year override"),
     locale: Locale = Query(default="en", description="Output locale"),
+    force_refresh: bool = Query(default=False, description="Bypass prediction cache (admin or cooldown)"),
     user: WebAuthUser | None = Depends(get_optional_current_user),
 ) -> dict[str, Any]:
     """
-    Run the full prediction pipeline for one fixture.
+    Run the full prediction pipeline for one fixture when cache is stale or missing.
 
-    Wraps ``PredictPipeline.run()`` (same path as ``python main.py predict``
-    and GUI ``match_action_panel``).
+    Returns cached result when fresh unless ``force_refresh=true``.
     """
-    try:
-        comp = get_competition(competition)
-    except KeyError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-    if season is not None:
-        comp = replace(comp, season=season)
-
+    comp = _resolve_competition(competition, season)
     settings = get_settings()
+    is_admin = user is not None and user.role == "admin"
+
+    if not force_refresh:
+        cached = _cache_lookup(
+            fixture_id,
+            competition_key=comp.key,
+            season=comp.season,
+            locale=locale,
+        )
+        if cached is not None:
+            return cached
+
+    try:
+        if force_refresh:
+            assert_force_refresh_allowed(
+                fixture_id,
+                user_id=user.id if user else None,
+                is_admin=is_admin,
+                settings=settings,
+            )
+        check_daily_live_budget(settings=settings)
+    except QuotaGuardError as exc:
+        raise HTTPException(
+            status_code=429,
+            detail={
+                "status": "error",
+                "fixture_id": fixture_id,
+                "message": str(exc),
+                "code": exc.code,
+            },
+        ) from exc
 
     try:
         pipeline = PredictPipeline(
@@ -244,5 +340,18 @@ def predict_fixture(
         return JSONResponse(status_code=422, content=_failure_payload(fixture_id, result))
 
     payload = _success_payload(result)
+    payload["cache_source"] = "live"
+    kickoff = kickoff_from_payload(payload) or _kickoff_for_fixture(fixture_id)
+    if kickoff is not None:
+        payload["kickoff_utc"] = kickoff.isoformat()
+    store_prediction(
+        fixture_id,
+        payload,
+        competition_key=comp.key,
+        season=comp.season,
+        locale=locale,
+        kickoff_utc=kickoff,
+        settings=settings,
+    )
     _record_user_history(user, payload)
     return payload

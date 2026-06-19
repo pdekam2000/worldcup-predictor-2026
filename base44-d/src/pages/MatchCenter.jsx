@@ -55,7 +55,7 @@ export default function MatchCenter() {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div>
         <h1 className="text-2xl font-display font-bold">Match Center</h1>
-        <p className="text-sm text-muted-foreground mt-1">Browse upcoming matches and AI predictions.</p>
+        <p className="text-sm text-muted-foreground mt-1">Browse upcoming fixtures — open a match to run prediction on demand.</p>
       </div>
 
       {/* Filters */}

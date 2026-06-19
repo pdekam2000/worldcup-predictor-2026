@@ -53,6 +53,8 @@ class FootballIntelligenceRepository:
         "model_coach_reports",
         "selection_decisions",
         "learning_records_v2",
+        "api_response_cache",
+        "api_quota_stats",
     )
 
     def __init__(self, path: str | None = None) -> None:
@@ -830,6 +832,98 @@ class FootballIntelligenceRepository:
                 fetched_at_utc,
                 expires_at_utc,
                 status,
+            ),
+        )
+        self._conn.commit()
+
+    def get_api_cache_payload(self, cache_key: str) -> Any | None:
+        row = self._conn.execute(
+            """
+            SELECT payload_json, expires_at
+            FROM api_response_cache
+            WHERE cache_key = ?
+            """,
+            (cache_key,),
+        ).fetchone()
+        if row is None:
+            return None
+        if str(row["expires_at"]) <= _utc_now():
+            self._conn.execute(
+                "DELETE FROM api_response_cache WHERE cache_key = ?",
+                (cache_key,),
+            )
+            self._conn.commit()
+            return None
+        try:
+            return json.loads(row["payload_json"])
+        except (json.JSONDecodeError, TypeError):
+            return None
+
+    def set_api_cache_payload(
+        self,
+        *,
+        cache_key: str,
+        endpoint: str,
+        params: dict[str, Any],
+        payload: Any,
+        expires_at: str,
+    ) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO api_response_cache (
+                cache_key, endpoint, params_json, payload_json, cached_at, expires_at
+            ) VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(cache_key) DO UPDATE SET
+                endpoint = excluded.endpoint,
+                params_json = excluded.params_json,
+                payload_json = excluded.payload_json,
+                cached_at = excluded.cached_at,
+                expires_at = excluded.expires_at
+            """,
+            (
+                cache_key,
+                endpoint,
+                json.dumps(params, sort_keys=True, default=str),
+                json.dumps(payload, ensure_ascii=False),
+                _utc_now(),
+                expires_at,
+            ),
+        )
+        self._conn.commit()
+
+    def get_api_quota_stats(self, stat_date: str | None = None) -> dict[str, Any] | None:
+        date_key = stat_date or datetime.now(timezone.utc).date().isoformat()
+        row = self._conn.execute(
+            "SELECT * FROM api_quota_stats WHERE stat_date = ?",
+            (date_key,),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def upsert_api_quota_stats(self, stats: dict[str, Any]) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO api_quota_stats (
+                stat_date, live_requests, cache_hits, local_hits,
+                calls_saved, rate_limit_retries, last_sync_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(stat_date) DO UPDATE SET
+                live_requests = excluded.live_requests,
+                cache_hits = excluded.cache_hits,
+                local_hits = excluded.local_hits,
+                calls_saved = excluded.calls_saved,
+                rate_limit_retries = excluded.rate_limit_retries,
+                last_sync_at = excluded.last_sync_at,
+                updated_at = excluded.updated_at
+            """,
+            (
+                stats.get("stat_date", datetime.now(timezone.utc).date().isoformat()),
+                int(stats.get("live_requests", 0)),
+                int(stats.get("cache_hits", 0)),
+                int(stats.get("local_hits", 0)),
+                int(stats.get("calls_saved", 0)),
+                int(stats.get("rate_limit_retries", 0)),
+                stats.get("last_sync_at"),
+                _utc_now(),
             ),
         )
         self._conn.commit()

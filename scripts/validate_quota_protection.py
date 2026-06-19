@@ -1,10 +1,11 @@
-"""Validate Phase 40A API quota protection."""
+"""Validate API quota protection — prediction cache, guards, fixtures list cache."""
 
 from __future__ import annotations
 
 from pathlib import Path
 import runpy
 import sys
+import tempfile
 
 runpy.run_path(str(Path(__file__).resolve().with_name("bootstrap_path.py")))
 
@@ -12,10 +13,16 @@ runpy.run_path(str(Path(__file__).resolve().with_name("bootstrap_path.py")))
 def main() -> int:
     checks: list[tuple[str, bool]] = []
     try:
+        from datetime import datetime, timedelta, timezone
+
         from worldcup_predictor.config.settings import Settings
+        from worldcup_predictor.quota.fixtures_list_cache import get_cached, store
+        from worldcup_predictor.quota.prediction_cache import get_cached_prediction, store_prediction
+        from worldcup_predictor.quota.quota_guard import QuotaGuardError, assert_force_refresh_allowed, quota_risk_level
         from worldcup_predictor.quota.quota_tracker import QuotaTracker, get_quota_tracker
         from worldcup_predictor.quota.request_throttle import ApiRequestThrottle, _is_rate_limit_error
         from worldcup_predictor.quota.sync_modes import DEFAULT_SYNC_MODE, fixture_query_params_for_mode
+        from worldcup_predictor.quota.cache_policy import should_fetch_lineups
 
         checks.append(("default_fast_mode", DEFAULT_SYNC_MODE == "fast"))
 
@@ -27,8 +34,11 @@ def main() -> int:
         tracker = QuotaTracker()
         tracker.record_cache_hit()
         tracker.record_local_hit()
+        tracker.record_prediction_cache_hit()
+        tracker.record_prediction_cache_miss()
         snap = tracker.snapshot()
-        checks.append(("calls_saved_tracked", snap.calls_saved >= 2))
+        checks.append(("calls_saved_tracked", snap.calls_saved >= 3))
+        checks.append(("prediction_cache_counters", snap.prediction_cache_hits >= 1 and snap.prediction_cache_misses >= 1))
 
         throttle = ApiRequestThrottle(base_delay_seconds=0.01, rate_limit_delay_seconds=0.01)
         calls = {"n": 0}
@@ -43,9 +53,47 @@ def main() -> int:
         checks.append(("429_retry", out == "ok" and calls["n"] == 2))
         checks.append(("rate_limit_detect", _is_rate_limit_error(RuntimeError("request limit for the day"))))
 
-        settings = Settings()
+        settings = Settings(
+            prediction_cache_dir=str(Path(tempfile.mkdtemp()) / "predictions"),
+            fixtures_list_cache_ttl_seconds=60,
+            prediction_refresh_cooldown_seconds=30,
+        )
+
+        payload = {
+            "status": "ok",
+            "fixture_id": 123,
+            "home_team": "A",
+            "away_team": "B",
+            "prediction": "home",
+            "confidence": 70,
+            "cache_source": "live",
+        }
+        store_prediction(123, payload, competition_key="world_cup_2026", season=2026, locale="en", settings=settings)
+        cached = get_cached_prediction(123, competition_key="world_cup_2026", season=2026, locale="en", settings=settings)
+        checks.append(("prediction_cache_roundtrip", cached is not None and cached.get("fixture_id") == 123))
+
+        list_payload = {"status": "ok", "count": 1, "matches": []}
+        store("world_cup_2026", 2026, 10, list_payload, settings=settings)
+        list_cached = get_cached("world_cup_2026", 2026, 10, settings=settings)
+        checks.append(("fixtures_list_cache", list_cached is not None and list_cached.get("count") == 1))
+
+        far_kickoff = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(hours=48)
+        checks.append(("lineups_skip_far", should_fetch_lineups(far_kickoff) is False))
+        near_kickoff = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(hours=1)
+        checks.append(("lineups_fetch_near", should_fetch_lineups(near_kickoff) is True))
+
+        try:
+            assert_force_refresh_allowed(999, user_id="u1", is_admin=False, settings=settings)
+            assert_force_refresh_allowed(999, user_id="u1", is_admin=False, settings=settings)
+            checks.append(("refresh_cooldown", False))
+        except QuotaGuardError:
+            checks.append(("refresh_cooldown", True))
+
+        risk = quota_risk_level(settings=settings)
+        checks.append(("quota_risk_shape", "risk_level" in risk))
+
         checks.append(("settings_sync_mode", settings.api_sync_mode == "fast"))
-        checks.append(("settings_throttle", settings.api_throttle_delay_seconds >= 0.5))
+        checks.append(("settings_daily_limit", settings.api_daily_live_limit > 0))
 
         global_tracker = get_quota_tracker()
         checks.append(("global_tracker", global_tracker is not None))

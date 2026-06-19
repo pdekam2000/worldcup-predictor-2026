@@ -110,6 +110,10 @@ export async function fetchAdminHealth() {
   return saasFetch("/api/admin/health");
 }
 
+export async function fetchAdminQuota() {
+  return saasFetch("/api/admin/quota");
+}
+
 export async function updateAdminUserRole(userId, role) {
   return saasFetch(`/api/admin/users/${userId}/role`, { method: "PATCH", body: { role } });
 }

@@ -15,6 +15,8 @@ from worldcup_predictor.database.postgres.enums import SubscriptionPlan, UserRol
 from worldcup_predictor.database.postgres.models import Subscription, User
 from worldcup_predictor.database.postgres.session import ping_postgres
 from worldcup_predictor.database.saas_factory import saas_uow
+from worldcup_predictor.quota.quota_guard import quota_risk_level
+from worldcup_predictor.quota.quota_tracker import get_quota_tracker
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -39,6 +41,40 @@ def admin_health(_admin: WebAuthUser = Depends(require_admin_user)) -> dict[str,
             },
             {"name": "Notification Service", "status": "operational", "uptime": "n/a"},
         ],
+    }
+
+
+@router.get("/quota")
+def admin_quota(_admin: WebAuthUser = Depends(require_admin_user)) -> dict[str, Any]:
+    snap = get_quota_tracker().snapshot()
+    risk = quota_risk_level()
+    db_stats = None
+    try:
+        from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+        db_stats = FootballIntelligenceRepository().get_api_quota_stats(snap.stat_date)
+    except Exception:
+        db_stats = None
+
+    provider_live = dict(snap.provider_live)
+    if not provider_live and snap.live_requests:
+        provider_live = {"api_football": snap.live_requests}
+
+    return {
+        "status": "ok",
+        "stat_date": snap.stat_date,
+        "api_calls_today": snap.live_requests,
+        "api_calls_by_provider": provider_live,
+        "cache_hits": snap.cache_hits,
+        "cache_misses": snap.prediction_cache_misses,
+        "local_hits": snap.local_hits,
+        "prediction_cache_hits": snap.prediction_cache_hits,
+        "prediction_cache_misses": snap.prediction_cache_misses,
+        "calls_saved": snap.calls_saved,
+        "cache_hit_rate": snap.cache_hit_rate,
+        "rate_limit_retries": snap.rate_limit_retries,
+        "quota_risk": risk,
+        "persisted": db_stats,
     }
 
 

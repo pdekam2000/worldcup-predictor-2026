@@ -15,12 +15,23 @@ def main() -> int:
     try:
         from worldcup_predictor.cache.api_cache import ApiCache
         from worldcup_predictor.database.repository import FootballIntelligenceRepository
-        from worldcup_predictor.quota.cache_policy import DAILY_TTL_SECONDS, MATCH_TTL_SECONDS, ttl_for_endpoint
+        from worldcup_predictor.quota.cache_policy import (
+            DAILY_TTL_SECONDS,
+            FIXTURES_LIST_TTL_SECONDS,
+            INJURIES_TTL_SECONDS,
+            LINEUPS_TTL_NEAR_SECONDS,
+            MATCH_TTL_SECONDS,
+            ODDS_TTL_SECONDS,
+            ttl_for_endpoint,
+        )
 
         checks.append(("daily_ttl_24h", DAILY_TTL_SECONDS == 86400))
         checks.append(("match_ttl_30m", MATCH_TTL_SECONDS == 1800))
         checks.append(("standings_daily", ttl_for_endpoint("standings") == DAILY_TTL_SECONDS))
-        checks.append(("lineups_match", ttl_for_endpoint("fixtures/lineups") == MATCH_TTL_SECONDS))
+        checks.append(("lineups_near_ttl", ttl_for_endpoint("fixtures/lineups") == LINEUPS_TTL_NEAR_SECONDS))
+        checks.append(("odds_ttl", ttl_for_endpoint("odds") == ODDS_TTL_SECONDS))
+        checks.append(("injuries_ttl", ttl_for_endpoint("injuries") == INJURIES_TTL_SECONDS))
+        checks.append(("fixtures_list_ttl", ttl_for_endpoint("fixtures") == FIXTURES_LIST_TTL_SECONDS))
 
         path = Path(tempfile.mkstemp(suffix=".db")[1])
         repo = FootballIntelligenceRepository(str(path))

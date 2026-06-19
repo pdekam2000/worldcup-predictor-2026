@@ -58,14 +58,41 @@ export async function fetchUpcomingMatches(params = {}) {
 /**
  * @param {number|string} fixtureId
  * @param {{ competition?: string, season?: number, locale?: string }} params
+ * @returns {Promise<{ status: string, cached: boolean, data?: object }>}
  */
-export async function runPrediction(fixtureId, params = {}) {
+export async function fetchCachedPrediction(fixtureId, params = {}) {
   const token = getAuthToken();
   const headers = { Accept: "application/json" };
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
   const response = await fetch(buildApiUrl(`/api/predict/${fixtureId}`, params), {
+    method: "GET",
+    headers,
+  });
+  if (response.status === 404) {
+    return { status: "not_cached", cached: false };
+  }
+  const payload = await parseJsonResponse(response);
+  return { status: payload?.status ?? "ok", cached: true, data: payload };
+}
+
+/**
+ * @param {number|string} fixtureId
+ * @param {{ competition?: string, season?: number, locale?: string, forceRefresh?: boolean }} params
+ */
+export async function runPrediction(fixtureId, params = {}) {
+  const { forceRefresh = false, ...queryParams } = params;
+  const token = getAuthToken();
+  const headers = { Accept: "application/json" };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const qs = { ...queryParams };
+  if (forceRefresh) {
+    qs.force_refresh = "true";
+  }
+  const response = await fetch(buildApiUrl(`/api/predict/${fixtureId}`, qs), {
     method: "POST",
     headers,
   });

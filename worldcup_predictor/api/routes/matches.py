@@ -12,6 +12,8 @@ from worldcup_predictor.config.competitions import DEFAULT_COMPETITION_KEY, get_
 from worldcup_predictor.config.settings import get_settings
 from worldcup_predictor.domain.schedule import TournamentFixture
 from worldcup_predictor.schedule.competition_schedule import build_schedule_service
+from worldcup_predictor.quota.fixtures_list_cache import get_cached as get_fixtures_list_cached
+from worldcup_predictor.quota.fixtures_list_cache import store as store_fixtures_list_cache
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +60,10 @@ def upcoming_matches(
     settings = get_settings()
     effective_limit = limit if limit > 0 else settings.upcoming_fixture_limit
 
+    cached = get_fixtures_list_cached(comp.key, comp.season, effective_limit, settings=settings)
+    if cached is not None:
+        return cached
+
     try:
         service = build_schedule_service(
             settings,
@@ -94,8 +100,11 @@ def upcoming_matches(
         for fixture in real_fixtures
     ]
 
-    return {
+    response = {
         "status": "ok",
         "count": len(matches),
         "matches": matches,
+        "cache_source": "live",
     }
+    store_fixtures_list_cache(comp.key, comp.season, effective_limit, response, settings=settings)
+    return response

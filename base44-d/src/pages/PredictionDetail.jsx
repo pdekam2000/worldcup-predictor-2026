@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { runPrediction } from "@/api/worldcupApi";
+import { fetchCachedPrediction, runPrediction } from "@/api/worldcupApi";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Trophy, Activity, Brain, Stethoscope,
   Users, Cloud, Flame, LineChart, Swords, Scale, Building, Star,
-  AlertCircle, RefreshCw,
+  AlertCircle, RefreshCw, Play,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -57,26 +57,52 @@ export default function PredictionDetail() {
   const { id } = useParams();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [running, setRunning] = useState(false);
+  const [notCached, setNotCached] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const [cacheSource, setCacheSource] = useState(null);
 
-  const loadPrediction = useCallback(async () => {
+  const loadCached = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     setApiError(null);
-    setResult(null);
+    setNotCached(false);
     try {
-      const data = await runPrediction(id);
-      setResult(data);
+      const cached = await fetchCachedPrediction(id);
+      if (cached.cached && cached.data) {
+        setResult(cached.data);
+        setCacheSource(cached.data.cache_source || "cache");
+      } else {
+        setResult(null);
+        setNotCached(true);
+        setCacheSource(null);
+      }
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : "Failed to run prediction.");
+      setApiError(err instanceof Error ? err.message : "Failed to load prediction.");
     } finally {
       setLoading(false);
     }
   }, [id]);
 
+  const executePrediction = useCallback(async (forceRefresh = false) => {
+    if (!id) return;
+    setRunning(true);
+    setApiError(null);
+    try {
+      const data = await runPrediction(id, { forceRefresh });
+      setResult(data);
+      setNotCached(false);
+      setCacheSource(data.cache_source || (forceRefresh ? "live" : "live"));
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : "Failed to run prediction.");
+    } finally {
+      setRunning(false);
+    }
+  }, [id]);
+
   useEffect(() => {
-    loadPrediction();
-  }, [loadPrediction]);
+    loadCached();
+  }, [loadCached]);
 
   if (loading) {
     return (
@@ -86,13 +112,44 @@ export default function PredictionDetail() {
         </span>
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-          <p className="text-sm text-muted-foreground">Running prediction...</p>
+          <p className="text-sm text-muted-foreground">Loading prediction...</p>
         </div>
       </div>
     );
   }
 
-  if (apiError) {
+  if (notCached && !result) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto">
+        <Link to="/matches" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back to Match Center
+        </Link>
+        <div className="glass rounded-2xl p-8 text-center border border-white/10">
+          <Brain className="w-10 h-10 mx-auto mb-3 text-primary" />
+          <p className="text-sm font-medium mb-1">No cached prediction yet</p>
+          <p className="text-xs text-muted-foreground mb-4 max-w-md mx-auto">
+            Fixture #{id} — run a full analysis only when you need it. Browsing Match Center does not consume prediction quota.
+          </p>
+          {apiError && <p className="text-xs text-red-300 mb-4">{apiError}</p>}
+          <Button type="button" size="sm" onClick={() => executePrediction(false)} disabled={running}>
+            {running ? (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                Running...
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4 mr-2" />
+                Run Prediction
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (apiError && !result) {
     return (
       <div className="space-y-6 max-w-5xl mx-auto">
         <Link to="/matches" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -102,7 +159,7 @@ export default function PredictionDetail() {
           <AlertCircle className="w-10 h-10 mx-auto mb-3 text-red-400" />
           <p className="text-sm font-medium text-red-300 mb-1">Prediction request failed</p>
           <p className="text-xs text-muted-foreground mb-4 max-w-md mx-auto">{apiError}</p>
-          <Button type="button" variant="outline" size="sm" className="border-white/10" onClick={loadPrediction}>
+          <Button type="button" variant="outline" size="sm" className="border-white/10" onClick={() => executePrediction(false)} disabled={running}>
             <RefreshCw className="w-4 h-4 mr-2" />
             Retry
           </Button>
@@ -137,9 +194,33 @@ export default function PredictionDetail() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <Link to="/matches" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back to Match Center
-      </Link>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <Link to="/matches" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back to Match Center
+        </Link>
+        <div className="flex items-center gap-2">
+          {cacheSource && (
+            <span className="text-xs text-muted-foreground px-2 py-1 rounded-lg bg-white/5">
+              Source: {cacheSource}
+            </span>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="border-white/10"
+            onClick={() => executePrediction(true)}
+            disabled={running}
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${running ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      {apiError && (
+        <div className="glass rounded-xl p-3 text-sm text-red-300 border border-red-500/20">{apiError}</div>
+      )}
 
       {/* Match header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-2xl p-6 sm:p-8">
@@ -184,7 +265,6 @@ export default function PredictionDetail() {
             <div className="text-4xl font-display font-bold text-gradient-blue mb-1">{predLabel}</div>
             <div className="text-sm text-muted-foreground">AI Prediction</div>
           </div>
-          {/* Confidence gauge */}
           <div className="relative w-40 h-40 mx-auto mb-6">
             <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
               <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
@@ -196,7 +276,6 @@ export default function PredictionDetail() {
               <span className="text-xs text-muted-foreground">Confidence</span>
             </div>
           </div>
-          {/* Probabilities */}
           <div className="space-y-3">
             {[
               { label: "Home Win", value: homeWinProb },
@@ -214,7 +293,6 @@ export default function PredictionDetail() {
           </div>
         </motion.div>
 
-        {/* Over/Under — only when API provides extended market data */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-6">
           <div className="glass rounded-2xl p-6">
             <h2 className="font-display font-semibold mb-4">Over / Under 2.5</h2>
@@ -247,7 +325,6 @@ export default function PredictionDetail() {
         </motion.div>
       </div>
 
-      {/* Specialist Analysis */}
       {specialists.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <h2 className="font-display font-semibold text-lg mb-4 flex items-center gap-2">

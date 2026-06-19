@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Users, CreditCard, BarChart3, Server, Trophy, Target,
-  CheckCircle, AlertCircle, XCircle
+  CheckCircle, AlertCircle, XCircle, Gauge, Database,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { fetchAdminStats, fetchAdminUsers, fetchAdminHealth } from "@/api/saasApi";
+import { fetchAdminStats, fetchAdminUsers, fetchAdminHealth, fetchAdminQuota } from "@/api/saasApi";
 
 const statusIcon = { operational: CheckCircle, degraded: AlertCircle, down: XCircle };
 const statusColor = { operational: "text-green-400", degraded: "text-yellow-400", down: "text-red-400" };
@@ -15,6 +15,7 @@ export default function AdminPanel() {
   const [users, setUsers] = useState([]);
   const [stats, setStats] = useState(null);
   const [services, setServices] = useState([]);
+  const [quota, setQuota] = useState(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,14 +24,16 @@ export default function AdminPanel() {
     setLoading(true);
     setError(null);
     try {
-      const [statsData, usersData, healthData] = await Promise.all([
+      const [statsData, usersData, healthData, quotaData] = await Promise.all([
         fetchAdminStats(),
         fetchAdminUsers({ limit: 100 }),
         fetchAdminHealth(),
+        fetchAdminQuota(),
       ]);
       setStats(statsData);
       setUsers(usersData.users || []);
       setServices(healthData.services || []);
+      setQuota(quotaData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load admin data");
     } finally {
@@ -86,6 +89,7 @@ export default function AdminPanel() {
       <Tabs defaultValue="users">
         <TabsList className="glass border-white/10 rounded-xl p-1">
           <TabsTrigger value="users" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Users</TabsTrigger>
+          <TabsTrigger value="quota" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">API Quota</TabsTrigger>
           <TabsTrigger value="system" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">System Health</TabsTrigger>
           <TabsTrigger value="leagues" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Leagues</TabsTrigger>
         </TabsList>
@@ -134,6 +138,57 @@ export default function AdminPanel() {
                 </table>
               </div>
             )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="quota" className="mt-4">
+          <div className="glass rounded-xl p-5 space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <h2 className="font-display font-semibold flex items-center gap-2">
+                <Gauge className="w-5 h-5 text-primary" /> API Usage Dashboard
+              </h2>
+              {quota?.quota_risk && (
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  quota.quota_risk.risk_level === "critical" ? "bg-red-500/10 text-red-400" :
+                  quota.quota_risk.risk_level === "warning" ? "bg-yellow-500/10 text-yellow-400" :
+                  "bg-green-500/10 text-green-400"
+                }`}>
+                  Quota risk: {quota.quota_risk.risk_level}
+                  {quota.quota_risk.usage_pct != null ? ` (${quota.quota_risk.usage_pct}%)` : ""}
+                </span>
+              )}
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[
+                { label: "API calls today", value: quota?.api_calls_today ?? "—", icon: BarChart3 },
+                { label: "Cache hits", value: quota?.cache_hits ?? "—", icon: Database },
+                { label: "Prediction cache hits", value: quota?.prediction_cache_hits ?? "—", icon: Target },
+                { label: "Prediction cache misses", value: quota?.prediction_cache_misses ?? "—", icon: AlertCircle },
+              ].map((item) => (
+                <div key={item.label} className="rounded-lg bg-white/5 p-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                    <item.icon className="w-3.5 h-3.5" /> {item.label}
+                  </div>
+                  <div className="text-xl font-display font-bold">{item.value}</div>
+                </div>
+              ))}
+            </div>
+            {quota?.api_calls_by_provider && Object.keys(quota.api_calls_by_provider).length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium mb-2">Calls by provider</h3>
+                <div className="space-y-2">
+                  {Object.entries(quota.api_calls_by_provider).map(([provider, count]) => (
+                    <div key={provider} className="flex items-center justify-between text-sm p-2 rounded-lg bg-white/5">
+                      <span className="text-muted-foreground">{provider}</span>
+                      <span className="font-medium">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Calls saved: {quota?.calls_saved ?? 0} · Local DB hits: {quota?.local_hits ?? 0} · Rate-limit retries: {quota?.rate_limit_retries ?? 0}
+            </p>
           </div>
         </TabsContent>
 

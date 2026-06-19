@@ -561,6 +561,11 @@ class MatchIntelligenceBuilder:
         sources: set[str],
         endpoint_log: list[EndpointInspection],
     ) -> dict[str, Any] | None:
+        from worldcup_predictor.quota.cache_policy import should_fetch_lineups
+
+        if not should_fetch_lineups(fixture.kickoff_utc):
+            missing_data.append("lineups")
+            return {"items": [], "available": False, "skipped": "far_from_kickoff"}
         result = self._api.get_fixture_lineups(fixture.id)
         self._log_endpoint(endpoint_log, "fixtures/lineups", result)
         sources.add(result.source)

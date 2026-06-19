@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     api_throttle_delay_seconds: float = Field(default=1.0, alias="API_THROTTLE_DELAY_SECONDS")
     api_throttle_warning_delay_seconds: float = Field(default=2.0, alias="API_THROTTLE_WARNING_DELAY_SECONDS")
     api_throttle_rate_limit_delay_seconds: float = Field(default=5.0, alias="API_THROTTLE_RATE_LIMIT_DELAY_SECONDS")
+    api_daily_live_limit: int = Field(default=7500, alias="API_DAILY_LIVE_LIMIT")
+    fixtures_list_cache_ttl_seconds: int = Field(default=1800, alias="FIXTURES_LIST_CACHE_TTL_SECONDS")
+    prediction_cache_dir: str = Field(default=".cache/predictions", alias="PREDICTION_CACHE_DIR")
+    prediction_refresh_cooldown_seconds: int = Field(default=300, alias="PREDICTION_REFRESH_COOLDOWN_SECONDS")
 
     # Database — PostgreSQL primary for SaaS; SQLite for intelligence (legacy/local)
     app_env: AppEnv = Field(default="local", alias="APP_ENV")
