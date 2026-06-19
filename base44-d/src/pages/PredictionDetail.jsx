@@ -9,6 +9,10 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import TeamBadge from "@/components/match/TeamBadge";
+import DataQualityBadge from "@/components/match/DataQualityBadge";
+import PredictionCacheBanner from "@/components/match/PredictionCacheBanner";
+import { labelForStatusReason } from "@/lib/specialistReasons";
 
 const specialistIcons = {
   form: Activity, injury: Stethoscope, lineup: Users, weather: Cloud,
@@ -61,6 +65,7 @@ export default function PredictionDetail() {
   const [notCached, setNotCached] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [cacheSource, setCacheSource] = useState(null);
+  const [cooldownRemaining, setCooldownRemaining] = useState(null);
 
   const loadCached = useCallback(async () => {
     if (!id) return;
@@ -72,6 +77,7 @@ export default function PredictionDetail() {
       if (cached.cached && cached.data) {
         setResult(cached.data);
         setCacheSource(cached.data.cache_source || "cache");
+        setCooldownRemaining(cached.data.refresh_cooldown_remaining_seconds ?? null);
       } else {
         setResult(null);
         setNotCached(true);
@@ -93,7 +99,11 @@ export default function PredictionDetail() {
       setResult(data);
       setNotCached(false);
       setCacheSource(data.cache_source || (forceRefresh ? "live" : "live"));
+      setCooldownRemaining(data.refresh_cooldown_remaining_seconds ?? null);
     } catch (err) {
+      if (err?.code === "refresh_cooldown" || err?.cooldownSeconds) {
+        setCooldownRemaining(err.cooldownSeconds ?? cooldownRemaining);
+      }
       setApiError(err instanceof Error ? err.message : "Failed to run prediction.");
     } finally {
       setRunning(false);
@@ -172,6 +182,7 @@ export default function PredictionDetail() {
   const awayTeam = result?.away_team ?? "—";
   const confidence = roundPercent(result?.confidence) ?? 0;
   const dataQuality = roundPercent(result?.data_quality);
+  const dataSignals = result?.data_signals;
   const pred = result?.prediction;
   const predLabel = predictionLabel(pred);
 
@@ -199,19 +210,20 @@ export default function PredictionDetail() {
         <Link to="/matches" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Match Center
         </Link>
-        <div className="flex items-center gap-2">
-          {cacheSource && (
-            <span className="text-xs text-muted-foreground px-2 py-1 rounded-lg bg-white/5">
-              Source: {cacheSource}
-            </span>
-          )}
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          <PredictionCacheBanner
+            cacheSource={cacheSource}
+            cachedAt={result?.cached_at}
+            refreshCooldownRemaining={cooldownRemaining}
+            refreshCooldownSeconds={result?.refresh_cooldown_seconds}
+          />
           <Button
             type="button"
             variant="outline"
             size="sm"
             className="border-white/10"
             onClick={() => executePrediction(true)}
-            disabled={running}
+            disabled={running || (cooldownRemaining != null && cooldownRemaining > 0)}
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${running ? "animate-spin" : ""}`} />
             Refresh
@@ -225,20 +237,18 @@ export default function PredictionDetail() {
 
       {/* Match header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-2xl p-6 sm:p-8">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-6 flex-wrap">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4 flex-wrap">
           <Trophy className="w-3.5 h-3.5" /> Fixture #{result?.fixture_id ?? id}
-          {dataQuality != null && (
-            <>
-              <span className="mx-2">•</span>
-              <span>Data quality: {dataQuality}%</span>
-            </>
-          )}
         </div>
+        <DataQualityBadge dataSignals={dataSignals} dataQualityPct={dataQuality} />
         <div className="flex items-center justify-between">
           <div className="flex-1 text-center">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-white/5 flex items-center justify-center mb-3 text-2xl font-bold text-primary">
-              {homeTeam.slice(0, 3).toUpperCase()}
-            </div>
+            <TeamBadge
+              teamName={homeTeam}
+              logoUrl={result?.home_team_logo}
+              countryHint={result?.country}
+              size="lg"
+            />
             <div className="font-display font-bold text-lg">{homeTeam}</div>
             <div className="text-xs text-muted-foreground mt-1">Home</div>
           </div>
@@ -247,9 +257,13 @@ export default function PredictionDetail() {
             <div className="text-xs text-muted-foreground uppercase tracking-wide">{pred || "—"}</div>
           </div>
           <div className="flex-1 text-center">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-white/5 flex items-center justify-center mb-3 text-2xl font-bold text-accent">
-              {awayTeam.slice(0, 3).toUpperCase()}
-            </div>
+            <TeamBadge
+              teamName={awayTeam}
+              logoUrl={result?.away_team_logo}
+              countryHint={result?.country}
+              size="lg"
+              className="text-accent"
+            />
             <div className="font-display font-bold text-lg">{awayTeam}</div>
             <div className="text-xs text-muted-foreground mt-1">Away</div>
           </div>
@@ -347,8 +361,8 @@ export default function PredictionDetail() {
                           {s.status}
                         </div>
                         {s.status_reason && (
-                          <div className="text-[10px] text-muted-foreground mt-1 font-mono">
-                            {s.status_reason.replace(/_/g, " ")}
+                          <div className="text-[10px] text-muted-foreground mt-1">
+                            {labelForStatusReason(s.status_reason)}
                           </div>
                         )}
                       </div>

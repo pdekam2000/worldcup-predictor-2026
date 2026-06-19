@@ -18,7 +18,15 @@ async function parseJsonResponse(response) {
       payload?.detail ||
       payload?.message ||
       `API request failed (${response.status})`;
-    throw new Error(typeof message === "string" ? message : JSON.stringify(message));
+    const err = new Error(typeof message === "string" ? message : JSON.stringify(message));
+    if (payload?.detail?.code) {
+      err.code = payload.detail.code;
+    }
+    const waitMatch = typeof message === "string" ? message.match(/wait (\d+)s/i) : null;
+    if (waitMatch) {
+      err.cooldownSeconds = parseInt(waitMatch[1], 10);
+    }
+    throw err;
   }
   return payload;
 }
@@ -33,6 +41,11 @@ export function mapUpcomingMatch(row) {
     away_team: row.away_team,
     status: row.status,
     season: row.season,
+    home_team_logo: row.home_team_logo ?? null,
+    away_team_logo: row.away_team_logo ?? null,
+    country: row.country ?? null,
+    venue: row.venue ?? null,
+    city: row.city ?? null,
   };
 }
 

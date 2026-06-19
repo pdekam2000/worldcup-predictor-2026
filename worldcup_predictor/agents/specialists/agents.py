@@ -363,9 +363,14 @@ class TacticsAgent(BaseAgent):
         supplemental = getattr(report, "supplemental_sources", None) or {}
         rapid_stats = supplemental.get("rapid_football_stats") or {}
         rapid_xg = supplemental.get("rapid_xg_statistics") or {}
+        sportmonks = supplemental.get("sportmonks") or {}
 
-        home_xg, home_xga, home_npxg = self._xg_triplet(home_stats, rapid_stats, rapid_xg, side="home")
-        away_xg, away_xga, away_npxg = self._xg_triplet(away_stats, rapid_stats, rapid_xg, side="away")
+        home_xg, home_xga, home_npxg = self._xg_triplet(
+            home_stats, rapid_stats, rapid_xg, side="home", sportmonks=sportmonks
+        )
+        away_xg, away_xga, away_npxg = self._xg_triplet(
+            away_stats, rapid_stats, rapid_xg, side="away", sportmonks=sportmonks
+        )
         home_shots = self._stat_float(home_stats, "shots", "total")
         away_shots = self._stat_float(away_stats, "shots", "total")
         home_poss = self._possession_hint(home_stats, formations, 0, rapid_stats, "home")
@@ -445,7 +450,11 @@ class TacticsAgent(BaseAgent):
         rapid_xg: dict,
         *,
         side: str,
+        sportmonks: dict | None = None,
     ) -> tuple[float | None, float | None, float | None]:
+        sportmonks = sportmonks or {}
+        sm_xg_map = sportmonks.get("xg") if isinstance(sportmonks.get("xg"), dict) else {}
+        sm_xg = TacticsAgent._float_or_none(sm_xg_map.get(side))
         xg_block = rapid_stats.get("xg") or rapid_xg.get("xg") or {}
         if isinstance(xg_block, dict):
             xg = TacticsAgent._float_or_none(xg_block.get(side) or xg_block.get(f"{side}_xg"))
@@ -457,6 +466,8 @@ class TacticsAgent(BaseAgent):
         else:
             xg = TacticsAgent._float_or_none(xg_block)
             npxg = None
+        if xg is None:
+            xg = sm_xg
         xga = TacticsAgent._float_or_none(
             stats.get("goals", {}).get("against", {}).get("total", {}).get("average")
         )

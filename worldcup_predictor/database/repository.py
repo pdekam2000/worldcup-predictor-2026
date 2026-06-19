@@ -782,6 +782,24 @@ class FootballIntelligenceRepository:
         ).fetchone()
         return dict(row) if row else None
 
+    def get_sportmonks_fixture_enrichment_by_api_fixture_id(
+        self,
+        fixture_id_api_football: int,
+    ) -> dict[str, Any] | None:
+        row = self._conn.execute(
+            """
+            SELECT *
+            FROM sportmonks_fixture_enrichment
+            WHERE fixture_id_api_football = ?
+              AND status = 'ok'
+              AND expires_at_utc > ?
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (int(fixture_id_api_football), _utc_now()),
+        ).fetchone()
+        return dict(row) if row else None
+
     def save_sportmonks_fixture_enrichment(
         self,
         *,

@@ -1,14 +1,17 @@
-"""Sportmonks football provider — optional backup / enrichment (not primary)."""
+"""SportmonksClient — delegates fixture resolution to cache-first WC lookup."""
 
 from __future__ import annotations
 
 import logging
 from typing import Any
 
-import httpx
-
 from worldcup_predictor.config.settings import Settings
 from worldcup_predictor.providers.base import ProviderCallResult, ProviderTier
+from worldcup_predictor.providers.sportmonks_fixture_lookup import lookup_world_cup_fixture
+from worldcup_predictor.providers.sportmonks_provider import (
+    WORLD_CUP_2026_COMPETITION_KEY,
+    redact_sportmonks_secrets,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -30,54 +33,90 @@ class SportmonksClient:
         home_team: str,
         away_team: str,
         kickoff_date: str | None = None,
+        api_fixture_id: int | None = None,
+        competition_key: str | None = None,
     ) -> ProviderCallResult:
         """
         Lookup fixture context for enrichment.
 
-        Sportmonks fixture IDs differ from API-Sports — enrichment matches by
-        team names (+ optional date window). Returns empty when not configured.
+        Uses GET /fixtures/date/{date} + fixtureLeagues:732 — not /fixtures/search.
         """
         if not self.is_configured:
             return ProviderCallResult(
                 data=None,
                 provider="sportmonks",
                 tier=ProviderTier.ENRICHMENT,
-                endpoint="fixtures/search",
+                endpoint="fixtures/date",
                 configured=False,
                 error="SPORTMONKS_API_TOKEN or SPORTMONKS_API_KEY not configured",
             )
 
-        token = self._settings.sportmonks_effective_token
-        params: dict[str, Any] = {
-            "api_token": token,
-            "include": "participants;statistics;scores",
-        }
-        if kickoff_date:
-            params["filters"] = f"fixtureDate:{kickoff_date}"
-
-        try:
-            url = f"{self._base_url}/fixtures/search/{home_team}"
-            with httpx.Client(timeout=25.0) as client:
-                response = client.get(url, params=params)
-                response.raise_for_status()
-                payload = response.json()
-            data = payload.get("data") if isinstance(payload, dict) else payload
-            matched = self._match_fixture(data, home_team, away_team)
-            return ProviderCallResult(
-                data=matched,
-                provider="sportmonks",
-                tier=ProviderTier.ENRICHMENT,
-                endpoint="fixtures/search",
-            )
-        except Exception as exc:
-            logger.exception("Sportmonks fixture lookup failed")
-            from worldcup_predictor.providers.sportmonks_provider import redact_sportmonks_secrets
-
+        if competition_key and competition_key != WORLD_CUP_2026_COMPETITION_KEY:
             return ProviderCallResult(
                 data=None,
                 provider="sportmonks",
                 tier=ProviderTier.ENRICHMENT,
-                endpoint="fixtures/search",
+                endpoint="fixtures/date",
+                configured=True,
+                error=None,
+            )
+
+        if api_fixture_id is None:
+            return ProviderCallResult(
+                data=None,
+                provider="sportmonks",
+                tier=ProviderTier.ENRICHMENT,
+                endpoint="fixtures/date",
+                configured=True,
+                error="missing_api_fixture_id",
+            )
+
+        try:
+            lookup = lookup_world_cup_fixture(
+                api_fixture_id=int(api_fixture_id),
+                home_team=home_team,
+                away_team=away_team,
+                kickoff_date=kickoff_date,
+                settings=self._settings,
+            )
+            if lookup.found and lookup.fixture:
+                return ProviderCallResult(
+                    data=lookup.fixture,
+                    provider="sportmonks",
+                    tier=ProviderTier.ENRICHMENT,
+                    endpoint=lookup.endpoint,
+                )
+            if lookup.from_cache and lookup.reason == "not_found":
+                return ProviderCallResult(
+                    data=None,
+                    provider="sportmonks",
+                    tier=ProviderTier.ENRICHMENT,
+                    endpoint=lookup.endpoint,
+                    error=None,
+                )
+            if lookup.status_code and lookup.status_code >= 400:
+                token = self._settings.sportmonks_effective_token
+                return ProviderCallResult(
+                    data=None,
+                    provider="sportmonks",
+                    tier=ProviderTier.ENRICHMENT,
+                    endpoint=lookup.endpoint,
+                    error=redact_sportmonks_secrets(lookup.reason, token),
+                )
+            return ProviderCallResult(
+                data=None,
+                provider="sportmonks",
+                tier=ProviderTier.ENRICHMENT,
+                endpoint=lookup.endpoint,
+                error=None,
+            )
+        except Exception as exc:
+            logger.exception("Sportmonks fixture lookup failed")
+            return ProviderCallResult(
+                data=None,
+                provider="sportmonks",
+                tier=ProviderTier.ENRICHMENT,
+                endpoint="fixtures/date",
                 error=redact_sportmonks_secrets(str(exc), self._settings.sportmonks_effective_token),
             )
 
@@ -87,18 +126,14 @@ class SportmonksClient:
         home_team: str,
         away_team: str,
     ) -> dict[str, Any] | None:
+        """Legacy helper — kept for tests importing _match_fixture."""
         if not isinstance(items, list):
             return None
-        home_l = home_team.lower()
-        away_l = away_team.lower()
+        from worldcup_predictor.providers.sportmonks_fixture_lookup import _match_fixture_item
+
         for item in items:
-            if not isinstance(item, dict):
-                continue
-            names = {
-                str(p.get("name", "")).lower()
-                for p in (item.get("participants") or [])
-                if isinstance(p, dict)
-            }
-            if home_l in names and away_l in names:
+            if isinstance(item, dict) and _match_fixture_item(
+                item, home_team=home_team, away_team=away_team
+            ):
                 return item
         return None

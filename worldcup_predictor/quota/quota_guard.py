@@ -67,6 +67,26 @@ def assert_force_refresh_allowed(
         _last_refresh[key] = now
 
 
+def refresh_cooldown_remaining_seconds(
+    fixture_id: int,
+    *,
+    user_id: str | None,
+    settings: Settings | None = None,
+) -> int | None:
+    """Seconds until force-refresh is allowed again; None if no active cooldown."""
+    settings = settings or get_settings()
+    cooldown = int(settings.prediction_refresh_cooldown_seconds)
+    if cooldown <= 0:
+        return None
+    key = _refresh_key(fixture_id, user_id)
+    with _lock:
+        last = _last_refresh.get(key)
+        if last is None:
+            return None
+        remaining = int(cooldown - (time.time() - last))
+        return remaining if remaining > 0 else None
+
+
 def quota_risk_level(*, settings: Settings | None = None) -> dict[str, Any]:
     settings = settings or get_settings()
     limit = int(settings.api_daily_live_limit)

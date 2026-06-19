@@ -138,7 +138,11 @@ def _supplemental_match_stats(report: MatchIntelligenceReport) -> dict[str, Any]
     supplemental = getattr(report, "supplemental_sources", None) or {}
     rapid_stats = supplemental.get("rapid_football_stats") or {}
     match_stats = rapid_stats.get("match_statistics") if isinstance(rapid_stats, dict) else {}
-    return match_stats if isinstance(match_stats, dict) else {}
+    if isinstance(match_stats, dict) and match_stats:
+        return match_stats
+    sportmonks = supplemental.get("sportmonks") or {}
+    sm_stats = sportmonks.get("match_statistics") if isinstance(sportmonks, dict) else {}
+    return sm_stats if isinstance(sm_stats, dict) else {}
 
 
 def extract_real_xg(
@@ -151,10 +155,19 @@ def extract_real_xg(
     supplemental = getattr(report, "supplemental_sources", None) or {}
     rapid_stats = supplemental.get("rapid_football_stats") or {}
     rapid_xg = supplemental.get("rapid_xg_statistics") or {}
+    sportmonks = supplemental.get("sportmonks") or {}
+
+    sportmonks = supplemental.get("sportmonks") or {}
+    sm_xg = sportmonks.get("xg") if isinstance(sportmonks, dict) else None
+    if isinstance(sm_xg, dict):
+        val = _float_or_none(sm_xg.get(side))
+        if val is not None:
+            return val, "sportmonks"
 
     for source_name, block in (
         ("rapid_xg_statistics", rapid_xg),
         ("rapid_football_stats", rapid_stats),
+        ("sportmonks", sportmonks),
     ):
         if not isinstance(block, dict):
             continue

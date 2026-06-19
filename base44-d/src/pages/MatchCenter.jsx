@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { fetchUpcomingMatches } from "@/api/worldcupApi";
+import TeamBadge from "@/components/match/TeamBadge";
 
 function getConfidenceColor(c) {
   if (c >= 75) return "text-green-400 bg-green-500/10";
@@ -138,9 +139,11 @@ export default function MatchCenter() {
 
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex-1 text-center">
-                      <div className="w-12 h-12 mx-auto rounded-xl bg-white/5 flex items-center justify-center mb-2 text-lg font-bold text-primary">
-                        {m.home_team?.slice(0, 2).toUpperCase()}
-                      </div>
+                      <TeamBadge
+                        teamName={m.home_team}
+                        logoUrl={m.home_team_logo}
+                        countryHint={m.country}
+                      />
                       <div className="text-sm font-medium truncate">{m.home_team}</div>
                     </div>
                     <div className="px-4 text-center">
@@ -154,9 +157,12 @@ export default function MatchCenter() {
                       )}
                     </div>
                     <div className="flex-1 text-center">
-                      <div className="w-12 h-12 mx-auto rounded-xl bg-white/5 flex items-center justify-center mb-2 text-lg font-bold text-accent">
-                        {m.away_team?.slice(0, 2).toUpperCase()}
-                      </div>
+                      <TeamBadge
+                        teamName={m.away_team}
+                        logoUrl={m.away_team_logo}
+                        countryHint={m.country}
+                        className="text-accent"
+                      />
                       <div className="text-sm font-medium truncate">{m.away_team}</div>
                     </div>
                   </div>

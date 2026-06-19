@@ -58,6 +58,10 @@ class EnrichmentService:
         if endpoint_log != (report.api_inspection.endpoints if report.api_inspection else []):
             report = replace(report, api_inspection=ApiInspectionReport(endpoints=endpoint_log))
 
+        from worldcup_predictor.providers.sportmonks_consumption import apply_sportmonks_consumption
+
+        report = apply_sportmonks_consumption(report)
+
         sources = list(report.enrichment_sources or [])
         for name in outcome.applied_providers:
             if name not in sources:
@@ -415,6 +419,8 @@ class EnrichmentService:
             home_team=fixture.home_team,
             away_team=fixture.away_team,
             kickoff_date=kickoff_date,
+            api_fixture_id=fixture.id,
+            competition_key=fixture.competition_key,
         )
         self._log_provider(endpoint_log, result)
         if not result.available:

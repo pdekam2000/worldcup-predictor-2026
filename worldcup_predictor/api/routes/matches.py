@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from worldcup_predictor.config.competitions import DEFAULT_COMPETITION_KEY, get_competition
 from worldcup_predictor.config.settings import get_settings
+from worldcup_predictor.api.display_helpers import fixture_to_match_display
 from worldcup_predictor.domain.schedule import TournamentFixture
 from worldcup_predictor.schedule.competition_schedule import build_schedule_service
 from worldcup_predictor.quota.fixtures_list_cache import get_cached as get_fixtures_list_cached
@@ -18,18 +19,6 @@ from worldcup_predictor.quota.fixtures_list_cache import store as store_fixtures
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/matches", tags=["matches"])
-
-
-def _fixture_to_match_dict(fixture: TournamentFixture, *, league: str, season: int) -> dict[str, Any]:
-    return {
-        "fixture_id": fixture.fixture_id,
-        "date": fixture.kickoff_time.isoformat(),
-        "league": league,
-        "season": season,
-        "home_team": fixture.home_team,
-        "away_team": fixture.away_team,
-        "status": fixture.status or "NS",
-    }
 
 
 def _is_real_fixture(fixture: TournamentFixture) -> bool:
@@ -96,7 +85,7 @@ def upcoming_matches(
 
     real_fixtures = [fixture for fixture in fixtures if _is_real_fixture(fixture)]
     matches = [
-        _fixture_to_match_dict(fixture, league=comp.display_name, season=comp.season)
+        fixture_to_match_display(fixture, league=comp.display_name, season=comp.season)
         for fixture in real_fixtures
     ]
 

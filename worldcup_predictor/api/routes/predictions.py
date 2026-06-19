@@ -10,6 +10,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import JSONResponse
 
+from worldcup_predictor.api.display_helpers import enrich_prediction_payload
 from worldcup_predictor.api.deps import get_optional_current_user
 from worldcup_predictor.api.web_auth import WebAuthUser
 
@@ -238,6 +239,7 @@ def get_cached_prediction_endpoint(
     competition: str = Query(default=DEFAULT_COMPETITION_KEY, description="Competition registry key"),
     season: int | None = Query(default=None, description="Season year override"),
     locale: Locale = Query(default="en", description="Output locale"),
+    user: WebAuthUser | None = Depends(get_optional_current_user),
 ) -> dict[str, Any]:
     """Return a cached prediction payload when fresh; does not run the pipeline."""
     comp = _resolve_competition(competition, season)
@@ -256,7 +258,12 @@ def get_cached_prediction_endpoint(
                 "message": "No fresh cached prediction. Use Run Prediction to generate one.",
             },
         )
-    return cached
+    return enrich_prediction_payload(
+        cached,
+        competition_key=comp.key,
+        season=comp.season,
+        user_id=user.id if user else None,
+    )
 
 
 @router.post("/predict/{fixture_id}")
@@ -285,7 +292,12 @@ def predict_fixture(
             locale=locale,
         )
         if cached is not None:
-            return cached
+            return enrich_prediction_payload(
+                cached,
+                competition_key=comp.key,
+                season=comp.season,
+                user_id=user.id if user else None,
+            )
 
     try:
         if force_refresh:
@@ -355,4 +367,10 @@ def predict_fixture(
         settings=settings,
     )
     _record_user_history(user, payload)
-    return payload
+    return enrich_prediction_payload(
+        payload,
+        competition_key=comp.key,
+        season=comp.season,
+        user_id=user.id if user else None,
+        settings=settings,
+    )
