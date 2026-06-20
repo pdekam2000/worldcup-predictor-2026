@@ -813,6 +813,13 @@ class FootballIntelligenceRepository:
         fetched_at_utc: str,
         expires_at_utc: str,
         status: str = "ok",
+        base_enrichment_available: bool = False,
+        premium_odds_available: bool = False,
+        premium_predictions_available: bool = False,
+        premium_xg_available: bool = False,
+        premium_odds_access_denied: bool = False,
+        premium_predictions_access_denied: bool = False,
+        premium_xg_access_denied: bool = False,
     ) -> None:
         self._conn.execute(
             """
@@ -826,8 +833,15 @@ class FootballIntelligenceRepository:
                 raw_json,
                 fetched_at_utc,
                 expires_at_utc,
-                status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                status,
+                base_enrichment_available,
+                premium_odds_available,
+                premium_predictions_available,
+                premium_xg_available,
+                premium_odds_access_denied,
+                premium_predictions_access_denied,
+                premium_xg_access_denied
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(sportmonks_fixture_id) DO UPDATE SET
                 fixture_id_api_football = excluded.fixture_id_api_football,
                 league_id = excluded.league_id,
@@ -837,7 +851,14 @@ class FootballIntelligenceRepository:
                 raw_json = excluded.raw_json,
                 fetched_at_utc = excluded.fetched_at_utc,
                 expires_at_utc = excluded.expires_at_utc,
-                status = excluded.status
+                status = excluded.status,
+                base_enrichment_available = excluded.base_enrichment_available,
+                premium_odds_available = excluded.premium_odds_available,
+                premium_predictions_available = excluded.premium_predictions_available,
+                premium_xg_available = excluded.premium_xg_available,
+                premium_odds_access_denied = excluded.premium_odds_access_denied,
+                premium_predictions_access_denied = excluded.premium_predictions_access_denied,
+                premium_xg_access_denied = excluded.premium_xg_access_denied
             """,
             (
                 fixture_id_api_football,
@@ -850,6 +871,13 @@ class FootballIntelligenceRepository:
                 fetched_at_utc,
                 expires_at_utc,
                 status,
+                int(base_enrichment_available),
+                int(premium_odds_available),
+                int(premium_predictions_available),
+                int(premium_xg_available),
+                int(premium_odds_access_denied),
+                int(premium_predictions_access_denied),
+                int(premium_xg_access_denied),
             ),
         )
         self._conn.commit()

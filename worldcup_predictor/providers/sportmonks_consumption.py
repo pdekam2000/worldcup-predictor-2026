@@ -320,28 +320,68 @@ def normalize_sportmonks_fixture(
     }
 
 
+def _premium_access_for_report(report: MatchIntelligenceReport) -> dict[str, bool] | None:
+    meta = report.provider_metadata or {}
+    direct = meta.get("sportmonks_premium_access")
+    if isinstance(direct, dict):
+        return direct
+    unified = meta.get("sportmonks_unified") or {}
+    nested = unified.get("premium_access")
+    if isinstance(nested, dict):
+        return nested
+
+    fixture_id = getattr(report, "fixture_id", None)
+    if fixture_id is not None:
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+            from worldcup_predictor.providers.sportmonks_enrichment import _premium_access_from_row
+
+            repo = FootballIntelligenceRepository()
+            row = repo.get_sportmonks_fixture_enrichment_by_api_fixture_id(int(fixture_id))
+            if row:
+                return _premium_access_from_row(row)
+        except Exception:
+            pass
+    return None
+
+
 def _resolve_raw_fixture_data(report: MatchIntelligenceReport) -> tuple[dict[str, Any] | None, str]:
+    """Prefer SQLite rows with full Phase 22C/22D includes over lookup fallback metadata."""
+    fixture_id = getattr(report, "fixture_id", None)
+
+    if fixture_id is not None:
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+            from worldcup_predictor.providers.sportmonks_enrichment import _cache_includes_complete
+
+            repo = FootballIntelligenceRepository()
+            row = repo.get_sportmonks_fixture_enrichment_by_api_fixture_id(int(fixture_id))
+            if row and row.get("raw_json") and _cache_includes_complete(row):
+                payload = json.loads(row["raw_json"])
+                data = payload.get("data") if isinstance(payload, dict) else None
+                if isinstance(data, dict):
+                    return data, "sqlite_cache_complete"
+        except Exception:
+            pass
+
     meta = report.provider_metadata or {}
     live = meta.get("sportmonks_fixture")
     if isinstance(live, dict) and live:
         return live, "provider_metadata"
 
-    fixture_id = getattr(report, "fixture_id", None)
-    if fixture_id is None:
-        return None, "none"
+    if fixture_id is not None:
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
 
-    try:
-        from worldcup_predictor.database.repository import FootballIntelligenceRepository
-
-        repo = FootballIntelligenceRepository()
-        row = repo.get_sportmonks_fixture_enrichment_by_api_fixture_id(int(fixture_id))
-        if row and row.get("raw_json"):
-            payload = json.loads(row["raw_json"])
-            data = payload.get("data") if isinstance(payload, dict) else None
-            if isinstance(data, dict):
-                return data, "sqlite_cache"
-    except Exception:
-        pass
+            repo = FootballIntelligenceRepository()
+            row = repo.get_sportmonks_fixture_enrichment_by_api_fixture_id(int(fixture_id))
+            if row and row.get("raw_json"):
+                payload = json.loads(row["raw_json"])
+                data = payload.get("data") if isinstance(payload, dict) else None
+                if isinstance(data, dict):
+                    return data, "sqlite_cache"
+        except Exception:
+            pass
     return None, "none"
 
 
@@ -390,10 +430,12 @@ def apply_sportmonks_consumption(report: MatchIntelligenceReport) -> MatchIntell
     )
 
     supplemental = dict(report.supplemental_sources or {})
+    premium_access = _premium_access_for_report(report)
     supplemental[SPORTMONKS_SUPPLEMENTAL_KEY] = {
         **normalized,
         "source": raw_source,
         "consumed": True,
+        "premium_access": premium_access,
     }
     supplemental[SPORTMONKS_ODDS_PREDICTION_KEY] = parse_odds_predictions_from_fixture(raw)
     supplemental[SPORTMONKS_XG_INTELLIGENCE_KEY] = parse_sportmonks_xg_from_fixture(raw)

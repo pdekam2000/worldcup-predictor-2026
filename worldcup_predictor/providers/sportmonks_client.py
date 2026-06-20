@@ -94,6 +94,7 @@ class SportmonksClient:
                 "enrichment_endpoint": unified.enrichment_endpoint,
                 "includes": list(unified.includes),
                 "keys_present": list(unified.keys_present),
+                "premium_access": unified.premium_access,
                 "phase": "22B_unified",
             }
             if unified.success and unified.fixture:

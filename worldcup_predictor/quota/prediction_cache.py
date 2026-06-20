@@ -12,6 +12,10 @@ from typing import Any
 from worldcup_predictor.cache.api_cache import ApiCache
 from worldcup_predictor.config.settings import Settings, get_settings
 from worldcup_predictor.quota.cache_policy import prediction_result_ttl_seconds
+from worldcup_predictor.quota.prediction_cache_policy import (
+    is_prediction_cache_valid,
+    stamp_prediction_cache,
+)
 from worldcup_predictor.quota.quota_tracker import get_quota_tracker
 
 _lock = threading.Lock()
@@ -67,9 +71,17 @@ def get_cached_prediction(
     if payload is None:
         get_quota_tracker().record_prediction_cache_miss()
         return None
+
+    valid, reason = is_prediction_cache_valid(payload)
+    if not valid:
+        get_quota_tracker().record_prediction_cache_miss()
+        return None
+
     get_quota_tracker().record_prediction_cache_hit()
     out = dict(payload)
     out["cache_source"] = "cache"
+    out["cache_validated"] = True
+    out["cache_validation_reason"] = reason
     return out
 
 
@@ -84,7 +96,7 @@ def store_prediction(
     settings: Settings | None = None,
 ) -> None:
     ttl = prediction_result_ttl_seconds(kickoff_utc)
-    enriched = dict(payload)
+    enriched = stamp_prediction_cache(dict(payload))
     enriched["cached_at"] = time.time()
     enriched["cache_source"] = enriched.get("cache_source", "live")
     if kickoff_utc is not None:

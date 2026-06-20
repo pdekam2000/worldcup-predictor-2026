@@ -25,6 +25,10 @@ const specialistLabels = {
   weather: "Weather Specialist", motivation: "Motivation Specialist", odds: "Odds Specialist",
   tactics: "Tactics Specialist", referee: "Referee Specialist", venue: "Venue Specialist",
   player_quality: "Player Quality Specialist",
+  expected_lineup_agent: "Expected Lineup Specialist",
+  tournament_context_agent: "Tournament Context Specialist",
+  xg_intelligence_agent: "Sportmonks xG Specialist",
+  sportmonks_prediction_agent: "Sportmonks Prediction Specialist",
 };
 
 function getStatusColor(status) {
@@ -377,6 +381,37 @@ export default function PredictionDetail() {
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     Domain: {s.domain}
                   </p>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
+
+      {result?.audit_trace && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="glass rounded-2xl p-6">
+          <h2 className="font-display font-semibold mb-4 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-primary" /> Promotion Trace
+          </h2>
+          <p className="text-xs text-muted-foreground mb-4">
+            Shadow-mode promotion signals — trace only, no WDE weight changes.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3 text-xs">
+            {[
+              { key: "expected_lineup", label: "Expected Lineup" },
+              { key: "tournament_context", label: "Tournament Context" },
+              { key: "xg_intelligence", label: "Sportmonks xG" },
+              { key: "sportmonks_prediction", label: "Sportmonks Prediction" },
+            ].map(({ key, label }) => {
+              const block = result.audit_trace[key] || {};
+              return (
+                <div key={key} className="rounded-lg bg-white/5 p-3 border border-white/5">
+                  <div className="font-semibold mb-1">{label}</div>
+                  <div className="text-muted-foreground space-y-0.5">
+                    <div>Agent: {block.status ?? "—"} · mode: {block.mode ?? result.audit_trace.promotion_modes?.[key === "xg_intelligence" ? "xg" : key === "sportmonks_prediction" ? "sportmonks_prediction" : key] ?? "—"}</div>
+                    <div>Delta: {block.delta_score != null ? roundPercent(block.delta_score) : "—"} · applied: {block.promotion_applied ? "yes" : "no"}</div>
+                    {block.reason ? <div className="truncate" title={block.reason}>Reason: {block.reason}</div> : null}
+                  </div>
                 </div>
               );
             })}

@@ -9,7 +9,10 @@ from worldcup_predictor.agents.specialists.helpers import make_signal, require_i
 from worldcup_predictor.intelligence.sportmonks_odds_prediction_engine import (
     build_sportmonks_prediction_intelligence,
 )
-from worldcup_predictor.providers.sportmonks_consumption import SPORTMONKS_ODDS_PREDICTION_KEY
+from worldcup_predictor.providers.sportmonks_consumption import (
+    SPORTMONKS_ODDS_PREDICTION_KEY,
+    SPORTMONKS_SUPPLEMENTAL_KEY,
+)
 
 
 class SportmonksPredictionAgent(BaseAgent):
@@ -29,6 +32,10 @@ class SportmonksPredictionAgent(BaseAgent):
 
         supplemental = getattr(report, "supplemental_sources", None) or {}
         odds_prediction_block = supplemental.get(SPORTMONKS_ODDS_PREDICTION_KEY)
+        sm_block = supplemental.get(SPORTMONKS_SUPPLEMENTAL_KEY) if isinstance(
+            supplemental.get(SPORTMONKS_SUPPLEMENTAL_KEY), dict
+        ) else {}
+        premium_access = sm_block.get("premium_access") if isinstance(sm_block, dict) else None
 
         signals_map: dict[str, Any] = self.context.shared.get("specialist_signals") or {}
         result = build_sportmonks_prediction_intelligence(
@@ -39,6 +46,17 @@ class SportmonksPredictionAgent(BaseAgent):
 
         has_data = result.sportmonks_odds_available or result.sportmonks_prediction_available
         status = "unavailable" if not has_data else "available"
+
+        status_reason = None
+        if not has_data and isinstance(premium_access, dict):
+            if premium_access.get("premium_predictions_access_denied") or premium_access.get(
+                "premium_odds_access_denied"
+            ):
+                from worldcup_predictor.agents.specialists.status_reasons import (
+                    SPORTMONKS_PLAN_NO_PREDICTIONS_ACCESS,
+                )
+
+                status_reason = SPORTMONKS_PLAN_NO_PREDICTIONS_ACCESS
 
         warnings: list[str] = []
         if not has_data:
@@ -86,6 +104,7 @@ class SportmonksPredictionAgent(BaseAgent):
             missing_data=[] if has_data else ["sportmonks_odds", "sportmonks_predictions"],
             impact_score=round(result.consensus_with_internal, 1),
             notes="; ".join(result.notes) if result.notes else "Sportmonks benchmark intelligence complete.",
+            status_reason=status_reason,
         )
         self.context.shared.setdefault("specialist_signals", {})[self.name] = signal
         return self._ok(data=signal, message="Sportmonks odds + prediction benchmark complete")

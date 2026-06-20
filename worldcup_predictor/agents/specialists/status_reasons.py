@@ -14,6 +14,8 @@ MISSING_LEAGUE_ID = "missing_league_id"
 CACHE_HIT = "cache_hit"
 LIVE_DATA_AVAILABLE = "live_data_available"
 HEURISTIC_PARTIAL = "heuristic_partial"
+SPORTMONKS_PLAN_NO_PREDICTIONS_ACCESS = "sportmonks_plan_no_predictions_access"
+SPORTMONKS_PLAN_NO_XG_ACCESS = "sportmonks_plan_no_xg_access"
 
 
 def endpoint_skip_reason(report: MatchIntelligenceReport | None, endpoint: str) -> str | None:

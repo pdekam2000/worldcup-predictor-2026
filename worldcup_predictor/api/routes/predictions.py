@@ -10,6 +10,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import JSONResponse
 
+from worldcup_predictor.api.audit_trace_helpers import build_audit_trace
 from worldcup_predictor.api.display_helpers import enrich_prediction_payload
 from worldcup_predictor.api.deps import get_optional_current_user
 from worldcup_predictor.api.web_auth import WebAuthUser
@@ -139,6 +140,7 @@ def _specialist_summary(
 def _success_payload(result: PredictPipelineResult) -> dict[str, Any]:
     prediction = result.prediction
     home_team, away_team = _split_teams(prediction.match_name)
+    specialist_summary = _specialist_summary(result, prediction)
     return {
         "status": "ok",
         "fixture_id": prediction.fixture_id,
@@ -147,7 +149,8 @@ def _success_payload(result: PredictPipelineResult) -> dict[str, Any]:
         "prediction": _map_prediction_selection(prediction.one_x_two.selection),
         "confidence": prediction.confidence_score,
         "probabilities": _extract_probabilities(prediction),
-        "specialist_summary": _specialist_summary(result, prediction),
+        "specialist_summary": specialist_summary,
+        "audit_trace": build_audit_trace(prediction, specialist_summary),
         "data_quality": _data_quality_score(prediction),
     }
 
@@ -225,12 +228,20 @@ def _cache_lookup(
     season: int,
     locale: Locale,
 ) -> dict[str, Any] | None:
-    return get_cached_prediction(
+    cached = get_cached_prediction(
         fixture_id,
         competition_key=competition_key,
         season=season,
         locale=locale,
     )
+    if cached is None:
+        return None
+    if "audit_trace" not in cached:
+        cached["audit_trace"] = build_audit_trace(
+            None,
+            cached.get("specialist_summary") if isinstance(cached.get("specialist_summary"), dict) else None,
+        )
+    return cached
 
 
 @router.get("/predict/{fixture_id}")

@@ -72,6 +72,17 @@ PHASE41_DDL: tuple[str, ...] = (
     """,
 )
 
+# Phase 28B — premium include access flags (non-destructive ALTER)
+PHASE42B_SPORTMONKS_COLUMNS: tuple[tuple[str, str, str], ...] = (
+    ("sportmonks_fixture_enrichment", "base_enrichment_available", "INTEGER NOT NULL DEFAULT 0"),
+    ("sportmonks_fixture_enrichment", "premium_odds_available", "INTEGER NOT NULL DEFAULT 0"),
+    ("sportmonks_fixture_enrichment", "premium_predictions_available", "INTEGER NOT NULL DEFAULT 0"),
+    ("sportmonks_fixture_enrichment", "premium_xg_available", "INTEGER NOT NULL DEFAULT 0"),
+    ("sportmonks_fixture_enrichment", "premium_odds_access_denied", "INTEGER NOT NULL DEFAULT 0"),
+    ("sportmonks_fixture_enrichment", "premium_predictions_access_denied", "INTEGER NOT NULL DEFAULT 0"),
+    ("sportmonks_fixture_enrichment", "premium_xg_access_denied", "INTEGER NOT NULL DEFAULT 0"),
+)
+
 
 def _table_exists(conn: sqlite3.Connection, table: str) -> bool:
     row = conn.execute(
@@ -114,6 +125,10 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
 
     for ddl in PHASE41_DDL:
         conn.execute(ddl)
+
+    for table, column, typedef in PHASE42B_SPORTMONKS_COLUMNS:
+        if _table_exists(conn, table):
+            _add_column_if_missing(conn, table, column, typedef)
 
     conn.execute(
         "INSERT OR REPLACE INTO schema_meta(key, value) VALUES (?, ?)",

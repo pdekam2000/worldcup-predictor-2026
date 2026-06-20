@@ -18,6 +18,7 @@ def main() -> int:
         from worldcup_predictor.config.settings import Settings
         from worldcup_predictor.quota.fixtures_list_cache import get_cached, store
         from worldcup_predictor.quota.prediction_cache import get_cached_prediction, store_prediction
+        from worldcup_predictor.quota.prediction_cache_policy import PHASE_22_REQUIRED_AGENT_KEYS, stamp_prediction_cache
         from worldcup_predictor.quota.quota_guard import QuotaGuardError, assert_force_refresh_allowed, quota_risk_level
         from worldcup_predictor.quota.quota_tracker import QuotaTracker, get_quota_tracker
         from worldcup_predictor.quota.request_throttle import ApiRequestThrottle, _is_rate_limit_error
@@ -59,7 +60,10 @@ def main() -> int:
             prediction_refresh_cooldown_seconds=30,
         )
 
-        payload = {
+        agents = {f"legacy_{i}": {"status": "available"} for i in range(18)}
+        for key in PHASE_22_REQUIRED_AGENT_KEYS:
+            agents[key] = {"status": "available"}
+        payload = stamp_prediction_cache({
             "status": "ok",
             "fixture_id": 123,
             "home_team": "A",
@@ -67,7 +71,8 @@ def main() -> int:
             "prediction": "home",
             "confidence": 70,
             "cache_source": "live",
-        }
+            "specialist_summary": {"agents": agents},
+        })
         store_prediction(123, payload, competition_key="world_cup_2026", season=2026, locale="en", settings=settings)
         cached = get_cached_prediction(123, competition_key="world_cup_2026", season=2026, locale="en", settings=settings)
         checks.append(("prediction_cache_roundtrip", cached is not None and cached.get("fixture_id") == 123))

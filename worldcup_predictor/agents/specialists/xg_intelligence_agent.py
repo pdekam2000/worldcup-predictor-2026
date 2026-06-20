@@ -9,7 +9,10 @@ from worldcup_predictor.agents.specialists.helpers import make_signal, require_i
 from worldcup_predictor.intelligence.sportmonks_xg_intelligence_engine import (
     build_sportmonks_xg_intelligence,
 )
-from worldcup_predictor.providers.sportmonks_consumption import SPORTMONKS_XG_INTELLIGENCE_KEY
+from worldcup_predictor.providers.sportmonks_consumption import (
+    SPORTMONKS_SUPPLEMENTAL_KEY,
+    SPORTMONKS_XG_INTELLIGENCE_KEY,
+)
 
 
 class XGIntelligenceAgent(BaseAgent):
@@ -29,6 +32,10 @@ class XGIntelligenceAgent(BaseAgent):
 
         supplemental = getattr(report, "supplemental_sources", None) or {}
         xg_block = supplemental.get(SPORTMONKS_XG_INTELLIGENCE_KEY)
+        sm_block = supplemental.get(SPORTMONKS_SUPPLEMENTAL_KEY) if isinstance(
+            supplemental.get(SPORTMONKS_SUPPLEMENTAL_KEY), dict
+        ) else {}
+        premium_access = sm_block.get("premium_access") if isinstance(sm_block, dict) else None
 
         signals_map: dict[str, Any] = self.context.shared.get("specialist_signals") or {}
         xg_v2 = signals_map.get("xg_chance_quality_intelligence_agent")
@@ -44,6 +51,15 @@ class XGIntelligenceAgent(BaseAgent):
         status = "unavailable" if not xg_block or not xg_block.get("available") else "available"
         if status == "available" and result.plan_support == "partial":
             status = "partial"
+
+        status_reason = None
+        if status == "unavailable" and isinstance(premium_access, dict):
+            if premium_access.get("premium_xg_access_denied"):
+                from worldcup_predictor.agents.specialists.status_reasons import (
+                    SPORTMONKS_PLAN_NO_XG_ACCESS,
+                )
+
+                status_reason = SPORTMONKS_PLAN_NO_XG_ACCESS
 
         warnings: list[str] = []
         if status == "unavailable":
@@ -102,6 +118,7 @@ class XGIntelligenceAgent(BaseAgent):
             missing_data=[] if status != "unavailable" else ["sportmonks_xg"],
             impact_score=round(result.xg_confidence, 1),
             notes="; ".join(result.notes) if result.notes else "Sportmonks xG intelligence complete.",
+            status_reason=status_reason,
         )
         self.context.shared.setdefault("specialist_signals", {})[self.name] = signal
         return self._ok(data=signal, message="Sportmonks xG intelligence complete")

@@ -448,6 +448,9 @@ class EnrichmentService:
         meta["sportmonks_fixture"] = result.data
         if trace:
             meta["sportmonks_unified"] = trace
+            premium_access = trace.get("premium_access")
+            if isinstance(premium_access, dict):
+                meta["sportmonks_premium_access"] = premium_access
         outcome.applied_providers.append("sportmonks")
         outcome.filled_fields.append("sportmonks_context")
         if trace.get("enrichment_endpoint"):
