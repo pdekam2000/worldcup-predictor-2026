@@ -116,20 +116,32 @@ class FootballIntelligenceRepository:
         )
         self._conn.commit()
 
-    def upsert_fixture(self, fixture: TournamentFixture, *, competition_key: str) -> bool:
+    def upsert_fixture(
+        self,
+        fixture: TournamentFixture,
+        *,
+        competition_key: str,
+        league_id: int | None = None,
+        season: int | None = None,
+    ) -> bool:
         if fixture.is_placeholder or fixture.source == "placeholder":
             return False
         kickoff = fixture.kickoff_time.isoformat() if fixture.kickoff_time else None
+        resolved_league_id = league_id if league_id is not None else fixture.league_id
+        resolved_season = season if season is not None else fixture.season
         self._conn.execute(
             """
             INSERT INTO fixtures(
-                fixture_id, competition_key, home_team, away_team, kickoff_utc, status,
-                round_name, group_name, venue, city, source, is_placeholder, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                fixture_id, competition_key, home_team, away_team, home_team_id, away_team_id,
+                kickoff_utc, status, round_name, group_name, venue, city, source, is_placeholder,
+                league_id, season, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(fixture_id) DO UPDATE SET
                 competition_key=excluded.competition_key,
                 home_team=excluded.home_team,
                 away_team=excluded.away_team,
+                home_team_id=COALESCE(excluded.home_team_id, fixtures.home_team_id),
+                away_team_id=COALESCE(excluded.away_team_id, fixtures.away_team_id),
                 kickoff_utc=excluded.kickoff_utc,
                 status=excluded.status,
                 round_name=excluded.round_name,
@@ -138,6 +150,8 @@ class FootballIntelligenceRepository:
                 city=excluded.city,
                 source=excluded.source,
                 is_placeholder=excluded.is_placeholder,
+                league_id=COALESCE(excluded.league_id, fixtures.league_id),
+                season=COALESCE(excluded.season, fixtures.season),
                 updated_at=excluded.updated_at
             """,
             (
@@ -145,6 +159,8 @@ class FootballIntelligenceRepository:
                 competition_key,
                 fixture.home_team,
                 fixture.away_team,
+                fixture.home_team_id,
+                fixture.away_team_id,
                 kickoff,
                 fixture.status,
                 fixture.round,
@@ -153,7 +169,43 @@ class FootballIntelligenceRepository:
                 fixture.city,
                 fixture.source,
                 int(fixture.is_placeholder),
+                resolved_league_id,
+                resolved_season,
                 _utc_now(),
+            ),
+        )
+        self._conn.commit()
+        return True
+
+    def update_fixture_identity(
+        self,
+        fixture_id: int,
+        *,
+        home_team_id: int | None = None,
+        away_team_id: int | None = None,
+        league_id: int | None = None,
+        season: int | None = None,
+    ) -> bool:
+        """Patch team/league identity fields after live fixture resolution."""
+        if not self.fixture_exists(fixture_id):
+            return False
+        self._conn.execute(
+            """
+            UPDATE fixtures SET
+                home_team_id = COALESCE(?, home_team_id),
+                away_team_id = COALESCE(?, away_team_id),
+                league_id = COALESCE(?, league_id),
+                season = COALESCE(?, season),
+                updated_at = ?
+            WHERE fixture_id = ?
+            """,
+            (
+                home_team_id,
+                away_team_id,
+                league_id,
+                season,
+                _utc_now(),
+                fixture_id,
             ),
         )
         self._conn.commit()

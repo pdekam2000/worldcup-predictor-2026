@@ -69,7 +69,32 @@ class SmartPredictionFetcher:
             if enrichment.get("events") and not report.fixture_events:
                 report.fixture_events = enrichment["events"]
 
+        self._persist_fixture_identity(fixture_id, report, repo)
         return report
+
+    @staticmethod
+    def _persist_fixture_identity(
+        fixture_id: int,
+        report: MatchIntelligenceReport,
+        repo: Any | None,
+    ) -> None:
+        if repo is None:
+            return
+        fixture = report.fixture
+        if fixture is None:
+            return
+        if not (fixture.home_team_id and fixture.away_team_id):
+            return
+        try:
+            repo.update_fixture_identity(
+                fixture_id,
+                home_team_id=int(fixture.home_team_id),
+                away_team_id=int(fixture.away_team_id),
+                league_id=int(fixture.league_id) if fixture.league_id else None,
+                season=int(fixture.season) if fixture.season else None,
+            )
+        except Exception:
+            pass
 
     @staticmethod
     def _try_repo():

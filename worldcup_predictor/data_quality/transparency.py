@@ -122,8 +122,12 @@ def build_data_quality_reason(
     ]
     for key, label in checks:
         max_pts = detail.component_max.get(key, 0)
-        if max_pts and detail.components.get(key, 0) < max_pts:
-            missing_pre.append(label)
+        got = detail.components.get(key, 0)
+        if max_pts and got < max_pts:
+            if key == "lineups" and got >= max_pts * 2 // 3:
+                missing_pre.append("projected lineups (official pending)")
+            else:
+                missing_pre.append(label)
 
     rapid_xg = (report.supplemental_sources or {}).get("rapid_xg_statistics") or {}
     rapid_stats = (report.supplemental_sources or {}).get("rapid_football_stats") or {}

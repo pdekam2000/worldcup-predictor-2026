@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from worldcup_predictor.agents.specialists.status_reasons import (
     CACHE_HIT,
     DATA_NOT_PUBLISHED_YET,
+    HEURISTIC_PARTIAL,
     LIVE_DATA_AVAILABLE,
     MISSING_REQUIRED_FIXTURE_FIELDS,
 )
@@ -15,6 +16,21 @@ from worldcup_predictor.domain.schedule import TournamentFixture
 from worldcup_predictor.quota.fixtures_list_cache import get_cached as get_fixtures_list_cached
 from worldcup_predictor.api.prediction_output import enrich_cached_prediction_output
 from worldcup_predictor.quota.quota_guard import refresh_cooldown_remaining_seconds
+
+LineupCoverage = Literal["official", "projected", "pending", "missing"]
+
+_LINEUP_AGENT_KEYS = ("lineup_agent", "lineup")
+_EXPECTED_LINEUP_AGENT_KEYS = ("expected_lineup_agent",)
+_LINEUP_INTEL_AGENT_KEYS = ("lineup_intelligence_agent",)
+_INJURY_AGENT_KEYS = ("injury_suspension_agent", "injury")
+_ODDS_AGENT_KEYS = (
+    "odds_market_agent",
+    "market_consensus_agent",
+    "odds_control_agent",
+    "odds",
+)
+
+_LIVE_FIXTURE_STATUSES = frozenset({"1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"})
 
 
 def fixture_to_match_display(fixture: TournamentFixture, *, league: str, season: int) -> dict[str, Any]:
@@ -89,47 +105,102 @@ def _agent_signal(agents: dict[str, Any], name: str) -> dict[str, Any]:
     return raw if isinstance(raw, dict) else {}
 
 
+def _first_agent_signal(agents: dict[str, Any], names: tuple[str, ...]) -> dict[str, Any]:
+    for name in names:
+        signal = _agent_signal(agents, name)
+        if signal:
+            return signal
+    return {}
+
+
+def _status_available(status: Any) -> bool:
+    return str(status or "").lower() in ("available", "partial")
+
+
+def _resolve_lineup_coverage(
+    agents: dict[str, Any],
+    *,
+    fixture_status: str | None = None,
+) -> LineupCoverage:
+    lineup = _first_agent_signal(agents, _LINEUP_AGENT_KEYS)
+    expected = _first_agent_signal(agents, _EXPECTED_LINEUP_AGENT_KEYS)
+    lineup_intel = _first_agent_signal(agents, _LINEUP_INTEL_AGENT_KEYS)
+
+    lineup_ok = _status_available(lineup.get("status"))
+    expected_ok = _status_available(expected.get("status"))
+    intel_ok = _status_available(lineup_intel.get("status"))
+
+    if not (lineup_ok or expected_ok or intel_ok):
+        lineup_reason = str(lineup.get("status_reason") or "")
+        lineup_status = str(lineup.get("status") or "").lower()
+        if lineup_reason in (DATA_NOT_PUBLISHED_YET, MISSING_REQUIRED_FIXTURE_FIELDS) or lineup_status in (
+            "unavailable",
+            "placeholder",
+        ):
+            return "missing"
+        return "missing"
+
+    status = (fixture_status or "NS").upper()
+    if status in _LIVE_FIXTURE_STATUSES and lineup_ok:
+        return "official"
+
+    lineup_reason = str(lineup.get("status_reason") or "").lower()
+    if expected_ok or lineup_reason in (DATA_NOT_PUBLISHED_YET, HEURISTIC_PARTIAL):
+        return "pending"
+    if str(lineup.get("status") or "").lower() == "partial":
+        return "pending"
+    if lineup_ok and not expected_ok:
+        return "official"
+    return "pending"
+
+
+def _resolve_odds_available(agents: dict[str, Any]) -> bool:
+    for name in _ODDS_AGENT_KEYS:
+        signal = _agent_signal(agents, name)
+        if not _status_available(signal.get("status")):
+            continue
+        reason = str(signal.get("status_reason") or "").lower()
+        if name == "odds_market_agent" and reason and reason not in (
+            LIVE_DATA_AVAILABLE,
+            CACHE_HIT,
+            "",
+        ):
+            continue
+        return True
+    return False
+
+
+def _resolve_missing_injuries(agents: dict[str, Any]) -> bool:
+    injury = _first_agent_signal(agents, _INJURY_AGENT_KEYS)
+    injury_reason = str(injury.get("status_reason") or "")
+    injury_status = str(injury.get("status") or "").lower()
+    if injury_status in ("available", "partial"):
+        return False
+    return injury_status == "unavailable" or injury_reason in (
+        DATA_NOT_PUBLISHED_YET,
+        MISSING_REQUIRED_FIXTURE_FIELDS,
+    )
+
+
 def data_signals_from_specialist_summary(
     specialist_summary: dict[str, Any] | None,
     *,
     data_quality: float | None,
+    fixture_status: str | None = None,
 ) -> dict[str, Any]:
     agents = (specialist_summary or {}).get("agents") or {}
-    lineup = _agent_signal(agents, "lineup")
-    injury = _agent_signal(agents, "injury")
-    odds = _agent_signal(agents, "odds")
-
-    lineup_reason = str(lineup.get("status_reason") or "")
-    lineup_status = str(lineup.get("status") or "").lower()
-    injury_reason = str(injury.get("status_reason") or "")
-    injury_status = str(injury.get("status") or "").lower()
-    odds_reason = str(odds.get("status_reason") or "")
-    odds_status = str(odds.get("status") or "").lower()
-
-    if lineup_status in ("available", "partial"):
-        missing_lineups = False
-    else:
-        missing_lineups = lineup_reason in (DATA_NOT_PUBLISHED_YET, MISSING_REQUIRED_FIXTURE_FIELDS) or lineup_status in (
-            "unavailable",
-            "placeholder",
-            "",
-        )
-
-    if injury_status in ("available", "partial"):
-        missing_injuries = False
-    else:
-        missing_injuries = injury_status == "unavailable" or injury_reason in (
-            DATA_NOT_PUBLISHED_YET,
-            MISSING_REQUIRED_FIXTURE_FIELDS,
-        )
-
-    odds_available = odds_status == "available" and odds_reason in (LIVE_DATA_AVAILABLE, CACHE_HIT, "")
+    lineup_coverage = _resolve_lineup_coverage(agents, fixture_status=fixture_status)
+    missing_lineups = lineup_coverage == "missing"
+    official_lineup_pending = lineup_coverage == "pending"
+    odds_available = _resolve_odds_available(agents)
 
     return {
         "tier": data_quality_tier(data_quality),
         "data_quality_pct": data_quality,
+        "lineup_coverage": lineup_coverage,
         "missing_lineups": bool(missing_lineups),
-        "missing_injuries": bool(missing_injuries),
+        "official_lineup_pending": bool(official_lineup_pending),
+        "missing_injuries": bool(_resolve_missing_injuries(agents)),
         "odds_available": bool(odds_available),
     }
 
@@ -156,9 +227,11 @@ def enrich_prediction_payload(
         dq_float = float(dq) if dq is not None else None
     except (TypeError, ValueError):
         dq_float = None
+    fixture_status = out.get("fixture_status") or out.get("status")
     out["data_signals"] = data_signals_from_specialist_summary(
         specialist if isinstance(specialist, dict) else None,
         data_quality=dq_float,
+        fixture_status=str(fixture_status) if fixture_status else None,
     )
     out["refresh_cooldown_seconds"] = int(settings.prediction_refresh_cooldown_seconds)
     if fixture_id:

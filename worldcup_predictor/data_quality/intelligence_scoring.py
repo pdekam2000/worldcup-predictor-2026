@@ -65,6 +65,37 @@ def _team_has_stats(team: TeamIntelligence, fixture_stats: dict[str, Any] | None
     return False
 
 
+def _lineup_items_have_starting_xi(items: list[Any]) -> bool:
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        start_xi = item.get("startXI") or item.get("start_xi") or []
+        if start_xi:
+            return True
+    return False
+
+
+def _projected_lineups_score(report: MatchIntelligenceReport) -> int:
+    """Partial lineups credit when official XI is pending but projected data exists."""
+    max_pts = CORE_WEIGHTS["lineups"]
+    partial = max_pts * 2 // 3  # 10 of 15
+    lineups = report.lineups or {}
+
+    if lineups.get("skipped") == "far_from_kickoff":
+        return partial
+
+    items = lineups.get("items") or []
+    if _lineup_items_have_starting_xi(items):
+        return partial
+
+    supplemental = report.supplemental_sources or {}
+    sm = supplemental.get("sportmonks") or {}
+    if _lineup_items_have_starting_xi(sm.get("lineups_api") or []):
+        return partial
+
+    return 0
+
+
 def score_data_quality_components(
     report: MatchIntelligenceReport,
 ) -> tuple[dict[str, int], dict[str, int]]:
@@ -111,6 +142,10 @@ def score_data_quality_components(
 
     if report.lineups and report.lineups.get("available"):
         components["lineups"] = CORE_WEIGHTS["lineups"]
+    else:
+        projected_pts = _projected_lineups_score(report)
+        if projected_pts:
+            components["lineups"] = projected_pts
 
     if report.weather and report.weather.get("available"):
         components["weather"] = CORE_WEIGHTS["weather"]

@@ -57,13 +57,35 @@ def parse_api_fixture_item(item: dict[str, Any], *, source: str = "live") -> Tou
         if fid <= 0:
             return None
         scorers = _parse_goal_scorers(item.get("events") or [])
+        home_meta = teams.get("home") or {}
+        away_meta = teams.get("away") or {}
+        try:
+            home_team_id = int(home_meta.get("id")) if home_meta.get("id") is not None else None
+        except (TypeError, ValueError):
+            home_team_id = None
+        try:
+            away_team_id = int(away_meta.get("id")) if away_meta.get("id") is not None else None
+        except (TypeError, ValueError):
+            away_team_id = None
+        try:
+            league_id = int(league.get("id")) if league.get("id") is not None else None
+        except (TypeError, ValueError):
+            league_id = None
+        try:
+            season = int(league.get("season")) if league.get("season") is not None else None
+        except (TypeError, ValueError):
+            season = None
         return TournamentFixture(
             fixture_id=fid,
             kickoff_time=kickoff,
-            home_team=(teams.get("home") or {}).get("name") or "TBD",
-            away_team=(teams.get("away") or {}).get("name") or "TBD",
+            home_team=home_meta.get("name") or "TBD",
+            away_team=away_meta.get("name") or "TBD",
             home_team_logo=str(home_logo) if home_logo else None,
             away_team_logo=str(away_logo) if away_logo else None,
+            home_team_id=home_team_id,
+            away_team_id=away_team_id,
+            league_id=league_id,
+            season=season,
             venue=str(venue_name),
             city=str(city),
             country=str(country),

@@ -368,6 +368,18 @@ class WorldCupScheduleService:
             elapsed = status_obj.get("elapsed")
             home_logo = teams.get("home", {}).get("logo")
             away_logo = teams.get("away", {}).get("logo")
+            home_id = (teams.get("home") or {}).get("id")
+            away_id = (teams.get("away") or {}).get("id")
+            league_id_raw = league.get("id")
+            season_raw = league.get("season")
+            try:
+                league_id = int(league_id_raw) if league_id_raw is not None else None
+            except (TypeError, ValueError):
+                league_id = None
+            try:
+                season = int(season_raw) if season_raw is not None else None
+            except (TypeError, ValueError):
+                season = None
             return TournamentFixture(
                 fixture_id=int(fixture.get("id", 0)),
                 kickoff_time=kickoff,
@@ -375,6 +387,10 @@ class WorldCupScheduleService:
                 away_team=teams.get("away", {}).get("name", "TBD"),
                 home_team_logo=str(home_logo) if home_logo else None,
                 away_team_logo=str(away_logo) if away_logo else None,
+                home_team_id=int(home_id) if home_id is not None else None,
+                away_team_id=int(away_id) if away_id is not None else None,
+                league_id=league_id,
+                season=season,
                 venue=venue_name,
                 city=city,
                 country=country,
@@ -531,6 +547,10 @@ class WorldCupScheduleService:
             kickoff_time=fixture.kickoff_utc,
             home_team=fixture.home_team,
             away_team=fixture.away_team,
+            home_team_id=fixture.home_team_id,
+            away_team_id=fixture.away_team_id,
+            league_id=fixture.league_id,
+            season=fixture.season,
             venue=fixture.venue.split(",")[0].strip() if "," in fixture.venue else fixture.venue,
             city=city,
             country=country,

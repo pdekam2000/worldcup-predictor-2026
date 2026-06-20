@@ -65,6 +65,10 @@ class TournamentFixture:
     stats_summary: dict[str, str] = field(default_factory=dict)
     home_team_logo: str | None = None
     away_team_logo: str | None = None
+    home_team_id: int | None = None
+    away_team_id: int | None = None
+    league_id: int | None = None
+    season: int | None = None
 
 
 @dataclass
