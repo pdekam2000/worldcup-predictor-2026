@@ -52,6 +52,7 @@ class EnrichmentService:
         report, outcome = self._maybe_enrich_odds(report, fixture, outcome, endpoint_log, force=force_odds_api)
         report, outcome = self._maybe_enrich_weather(report, fixture, outcome, endpoint_log)
         report, outcome = self._maybe_enrich_sportmonks(report, fixture, outcome, endpoint_log)
+        report, outcome = self._maybe_enrich_sportmonks_standings(report, fixture, outcome, endpoint_log)
         report, outcome = self._maybe_enrich_rapid_football_stats(report, fixture, outcome, endpoint_log)
         report, outcome = self._maybe_enrich_rapid_xg_statistics(report, fixture, outcome, endpoint_log)
 
@@ -423,6 +424,19 @@ class EnrichmentService:
             competition_key=fixture.competition_key,
         )
         self._log_provider(endpoint_log, result)
+        trace = result.trace or {}
+        lookup_endpoint = trace.get("lookup_endpoint")
+        if lookup_endpoint and lookup_endpoint != result.endpoint:
+            endpoint_log.append(
+                EndpointInspection(
+                    endpoint=f"sportmonks/{lookup_endpoint}",
+                    loaded=True,
+                    response_count=1,
+                    source="cache" if trace.get("api_calls_made", 1) == 0 else "live",
+                    error=None,
+                    status="loaded",
+                )
+            )
         if not result.available:
             if result.error and result.configured:
                 outcome.errors.append(f"sportmonks: {result.error}")
@@ -432,9 +446,55 @@ class EnrichmentService:
 
         meta = dict(report.provider_metadata or {})
         meta["sportmonks_fixture"] = result.data
+        if trace:
+            meta["sportmonks_unified"] = trace
         outcome.applied_providers.append("sportmonks")
         outcome.filled_fields.append("sportmonks_context")
+        if trace.get("enrichment_endpoint"):
+            outcome.filled_fields.append("sportmonks_unified_enrichment")
         return replace(report, provider_metadata=meta), outcome
+
+    def _maybe_enrich_sportmonks_standings(
+        self,
+        report: MatchIntelligenceReport,
+        fixture: Fixture,
+        outcome: EnrichmentOutcome,
+        endpoint_log: list[EndpointInspection],
+    ) -> tuple[MatchIntelligenceReport, EnrichmentOutcome]:
+        if not self._registry.sportmonks.is_configured:
+            outcome.skipped.append("sportmonks_standings:not_configured")
+            return report, outcome
+        if fixture.competition_key != "world_cup_2026":
+            outcome.skipped.append("sportmonks_standings:competition_skipped")
+            return report, outcome
+
+        from worldcup_predictor.intelligence.sportmonks_standings_service import (
+            fetch_worldcup_standings,
+        )
+        from worldcup_predictor.intelligence.tournament_context_engine import (
+            SPORTMONKS_TOURNAMENT_STANDINGS_KEY,
+        )
+
+        block = fetch_worldcup_standings(settings=self._settings)
+        endpoint_log.append(
+            EndpointInspection(
+                endpoint=f"sportmonks/{block.get('endpoint', '/standings/seasons')}",
+                loaded=bool(block.get("available")),
+                response_count=int(block.get("team_count") or 0),
+                source="cache" if block.get("from_cache") else "live",
+                error=block.get("message") if not block.get("available") else None,
+                status="loaded" if block.get("available") else "empty",
+            )
+        )
+        if not block.get("available"):
+            outcome.skipped.append("sportmonks_standings:unavailable")
+            return report, outcome
+
+        supplemental = dict(report.supplemental_sources or {})
+        supplemental[SPORTMONKS_TOURNAMENT_STANDINGS_KEY] = block
+        outcome.applied_providers.append("sportmonks_standings")
+        outcome.filled_fields.append("sportmonks_tournament_standings")
+        return replace(report, supplemental_sources=supplemental), outcome
 
     @staticmethod
     def _odds_bookmakers_from_event(event: dict[str, Any] | None) -> list[dict[str, Any]]:

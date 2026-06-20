@@ -6,6 +6,7 @@ from worldcup_predictor.agents.base import AgentResult, BaseAgent
 from worldcup_predictor.agents.specialists.injury_suspension_intelligence_agent import (
     InjurySuspensionIntelligenceAgent,
 )
+from worldcup_predictor.agents.specialists.expected_lineup_agent import ExpectedLineupAgent
 from worldcup_predictor.agents.specialists.lineup_intelligence_agent import LineupIntelligenceAgent
 from worldcup_predictor.agents.specialists.agents import (
     InjurySuspensionAgent,
@@ -23,13 +24,18 @@ from worldcup_predictor.agents.specialists.odds_control_agent import OddsControl
 from worldcup_predictor.odds.market_consensus_agent import MarketConsensusAgent
 from worldcup_predictor.odds.odds_movement_agent import OddsMovementAgent
 from worldcup_predictor.agents.specialists.sharp_money_intelligence_agent import SharpMoneyIntelligenceAgent
+from worldcup_predictor.agents.specialists.sportmonks_prediction_agent import SportmonksPredictionAgent
+from worldcup_predictor.agents.specialists.xg_intelligence_agent import XGIntelligenceAgent
 from worldcup_predictor.agents.specialists.elo_team_strength_intelligence_agent import (
     EloTeamStrengthIntelligenceAgent,
 )
 from worldcup_predictor.agents.specialists.xg_chance_quality_intelligence_agent import (
     XGChanceQualityIntelligenceAgent,
 )
-from worldcup_predictor.agents.specialists.tournament_intelligence_agent import TournamentIntelligenceAgent
+from worldcup_predictor.agents.specialists.tournament_context_agent import TournamentContextAgent
+from worldcup_predictor.agents.specialists.tournament_intelligence_agent import (
+    TournamentIntelligenceAgent,
+)
 from worldcup_predictor.domain.specialist import MatchSpecialistReport
 from worldcup_predictor.schedule.context_loader import load_tournament_context
 
@@ -44,6 +50,7 @@ class SpecialistOrchestrator(BaseAgent):
         RefereeAgent,
         LineupAgent,
         LineupIntelligenceAgent,
+        ExpectedLineupAgent,
         InjurySuspensionAgent,
         InjurySuspensionIntelligenceAgent,
         TeamFormAgent,
@@ -56,8 +63,11 @@ class SpecialistOrchestrator(BaseAgent):
         MarketConsensusAgent,
         OddsMovementAgent,
         SharpMoneyIntelligenceAgent,
+        SportmonksPredictionAgent,
+        XGIntelligenceAgent,
         MotivationPsychologyAgent,
         TournamentIntelligenceAgent,
+        TournamentContextAgent,
         MasterAnalysisAgent,
     )
 

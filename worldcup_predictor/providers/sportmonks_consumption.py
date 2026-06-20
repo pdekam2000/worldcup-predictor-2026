@@ -7,8 +7,16 @@ from dataclasses import replace
 from typing import Any
 
 from worldcup_predictor.domain.intelligence import InjuryReport, MatchIntelligenceReport
+from worldcup_predictor.intelligence.sportmonks_odds_prediction_engine import (
+    parse_odds_predictions_from_fixture,
+)
+from worldcup_predictor.intelligence.sportmonks_xg_intelligence_engine import (
+    parse_sportmonks_xg_from_fixture,
+)
 
 SPORTMONKS_SUPPLEMENTAL_KEY = "sportmonks"
+SPORTMONKS_ODDS_PREDICTION_KEY = "sportmonks_odds_prediction"
+SPORTMONKS_XG_INTELLIGENCE_KEY = "sportmonks_xg_intelligence"
 
 _XG_TYPE_HINTS = frozenset(
     {
@@ -88,6 +96,9 @@ def map_sportmonks_payload_fields(raw: dict[str, Any] | None) -> dict[str, Any]:
             "has_statistics": False,
             "has_sidelined": False,
             "has_scores": False,
+            "has_odds": False,
+            "has_predictions": False,
+            "has_xg_fixture": False,
         }
     keys = [k for k, v in raw.items() if v not in (None, [], {}, "")]
     return {
@@ -99,6 +110,9 @@ def map_sportmonks_payload_fields(raw: dict[str, Any] | None) -> dict[str, Any]:
         "has_statistics": bool(_safe_list(raw.get("statistics"))),
         "has_sidelined": bool(_safe_list(raw.get("sidelined"))),
         "has_scores": bool(_safe_list(raw.get("scores"))),
+        "has_odds": bool(_safe_list(raw.get("odds"))),
+        "has_predictions": bool(_safe_list(raw.get("predictions"))),
+        "has_xg_fixture": raw.get("xGFixture") is not None or bool(_safe_list(raw.get("expected"))),
         "sportmonks_fixture_id": raw.get("id"),
     }
 
@@ -381,6 +395,8 @@ def apply_sportmonks_consumption(report: MatchIntelligenceReport) -> MatchIntell
         "source": raw_source,
         "consumed": True,
     }
+    supplemental[SPORTMONKS_ODDS_PREDICTION_KEY] = parse_odds_predictions_from_fixture(raw)
+    supplemental[SPORTMONKS_XG_INTELLIGENCE_KEY] = parse_sportmonks_xg_from_fixture(raw)
 
     missing = list(report.missing_data or [])
     sources = list(report.enrichment_sources or [])

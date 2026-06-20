@@ -884,6 +884,7 @@ class MasterAnalysisAgent(BaseAgent):
         "referee_agent",
         "lineup_agent",
         "lineup_intelligence_agent",
+        "expected_lineup_agent",
         "injury_suspension_agent",
         "injury_suspension_intelligence_agent",
         "team_form_agent",
@@ -896,8 +897,11 @@ class MasterAnalysisAgent(BaseAgent):
         "market_consensus_agent",
         "odds_movement_agent",
         "sharp_money_intelligence_agent",
+        "sportmonks_prediction_agent",
+        "xg_intelligence_agent",
         "motivation_psychology_agent",
         "tournament_intelligence_agent",
+        "tournament_context_agent",
     )
 
     def run(self, **kwargs: Any) -> AgentResult:
@@ -980,6 +984,36 @@ class MasterAnalysisAgent(BaseAgent):
             if "low_market_confidence" in (sv2.get("risk_flags") or []):
                 adjustments.append("Low market data confidence — minimal sharp-money weight applied.")
 
+        sm_benchmark = signals.get("sportmonks_prediction_agent")
+        if sm_benchmark and sm_benchmark.signals:
+            sm = sm_benchmark.signals
+            if sm.get("conflict_level") == "high":
+                conflicts.append(
+                    "Sportmonks benchmark strongly disagrees with internal market lean — review only."
+                )
+            elif sm.get("conflict_level") == "medium":
+                adjustments.append(
+                    "Sportmonks vs internal moderate disagreement — use as calibration reference only."
+                )
+            if sm.get("recommendation") == "no_bet_review":
+                adjustments.append(
+                    "Sportmonks benchmark flags elevated uncertainty (no_bet_review) — trace only."
+                )
+            if (sm.get("odds_vs_api_football_disagreement") or 0) >= 0.22:
+                conflicts.append(
+                    "Sportmonks odds diverge from API-Football consensus — supplemental market check."
+                )
+
+        xg_intel = signals.get("xg_intelligence_agent")
+        if xg_intel and xg_intel.signals:
+            xi = xg_intel.signals
+            if xi.get("comparison_available") and not xi.get("xg_supports_internal"):
+                adjustments.append(
+                    "Sportmonks xG diverges from internal xG — benchmark trace only (no weight change)."
+                )
+            if xi.get("plan_support") == "none":
+                adjustments.append("Sportmonks xG add-on not detected — rely on internal/API-Football xG.")
+
         lineup_sig = signals.get("lineup_agent")
         lineup_v2 = signals.get("lineup_intelligence_agent")
         if lineup_sig and lineup_sig.status != "available":
@@ -994,6 +1028,20 @@ class MasterAnalysisAgent(BaseAgent):
             if "key_player_missing" in home_flags + away_flags:
                 adjustments.append("Key absences detected — lineup strength reduced.")
 
+        exp_lineup = signals.get("expected_lineup_agent")
+        if exp_lineup and exp_lineup.signals:
+            ex = exp_lineup.signals
+            if ex.get("late_news_risk") == "high":
+                adjustments.append("Expected lineup benchmark — late news risk (trace only, no auto no-bet).")
+            if ex.get("goalkeeper_change_flag"):
+                adjustments.append("ExpectedLineupAgent GK change flag — informational trace.")
+            if ex.get("comparison_available") and not ex.get("lineup_supports_internal"):
+                conflicts.append("Expected lineup benchmark diverges from Lineup Intelligence V2 — review only.")
+            if ex.get("comparison_available") and ex.get("player_overlap_pct") is not None:
+                adjustments.append(
+                    f"Expected vs confirmed XI overlap {ex.get('player_overlap_pct')}% — accuracy trace."
+                )
+
         injury_v2 = signals.get("injury_suspension_intelligence_agent")
         if injury_v2 and injury_v2.signals:
             ih = (injury_v2.signals.get("home") or {}).get("risk_flags") or []
@@ -1004,6 +1052,18 @@ class MasterAnalysisAgent(BaseAgent):
                 adjustments.append("Key goalkeeper missing — goal volatility elevated (analysis only).")
             if "multiple_absences" in ih + ia:
                 adjustments.append("Multiple absences detected — squad depth reduced.")
+
+        tcx = signals.get("tournament_context_agent")
+        if tcx and tcx.signals:
+            tx = tcx.signals
+            if tx.get("must_win_flag"):
+                adjustments.append("TournamentContextAgent must-win flag — trace only.")
+            if not tx.get("context_supports_internal") and (tx.get("disagreement_score") or 0) >= 0.35:
+                conflicts.append(
+                    "Tournament context benchmark diverges from motivation agent — review only."
+                )
+            if tx.get("draw_acceptability"):
+                adjustments.append("Draw acceptability detected in group context — conservative bias possible.")
 
         tour_v2 = signals.get("tournament_intelligence_agent")
         if tour_v2 and tour_v2.signals:

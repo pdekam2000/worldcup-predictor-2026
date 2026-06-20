@@ -4,9 +4,8 @@ import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserPlus, Mail, Lock, Loader2 } from "lucide-react";
+import { UserPlus, Mail, Lock, Loader2, KeyRound } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
-import GoogleIcon from "@/components/GoogleIcon";
 
 export default function Register() {
   const { register } = useAuth();
@@ -54,25 +53,9 @@ export default function Register() {
         </>
       }
     >
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6 opacity-60 cursor-not-allowed"
-        disabled
-        title="Coming soon"
-      >
-        <GoogleIcon className="w-5 h-5 mr-2" />
-        Continue with Google
-      </Button>
-
-      <div className="relative mb-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">or</span>
-        </div>
-      </div>
+      <p className="text-center text-xs text-muted-foreground mb-6">
+        Google login coming soon.
+      </p>
 
       {error && (
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
@@ -99,15 +82,22 @@ export default function Register() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="inviteCode">Invite code</Label>
-          <Input
-            id="inviteCode"
-            type="password"
-            autoComplete="off"
-            placeholder="Required if invite-only registration is enabled"
-            value={inviteCode}
-            onChange={(e) => setInviteCode(e.target.value)}
-            className="h-12"
-          />
+          <div className="relative">
+            <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Input
+              id="inviteCode"
+              type="text"
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="Enter your invite code"
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value)}
+              className="pl-10 h-12"
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Required to create an account. Contact support if you don&apos;t have one.
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>

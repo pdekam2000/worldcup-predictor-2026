@@ -96,6 +96,11 @@ class WeightedDecisionEngine:
     ) -> None:
         self._factor_weights = factor_weights or _default_factor_weights()
         self._thresholds = thresholds or _default_thresholds()
+        self._last_lineup_promotion: Any = None
+        self._last_context_promotion: Any = None
+        self._last_xg_promotion: Any = None
+        self._last_sportmonks_promotion: Any = None
+        self._combined_promotion_confidence_delta: float = 0.0
 
     def decide(self, decision_input: DecisionInput) -> DecisionOutput:
         baseline = decision_input.baseline
@@ -104,6 +109,21 @@ class WeightedDecisionEngine:
 
         factors = self._build_factors(report, specialist, baseline)
         audit = self._build_audit_skeleton(baseline.fixture_id, factors)
+
+        competition_key = "world_cup_2026"
+        if report.fixture and getattr(report.fixture, "competition_key", None):
+            competition_key = str(report.fixture.competition_key)
+        from worldcup_predictor.promotion.sportmonks_prediction_adapter import (
+            compute_sportmonks_prediction_promotion,
+        )
+
+        self._last_sportmonks_promotion = compute_sportmonks_prediction_promotion(
+            specialist=specialist,
+            internal_selection=str(baseline.one_x_two.selection),
+            competition_key=competition_key,
+            is_placeholder=bool(report.is_placeholder),
+            fixture_id=int(baseline.fixture_id),
+        )
 
         home_edge_total = sum(f.contribution for f in factors.values())
         baseline_selection = baseline.one_x_two.selection
@@ -117,6 +137,41 @@ class WeightedDecisionEngine:
         caps: list[str] = []
         reductions: list[str] = []
         no_bet_reasons: list[str] = []
+
+        promotion = self._last_lineup_promotion
+        context_promo = self._last_context_promotion
+        sm_promo = self._last_sportmonks_promotion
+        promo_conf_delta = 0.0
+        if promotion and promotion.applied and promotion.confidence_delta:
+            promo_conf_delta += promotion.confidence_delta
+            tag = "lineup_promotion_confidence"
+            if promotion.confidence_delta > 0:
+                caps.append(f"{tag}_plus_{abs(promotion.confidence_delta):.0f}")
+            else:
+                reductions.append(f"{tag}_minus_{abs(promotion.confidence_delta):.0f}")
+        if context_promo and context_promo.applied and context_promo.confidence_delta:
+            promo_conf_delta += context_promo.confidence_delta
+            tag = "context_promotion_confidence"
+            if context_promo.confidence_delta > 0:
+                caps.append(f"{tag}_plus_{abs(context_promo.confidence_delta):.0f}")
+            else:
+                reductions.append(f"{tag}_minus_{abs(context_promo.confidence_delta):.0f}")
+        if sm_promo and sm_promo.applied and sm_promo.sportmonks_confidence_delta:
+            promo_conf_delta += sm_promo.sportmonks_confidence_delta
+            tag = "sportmonks_promotion_confidence"
+            if sm_promo.sportmonks_confidence_delta > 0:
+                caps.append(f"{tag}_plus_{abs(sm_promo.sportmonks_confidence_delta):.0f}")
+            else:
+                reductions.append(f"{tag}_minus_{abs(sm_promo.sportmonks_confidence_delta):.0f}")
+        combined_promotion_conf_delta = 0.0
+        if promo_conf_delta:
+            from worldcup_predictor.promotion.config import MAX_CUMULATIVE_PROMOTION_CONF_DELTA
+
+            combined_promotion_conf_delta = self._clamp(
+                promo_conf_delta, -MAX_CUMULATIVE_PROMOTION_CONF_DELTA, MAX_CUMULATIVE_PROMOTION_CONF_DELTA
+            )
+            confidence += combined_promotion_conf_delta
+        self._combined_promotion_confidence_delta = combined_promotion_conf_delta
 
         data_quality_pct = factors["data_quality"].score
         dq_cap_below = self._thresholds["data_quality_confidence_cap_below"]
@@ -143,6 +198,23 @@ class WeightedDecisionEngine:
             reduction = min(conflict_count * conflict_per, conflict_max)
             confidence -= reduction
             reductions.append(f"specialist_conflicts_high_minus_{int(reduction)}")
+
+        if sm_promo and sm_promo.sportmonks_promotion_active:
+            if sm_promo.sportmonks_lean != sm_promo.internal_lean:
+                conflicts.append(
+                    DecisionConflict(
+                        description=(
+                            f"external_model_divergence: internal={sm_promo.internal_lean} "
+                            f"sportmonks={sm_promo.sportmonks_lean} "
+                            f"({sm_promo.sportmonks_disagreement_signal})"
+                        ),
+                        severity="high" if sm_promo.conflict_level == "high" else "medium",
+                    )
+                )
+            if sm_promo.no_bet_review_trace:
+                audit.market_disagreement_warnings.append(
+                    "Sportmonks no_bet_review trace — human review recommended (not auto no-bet)."
+                )
 
         market_warning = self._market_disagreement(baseline, factors, home_edge_total, specialist)
         if market_warning:
@@ -241,6 +313,10 @@ class WeightedDecisionEngine:
         audit.conflicts = conflicts
         audit.limitations = self._limitations(report, specialist)
         audit.first_goal_player_confidence = first_goal_player_conf
+        promo = self._last_lineup_promotion
+        ctx_promo = self._last_context_promotion
+        xg_promo = self._last_xg_promotion
+        sm_promo = self._last_sportmonks_promotion
         audit.trace = FinalDecisionTrace(
             baseline_confidence=baseline.confidence_score,
             final_confidence=confidence,
@@ -253,7 +329,79 @@ class WeightedDecisionEngine:
                 if watch_only
                 else "Moderate analytical edge — still not betting advice."
             ),
+            lineup_promotion_active=bool(promo and promo.lineup_promotion_active),
+            lineup_delta_score=float(promo.lineup_delta_score if promo else 0.0),
+            lineup_promotion_reason=str(promo.lineup_promotion_reason if promo else ""),
+            lineup_promotion_confidence=float(promo.lineup_promotion_confidence if promo else 0.0),
+            expected_vs_confirmed_history=dict(promo.expected_vs_confirmed_history if promo else {}),
+            context_promotion_active=bool(ctx_promo and ctx_promo.context_promotion_active),
+            context_delta_score=float(ctx_promo.context_delta_score if ctx_promo else 0.0),
+            context_promotion_reason=str(ctx_promo.context_promotion_reason if ctx_promo else ""),
+            context_promotion_confidence=float(ctx_promo.context_promotion_confidence if ctx_promo else 0.0),
+            must_win_influence=float(ctx_promo.must_win_influence if ctx_promo else 0.0),
+            rotation_context_influence=float(ctx_promo.rotation_context_influence if ctx_promo else 0.0),
+            draw_acceptability_influence=float(ctx_promo.draw_acceptability_influence if ctx_promo else 0.0),
+            tactics_trace_notes=str(ctx_promo.tactics_trace_notes if ctx_promo else ""),
+            tactics_over_trace_delta=float(ctx_promo.tactics_over_trace_delta if ctx_promo else 0.0),
+            xg_promotion_active=bool(xg_promo and xg_promo.xg_promotion_active),
+            xg_delta_score=float(xg_promo.xg_delta_score if xg_promo else 0.0),
+            xg_promotion_reason=str(xg_promo.xg_promotion_reason if xg_promo else ""),
+            xg_promotion_confidence=float(xg_promo.xg_promotion_confidence if xg_promo else 0.0),
+            sportmonks_promotion_active=bool(sm_promo and sm_promo.sportmonks_promotion_active),
+            sportmonks_confidence_delta=float(sm_promo.sportmonks_confidence_delta if sm_promo else 0.0),
+            sportmonks_disagreement_signal=str(sm_promo.sportmonks_disagreement_signal if sm_promo else ""),
+            sportmonks_promotion_reason=str(sm_promo.sportmonks_promotion_reason if sm_promo else ""),
+            sportmonks_no_bet_review_trace=bool(sm_promo and sm_promo.no_bet_review_trace),
+            combined_promotion_confidence_delta=float(
+                getattr(self, "_combined_promotion_confidence_delta", 0.0)
+            ),
         )
+        if promo and promo.lineup_promotion_active:
+            audit.limitations.append(
+                DataLimitation(
+                    field="lineup_promotion_24a",
+                    impact=(
+                        f"mode={promo.mode} applied={promo.applied} "
+                        f"delta_score={promo.lineup_delta_score} reason={promo.lineup_promotion_reason}"
+                    ),
+                )
+            )
+        if ctx_promo and ctx_promo.context_promotion_active:
+            audit.limitations.append(
+                DataLimitation(
+                    field="context_promotion_24b",
+                    impact=(
+                        f"mode={ctx_promo.mode} applied={ctx_promo.applied} "
+                        f"delta_score={ctx_promo.context_delta_score} "
+                        f"tactics_trace={ctx_promo.tactics_over_trace_delta} "
+                        f"reason={ctx_promo.context_promotion_reason}"
+                    ),
+                )
+            )
+        if xg_promo and xg_promo.xg_promotion_active:
+            audit.limitations.append(
+                DataLimitation(
+                    field="xg_promotion_24c",
+                    impact=(
+                        f"mode={xg_promo.mode} applied={xg_promo.applied} "
+                        f"delta_score={xg_promo.xg_delta_score} delta_over={xg_promo.xg_delta_over} "
+                        f"reason={xg_promo.xg_promotion_reason}"
+                    ),
+                )
+            )
+        if sm_promo and sm_promo.sportmonks_promotion_active:
+            audit.limitations.append(
+                DataLimitation(
+                    field="sportmonks_promotion_24c",
+                    impact=(
+                        f"mode={sm_promo.mode} applied={sm_promo.applied} "
+                        f"conf_delta={sm_promo.sportmonks_confidence_delta} "
+                        f"signal={sm_promo.sportmonks_disagreement_signal} "
+                        f"no_bet_review={sm_promo.no_bet_review_trace} "
+                        f"reason={sm_promo.sportmonks_promotion_reason}"
+                    ),
+                )
+            )
 
         return DecisionOutput(
             confidence_score=round(confidence, 1),
@@ -285,6 +433,28 @@ class WeightedDecisionEngine:
         baseline.first_goal_player_confidence = output.first_goal_player_confidence
         baseline.metadata["decision_engine"] = "weighted"
         baseline.metadata["watch_only"] = str(output.audit.trace.watch_only if output.audit and output.audit.trace else False)
+        if output.audit and output.audit.trace:
+            tr = output.audit.trace
+            baseline.metadata["lineup_promotion_active"] = str(tr.lineup_promotion_active)
+            baseline.metadata["lineup_delta_score"] = str(tr.lineup_delta_score)
+            baseline.metadata["lineup_promotion_reason"] = tr.lineup_promotion_reason
+            baseline.metadata["lineup_promotion_confidence"] = str(tr.lineup_promotion_confidence)
+            baseline.metadata["context_promotion_active"] = str(tr.context_promotion_active)
+            baseline.metadata["context_delta_score"] = str(tr.context_delta_score)
+            baseline.metadata["context_promotion_reason"] = tr.context_promotion_reason
+            baseline.metadata["context_promotion_confidence"] = str(tr.context_promotion_confidence)
+            baseline.metadata["must_win_influence"] = str(tr.must_win_influence)
+            baseline.metadata["rotation_context_influence"] = str(tr.rotation_context_influence)
+            baseline.metadata["draw_acceptability_influence"] = str(tr.draw_acceptability_influence)
+            baseline.metadata["xg_promotion_active"] = str(tr.xg_promotion_active)
+            baseline.metadata["xg_delta_score"] = str(tr.xg_delta_score)
+            baseline.metadata["xg_promotion_reason"] = tr.xg_promotion_reason
+            baseline.metadata["xg_promotion_confidence"] = str(tr.xg_promotion_confidence)
+            baseline.metadata["sportmonks_promotion_active"] = str(tr.sportmonks_promotion_active)
+            baseline.metadata["sportmonks_confidence_delta"] = str(tr.sportmonks_confidence_delta)
+            baseline.metadata["sportmonks_disagreement_signal"] = tr.sportmonks_disagreement_signal
+            baseline.metadata["sportmonks_promotion_reason"] = tr.sportmonks_promotion_reason
+            baseline.metadata["combined_promotion_confidence_delta"] = str(tr.combined_promotion_confidence_delta)
         return baseline
 
     def _build_factors(
@@ -361,6 +531,27 @@ class WeightedDecisionEngine:
             if ls.get("official_lineups_available"):
                 lineup_edge = 0.05
 
+        competition_key = "world_cup_2026"
+        if report.fixture and getattr(report.fixture, "competition_key", None):
+            competition_key = str(report.fixture.competition_key)
+        from worldcup_predictor.promotion.expected_lineup_adapter import (
+            apply_lineup_promotion_to_factor,
+            compute_expected_lineup_promotion,
+        )
+
+        promotion = compute_expected_lineup_promotion(
+            specialist=specialist,
+            baseline_lineup_score=lineup_score,
+            baseline_lineup_edge=lineup_edge,
+            competition_key=competition_key,
+            is_placeholder=bool(report.is_placeholder),
+            fixture_id=int(report.fixture_id),
+        )
+        self._last_lineup_promotion = promotion
+        lineup_score, lineup_edge = apply_lineup_promotion_to_factor(
+            lineup_score, lineup_edge, promotion
+        )
+
         tactics_score = 55.0
         tactics_over = 0.0
         if specialist and specialist.signal("tactics_agent"):
@@ -417,6 +608,24 @@ class WeightedDecisionEngine:
                 tactics_over *= 0.55
             if "limited_statistics" in (xv2.get("risk_flags") or []):
                 tactics_score = min(tactics_score, 58.0)
+
+        from worldcup_predictor.promotion.xg_promotion_adapter import (
+            apply_xg_promotion_to_factor,
+            compute_xg_promotion,
+        )
+
+        xg_promotion = compute_xg_promotion(
+            specialist=specialist,
+            baseline_tactics_score=tactics_score,
+            baseline_tactics_over=tactics_over,
+            competition_key=competition_key,
+            is_placeholder=bool(report.is_placeholder),
+            fixture_id=int(report.fixture_id),
+        )
+        self._last_xg_promotion = xg_promotion
+        tactics_score, tactics_over = apply_xg_promotion_to_factor(
+            tactics_score, tactics_over, xg_promotion
+        )
 
         player_score = 65.0
         player_edge = 0.0
@@ -487,6 +696,27 @@ class WeightedDecisionEngine:
             if "low_tournament_data_confidence" in (tv2.get("risk_flags") or []):
                 mot_score = min(mot_score, 58.0)
                 mot_edge *= 0.5
+
+        competition_key = "world_cup_2026"
+        if report.fixture and getattr(report.fixture, "competition_key", None):
+            competition_key = str(report.fixture.competition_key)
+        from worldcup_predictor.promotion.tournament_context_adapter import (
+            apply_context_promotion_to_factor,
+            compute_tournament_context_promotion,
+        )
+
+        context_promotion = compute_tournament_context_promotion(
+            specialist=specialist,
+            baseline_mot_score=mot_score,
+            baseline_mot_edge=mot_edge,
+            competition_key=competition_key,
+            is_placeholder=bool(report.is_placeholder),
+            fixture_id=int(report.fixture_id),
+        )
+        self._last_context_promotion = context_promotion
+        mot_score, mot_edge = apply_context_promotion_to_factor(
+            mot_score, mot_edge, context_promotion
+        )
 
         weather_score = 50.0
         weather_edge = 0.0
@@ -576,6 +806,21 @@ class WeightedDecisionEngine:
             for name, sig in specialist.signals.items():
                 for missing in sig.missing_data:
                     items.append(DataLimitation(field=f"{name}:{missing}", impact="specialist partial coverage"))
+            sm_sig = specialist.signal("sportmonks_prediction_agent")
+            if sm_sig and sm_sig.signals:
+                sm = sm_sig.signals
+                if sm.get("sportmonks_odds_available") or sm.get("sportmonks_prediction_available"):
+                    items.append(
+                        DataLimitation(
+                            field="sportmonks_benchmark_trace",
+                            impact=(
+                                f"conflict={sm.get('conflict_level')} "
+                                f"consensus={sm.get('consensus_with_internal')} "
+                                f"recommendation={sm.get('recommendation')} "
+                                f"disagreement={sm.get('disagreement_vs_internal')}"
+                            ),
+                        )
+                    )
         return items
 
     def _market_disagreement(

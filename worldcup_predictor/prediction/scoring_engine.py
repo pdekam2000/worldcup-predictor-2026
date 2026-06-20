@@ -385,6 +385,20 @@ class ScoringEngine:
             )
         except Exception:
             pass
+        try:
+            from worldcup_predictor.config.settings import get_settings
+            from worldcup_predictor.validation.capture import maybe_record_real_world_validation
+
+            settings = get_settings()
+            maybe_record_real_world_validation(
+                prediction=final_prediction,
+                report=report,
+                specialist=specialist_report,
+                enabled=settings.real_world_validation_mode == "shadow",
+                store_path=settings.real_world_validation_path,
+            )
+        except Exception:
+            pass
         return final_prediction
 
     def _apply_specialist_signals(

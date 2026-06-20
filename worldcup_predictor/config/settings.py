@@ -75,6 +75,60 @@ class Settings(BaseSettings):
         alias="RULE_A_LIVE_PATH",
     )
 
+    # Phase 24A — expected lineup promotion (lineup_strength factor; weights unchanged)
+    expected_lineup_promotion_mode: Literal["off", "shadow", "gated"] = Field(
+        default="shadow",
+        alias="EXPECTED_LINEUP_PROMOTION_MODE",
+    )
+    expected_lineup_promotion_shadow_path: str = Field(
+        default="data/shadow/expected_lineup_promotion_shadow.jsonl",
+        alias="EXPECTED_LINEUP_PROMOTION_SHADOW_PATH",
+    )
+
+    # Phase 24B — tournament context promotion (motivation_psychology factor; weights unchanged)
+    tournament_context_promotion_mode: Literal["off", "shadow", "gated"] = Field(
+        default="shadow",
+        alias="TOURNAMENT_CONTEXT_PROMOTION_MODE",
+    )
+    tournament_context_promotion_shadow_path: str = Field(
+        default="data/shadow/tournament_context_promotion_shadow.jsonl",
+        alias="TOURNAMENT_CONTEXT_PROMOTION_SHADOW_PATH",
+    )
+
+    # Phase 24C — xG promotion (tactics_matchup factor; weights unchanged)
+    xg_promotion_mode: Literal["off", "shadow", "gated"] = Field(
+        default="shadow",
+        alias="XG_PROMOTION_MODE",
+    )
+    xg_promotion_shadow_path: str = Field(
+        default="data/shadow/xg_promotion_shadow.jsonl",
+        alias="XG_PROMOTION_SHADOW_PATH",
+    )
+
+    # Phase 24C — Sportmonks prediction promotion (confidence/audit only)
+    sportmonks_prediction_promotion_mode: Literal["off", "shadow", "gated"] = Field(
+        default="shadow",
+        alias="SPORTMONKS_PREDICTION_PROMOTION_MODE",
+    )
+    sportmonks_prediction_promotion_shadow_path: str = Field(
+        default="data/shadow/sportmonks_prediction_promotion_shadow.jsonl",
+        alias="SPORTMONKS_PREDICTION_PROMOTION_SHADOW_PATH",
+    )
+
+    # Phase 26 — real-world validation framework (capture only; promotions stay shadow)
+    real_world_validation_mode: Literal["off", "shadow"] = Field(
+        default="shadow",
+        alias="REAL_WORLD_VALIDATION_MODE",
+    )
+    real_world_validation_path: str = Field(
+        default="data/validation/real_world_validation.jsonl",
+        alias="REAL_WORLD_VALIDATION_PATH",
+    )
+    real_world_validation_stats_path: str = Field(
+        default="data/validation/promotion_contribution_stats.json",
+        alias="REAL_WORLD_VALIDATION_STATS_PATH",
+    )
+
     # Database — PostgreSQL primary for SaaS; SQLite for intelligence (legacy/local)
     app_env: AppEnv = Field(default="local", alias="APP_ENV")
     database_url: str | None = Field(default=None, alias="DATABASE_URL")

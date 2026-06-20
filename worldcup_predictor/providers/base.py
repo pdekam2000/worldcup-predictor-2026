@@ -35,6 +35,7 @@ class ProviderCallResult:
     endpoint: str
     configured: bool = True
     error: str | None = None
+    trace: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
