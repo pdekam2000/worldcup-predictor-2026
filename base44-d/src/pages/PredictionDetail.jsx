@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchCachedPrediction, runPrediction } from "@/api/worldcupApi";
+import { fetchCachedPrediction, runPrediction, normalizePredictionPayload } from "@/api/worldcupApi";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Trophy, Activity, Brain, Stethoscope,
   Users, Cloud, Flame, LineChart, Swords, Scale, Building, Star,
-  AlertCircle, RefreshCw, Play,
+  AlertCircle, RefreshCw, Play, ChevronDown, ChevronUp, Target, ShieldAlert, ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -56,9 +56,111 @@ function predictionLabel(prediction) {
   return prediction || "—";
 }
 
+function formatMarketSelection(selection) {
+  if (!selection) return "—";
+  const map = {
+    home_win: "Home Win",
+    away_win: "Away Win",
+    draw: "Draw",
+    over_2_5: "Over 2.5",
+    under_2_5: "Under 2.5",
+    yes: "BTTS Yes",
+    no: "BTTS No",
+  };
+  return map[selection] || String(selection).replace(/_/g, " ");
+}
+
+function recommendedHeadline(recommendedBets) {
+  if (!Array.isArray(recommendedBets) || recommendedBets.length === 0) {
+    return null;
+  }
+  const primary = recommendedBets[0];
+  if (primary?.status === "no_bet") {
+    return { type: "no_bet", text: primary.display_text || "No Bet — confidence too low" };
+  }
+  const labels = recommendedBets
+    .filter((b) => b.status === "recommended")
+    .map((b) => b.pick)
+    .filter(Boolean);
+  if (labels.length === 0) return null;
+  if (labels.length === 1) {
+    return { type: "single", text: `Recommended Bet: ${labels[0]}` };
+  }
+  return { type: "multi", text: `Recommended Bets: ${labels.join(" + ")}` };
+}
+
+function MarketDetailSection({ title, children, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-white/10 rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold hover:bg-white/5 transition-colors"
+      >
+        <span>{title}</span>
+        {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+      </button>
+      {open && <div className="px-4 pb-4 pt-1 border-t border-white/5">{children}</div>}
+    </div>
+  );
+}
+
+function ProbBar({ label, value }) {
+  const pct = value != null && !Number.isNaN(Number(value)) ? Number(value) : null;
+  return (
+    <div>
+      <div className="flex justify-between text-xs mb-1">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="font-medium">{pct != null ? `${pct}%` : "—"}</span>
+      </div>
+      <Progress value={pct ?? 0} className="h-2 bg-white/5" />
+    </div>
+  );
+}
+
 function roundPercent(value) {
   if (value == null || Number.isNaN(Number(value))) return null;
   return Math.round(Number(value) * 10) / 10;
+}
+
+function pctFromProb(value) {
+  if (value == null || Number.isNaN(Number(value))) return null;
+  const n = Number(value);
+  return roundPercent(n <= 1 ? n * 100 : n);
+}
+
+function RankingPickCard({ title, pick, accentClass, icon: Icon }) {
+  if (!pick) {
+    return (
+      <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-sm text-muted-foreground">
+        <div className="font-semibold text-foreground/80 mb-1">{title}</div>
+        <span>Not available for this fixture</span>
+      </div>
+    );
+  }
+  const prob = pctFromProb(pick.probability ?? pick.confidence);
+  const score = pick.market_rank_score != null ? Math.round(Number(pick.market_rank_score) * 1000) / 10 : null;
+  return (
+    <div className={`rounded-xl border p-4 ${accentClass}`}>
+      <div className="flex items-start gap-3">
+        {Icon && <Icon className="w-5 h-5 shrink-0 mt-0.5 opacity-80" />}
+        <div className="min-w-0 flex-1">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">{title}</div>
+          <div className="font-display font-bold text-lg leading-tight">{pick.pick}</div>
+          <div className="text-xs text-muted-foreground mt-1">{pick.market}</div>
+          <div className="flex flex-wrap gap-3 mt-2 text-sm">
+            {prob != null && (
+              <span>Probability: <strong className="text-foreground">{prob}%</strong></span>
+            )}
+            {score != null && (
+              <span>Rank score: <strong className="text-foreground">{score}%</strong></span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function PredictionDetail() {
@@ -79,7 +181,7 @@ export default function PredictionDetail() {
     try {
       const cached = await fetchCachedPrediction(id);
       if (cached.cached && cached.data) {
-        setResult(cached.data);
+        setResult(normalizePredictionPayload(cached.data));
         setCacheSource(cached.data.cache_source || "cache");
         setCooldownRemaining(cached.data.refresh_cooldown_remaining_seconds ?? null);
       } else {
@@ -100,7 +202,7 @@ export default function PredictionDetail() {
     setApiError(null);
     try {
       const data = await runPrediction(id, { forceRefresh });
-      setResult(data);
+      setResult(normalizePredictionPayload(data));
       setNotCached(false);
       setCacheSource(data.cache_source || (forceRefresh ? "live" : "live"));
       setCooldownRemaining(data.refresh_cooldown_remaining_seconds ?? null);
@@ -189,16 +291,30 @@ export default function PredictionDetail() {
   const dataSignals = result?.data_signals;
   const pred = result?.prediction;
   const predLabel = predictionLabel(pred);
+  const recommendedBets = result?.recommended_bets ?? [];
+  const headline = recommendedHeadline(recommendedBets);
+  const primaryRec = result?.primary_recommendation ?? recommendedBets[0];
+  const safePick = result?.safe_pick ?? null;
+  const valuePick = result?.value_pick ?? null;
+  const aggressivePick = result?.aggressive_pick ?? null;
+  const markets = result?.detailed_markets ?? {};
+  const riskLevel = result?.risk_level ?? "medium";
 
-  const homeWinProb = roundPercent(result?.probabilities?.home_win);
-  const drawProb = roundPercent(result?.probabilities?.draw);
-  const awayWinProb = roundPercent(result?.probabilities?.away_win);
+  const homeWinProb = roundPercent(result?.probabilities?.home_win ?? markets.match_winner?.probabilities?.home_win);
+  const drawProb = roundPercent(result?.probabilities?.draw ?? markets.match_winner?.probabilities?.draw);
+  const awayWinProb = roundPercent(result?.probabilities?.away_win ?? markets.match_winner?.probabilities?.away_win);
 
-  const overUnder = result?.probabilities?.over_under_2_5;
-  const overSelection = overUnder?.selection;
-  const overProb = roundPercent(
-    overUnder?.probability != null ? overUnder.probability * (overUnder.probability <= 1 ? 100 : 1) : null,
-  );
+  const overUnder = result?.probabilities?.over_under_2_5 ?? markets.over_under_25;
+  const overSelection = overUnder?.selection ?? markets.over_under_25?.selection;
+  const overProb = pctFromProb(overUnder?.probability ?? markets.over_under_25?.probability);
+  const ouProbs = overUnder?.probabilities ?? markets.over_under_25?.probabilities ?? {};
+
+  const btts = result?.probabilities?.btts ?? markets.btts ?? {};
+  const bttsProb = pctFromProb(btts.probability);
+  const ht = markets.halftime ?? {};
+  const firstGoal = markets.first_goal ?? {};
+  const goalscorer = markets.goalscorer ?? {};
+  const doubleChance = markets.double_chance ?? {};
 
   const specialists = Object.entries(result?.specialist_summary?.agents ?? {}).map(([name, agent]) => ({
     name,
@@ -274,75 +390,211 @@ export default function PredictionDetail() {
         </div>
       </motion.div>
 
-      {/* Main prediction */}
-      <div className="grid sm:grid-cols-2 gap-6">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-2xl p-6">
-          <h2 className="font-display font-semibold mb-4 flex items-center gap-2">
-            <Brain className="w-5 h-5 text-primary" /> Match Prediction
-          </h2>
-          <div className="text-center mb-6">
-            <div className="text-4xl font-display font-bold text-gradient-blue mb-1">{predLabel}</div>
-            <div className="text-sm text-muted-foreground">AI Prediction</div>
-          </div>
-          <div className="relative w-40 h-40 mx-auto mb-6">
-            <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-              <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
-              <circle cx="60" cy="60" r="54" fill="none" stroke="hsl(217, 91%, 60%)" strokeWidth="10"
-                strokeDasharray={`${(confidence / 100) * 339} 339`} strokeLinecap="round" />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-display font-bold">{confidence}%</span>
-              <span className="text-xs text-muted-foreground">Confidence</span>
-            </div>
-          </div>
-          <div className="space-y-3">
-            {[
-              { label: "Home Win", value: homeWinProb },
-              { label: "Draw", value: drawProb },
-              { label: "Away Win", value: awayWinProb },
-            ].map((p, i) => (
-              <div key={i}>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-muted-foreground">{p.label}</span>
-                  <span className="font-medium">{p.value != null ? `${p.value}%` : "—"}</span>
-                </div>
-                <Progress value={p.value ?? 0} className="h-2 bg-white/5" />
-              </div>
-            ))}
+      {/* Phase 30C — ranked pick buckets */}
+      {!result?.no_bet && (safePick || valuePick || aggressivePick) && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.04 }}
+          className="space-y-3"
+        >
+          <h2 className="font-display font-semibold text-lg">Ranked Picks</h2>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <RankingPickCard
+              title="Safe Pick"
+              pick={safePick}
+              accentClass="border-emerald-500/25 bg-emerald-500/5"
+              icon={ShieldCheck}
+            />
+            <RankingPickCard
+              title="Value Pick"
+              pick={valuePick}
+              accentClass="border-primary/25 bg-primary/5"
+              icon={Target}
+            />
+            <RankingPickCard
+              title="Aggressive Pick"
+              pick={aggressivePick}
+              accentClass="border-orange-500/25 bg-orange-500/5"
+              icon={Flame}
+            />
           </div>
         </motion.div>
+      )}
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-6">
-          <div className="glass rounded-2xl p-6">
-            <h2 className="font-display font-semibold mb-4">Over / Under 2.5</h2>
-            {overSelection != null ? (
-              <>
-                <div className="flex items-center justify-between mb-3">
-                  <span className={`text-lg font-bold ${String(overSelection).toLowerCase().includes("over") ? "text-green-400" : "text-red-400"}`}>
-                    {String(overSelection).replace(/_/g, " ")}
-                  </span>
-                  <span className="text-2xl font-display font-bold">{overProb ?? "—"}%</span>
-                </div>
-                <Progress value={overProb ?? 0} className="h-3 bg-white/5" />
-              </>
-            ) : (
-              <p className="text-sm text-muted-foreground">Extended market data not returned for this fixture.</p>
+      {/* Recommended bet — primary UX */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className={`glass rounded-2xl p-6 border ${
+          headline?.type === "no_bet" ? "border-yellow-500/30 bg-yellow-500/5" : "border-primary/30 bg-primary/5"
+        }`}
+      >
+        <div className="flex items-start gap-3">
+          {headline?.type === "no_bet" ? (
+            <ShieldAlert className="w-8 h-8 text-yellow-400 shrink-0" />
+          ) : (
+            <Target className="w-8 h-8 text-primary shrink-0" />
+          )}
+          <div className="flex-1 min-w-0">
+            <h2 className="font-display font-bold text-xl sm:text-2xl mb-2">
+              {headline?.text || `Recommended Bet: ${predLabel}`}
+            </h2>
+            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
+              <span>Confidence: <strong className="text-foreground">{confidence}%</strong></span>
+              <span>Risk: <strong className="text-foreground capitalize">{riskLevel}</strong></span>
+              {dataQuality != null && (
+                <span>Data quality: <strong className="text-foreground">{dataQuality}%</strong></span>
+              )}
+            </div>
+            {primaryRec?.reasoning && (
+              <p className="text-sm text-muted-foreground leading-relaxed">{primaryRec.reasoning}</p>
+            )}
+            {Array.isArray(primaryRec?.source_agents) && primaryRec.source_agents.length > 0 && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Sources: {primaryRec.source_agents.join(" · ")}
+              </p>
             )}
           </div>
-          {result?.specialist_summary?.aggregated_score != null && (
-            <div className="glass rounded-2xl p-6">
-              <h2 className="font-display font-semibold mb-4">Specialist Score</h2>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-lg font-bold text-primary">Aggregated</span>
-                <span className="text-2xl font-display font-bold">
-                  {roundPercent(result.specialist_summary.aggregated_score)}%
+        </div>
+        {recommendedBets.filter((b) => b.status === "recommended").length > 1 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {recommendedBets
+              .filter((b) => b.status === "recommended")
+              .map((bet) => (
+                <span
+                  key={`${bet.market}-${bet.pick}`}
+                  className="px-3 py-1 rounded-full text-xs font-semibold bg-primary/15 text-primary border border-primary/20"
+                >
+                  {bet.market}: {bet.pick}
                 </span>
-              </div>
-              <Progress value={roundPercent(result.specialist_summary.aggregated_score) ?? 0} className="h-3 bg-white/5" />
+              ))}
+          </div>
+        )}
+      </motion.div>
+
+      {/* Collapsible detailed markets */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12 }}
+        className="space-y-3"
+      >
+        <h2 className="font-display font-semibold text-lg flex items-center gap-2">
+          <LineChart className="w-5 h-5 text-primary" /> Detailed Probabilities
+        </h2>
+        <p className="text-xs text-muted-foreground -mt-1 mb-2">
+          Raw model outputs for transparency — recommendations above use only the strongest signals.
+        </p>
+
+        <MarketDetailSection title="Match Winner (1X2)" defaultOpen>
+          <div className="space-y-3 pt-2">
+            <ProbBar label="Home Win" value={homeWinProb} />
+            <ProbBar label="Draw" value={drawProb} />
+            <ProbBar label="Away Win" value={awayWinProb} />
+          </div>
+        </MarketDetailSection>
+
+        <MarketDetailSection title="Over / Under 2.5">
+          <div className="space-y-3 pt-2">
+            {overSelection != null ? (
+              <>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold text-primary">{formatMarketSelection(overSelection)}</span>
+                  <span>{overProb != null ? `${overProb}%` : "—"}</span>
+                </div>
+                <ProbBar label="Over 2.5" value={ouProbs.over_2_5 ?? ouProbs.over} />
+                <ProbBar label="Under 2.5" value={ouProbs.under_2_5 ?? ouProbs.under} />
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">Over/Under data unavailable.</p>
+            )}
+          </div>
+        </MarketDetailSection>
+
+        <MarketDetailSection title="Both Teams To Score (BTTS)">
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-semibold">{formatMarketSelection(btts.selection)}</span>
+              <span>{bttsProb != null ? `${bttsProb}%` : "—"}</span>
             </div>
-          )}
+            <ProbBar label="Yes" value={btts.probabilities?.yes} />
+            <ProbBar label="No" value={btts.probabilities?.no} />
+          </div>
+        </MarketDetailSection>
+
+        <MarketDetailSection title="Half Time Result">
+          <div className="space-y-3 pt-2">
+            <ProbBar label="Home HT" value={ht.probabilities?.home_win} />
+            <ProbBar label="Draw HT" value={ht.probabilities?.draw} />
+            <ProbBar label="Away HT" value={ht.probabilities?.away_win} />
+          </div>
+        </MarketDetailSection>
+
+        <MarketDetailSection title="First Goal & Timing">
+          <div className="space-y-2 pt-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">First team to score</span>
+              <span className="font-medium">{firstGoal.team || "—"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Minute range</span>
+              <span className="font-medium">{firstGoal.minute_range || "—"}</span>
+            </div>
+            {firstGoal.expected_minute != null && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Expected minute</span>
+                <span className="font-medium">{firstGoal.expected_minute}&apos;</span>
+              </div>
+            )}
+          </div>
+        </MarketDetailSection>
+
+        {goalscorer?.available !== false && (goalscorer?.player || goalscorer?.available) && (
+          <MarketDetailSection title="Likely Goalscorer">
+            <div className="space-y-2 pt-2 text-sm">
+              {goalscorer?.player ? (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Player</span>
+                    <span className="font-medium">{goalscorer.player}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Team</span>
+                    <span className="font-medium">{goalscorer.team || "—"}</span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-muted-foreground">Lineup/player data not available for goalscorer pick.</p>
+              )}
+            </div>
+          </MarketDetailSection>
+        )}
+
+        {(doubleChance.home_or_draw != null || doubleChance.draw_or_away != null) && (
+          <MarketDetailSection title="Double Chance">
+            <div className="space-y-3 pt-2">
+              <ProbBar label="Home or Draw" value={doubleChance.home_or_draw} />
+              <ProbBar label="Home or Away" value={doubleChance.home_or_away} />
+              <ProbBar label="Draw or Away" value={doubleChance.draw_or_away} />
+            </div>
+          </MarketDetailSection>
+        )}
+      </motion.div>
+
+      {result?.specialist_summary?.aggregated_score != null && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="glass rounded-2xl p-6">
+          <h2 className="font-display font-semibold mb-4">Specialist Agreement</h2>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-lg font-bold text-primary">Aggregated score</span>
+            <span className="text-2xl font-display font-bold">
+              {roundPercent(result.specialist_summary.aggregated_score)}%
+            </span>
+          </div>
+          <Progress value={roundPercent(result.specialist_summary.aggregated_score) ?? 0} className="h-3 bg-white/5" />
         </motion.div>
-      </div>
+      )}
 
       {specialists.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>

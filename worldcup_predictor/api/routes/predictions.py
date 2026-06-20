@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 
 from worldcup_predictor.api.audit_trace_helpers import build_audit_trace
 from worldcup_predictor.api.display_helpers import enrich_prediction_payload
+from worldcup_predictor.api.prediction_output import build_prediction_output
 from worldcup_predictor.api.deps import get_optional_current_user
 from worldcup_predictor.api.web_auth import WebAuthUser
 
@@ -52,41 +53,9 @@ def _map_prediction_selection(selection: str) -> str:
 
 
 def _extract_probabilities(prediction: MatchPrediction) -> dict[str, Any]:
-    raw_ft = (prediction.metadata or {}).get("extended_markets_ft_1x2")
-    if raw_ft:
-        try:
-            ft = json.loads(raw_ft) if isinstance(raw_ft, str) else raw_ft
-            if isinstance(ft, dict) and "home" in ft:
-                return {
-                    "home_win": round(float(ft["home"]) * 100, 1),
-                    "draw": round(float(ft["draw"]) * 100, 1),
-                    "away_win": round(float(ft["away"]) * 100, 1),
-                }
-        except (json.JSONDecodeError, TypeError, ValueError):
-            pass
-
-    raw_ext = (prediction.metadata or {}).get("extended_markets")
-    if raw_ext:
-        try:
-            data = json.loads(raw_ext) if isinstance(raw_ext, str) else raw_ext
-            ft = (data or {}).get("full_time_1x2") or {}
-            if ft:
-                return {
-                    "home_win": round(float(ft.get("home", 0)) * 100, 1),
-                    "draw": round(float(ft.get("draw", 0)) * 100, 1),
-                    "away_win": round(float(ft.get("away", 0)) * 100, 1),
-                }
-        except (json.JSONDecodeError, TypeError, ValueError):
-            pass
-
-    return {
-        "selection": prediction.one_x_two.selection,
-        "selection_probability": prediction.one_x_two.probability,
-        "over_under_2_5": {
-            "selection": prediction.over_under.selection,
-            "probability": prediction.over_under.probability,
-        },
-    }
+    """Backward-compatible wrapper — delegates to Phase 30A output builder."""
+    block = build_prediction_output(prediction)
+    return block["probabilities"]
 
 
 def _data_quality_score(prediction: MatchPrediction) -> float:
@@ -141,6 +110,7 @@ def _success_payload(result: PredictPipelineResult) -> dict[str, Any]:
     prediction = result.prediction
     home_team, away_team = _split_teams(prediction.match_name)
     specialist_summary = _specialist_summary(result, prediction)
+    output_block = build_prediction_output(prediction, specialist_summary=specialist_summary)
     return {
         "status": "ok",
         "fixture_id": prediction.fixture_id,
@@ -148,7 +118,17 @@ def _success_payload(result: PredictPipelineResult) -> dict[str, Any]:
         "away_team": away_team,
         "prediction": _map_prediction_selection(prediction.one_x_two.selection),
         "confidence": prediction.confidence_score,
-        "probabilities": _extract_probabilities(prediction),
+        "probabilities": output_block["probabilities"],
+        "recommended_bets": output_block["recommended_bets"],
+        "detailed_markets": output_block["detailed_markets"],
+        "primary_recommendation": output_block["primary_recommendation"],
+        "market_ranking": output_block.get("market_ranking") or [],
+        "safe_pick": output_block.get("safe_pick"),
+        "value_pick": output_block.get("value_pick"),
+        "aggressive_pick": output_block.get("aggressive_pick"),
+        "accuracy_tracking": output_block.get("accuracy_tracking"),
+        "risk_level": output_block["risk_level"],
+        "no_bet": output_block["no_bet"],
         "specialist_summary": specialist_summary,
         "audit_trace": build_audit_trace(prediction, specialist_summary),
         "data_quality": _data_quality_score(prediction),

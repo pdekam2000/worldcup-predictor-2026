@@ -13,6 +13,7 @@ from worldcup_predictor.agents.specialists.status_reasons import (
 from worldcup_predictor.config.settings import Settings, get_settings
 from worldcup_predictor.domain.schedule import TournamentFixture
 from worldcup_predictor.quota.fixtures_list_cache import get_cached as get_fixtures_list_cached
+from worldcup_predictor.api.prediction_output import enrich_cached_prediction_output
 from worldcup_predictor.quota.quota_guard import refresh_cooldown_remaining_seconds
 
 
@@ -168,4 +169,4 @@ def enrich_prediction_payload(
         )
         if remaining is not None:
             out["refresh_cooldown_remaining_seconds"] = remaining
-    return out
+    return enrich_cached_prediction_output(out)

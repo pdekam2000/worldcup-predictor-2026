@@ -88,9 +88,22 @@ export async function markAllNotificationsRead() {
   return saasFetch("/api/user/notifications/read-all", { method: "POST" });
 }
 
-export async function fetchPredictionHistoryPage({ limit = 50, offset = 0 } = {}) {
-  const qs = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+export async function fetchPredictionHistoryPage({ limit = 50, offset = 0, resultFilter = "all" } = {}) {
+  const qs = new URLSearchParams({
+    limit: String(limit),
+    offset: String(offset),
+    result_filter: resultFilter,
+  });
   return saasFetch(`/api/user/prediction-history?${qs}`);
+}
+
+export async function fetchPredictionHistoryResults({ limit = 50, offset = 0, resultFilter = "all" } = {}) {
+  const qs = new URLSearchParams({
+    limit: String(limit),
+    offset: String(offset),
+    result_filter: resultFilter,
+  });
+  return saasFetch(`/api/user/prediction-history/results?${qs}`);
 }
 
 export async function fetchSubscription() {

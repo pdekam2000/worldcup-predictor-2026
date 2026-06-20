@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from collections import defaultdict
+from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
@@ -12,6 +13,10 @@ from pydantic import BaseModel, Field
 from sqlalchemy.exc import IntegrityError
 
 from worldcup_predictor.api.deps import get_current_user
+from worldcup_predictor.api.prediction_history_evaluation import (
+    evaluate_history_record,
+    filter_by_result_status,
+)
 from worldcup_predictor.api.saas_serializers import (
     alert_to_dict,
     favorite_to_dict,
@@ -21,6 +26,7 @@ from worldcup_predictor.api.saas_serializers import (
     settings_to_dict,
     subscription_to_dict,
 )
+from worldcup_predictor.config.settings import get_settings
 from worldcup_predictor.api.web_auth import WebAuthUser
 from worldcup_predictor.database.postgres.enums import FavoriteType, Prediction1x2, PredictionResult
 from worldcup_predictor.database.saas_factory import saas_uow
@@ -52,6 +58,49 @@ class PredictionHistoryCreateRequest(BaseModel):
     prediction_1x2: str = Field(..., pattern="^(home|draw|away)$")
     league: str | None = None
     confidence: float | None = None
+
+
+def _dashboard_stats_from_evaluated(history: list[dict[str, Any]]) -> dict[str, Any]:
+    total = len(history)
+    settled = [h for h in history if h.get("result_status") in ("correct", "wrong")]
+    correct = sum(1 for h in settled if h.get("result_status") == "correct")
+    win_rate = round((correct / len(settled)) * 100, 1) if settled else 0.0
+
+    streak = 0
+    for row in history:
+        if row.get("result_status") == "correct":
+            streak += 1
+        elif row.get("result_status") == "wrong":
+            break
+
+    by_month: dict[str, list[int]] = defaultdict(list)
+    for row in history:
+        if row.get("result_status") not in ("correct", "wrong"):
+            continue
+        viewed = row.get("viewed_at")
+        if not viewed:
+            continue
+        try:
+            month_key = datetime.fromisoformat(str(viewed).replace("Z", "+00:00")).strftime("%b")
+        except ValueError:
+            continue
+        by_month[month_key].append(1 if row.get("result_status") == "correct" else 0)
+
+    trend = [
+        {"month": month, "accuracy": round(sum(vals) / len(vals) * 100, 1)}
+        for month, vals in sorted(by_month.items(), key=lambda item: item[0])
+    ][-6:]
+
+    return {
+        "predictions_viewed": total,
+        "win_rate": win_rate,
+        "matches_analyzed": total,
+        "streak": f"{streak}W" if streak else "0",
+        "streak_count": streak,
+        "correct": correct,
+        "settled": len(settled),
+        "performance_trend": trend,
+    }
 
 
 def _dashboard_stats(history: list) -> dict[str, Any]:
@@ -234,25 +283,54 @@ def mark_all_notifications_read(user: WebAuthUser = Depends(get_current_user)) -
 def list_prediction_history(
     limit: int = 50,
     offset: int = 0,
+    result_filter: str = "all",
     user: WebAuthUser = Depends(get_current_user),
 ) -> dict[str, Any]:
     limit = max(1, min(limit, 100))
     offset = max(0, offset)
+    settings = get_settings()
     with saas_uow() as uow:
         rows = uow.prediction_history.list_for_user(_user_id(user), limit=limit, offset=offset)
-        items = [prediction_history_to_dict(row) for row in rows]
-        settled = [row for row in rows if row.result != PredictionResult.PENDING]
-        correct = sum(1 for row in settled if row.result == PredictionResult.CORRECT)
+        from worldcup_predictor.api.prediction_history_evaluation import FixtureOutcomeResolver
+
+        resolver = FixtureOutcomeResolver(settings=settings)
+        items = [evaluate_history_record(row, resolver=resolver, settings=settings) for row in rows]
+        filtered = filter_by_result_status(items, result_filter)
+
+        settled = [item for item in items if item.get("result_status") in ("correct", "wrong")]
+        correct = sum(1 for item in settled if item.get("result_status") == "correct")
+        wrong = sum(1 for item in settled if item.get("result_status") == "wrong")
+        pending = sum(1 for item in items if item.get("result_status") == "pending")
+        unknown = sum(1 for item in items if item.get("result_status") == "unknown")
         accuracy = round((correct / len(settled)) * 100, 1) if settled else 0.0
         return {
             "status": "ok",
-            "history": items,
+            "history": filtered,
             "stats": {
                 "total": len(items),
                 "correct": correct,
+                "wrong": wrong,
+                "pending": pending,
+                "unknown": unknown,
                 "accuracy": accuracy,
             },
         }
+
+
+@router.get("/prediction-history/results")
+def list_prediction_history_results(
+    limit: int = 50,
+    offset: int = 0,
+    result_filter: str = "all",
+    user: WebAuthUser = Depends(get_current_user),
+) -> dict[str, Any]:
+    """Phase 29 — explicit results endpoint (same payload as enriched prediction-history)."""
+    return list_prediction_history(
+        limit=limit,
+        offset=offset,
+        result_filter=result_filter,
+        user=user,
+    )
 
 
 @router.post("/prediction-history")
@@ -293,11 +371,16 @@ def get_subscription(user: WebAuthUser = Depends(get_current_user)) -> dict[str,
 
 @router.get("/dashboard")
 def get_dashboard(user: WebAuthUser = Depends(get_current_user)) -> dict[str, Any]:
+    settings = get_settings()
     with saas_uow() as uow:
         history = uow.prediction_history.list_for_user(_user_id(user), limit=50)
-        stats = _dashboard_stats(history)
+        from worldcup_predictor.api.prediction_history_evaluation import FixtureOutcomeResolver
+
+        resolver = FixtureOutcomeResolver(settings=settings)
+        evaluated = [evaluate_history_record(row, resolver=resolver, settings=settings) for row in history]
+        stats = _dashboard_stats_from_evaluated(evaluated)
         trend = stats.pop("performance_trend", [])
-        recent = [prediction_history_to_dict(row) for row in history[:5]]
+        recent = evaluated[:5]
         return {
             "status": "ok",
             "stats": stats,

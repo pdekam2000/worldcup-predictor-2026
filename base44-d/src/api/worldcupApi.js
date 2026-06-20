@@ -112,4 +112,25 @@ export async function runPrediction(fixtureId, params = {}) {
   return parseJsonResponse(response);
 }
 
-export { buildApiUrl as buildUrl };
+/** Normalize prediction API payload for UI — Phase 30A/30C. */
+export function normalizePredictionPayload(data) {
+  if (!data || typeof data !== "object") return data;
+  const ou =
+    data.probabilities?.over_under_2_5 ??
+    data.detailed_markets?.over_under_25 ??
+    null;
+  return {
+    ...data,
+    recommended_bets: Array.isArray(data.recommended_bets) ? data.recommended_bets : [],
+    detailed_markets: data.detailed_markets ?? {},
+    market_ranking: Array.isArray(data.market_ranking) ? data.market_ranking : [],
+    safe_pick: data.safe_pick ?? null,
+    value_pick: data.value_pick ?? null,
+    aggressive_pick: data.aggressive_pick ?? null,
+    accuracy_tracking: data.accuracy_tracking ?? null,
+    probabilities: {
+      ...(data.probabilities ?? {}),
+      over_under_2_5: ou,
+    },
+  };
+}
