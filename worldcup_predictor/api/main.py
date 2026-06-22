@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from worldcup_predictor.api.routes.admin import router as admin_router
 from worldcup_predictor.api.routes.auth import router as auth_router
+from worldcup_predictor.api.routes.goal_timing import router as goal_timing_router
 from worldcup_predictor.api.routes.health import router as health_router
 from worldcup_predictor.api.routes.matches import router as matches_router
 from worldcup_predictor.api.routes.predictions import router as predictions_router
@@ -62,3 +63,4 @@ app.include_router(user_router, prefix="/api")
 app.include_router(admin_router, prefix="/api")
 app.include_router(matches_router, prefix="/api")
 app.include_router(predictions_router, prefix="/api")
+app.include_router(goal_timing_router, prefix="/api")

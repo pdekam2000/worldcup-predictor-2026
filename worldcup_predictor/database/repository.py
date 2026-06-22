@@ -1025,3 +1025,146 @@ class FootballIntelligenceRepository:
             ),
         )
         self._conn.commit()
+
+    def list_fixture_goal_events(self, fixture_id: int) -> list[dict[str, Any]]:
+        rows = self._conn.execute(
+            """
+            SELECT sort_index, minute, extra_minute, team, team_id, player, assist,
+                   is_penalty, is_own_goal, detail
+            FROM fixture_goal_events
+            WHERE fixture_id = ?
+            ORDER BY sort_index ASC
+            """,
+            (int(fixture_id),),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def count_fixture_goal_events(self, fixture_id: int) -> int:
+        row = self._conn.execute(
+            "SELECT COUNT(*) FROM fixture_goal_events WHERE fixture_id = ?",
+            (int(fixture_id),),
+        ).fetchone()
+        return int(row[0]) if row else 0
+
+    def replace_fixture_goal_events(self, fixture_id: int, events: list[Any]) -> bool:
+        from worldcup_predictor.outcomes.models import GoalEvent
+
+        fid = int(fixture_id)
+        self._conn.execute("DELETE FROM fixture_goal_events WHERE fixture_id = ?", (fid,))
+        for idx, event in enumerate(events):
+            if isinstance(event, GoalEvent):
+                row = event
+            elif isinstance(event, dict):
+                row = GoalEvent.from_row({**event, "sort_index": event.get("sort_index", idx)})
+            else:
+                continue
+            self._conn.execute(
+                """
+                INSERT INTO fixture_goal_events (
+                    fixture_id, sort_index, minute, extra_minute, team, team_id,
+                    player, assist, is_penalty, is_own_goal, detail
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    fid,
+                    int(row.sort_index),
+                    row.minute,
+                    row.extra_minute,
+                    row.team,
+                    row.team_id,
+                    row.player,
+                    row.assist,
+                    1 if row.is_penalty else 0,
+                    1 if row.is_own_goal else 0,
+                    row.detail,
+                ),
+            )
+        self._conn.commit()
+        return True
+
+    # --- Phase 51C goal timing queries (read-only, leakage-safe filters) ---
+
+    def list_finished_fixtures_before(
+        self,
+        *,
+        before_kickoff: str,
+        competition_keys: list[str],
+        limit: int | None = None,
+    ) -> list[dict[str, Any]]:
+        if not competition_keys:
+            return []
+        placeholders = ",".join("?" for _ in competition_keys)
+        query = f"""
+            SELECT f.*, r.home_goals, r.away_goals, r.first_goal_team, r.first_goal_minute,
+                   r.first_goal_extra_minute
+            FROM fixtures f
+            LEFT JOIN fixture_results r ON r.fixture_id = f.fixture_id
+            WHERE f.is_placeholder = 0
+              AND f.competition_key IN ({placeholders})
+              AND f.kickoff_utc IS NOT NULL
+              AND f.kickoff_utc < ?
+              AND f.status IN ('FT', 'AET', 'PEN', 'FINISHED')
+            ORDER BY f.kickoff_utc DESC
+        """
+        params: list[Any] = [*competition_keys, before_kickoff]
+        if limit:
+            query += " LIMIT ?"
+            params.append(int(limit))
+        rows = self._conn.execute(query, params).fetchall()
+        return [dict(r) for r in rows]
+
+    def list_team_finished_fixtures_before(
+        self,
+        *,
+        team_name: str,
+        before_kickoff: str,
+        competition_keys: list[str],
+        limit: int = 40,
+    ) -> list[dict[str, Any]]:
+        if not competition_keys or not team_name:
+            return []
+        placeholders = ",".join("?" for _ in competition_keys)
+        query = f"""
+            SELECT f.*, r.home_goals, r.away_goals, r.first_goal_team, r.first_goal_minute,
+                   r.first_goal_extra_minute
+            FROM fixtures f
+            LEFT JOIN fixture_results r ON r.fixture_id = f.fixture_id
+            WHERE f.is_placeholder = 0
+              AND f.competition_key IN ({placeholders})
+              AND f.kickoff_utc IS NOT NULL
+              AND f.kickoff_utc < ?
+              AND f.status IN ('FT', 'AET', 'PEN', 'FINISHED')
+              AND (f.home_team = ? OR f.away_team = ?)
+            ORDER BY f.kickoff_utc DESC
+            LIMIT ?
+        """
+        params: list[Any] = [*competition_keys, before_kickoff, team_name, team_name, int(limit)]
+        rows = self._conn.execute(query, params).fetchall()
+        return [dict(r) for r in rows]
+
+    def goal_timing_league_coverage(self, competition_keys: list[str]) -> list[dict[str, Any]]:
+        if not competition_keys:
+            return []
+        placeholders = ",".join("?" for _ in competition_keys)
+        rows = self._conn.execute(
+            f"""
+            SELECT f.competition_key AS competition_key,
+                   COUNT(*) AS finished_matches,
+                   SUM(CASE WHEN g.c > 0 THEN 1 ELSE 0 END) AS with_goal_events,
+                   SUM(CASE WHEN r.first_goal_minute IS NOT NULL THEN 1 ELSE 0 END) AS with_first_goal_minute
+            FROM fixtures f
+            LEFT JOIN fixture_results r ON r.fixture_id = f.fixture_id
+            LEFT JOIN (
+                SELECT fixture_id, COUNT(*) AS c
+                FROM fixture_goal_events
+                GROUP BY fixture_id
+            ) g ON g.fixture_id = f.fixture_id
+            WHERE f.is_placeholder = 0
+              AND f.competition_key IN ({placeholders})
+              AND f.status IN ('FT', 'AET', 'PEN', 'FINISHED')
+            GROUP BY f.competition_key
+            ORDER BY f.competition_key
+            """,
+            competition_keys,
+        ).fetchall()
+        return [dict(r) for r in rows]

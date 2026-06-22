@@ -135,3 +135,21 @@ export async function updateAdminUserPlan(userId, plan) {
   const qs = new URLSearchParams({ plan });
   return saasFetch(`/api/admin/users/${userId}/subscription?${qs.toString()}`, { method: "PATCH" });
 }
+
+/** Phase 51 — Elite Goal Timing engine */
+export async function fetchGoalTimingStatus() {
+  return saasFetch("/api/goal-timing/status");
+}
+
+export async function fetchGoalTimingDashboard() {
+  return saasFetch("/api/goal-timing/dashboard");
+}
+
+export async function fetchGoalTimingPicks({ limit = 20 } = {}) {
+  const qs = new URLSearchParams({ limit: String(limit) });
+  return saasFetch(`/api/goal-timing/picks?${qs}`);
+}
+
+export async function fetchGoalTimingPrediction(fixtureId) {
+  return saasFetch(`/api/goal-timing/predictions/${encodeURIComponent(fixtureId)}`);
+}

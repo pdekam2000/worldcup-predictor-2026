@@ -4,13 +4,15 @@ import { useAuth } from "@/lib/AuthContext";
 import {
   LayoutDashboard, BarChart3, CreditCard, Bell, Settings,
   Zap, Menu, LogOut, ChevronLeft, Shield, Trophy, History,
-  Heart, BellRing, Server, Star
+  Heart, BellRing, Server, Star, Timer, Target
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Goal Timing", path: "/goal-timing/dashboard", icon: Timer },
+  { label: "Today's Picks", path: "/goal-timing/picks", icon: Target },
   { label: "Match Center", path: "/matches", icon: Trophy },
   { label: "Accuracy", path: "/accuracy", icon: BarChart3 },
   { label: "History", path: "/history", icon: History },

@@ -39,6 +39,11 @@ import PredictionHistoryPage from './pages/PredictionHistoryPage';
 import FavoritesPage from './pages/FavoritesPage';
 import AlertsPage from './pages/AlertsPage';
 import ApiSettingsPage from './pages/ApiSettingsPage';
+import GoalTimingDashboardPage from './pages/goalTiming/GoalTimingDashboardPage';
+import GoalTimingPicksPage from './pages/goalTiming/GoalTimingPicksPage';
+import GoalTimingHistoryPage from './pages/goalTiming/GoalTimingHistoryPage';
+import GoalTimingBacktestPage from './pages/goalTiming/GoalTimingBacktestPage';
+import GoalTimingInsightsPage from './pages/goalTiming/GoalTimingInsightsPage';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth } = useAuth();
@@ -71,6 +76,12 @@ const AuthenticatedApp = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/matches" element={<MatchCenter />} />
           <Route path="/prediction/:id" element={<PredictionDetail />} />
+          <Route path="/goal-timing" element={<Navigate to="/goal-timing/dashboard" replace />} />
+          <Route path="/goal-timing/dashboard" element={<GoalTimingDashboardPage />} />
+          <Route path="/goal-timing/picks" element={<GoalTimingPicksPage />} />
+          <Route path="/goal-timing/history" element={<GoalTimingHistoryPage />} />
+          <Route path="/goal-timing/backtest" element={<GoalTimingBacktestPage />} />
+          <Route path="/goal-timing/insights" element={<GoalTimingInsightsPage />} />
           <Route path="/accuracy" element={<AccuracyCenter />} />
           <Route path="/subscription" element={<SubscriptionPage />} />
           <Route path="/notifications" element={<Notifications />} />

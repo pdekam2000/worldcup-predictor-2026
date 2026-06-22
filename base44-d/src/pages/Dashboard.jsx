@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { fetchDashboard } from "@/api/saasApi";
+import { fetchDashboard, fetchGoalTimingStatus } from "@/api/saasApi";
 import { fetchUpcomingMatches } from "@/api/worldcupApi";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [dashboardError, setDashboardError] = useState(null);
+  const [goalTimingStatus, setGoalTimingStatus] = useState(null);
 
   const loadMatches = useCallback(async () => {
     setMatchesLoading(true);
@@ -51,6 +52,9 @@ export default function Dashboard() {
   useEffect(() => {
     loadMatches();
     loadDashboard();
+    fetchGoalTimingStatus()
+      .then(setGoalTimingStatus)
+      .catch(() => setGoalTimingStatus(null));
   }, [loadMatches, loadDashboard]);
 
   const statsData = dashboard?.stats;
@@ -69,7 +73,24 @@ export default function Dashboard() {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div>
         <h1 className="text-2xl font-display font-bold">Welcome back{user?.full_name ? `, ${user.full_name}` : ""}</h1>
-        <p className="text-sm text-muted-foreground mt-1">Here's your prediction overview for today.</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Your hub for Elite Goal Timing predictions — first goal team, minute ranges, and timing intelligence.
+        </p>
+      </div>
+
+      <div className="glass rounded-2xl p-5 border border-primary/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Elite Goal Timing Engine</p>
+          <p className="text-sm text-muted-foreground">
+            {goalTimingStatus?.message || "Premier League baseline predictions — Phase 51D prototype."}
+          </p>
+        </div>
+        <Link
+          to="/goal-timing/dashboard"
+          className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+        >
+          Open Goal Timing <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
 
       {dashboardError && (
