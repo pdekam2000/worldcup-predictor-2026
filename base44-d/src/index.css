@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,78 +6,50 @@
 
 @layer base {
   :root {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 6%;
-    --secondary: 222 47% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 14%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 45 93% 58%;
-    --accent-foreground: 222 47% 6%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 217 91% 60%;
-    --chart-1: 217 91% 60%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 45 93% 58%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --radius: 0.75rem;
-    --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 222 47% 14%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 30% 18%;
-    --sidebar-ring: 217 91% 60%;
-  }
+    --terminal-bg: 220 43% 4%;
+    --terminal-card: 222 38% 11%;
+    --terminal-green: 151 100% 45%;
+    --terminal-gold: 43 100% 70%;
+    --terminal-red: 0 100% 65%;
+    --terminal-blue: 217 91% 60%;
 
-  .dark {
-    --background: 222 47% 6%;
+    --background: 220 43% 4%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 9%;
+    --card: 222 38% 11%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 47% 9%;
+    --popover: 222 38% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 6%;
-    --secondary: 222 47% 14%;
+    --primary: 151 100% 45%;
+    --primary-foreground: 220 43% 4%;
+    --secondary: 222 32% 16%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 14%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 45 93% 58%;
-    --accent-foreground: 222 47% 6%;
-    --destructive: 0 62.8% 30.6%;
+    --muted: 222 28% 14%;
+    --muted-foreground: 215 16% 65%;
+    --accent: 43 100% 70%;
+    --accent-foreground: 220 43% 4%;
+    --destructive: 0 100% 65%;
     --destructive-foreground: 210 40% 98%;
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 217 91% 60%;
-    --chart-1: 217 91% 60%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 45 93% 58%;
+    --border: 222 24% 18%;
+    --input: 222 24% 18%;
+    --ring: 151 100% 45%;
+    --chart-1: 151 100% 45%;
+    --chart-2: 217 91% 60%;
+    --chart-3: 43 100% 70%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 222 47% 14%;
+    --chart-5: 0 100% 65%;
+    --radius: 0.875rem;
+    --font-heading: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sidebar-background: 222 38% 8%;
+    --sidebar-foreground: 210 40% 92%;
+    --sidebar-primary: 151 100% 45%;
+    --sidebar-primary-foreground: 220 43% 4%;
+    --sidebar-accent: 222 32% 14%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 30% 18%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 222 24% 16%;
+    --sidebar-ring: 151 100% 45%;
   }
 }
 
@@ -85,28 +57,82 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    color-scheme: dark;
+  }
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground font-body antialiased;
+    background-color: #070b14;
+    background-image:
+      radial-gradient(ellipse 90% 60% at 50% -30%, rgba(0, 230, 118, 0.07), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 0%, rgba(59, 130, 246, 0.06), transparent 50%),
+      radial-gradient(ellipse 40% 30% at 0% 100%, rgba(255, 209, 102, 0.04), transparent 45%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .terminal-card {
+    @apply rounded-2xl border border-white/[0.06] bg-[#101827] shadow-[0_8px_32px_rgba(0,0,0,0.35)];
+  }
+  .terminal-card-glow {
+    @apply terminal-card;
+    box-shadow:
+      0 0 0 1px rgba(0, 230, 118, 0.08),
+      0 8px 40px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .terminal-chip {
+    @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide;
+  }
+  .terminal-section-title {
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-[#94A3B8];
+  }
+  .terminal-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#00E676] to-[#3B82F6];
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+    @apply terminal-card backdrop-blur-xl;
   }
   .glass-strong {
-    @apply bg-white/10 backdrop-blur-2xl border border-white/15;
+    @apply terminal-card-glow backdrop-blur-2xl;
   }
-  .glow-blue {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1);
+  .glow-green {
+    box-shadow: 0 0 24px rgba(0, 230, 118, 0.15), 0 0 0 1px rgba(0, 230, 118, 0.12);
   }
   .glow-gold {
-    box-shadow: 0 0 20px rgba(234, 179, 8, 0.3), 0 0 60px rgba(234, 179, 8, 0.1);
+    box-shadow: 0 0 24px rgba(255, 209, 102, 0.12), 0 0 0 1px rgba(255, 209, 102, 0.1);
   }
-  .text-gradient-blue {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400;
+  .animate-live-pulse {
+    animation: live-pulse 2s ease-in-out infinite;
   }
-  .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-amber-500;
+  @keyframes live-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(0.92); }
+  }
+  .scanline-overlay {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.012) 2px,
+      rgba(255, 255, 255, 0.012) 4px
+    );
+    pointer-events: none;
+  }
+  .intel-skeleton {
+    @apply rounded-lg bg-gradient-to-r from-white/[0.04] via-white/[0.08] to-white/[0.04] bg-[length:200%_100%] animate-pulse;
+  }
+  .intel-page-hero {
+    @apply rounded-2xl border border-white/[0.06] bg-gradient-to-br from-[#101827] via-[#0a0f1a] to-[#070B14] p-6 sm:p-8;
+  }
+  .intel-badge-gold {
+    @apply terminal-chip border-[#FFD166]/30 bg-[#FFD166]/10 text-[#FFD166];
+  }
+  .intel-badge-cyan {
+    @apply terminal-chip border-[#22D3EE]/30 bg-[#22D3EE]/10 text-[#67E8F9];
   }
 }
