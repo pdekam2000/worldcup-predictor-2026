@@ -1,15 +1,10 @@
 import {
   LayoutDashboard,
   Trophy,
+  Globe2,
   Sparkles,
-  FlaskConical,
   BookOpen,
   Timer,
-  Target,
-  History,
-  BarChart3,
-  LineChart,
-  Brain,
   CreditCard,
   Settings,
   Shield,
@@ -17,20 +12,26 @@ import {
   Star,
   Server,
   Activity,
-  Zap,
   Award,
   GitCompare,
+  Cpu,
+  FlaskConical,
+  Beaker,
+  Layers,
 } from "lucide-react";
 
-/** Phase 62 — unified navigation architecture */
+/** Phase 62/64 — unified navigation architecture */
 
 export const MAIN_NAV_SECTION = {
   id: "main",
   label: "Main",
   items: [
     { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { label: "Matches", path: "/matches", icon: Trophy },
+    { label: "Match Center", path: "/matches", icon: Trophy },
+    { label: "World Cup", path: "/world-cup", icon: Globe2 },
     { label: "Predictions", path: "/dashboard", icon: Sparkles, matchPath: "/prediction" },
+    { label: "Goal Timing", path: "/goal-timing/dashboard", icon: Timer },
+    { label: "Research Highlights", path: "/research/highlights", icon: BookOpen },
     { label: "Subscription", path: "/subscription", icon: CreditCard },
     { label: "Settings", path: "/settings", icon: Settings },
   ],
@@ -40,14 +41,8 @@ export const INTELLIGENCE_NAV_SECTION = {
   id: "intelligence",
   label: "Intelligence",
   items: [
-    { label: "Goal Timing", path: "/goal-timing/dashboard", icon: Timer },
-    { label: "Today's Picks", path: "/goal-timing/picks", icon: Target },
-    { label: "GT History", path: "/goal-timing/history", icon: History },
-    { label: "GT Accuracy", path: "/goal-timing/accuracy", icon: BarChart3 },
-    { label: "GT Performance", path: "/goal-timing/performance", icon: LineChart },
-    { label: "Model Insights", path: "/goal-timing/insights", icon: Brain },
-    { label: "Accuracy Center", path: "/accuracy", icon: BarChart3 },
-    { label: "Performance Center", path: "/admin/performance", icon: Activity, roles: ["super_admin"] },
+    { label: "Accuracy Center", path: "/accuracy", icon: Activity },
+    { label: "Performance Center", path: "/admin/performance", icon: Award, roles: ["super_admin"] },
   ],
 };
 
@@ -104,18 +99,8 @@ function dedupeItems(items) {
 export function buildNavSections({ user, showEliteWcPublic = false } = {}) {
   const role = user?.role;
   const isOwner = role === "owner";
-  if (isOwner) {
-    return [
-      {
-        id: "owner-redirect",
-        label: "Owner",
-        items: [{ label: "Command Center", path: "/owner", icon: LayoutDashboard }],
-      },
-    ];
-  }
-
-  const isSuperAdmin = role === "super_admin";
-  const isAdmin = role === "admin" || isSuperAdmin;
+  const isSuperAdmin = role === "super_admin" && !isOwner;
+  const isAdmin = (role === "admin" || isSuperAdmin) && !isOwner;
   const ctx = { isAdmin, isSuperAdmin };
 
   const mainItems = MAIN_NAV_SECTION.items.filter((item) => itemVisible(item, ctx));
@@ -151,8 +136,8 @@ export function isNavItemActive(pathname, item) {
   if (target === "/dashboard") {
     return pathname === "/dashboard" || pathname.startsWith("/prediction/");
   }
-  if (target === "/matches") {
-    return pathname === "/matches";
+  if (target === "/matches" || target === "/world-cup") {
+    return pathname === "/matches" || pathname.startsWith("/matches") || pathname === "/world-cup";
   }
   return pathname === target || pathname.startsWith(`${target}/`);
 }

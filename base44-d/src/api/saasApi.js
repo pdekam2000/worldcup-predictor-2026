@@ -364,8 +364,20 @@ export async function fetchOwnerNotifications() {
   return saasFetch("/api/owner/notifications");
 }
 
-export async function ownerRunAutonomousOnce() {
-  return saasFetch("/api/owner/autonomous/run-once", { method: "POST" });
+export async function ownerRunAutonomousOnce({ dryRun = false, fixtureLimit = 10 } = {}) {
+  return saasFetch("/api/owner/autonomous/run-once", {
+    method: "POST",
+    body: { dry_run: dryRun, fixture_limit: fixtureLimit },
+  });
+}
+
+export async function fetchOwnerModelCenter() {
+  return saasFetch("/api/owner/model-center");
+}
+
+export async function fetchOwnerResearchLab({ refresh = false } = {}) {
+  const qs = refresh ? "?refresh=true" : "";
+  return saasFetch(`/api/owner/research-lab${qs}`);
 }
 
 export async function ownerRunAutonomousEvaluation() {

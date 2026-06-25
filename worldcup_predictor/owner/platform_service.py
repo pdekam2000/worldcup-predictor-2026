@@ -182,8 +182,17 @@ class OwnerPlatformService:
             "recent_runs": state.get("recent_runs") or [],
         }
 
-    def run_once(self) -> dict[str, Any]:
-        report = run_autonomous_cycle(settings=self.settings)
+    def run_once(
+        self,
+        *,
+        dry_run: bool | None = None,
+        fixture_limit: int | None = None,
+    ) -> dict[str, Any]:
+        report = run_autonomous_cycle(
+            settings=self.settings,
+            dry_run=dry_run,
+            fixture_limit=fixture_limit,
+        )
         state = _load_state()
         runs: list[dict[str, Any]] = list(state.get("recent_runs") or [])
         entry = {
@@ -192,6 +201,13 @@ class OwnerPlatformService:
             "cycle_id": report.get("cycle_id"),
             "duration_seconds": report.get("duration_seconds"),
             "api_calls_used": report.get("api_calls_used"),
+            "dry_run": dry_run if dry_run is not None else self.settings.autonomous_dry_run,
+            "fixture_limit": fixture_limit,
+            "fixtures_discovered": (report.get("discovery") or {}).get("fixture_count"),
+            "predictions_created": (report.get("predictions") or {}).get("production_snapshots"),
+            "elite_snapshots": (report.get("predictions") or {}).get("elite_snapshots"),
+            "evaluations_pending": (report.get("evaluation") or {}).get("pending"),
+            "duplicate_skipped": (report.get("predictions") or {}).get("skipped_cache"),
         }
         runs.insert(0, entry)
         state["recent_runs"] = runs[:20]
@@ -284,6 +300,119 @@ class OwnerPlatformService:
                 },
             )
         return {"status": "ok", "notifications": items}
+
+    def model_center(self) -> dict[str, Any]:
+        cert = self.performance.certification_summary()
+        levels = cert.get("certification_levels") or {}
+        markets = cert.get("markets") or {}
+        engines = cert.get("engines") or {}
+
+        production_markets = [
+            "1x2",
+            "double_chance",
+            "btts",
+            "over_under_2_5",
+            "correct_score",
+        ]
+        elite_markets = production_markets + [
+            "goal_timing",
+            "first_goal_team",
+            "team_to_score_first",
+            "goalscorer",
+        ]
+
+        def _market_rows(engine_key: str, market_list: list[str]) -> list[dict[str, Any]]:
+            rows = []
+            for m in market_list:
+                key = f"{engine_key}:{m}"
+                metrics = markets.get(key) or markets.get(m) or {}
+                rows.append(
+                    {
+                        "market": m,
+                        "predictions": metrics.get("total") or metrics.get("predictions") or 0,
+                        "evaluated": metrics.get("evaluated") or 0,
+                        "pending": metrics.get("pending") or 0,
+                        "winrate": metrics.get("winrate"),
+                        "roi": metrics.get("roi"),
+                        "certification": levels.get(key) or levels.get(m) or "BLOCKED",
+                    }
+                )
+            return rows
+
+        trusted = []
+        needs_data = []
+        no_bet = []
+        for key, level in levels.items():
+            if level == "PRODUCTION_READY":
+                trusted.append(key)
+            elif level in ("BLOCKED", "RESEARCH_ONLY"):
+                needs_data.append(key)
+            elif level == "PAPER_READY":
+                no_bet.append(key)
+
+        return {
+            "status": "ok",
+            "production_engine": {
+                "name": "Production WDE",
+                "status": "Public Active",
+                "markets": production_markets,
+                "metrics": engines.get("production") or {},
+                "market_rows": _market_rows("production", production_markets),
+            },
+            "elite_engine": {
+                "name": "Elite Shadow",
+                "status": "Shadow / Research — Not promoted",
+                "markets": elite_markets,
+                "metrics": engines.get("elite_shadow") or {},
+                "market_rows": _market_rows("elite_shadow", elite_markets),
+            },
+            "certification": cert,
+            "recommendations": {
+                "trusted_markets": trusted[:20],
+                "needs_more_results": needs_data[:20],
+                "no_bet_or_paper_only": no_bet[:20],
+            },
+            "generated_at": _utc_now(),
+        }
+
+    def research_lab(self, *, refresh_value: bool = False) -> dict[str, Any]:
+        from worldcup_predictor.research.value_intelligence import load_value_summary, run_value_intelligence
+
+        value_summary = load_value_summary()
+        if refresh_value or value_summary is None:
+            try:
+                value_summary = run_value_intelligence(write_artifacts=True)
+            except Exception as exc:
+                value_summary = {"error": str(exc), "sample_size": 0}
+
+        timing_path = Path("artifacts/phase60b_first_goal_timing_distribution/summary.json")
+        timing_summary = None
+        if timing_path.is_file():
+            try:
+                timing_summary = json.loads(timing_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                timing_summary = None
+
+        odds_path = Path("artifacts/phase60c_goal_event_backfill/odds_bucket_summary.json")
+        odds_summary = None
+        if odds_path.is_file():
+            try:
+                odds_summary = json.loads(odds_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                odds_summary = None
+
+        warnings = list(value_summary.get("data_quality_warnings") or []) if value_summary else []
+        warnings.append("Research only — not betting advice.")
+
+        return {
+            "status": "ok",
+            "disclaimer": "Research only — not betting advice.",
+            "first_goal_timing": timing_summary,
+            "odds_buckets": odds_summary,
+            "value_intelligence": value_summary,
+            "warnings": warnings,
+            "generated_at": _utc_now(),
+        }
 
     def _append_notification(self, title: str, level: str, detail: str) -> None:
         state = _load_state()

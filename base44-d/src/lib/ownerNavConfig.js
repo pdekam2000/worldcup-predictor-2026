@@ -1,58 +1,59 @@
 import {
   LayoutDashboard,
-  Activity,
+  Trophy,
+  Globe2,
   Eye,
   FlaskConical,
-  Users,
-  Server,
-  FileText,
-  Settings,
-  BookOpen,
   Award,
-  Cpu,
-  Bell,
-  Database,
-  Zap,
+  BookOpen,
+  Server,
+  Users,
+  Settings,
+  Layers,
+  Beaker,
+  CreditCard,
+  Activity,
 } from "lucide-react";
 
-/** Owner-only navigation — separate from user dashboard. */
+/** Owner-only navigation — Phase 64 product owner upgrade */
 
 export const OWNER_NAV_SECTIONS = [
   {
     id: "command",
-    label: "Command Center",
+    label: "Command",
     items: [
-      { label: "Overview", path: "/owner", icon: LayoutDashboard, exact: true },
-      { label: "Monitoring", path: "/owner/monitoring", icon: Cpu },
-      { label: "Notifications", path: "/owner/notifications", icon: Bell },
+      { label: "Owner Command Center", path: "/owner", icon: LayoutDashboard, exact: true },
+      { label: "Model Center", path: "/owner/model-center", icon: Layers },
+      { label: "Research Lab", path: "/owner/research-lab", icon: Beaker },
     ],
   },
   {
-    id: "intelligence",
-    label: "Intelligence",
+    id: "product",
+    label: "Product View",
     items: [
-      { label: "Research", path: "/research/highlights", icon: BookOpen },
-      { label: "Performance", path: "/owner/performance", icon: Award },
-      { label: "Elite Shadow", path: "/admin/elite-shadow", icon: Eye },
-      { label: "Goal Timing", path: "/goal-timing/dashboard", icon: Zap },
+      { label: "Match Center", path: "/matches", icon: Trophy },
+      { label: "World Cup", path: "/world-cup", icon: Globe2 },
+      { label: "Elite World Cup", path: "/elite/world-cup", icon: Globe2 },
+      { label: "Research Highlights", path: "/research/highlights", icon: BookOpen },
     ],
   },
   {
     id: "runtime",
     label: "Autonomous",
     items: [
-      { label: "Runtime Control", path: "/owner/autonomous", icon: FlaskConical },
-      { label: "System Health", path: "/owner/health", icon: Server },
-      { label: "API Usage", path: "/owner/api-usage", icon: Activity },
+      { label: "Autonomous Runtime", path: "/owner/autonomous", icon: FlaskConical },
+      { label: "Performance Center", path: "/owner/performance", icon: Award },
+      { label: "Elite Shadow", path: "/admin/elite-shadow", icon: Eye },
     ],
   },
   {
     id: "platform",
     label: "Platform",
     items: [
+      { label: "System Health", path: "/owner/health", icon: Server },
+      { label: "Monitoring", path: "/owner/monitoring", icon: Activity },
       { label: "Users", path: "/admin", icon: Users },
-      { label: "Database", path: "/owner/database", icon: Database },
-      { label: "Logs", path: "/owner/logs", icon: FileText },
+      { label: "Subscription", path: "/subscription", icon: CreditCard },
       { label: "Settings", path: "/settings", icon: Settings },
     ],
   },
@@ -60,5 +61,11 @@ export const OWNER_NAV_SECTIONS = [
 
 export function isOwnerNavActive(pathname, item) {
   if (item.exact) return pathname === item.path;
+  if (item.path === "/matches") {
+    return pathname === "/matches" || pathname.startsWith("/matches");
+  }
+  if (item.path === "/world-cup") {
+    return pathname === "/world-cup" || (pathname === "/matches" && pathname.includes("worldcup"));
+  }
   return pathname === item.path || pathname.startsWith(`${item.path}/`);
 }

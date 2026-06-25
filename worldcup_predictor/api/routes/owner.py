@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel, Field
 
 from worldcup_predictor.api.deps import require_owner_user
 from worldcup_predictor.api.web_auth import WebAuthUser
@@ -12,6 +13,11 @@ from worldcup_predictor.owner.platform_service import OwnerPlatformService
 
 router = APIRouter(prefix="/owner", tags=["owner"])
 _service = OwnerPlatformService()
+
+
+class AutonomousRunRequest(BaseModel):
+    dry_run: bool | None = None
+    fixture_limit: int | None = Field(default=None, ge=1, le=50)
 
 
 @router.get("/overview")
@@ -30,8 +36,25 @@ def owner_autonomous_status(_owner: WebAuthUser = Depends(require_owner_user)) -
 
 
 @router.post("/autonomous/run-once")
-def owner_autonomous_run_once(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
-    return _service.run_once()
+def owner_autonomous_run_once(
+    body: AutonomousRunRequest | None = None,
+    _owner: WebAuthUser = Depends(require_owner_user),
+) -> dict[str, Any]:
+    payload = body or AutonomousRunRequest()
+    return _service.run_once(dry_run=payload.dry_run, fixture_limit=payload.fixture_limit)
+
+
+@router.get("/model-center")
+def owner_model_center(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.model_center()
+
+
+@router.get("/research-lab")
+def owner_research_lab(
+    refresh: bool = Query(default=False),
+    _owner: WebAuthUser = Depends(require_owner_user),
+) -> dict[str, Any]:
+    return _service.research_lab(refresh_value=refresh)
 
 
 @router.post("/autonomous/evaluation")

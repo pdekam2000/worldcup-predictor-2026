@@ -61,6 +61,8 @@ import OwnerAutonomousPage from './pages/owner/OwnerAutonomousPage';
 import OwnerMonitoringPage from './pages/owner/OwnerMonitoringPage';
 import OwnerNotificationsPage from './pages/owner/OwnerNotificationsPage';
 import OwnerPerformancePage from './pages/owner/OwnerPerformancePage';
+import OwnerModelCenter from './pages/owner/OwnerModelCenter';
+import OwnerResearchLab from './pages/owner/OwnerResearchLab';
 import OwnerHealthPage, { OwnerApiUsagePage, OwnerDatabasePage, OwnerLogsPage } from './pages/owner/OwnerHealthPage';
 
 const AuthenticatedApp = () => {
@@ -91,6 +93,7 @@ const AuthenticatedApp = () => {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/imprint" element={<ImprintPage />} />
       <Route path="/research/highlights" element={<ResearchHighlights />} />
+      <Route path="/world-cup" element={<Navigate to="/matches?hub=worldcup" replace />} />
       <Route path="/account/settings" element={<Navigate to="/settings" replace />} />
       <Route path="/analytics/accuracy" element={<Navigate to="/accuracy" replace />} />
       <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
@@ -102,6 +105,8 @@ const AuthenticatedApp = () => {
           <Route path="/owner/monitoring" element={<OwnerMonitoringPage />} />
           <Route path="/owner/notifications" element={<OwnerNotificationsPage />} />
           <Route path="/owner/performance" element={<OwnerPerformancePage />} />
+          <Route path="/owner/model-center" element={<OwnerModelCenter />} />
+          <Route path="/owner/research-lab" element={<OwnerResearchLab />} />
           <Route path="/owner/health" element={<OwnerHealthPage />} />
           <Route path="/owner/api-usage" element={<OwnerApiUsagePage />} />
           <Route path="/owner/database" element={<OwnerDatabasePage />} />
