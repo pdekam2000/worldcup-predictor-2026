@@ -58,6 +58,7 @@ export default function OwnerAutonomousPage() {
   if (error && !status) return <ErrorState message={error} onRetry={load} />;
 
   const auto = status || {};
+  const readiness = auto.scheduler_readiness || {};
   const canEnable = auto.can_enable_scheduler;
   const report = lastResult?.report || lastResult;
 
@@ -80,10 +81,22 @@ export default function OwnerAutonomousPage() {
           <p>Status: {auto.last_run?.status || auto.last_error || "—"}</p>
           <p>Success streak: {auto.consecutive_successes ?? 0} / {auto.required_for_scheduler ?? 3}</p>
           <p>Scheduler: {auto.scheduler_enabled ? "enabled" : "disabled"}</p>
+          <p>Readiness: {readiness.scheduler_status || "—"}</p>
           <p>API calls (last): {auto.last_run?.api_calls_used ?? "—"}</p>
           <p>Duplicates skipped: {auto.last_run?.duplicate_skipped ?? "—"}</p>
         </div>
       </IntelligenceCard>
+
+      {readiness.blockers?.length > 0 && !canEnable && (
+        <IntelligenceCard className="border-red-500/20">
+          <p className="text-xs uppercase text-red-300 mb-2">Scheduler blocked</p>
+          <ul className="text-sm text-[#94A3B8] list-disc pl-5 space-y-1">
+            {readiness.blockers.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
+          </ul>
+        </IntelligenceCard>
+      )}
 
       <IntelligenceCard>
         <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -129,7 +142,7 @@ export default function OwnerAutonomousPage() {
             variant="outline"
             disabled={!!busy || !canEnable}
             onClick={() => runAction("enable", ownerEnableScheduler)}
-            title={!canEnable ? "Requires 3 consecutive successful runs" : ""}
+            title={!canEnable ? (readiness.blockers?.[0] || "Scheduler gates not met") : ""}
           >
             <Power className="w-4 h-4 mr-2" /> Enable scheduler
           </Button>

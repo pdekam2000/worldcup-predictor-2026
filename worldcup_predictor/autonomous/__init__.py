@@ -1,5 +1,3 @@
-"""Phase 61 — Autonomous prediction platform."""
+"""Phase 61 — Autonomous prediction platform (subpackage imports only)."""
 
-from worldcup_predictor.autonomous.orchestrator import run_autonomous_cycle
-
-__all__ = ["run_autonomous_cycle"]
+__all__: list[str] = []

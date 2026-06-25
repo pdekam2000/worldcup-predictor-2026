@@ -23,6 +23,8 @@ from worldcup_predictor.quota.quota_guard import quota_risk_level
 from worldcup_predictor.quota.quota_tracker import get_quota_tracker
 
 REQUIRED_CONSECUTIVE_SUCCESSES = 3
+MAX_API_CALLS_PER_RUN = 50
+MAX_DUPLICATE_SKIP_RATE = 0.95
 STATE_FILE = Path("data/enterprise/owner_runtime_state.json")
 TIMER_UNIT = "worldcup-autonomous.timer"
 SERVICE_UNIT = "worldcup-autonomous.service"
@@ -167,16 +169,75 @@ class OwnerPlatformService:
             "generated_at": _utc_now(),
         }
 
+    def _scheduler_readiness(self, state: dict[str, Any] | None = None) -> dict[str, Any]:
+        state = state or _load_state()
+        runs: list[dict[str, Any]] = list(state.get("recent_runs") or [])
+        streak = int(state.get("consecutive_successes") or 0)
+        blockers: list[str] = []
+        checks: dict[str, bool] = {}
+
+        checks["success_streak"] = streak >= REQUIRED_CONSECUTIVE_SUCCESSES
+        if not checks["success_streak"]:
+            blockers.append(
+                f"Success streak {streak}/{REQUIRED_CONSECUTIVE_SUCCESSES} — run autonomous_once until 3 consecutive OK"
+            )
+
+        last_three = runs[:REQUIRED_CONSECUTIVE_SUCCESSES]
+        checks["last_three_ok"] = (
+            len(last_three) >= REQUIRED_CONSECUTIVE_SUCCESSES
+            and all(r.get("status") == "ok" for r in last_three)
+        )
+        if not checks["last_three_ok"]:
+            blockers.append("Last 3 autonomous runs must all have status=ok with zero errors")
+
+        dup_rates: list[float] = []
+        for r in last_three:
+            discovered = int(r.get("fixtures_discovered") or 0)
+            dup = int(r.get("duplicate_skipped") or 0)
+            if discovered > 0:
+                dup_rates.append(dup / discovered)
+        avg_dup = sum(dup_rates) / len(dup_rates) if dup_rates else 0.0
+        checks["duplicate_rate_ok"] = avg_dup <= MAX_DUPLICATE_SKIP_RATE
+        if not checks["duplicate_rate_ok"]:
+            blockers.append(f"Duplicate snapshot skip rate too high ({avg_dup:.0%})")
+
+        api_ok = all(int(r.get("api_calls_used") or 0) <= MAX_API_CALLS_PER_RUN for r in last_three) if last_three else False
+        checks["api_calls_within_cap"] = api_ok or not last_three
+        if not checks["api_calls_within_cap"]:
+            blockers.append(f"API calls exceeded cap ({MAX_API_CALLS_PER_RUN}) in recent runs")
+
+        pg_ok = ping_postgres()
+        sqlite_ok = Path(self.settings.sqlite_path or "data/football_intelligence.db").is_file()
+        checks["db_health_ok"] = pg_ok and sqlite_ok
+        if not checks["db_health_ok"]:
+            if not pg_ok:
+                blockers.append("PostgreSQL health check failed")
+            if not sqlite_ok:
+                blockers.append("SQLite intelligence database missing")
+
+        ready = all(checks.values())
+        return {
+            "scheduler_status": "READY_TO_ENABLE" if ready else "BLOCKED",
+            "ready_to_enable": ready,
+            "checks": checks,
+            "blockers": blockers,
+            "duplicate_skip_rate_avg": round(avg_dup, 4) if dup_rates else None,
+            "max_api_calls_per_run": MAX_API_CALLS_PER_RUN,
+        }
+
     def autonomous_status(self) -> dict[str, Any]:
         state = _load_state()
         latest = self._latest_cycle()
+        readiness = self._scheduler_readiness(state)
+        can_enable = readiness["ready_to_enable"]
         return {
             "platform_enabled": self.settings.autonomous_platform_enabled,
             "dry_run": self.settings.autonomous_dry_run,
             "scheduler_enabled": bool(state.get("scheduler_enabled")),
             "consecutive_successes": int(state.get("consecutive_successes") or 0),
             "required_for_scheduler": REQUIRED_CONSECUTIVE_SUCCESSES,
-            "can_enable_scheduler": int(state.get("consecutive_successes") or 0) >= REQUIRED_CONSECUTIVE_SUCCESSES,
+            "can_enable_scheduler": can_enable,
+            "scheduler_readiness": readiness,
             "last_run": latest,
             "last_error": state.get("last_error"),
             "recent_runs": state.get("recent_runs") or [],
@@ -241,12 +302,47 @@ class OwnerPlatformService:
         report = run_performance_certification(settings=self.settings)
         return {"status": "ok", "certification": report.to_dict(), "summary": self.performance.certification_summary()}
 
+    def promotion_status(self) -> dict[str, Any]:
+        from worldcup_predictor.elite.promotion_framework import build_promotion_status
+
+        return build_promotion_status(settings=self.settings)
+
+    def betting_intelligence(self) -> dict[str, Any]:
+        from worldcup_predictor.research.betting_intelligence import build_betting_intelligence
+
+        return build_betting_intelligence(settings=self.settings)
+
+    def research_lab_summary(self, *, refresh_value: bool = False) -> dict[str, Any]:
+        lab = self.research_lab(refresh_value=refresh_value)
+        betting = self.betting_intelligence()
+        return {
+            "status": "ok",
+            "disclaimer": lab.get("disclaimer"),
+            "generated_at": _utc_now(),
+            "odds_bucket_performance": lab.get("odds_buckets"),
+            "value_buckets": (lab.get("value_intelligence") or {}).get("favorite_buckets"),
+            "ev_bucket_summary": (betting.get("summary") or {}).get("ev_buckets"),
+            "model_vs_market_edge": {
+                "value_candidates": (betting.get("summary") or {}).get("value_candidates"),
+                "watch_only": (betting.get("summary") or {}).get("watch_only"),
+                "no_bet": (betting.get("summary") or {}).get("no_bet"),
+                "total_analyzed": (betting.get("summary") or {}).get("total_analyzed"),
+            },
+            "first_goal_timing": lab.get("first_goal_timing"),
+            "data_coverage_warnings": lab.get("warnings") or [],
+            "value_intelligence_overall": (lab.get("value_intelligence") or {}).get("overall"),
+        }
+
     def enable_scheduler(self) -> dict[str, Any]:
         status = self.autonomous_status()
         if not status["can_enable_scheduler"]:
+            blockers = (status.get("scheduler_readiness") or {}).get("blockers") or []
+            reason = "; ".join(blockers) if blockers else (
+                f"Requires {REQUIRED_CONSECUTIVE_SUCCESSES} consecutive successful autonomous_once runs"
+            )
             return {
                 "status": "blocked",
-                "reason": f"Requires {REQUIRED_CONSECUTIVE_SUCCESSES} consecutive successful autonomous_once runs",
+                "reason": reason,
                 "autonomous": status,
             }
         state = _load_state()
@@ -404,12 +500,23 @@ class OwnerPlatformService:
         warnings = list(value_summary.get("data_quality_warnings") or []) if value_summary else []
         warnings.append("Research only — not betting advice.")
 
+        betting_summary = None
+        try:
+            from worldcup_predictor.research.betting_intelligence import build_betting_intelligence
+
+            betting_summary = build_betting_intelligence(settings=self.settings, limit=100)
+        except Exception as exc:
+            betting_summary = {"error": str(exc)}
+
         return {
             "status": "ok",
             "disclaimer": "Research only — not betting advice.",
             "first_goal_timing": timing_summary,
             "odds_buckets": odds_summary,
             "value_intelligence": value_summary,
+            "betting_intelligence": betting_summary,
+            "ev_bucket_summary": (betting_summary or {}).get("summary", {}).get("ev_buckets"),
+            "model_vs_market_edge": (betting_summary or {}).get("summary"),
             "warnings": warnings,
             "generated_at": _utc_now(),
         }

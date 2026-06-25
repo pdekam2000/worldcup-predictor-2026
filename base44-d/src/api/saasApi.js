@@ -380,6 +380,19 @@ export async function fetchOwnerResearchLab({ refresh = false } = {}) {
   return saasFetch(`/api/owner/research-lab${qs}`);
 }
 
+export async function fetchOwnerResearchLabSummary({ refresh = false } = {}) {
+  const qs = refresh ? "?refresh=true" : "";
+  return saasFetch(`/api/owner/research-lab/summary${qs}`);
+}
+
+export async function fetchOwnerPromotionStatus() {
+  return saasFetch("/api/owner/promotion/status");
+}
+
+export async function fetchOwnerBettingIntelligence() {
+  return saasFetch("/api/owner/betting-intelligence");
+}
+
 export async function ownerRunAutonomousEvaluation() {
   return saasFetch("/api/owner/autonomous/evaluation", { method: "POST" });
 }
@@ -389,11 +402,11 @@ export async function ownerRunAutonomousCertification() {
 }
 
 export async function ownerEnableScheduler() {
-  return saasFetch("/api/owner/autonomous/scheduler/enable", { method: "POST" });
+  return saasFetch("/api/owner/autonomous/enable-scheduler", { method: "POST" });
 }
 
 export async function ownerDisableScheduler() {
-  return saasFetch("/api/owner/autonomous/scheduler/disable", { method: "POST" });
+  return saasFetch("/api/owner/autonomous/disable-scheduler", { method: "POST" });
 }
 
 /** Phase 51 — Elite Goal Timing engine */

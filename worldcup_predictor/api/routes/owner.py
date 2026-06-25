@@ -57,6 +57,24 @@ def owner_research_lab(
     return _service.research_lab(refresh_value=refresh)
 
 
+@router.get("/research-lab/summary")
+def owner_research_lab_summary(
+    refresh: bool = Query(default=False),
+    _owner: WebAuthUser = Depends(require_owner_user),
+) -> dict[str, Any]:
+    return _service.research_lab_summary(refresh_value=refresh)
+
+
+@router.get("/promotion/status")
+def owner_promotion_status(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.promotion_status()
+
+
+@router.get("/betting-intelligence")
+def owner_betting_intelligence(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.betting_intelligence()
+
+
 @router.post("/autonomous/evaluation")
 def owner_autonomous_evaluation(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
     return _service.run_evaluation()
@@ -68,11 +86,13 @@ def owner_autonomous_certification(_owner: WebAuthUser = Depends(require_owner_u
 
 
 @router.post("/autonomous/scheduler/enable")
+@router.post("/autonomous/enable-scheduler")
 def owner_scheduler_enable(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
     return _service.enable_scheduler()
 
 
 @router.post("/autonomous/scheduler/disable")
+@router.post("/autonomous/disable-scheduler")
 def owner_scheduler_disable(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
     return _service.disable_scheduler()
 

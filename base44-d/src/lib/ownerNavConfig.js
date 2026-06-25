@@ -11,6 +11,8 @@ import {
   Settings,
   Layers,
   Beaker,
+  TrendingUp,
+  DollarSign,
   CreditCard,
   Activity,
 } from "lucide-react";
@@ -25,6 +27,8 @@ export const OWNER_NAV_SECTIONS = [
       { label: "Owner Command Center", path: "/owner", icon: LayoutDashboard, exact: true },
       { label: "Model Center", path: "/owner/model-center", icon: Layers },
       { label: "Research Lab", path: "/owner/research-lab", icon: Beaker },
+      { label: "Promotion Center", path: "/owner/promotion-center", icon: TrendingUp },
+      { label: "Betting Intelligence", path: "/owner/betting-intelligence", icon: DollarSign },
     ],
   },
   {
