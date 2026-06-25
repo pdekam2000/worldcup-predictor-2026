@@ -55,9 +55,9 @@ class Settings(BaseSettings):
         alias="LAMBDA_BRIDGE_CONFIG_VERSION",
     )
 
-    # Phase 21A — Rule A harmonization gate (shadow only; production unchanged)
-    rule_a_gate_mode: Literal["off", "shadow"] = Field(
-        default="shadow",
+    # Phase 21A / 47C — Rule A conditional harmonization (active = production Rule A)
+    rule_a_gate_mode: Literal["off", "shadow", "active"] = Field(
+        default="active",
         alias="RULE_A_GATE_MODE",
     )
     rule_a_shadow_path: str = Field(
@@ -128,6 +128,42 @@ class Settings(BaseSettings):
         default="data/validation/promotion_contribution_stats.json",
         alias="REAL_WORLD_VALIDATION_STATS_PATH",
     )
+    national_team_intelligence_enabled: bool = Field(
+        default=True,
+        alias="NATIONAL_TEAM_INTELLIGENCE_ENABLED",
+    )
+    worldcup_prediction_window_days: int = Field(
+        default=3,
+        alias="WORLDCUP_PREDICTION_WINDOW_DAYS",
+    )
+    worldcup_background_prediction_enabled: bool = Field(
+        default=True,
+        alias="WORLDCUP_BACKGROUND_PREDICTION_ENABLED",
+    )
+
+    # Phase 60D — Elite World Cup experimental page (super_admin by default)
+    elite_wc_public_enabled: bool = Field(
+        default=False,
+        alias="ELITE_WC_PUBLIC_ENABLED",
+    )
+
+    # Phase 61 — autonomous prediction platform
+    autonomous_platform_enabled: bool = Field(
+        default=True,
+        alias="AUTONOMOUS_PLATFORM_ENABLED",
+    )
+    autonomous_snapshot_freshness_hours: int = Field(
+        default=6,
+        alias="AUTONOMOUS_SNAPSHOT_FRESHNESS_HOURS",
+    )
+    autonomous_fixture_limit_per_cycle: int = Field(
+        default=25,
+        alias="AUTONOMOUS_FIXTURE_LIMIT",
+    )
+    autonomous_dry_run: bool = Field(
+        default=False,
+        alias="AUTONOMOUS_DRY_RUN",
+    )
 
     # Database — PostgreSQL primary for SaaS; SQLite for intelligence (legacy/local)
     app_env: AppEnv = Field(default="local", alias="APP_ENV")
@@ -140,7 +176,37 @@ class Settings(BaseSettings):
     jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
     jwt_access_token_expire_minutes: int = Field(default=10080, alias="JWT_ACCESS_TOKEN_EXPIRE_MINUTES")
 
-    # Optional enrichment providers (not required — API-Sports remains primary)
+    # Phase 37A — admin panel access gates (never expose to frontend)
+    admin_access_key: str = Field(default="", alias="ADMIN_ACCESS_KEY")
+    super_admin_access_key: str = Field(default="", alias="SUPER_ADMIN_ACCESS_KEY")
+    admin_audit_log_path: str = Field(default="data/logs/admin_audit.jsonl", alias="ADMIN_AUDIT_LOG_PATH")
+    auth_audit_log_path: str = Field(default="data/logs/auth_audit.jsonl", alias="AUTH_AUDIT_LOG_PATH")
+    admin_gate_ttl_minutes: int = Field(default=60, alias="ADMIN_GATE_TTL_MINUTES")
+
+    # Phase 38A — subscription contact admin (never expose admin email to users)
+    admin_contact_email: str = Field(default="", alias="ADMIN_CONTACT_EMAIL")
+    subscription_audit_log_path: str = Field(
+        default="data/logs/subscription_audit.jsonl",
+        alias="SUBSCRIPTION_AUDIT_LOG_PATH",
+    )
+    smtp_host: str = Field(default="", alias="SMTP_HOST")
+    smtp_port: int = Field(default=587, alias="SMTP_PORT")
+    smtp_user: str = Field(default="", alias="SMTP_USER")
+    smtp_password: str = Field(default="", alias="SMTP_PASSWORD")
+    smtp_from: str = Field(default="", alias="SMTP_FROM")
+    smtp_use_tls: bool = Field(default=True, alias="SMTP_USE_TLS")
+    email_verification_required: bool = Field(default=True, alias="EMAIL_VERIFICATION_REQUIRED")
+
+    # Phase 39B-1 — Stripe SaaS billing (optional; missing env must not break startup)
+    stripe_secret_key: str = Field(default="", alias="STRIPE_SECRET_KEY")
+    stripe_webhook_secret: str = Field(default="", alias="STRIPE_WEBHOOK_SECRET")
+    stripe_starter_price_id: str = Field(default="", alias="STRIPE_STARTER_PRICE_ID")
+    stripe_pro_price_id: str = Field(default="", alias="STRIPE_PRO_PRICE_ID")
+    stripe_success_url: str = Field(default="", alias="STRIPE_SUCCESS_URL")
+    stripe_cancel_url: str = Field(default="", alias="STRIPE_CANCEL_URL")
+    stripe_portal_return_url: str = Field(default="", alias="STRIPE_PORTAL_RETURN_URL")
+    stripe_mode: str = Field(default="", alias="STRIPE_MODE")
+
     sportmonks_api_key: str = Field(default="", alias="SPORTMONKS_API_KEY")
     sportmonks_api_token: str = Field(default="", alias="SPORTMONKS_API_TOKEN")
     sportmonks_base_url: str = Field(
@@ -162,6 +228,7 @@ class Settings(BaseSettings):
     weather_provider: WeatherProviderKind = Field(default="weatherapi", alias="WEATHER_PROVIDER")
     weather_api_key: str = Field(default="", alias="WEATHER_API_KEY")
     openweather_api_key: str = Field(default="", alias="OPENWEATHER_API_KEY")
+    weather_cache_ttl_seconds: int = Field(default=3600, alias="WEATHER_CACHE_TTL_SECONDS")
 
     # RapidAPI supplemental football stats (optional enrichment)
     rapid_football_stats_enabled: bool = Field(default=False, alias="RAPID_FOOTBALL_STATS_ENABLED")
@@ -262,6 +329,92 @@ class Settings(BaseSettings):
         """Production and SaaS layers require PostgreSQL."""
         return self.is_production or self.postgres_configured
 
+    @property
+    def stripe_secret_key_configured(self) -> bool:
+        return bool(self.stripe_secret_key.strip())
+
+    @property
+    def stripe_webhook_secret_configured(self) -> bool:
+        return bool(self.stripe_webhook_secret.strip())
+
+    @property
+    def stripe_starter_price_configured(self) -> bool:
+        return bool(self.stripe_starter_price_id.strip())
+
+    @property
+    def stripe_pro_price_configured(self) -> bool:
+        return bool(self.stripe_pro_price_id.strip())
+
+    @property
+    def stripe_success_url_configured(self) -> bool:
+        return bool(self.stripe_success_url.strip())
+
+    @property
+    def stripe_cancel_url_configured(self) -> bool:
+        return bool(self.stripe_cancel_url.strip())
+
+    @property
+    def stripe_portal_return_url_configured(self) -> bool:
+        return bool(self.effective_stripe_portal_return_url.strip())
+
+    @property
+    def effective_stripe_portal_return_url(self) -> str:
+        explicit = (self.stripe_portal_return_url or "").strip()
+        if explicit:
+            return explicit
+        success = (self.stripe_success_url or "").strip()
+        if success:
+            from urllib.parse import urlparse, urlunparse
+
+            parsed = urlparse(success)
+            path = parsed.path.rstrip("/")
+            if path.endswith("/success"):
+                path = path[: -len("/success")]
+            portal_path = f"{path}/subscription" if path else "/subscription"
+            return urlunparse((parsed.scheme, parsed.netloc, portal_path, "", "", ""))
+        return ""
+
+    @property
+    def stripe_mode_normalized(self) -> str:
+        raw = (self.stripe_mode or "").strip().lower()
+        if raw in ("test", "live"):
+            return raw
+        return "missing"
+
+    def stripe_price_id_for_plan(self, plan: str) -> str:
+        key = str(plan or "").strip().lower()
+        if key == "starter":
+            return self.stripe_starter_price_id.strip()
+        if key == "pro":
+            return self.stripe_pro_price_id.strip()
+        return ""
+
+    @property
+    def stripe_billing_configured(self) -> bool:
+        return (
+            self.stripe_secret_key_configured
+            and self.stripe_starter_price_configured
+            and self.stripe_pro_price_configured
+            and self.stripe_success_url_configured
+            and self.stripe_cancel_url_configured
+            and self.stripe_mode_normalized in ("test", "live")
+        )
+
+    @property
+    def smtp_configured(self) -> bool:
+        return bool(
+            (self.smtp_host or "").strip()
+            and (self.smtp_from or self.smtp_user or "").strip()
+        )
+
+    @property
+    def admin_contact_email_configured(self) -> bool:
+        return bool((self.admin_contact_email or "").strip())
+
+    @property
+    def email_operations_ready(self) -> bool:
+        return self.smtp_configured and self.admin_contact_email_configured
+
     @model_validator(mode="after")
     def _prefer_local_pgembed_url(self) -> "Settings":
         """Use pgembed URL file in local dev — port changes each embedded PG start."""
@@ -276,6 +429,13 @@ class Settings(BaseSettings):
         return self
 
 
+from worldcup_predictor.config.env_loading import note_loaded_env_file, resolve_env_file
+
+
 @lru_cache
 def get_settings() -> Settings:
+    env_path = resolve_env_file()
+    note_loaded_env_file(env_path)
+    if env_path is not None:
+        return Settings(_env_file=str(env_path))
     return Settings()

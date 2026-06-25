@@ -8,11 +8,12 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.exc import IntegrityError
 
 from worldcup_predictor.api.deps import get_current_user
+from worldcup_predictor.api.prediction_archive_detail import fetch_archive_detail_for_user
 from worldcup_predictor.api.prediction_history_evaluation import (
     evaluate_history_record,
     filter_by_result_status,
@@ -26,7 +27,7 @@ from worldcup_predictor.api.saas_serializers import (
     settings_to_dict,
     subscription_to_dict,
 )
-from worldcup_predictor.config.settings import get_settings
+from worldcup_predictor.config.settings import get_settings as get_app_settings
 from worldcup_predictor.api.web_auth import WebAuthUser
 from worldcup_predictor.database.postgres.enums import FavoriteType, Prediction1x2, PredictionResult
 from worldcup_predictor.database.saas_factory import saas_uow
@@ -140,14 +141,14 @@ def _dashboard_stats(history: list) -> dict[str, Any]:
 
 
 @router.get("/settings")
-def get_settings(user: WebAuthUser = Depends(get_current_user)) -> dict[str, Any]:
+def read_user_settings(user: WebAuthUser = Depends(get_current_user)) -> dict[str, Any]:
     with saas_uow() as uow:
         record = uow.settings.get_or_create(_user_id(user))
         return {"status": "ok", "settings": settings_to_dict(record)}
 
 
 @router.patch("/settings")
-def patch_settings(
+def update_user_settings(
     body: SettingsPatchRequest,
     user: WebAuthUser = Depends(get_current_user),
 ) -> dict[str, Any]:
@@ -288,7 +289,7 @@ def list_prediction_history(
 ) -> dict[str, Any]:
     limit = max(1, min(limit, 100))
     offset = max(0, offset)
-    settings = get_settings()
+    settings = get_app_settings()
     with saas_uow() as uow:
         rows = uow.prediction_history.list_for_user(_user_id(user), limit=limit, offset=offset)
         from worldcup_predictor.api.prediction_history_evaluation import FixtureOutcomeResolver
@@ -333,6 +334,19 @@ def list_prediction_history_results(
     )
 
 
+@router.get("/prediction-history/{entry_id}")
+def get_prediction_history_entry(
+    entry_id: str,
+    user: WebAuthUser = Depends(get_current_user),
+) -> dict[str, Any]:
+    """Phase 42C — archive detail for one history row."""
+    entry_uuid = parse_uuid(entry_id, field="entry id")
+    detail = fetch_archive_detail_for_user(_user_id(user), entry_uuid, settings=get_app_settings())
+    if detail is None:
+        raise HTTPException(status_code=404, detail="Prediction history entry not found")
+    return detail
+
+
 @router.post("/prediction-history")
 def record_prediction_history(
     body: PredictionHistoryCreateRequest,
@@ -360,30 +374,146 @@ def record_prediction_history(
 
 @router.get("/subscription")
 def get_subscription(user: WebAuthUser = Depends(get_current_user)) -> dict[str, Any]:
+    from worldcup_predictor.billing.billing_serializers import format_invoice_for_legacy_table
+    from worldcup_predictor.billing.billing_service import get_billing_service
+    from worldcup_predictor.subscription.plan_limits import PLAN_FEATURES, PLAN_PRICES_EUR, normalize_plan
+
     with saas_uow() as uow:
         record = uow.subscriptions.get_or_create_free(_user_id(user))
-        return {
-            "status": "ok",
-            "subscription": subscription_to_dict(record),
-            "billing_history": [],
-        }
+
+    plan_key = normalize_plan(record.plan.value if record else "free")
+    with saas_uow() as uow:
+        invoice_items = uow.billing_invoices.list_for_user(_user_id(user), limit=20)
+    billing_history = [format_invoice_for_legacy_table(item) for item in invoice_items]
+
+    return {
+        "status": "ok",
+        "subscription": subscription_to_dict(record),
+        "features": PLAN_FEATURES.get(plan_key, PLAN_FEATURES["free"]),
+        "price_eur": PLAN_PRICES_EUR.get(plan_key, 0),
+        "billing_history": billing_history,
+    }
+
+
+@router.get("/quota")
+def get_user_quota(user: WebAuthUser = Depends(get_current_user)) -> dict[str, Any]:
+    from worldcup_predictor.subscription.quota_service import get_user_quota_status
+    from worldcup_predictor.subscription.plan_limits import PLAN_FEATURES, PLAN_PRICES_EUR, normalize_plan
+
+    quota = get_user_quota_status(user.id, role=user.role)
+    plan = normalize_plan(quota.plan)
+    limit = quota.monthly_limit or 0
+    used = quota.used_this_period or 0
+    percent_used = round((used / limit) * 100, 1) if limit > 0 and not quota.bypass else 0.0
+    quota_warning = None
+    if not quota.bypass and limit > 0:
+        if used >= limit:
+            quota_warning = "exhausted"
+        elif percent_used >= 90:
+            quota_warning = "critical"
+        elif percent_used >= 75:
+            quota_warning = "warning"
+
+    return {
+        "status": "ok",
+        "plan": quota.plan,
+        "monthly_limit": quota.monthly_limit,
+        "used_this_period": quota.used_this_period,
+        "remaining": quota.remaining,
+        "percent_used": percent_used,
+        "quota_warning": quota_warning,
+        "period_key": quota.period_key,
+        "period_start": quota.period_start,
+        "period_end": quota.period_end,
+        "next_reset_date": quota.period_end,
+        "bypass": quota.bypass,
+        "allowed": quota.allowed,
+        "price_eur": PLAN_PRICES_EUR.get(plan, 0),
+        "features": PLAN_FEATURES.get(plan, PLAN_FEATURES["free"]),
+        # Legacy fields for older frontend
+        "daily_limit": quota.monthly_limit,
+        "used_today": quota.used_this_period,
+    }
+
+
+class ContactAdminRequest(BaseModel):
+    subject: str = Field(min_length=1, max_length=200)
+    message: str = Field(min_length=1, max_length=4000)
+    category: str = Field(
+        default="other",
+        pattern="^(support|subscription|billing|prediction_issue|feature_request|other)$",
+    )
+
+
+@router.post("/contact-admin")
+def contact_admin(
+    body: ContactAdminRequest,
+    request: Request,
+    user: WebAuthUser = Depends(get_current_user),
+) -> dict[str, Any]:
+    from worldcup_predictor.subscription.contact_admin import (
+        ContactAdminRateLimitError,
+        submit_contact_admin,
+    )
+
+    ip = request.client.host if request.client else None
+    try:
+        submit_contact_admin(
+            user_id=user.id,
+            user_email=user.email,
+            subject=body.subject,
+            message=body.message,
+            category=body.category,
+            ip=ip,
+        )
+    except ContactAdminRateLimitError as exc:
+        raise HTTPException(
+            status_code=429,
+            detail={"message": str(exc), "retry_after_seconds": exc.retry_after_seconds},
+        ) from exc
+    return {"status": "ok", "message": "Message sent successfully"}
+
+
+def _empty_dashboard_payload() -> dict[str, Any]:
+    return {
+        "status": "ok",
+        "stats": {
+            "predictions_viewed": 0,
+            "win_rate": 0.0,
+            "matches_analyzed": 0,
+            "streak": "0",
+            "streak_count": 0,
+            "correct": 0,
+            "settled": 0,
+        },
+        "recent_predictions": [],
+        "performance_trend": [],
+    }
 
 
 @router.get("/dashboard")
 def get_dashboard(user: WebAuthUser = Depends(get_current_user)) -> dict[str, Any]:
-    settings = get_settings()
-    with saas_uow() as uow:
-        history = uow.prediction_history.list_for_user(_user_id(user), limit=50)
-        from worldcup_predictor.api.prediction_history_evaluation import FixtureOutcomeResolver
+    try:
+        settings = get_app_settings()
+        with saas_uow() as uow:
+            history = uow.prediction_history.list_for_user(_user_id(user), limit=50)
+            from worldcup_predictor.api.prediction_history_evaluation import FixtureOutcomeResolver
 
-        resolver = FixtureOutcomeResolver(settings=settings)
-        evaluated = [evaluate_history_record(row, resolver=resolver, settings=settings) for row in history]
-        stats = _dashboard_stats_from_evaluated(evaluated)
-        trend = stats.pop("performance_trend", [])
-        recent = evaluated[:5]
-        return {
-            "status": "ok",
-            "stats": stats,
-            "recent_predictions": recent,
-            "performance_trend": trend,
-        }
+            resolver = FixtureOutcomeResolver(settings=settings)
+            evaluated = []
+            for row in history:
+                try:
+                    evaluated.append(evaluate_history_record(row, resolver=resolver, settings=settings))
+                except Exception:
+                    continue
+            stats = _dashboard_stats_from_evaluated(evaluated)
+            trend = stats.pop("performance_trend", [])
+            recent = evaluated[:5]
+            return {
+                "status": "ok",
+                "stats": stats,
+                "recent_predictions": recent,
+                "performance_trend": trend,
+            }
+    except Exception:
+        return _empty_dashboard_payload()

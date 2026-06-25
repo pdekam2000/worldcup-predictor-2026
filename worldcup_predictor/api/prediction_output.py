@@ -9,6 +9,7 @@ from worldcup_predictor.api.market_ranking_engine import (
     build_market_ranking,
     ranked_to_recommended_bets,
 )
+from worldcup_predictor.api.pick_visibility import enrich_pick_visibility
 from worldcup_predictor.domain.prediction import MatchPrediction
 from worldcup_predictor.prediction.extended_markets import (
     build_extended_markets,
@@ -330,23 +331,27 @@ def build_prediction_output(
             "market_key": bet.get("market_key") or bet.get("market", "").lower().replace("/", "_"),
             "selection": bet.get("selection") or bet.get("pick"),
             "bucket": bet.get("bucket"),
+            "pick_tier": bet.get("pick_tier"),
         }
         for bet in recommended
-        if bet.get("status") == "recommended"
+        if bet.get("status") in {"recommended", "caution"}
     ]
-    return {
+    block = {
         "recommended_bets": recommended,
         "detailed_markets": detailed,
         "probabilities": build_probabilities_block(prediction, detailed),
         "risk_level": risk,
-        "no_bet": recommended[0].get("status") == "no_bet" if recommended else True,
+        "data_quality": _data_quality(prediction),
         "primary_recommendation": recommended[0] if recommended else None,
         "market_ranking": ranking.get("market_ranking") or [],
         "safe_pick": ranking.get("safe_pick"),
         "value_pick": ranking.get("value_pick"),
         "aggressive_pick": ranking.get("aggressive_pick"),
+        "caution_pick": ranking.get("caution_pick"),
+        "best_available_pick": ranking.get("best_available_pick"),
         "accuracy_tracking": tracking,
     }
+    return enrich_pick_visibility(block, prediction, data_quality=block["data_quality"])
 
 
 def enrich_cached_prediction_output(payload: dict[str, Any]) -> dict[str, Any]:

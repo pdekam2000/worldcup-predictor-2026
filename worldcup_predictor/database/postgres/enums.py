@@ -6,8 +6,15 @@ import enum
 
 
 class UserRole(str, enum.Enum):
-    USER = "user"
+    GUEST = "guest"
+    FREE_USER = "free_user"
+    USER = "user"  # legacy — treated as free_user in RBAC
+    STARTER = "starter"
+    PRO = "pro"
+    PREMIUM = "premium"
     ADMIN = "admin"
+    SUPER_ADMIN = "super_admin"
+    OWNER = "owner"
 
 
 class FavoriteType(str, enum.Enum):
@@ -32,6 +39,7 @@ class NotificationType(str, enum.Enum):
 
 class SubscriptionPlan(str, enum.Enum):
     FREE = "free"
+    STARTER = "starter"
     PRO = "pro"
     ELITE = "elite"
     UNLIMITED = "unlimited"

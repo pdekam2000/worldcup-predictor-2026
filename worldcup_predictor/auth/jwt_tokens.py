@@ -32,6 +32,7 @@ def create_access_token(
     user_id: uuid.UUID,
     email: str,
     role: UserRole,
+    token_version: int = 0,
     settings: Settings | None = None,
 ) -> str:
     active = _settings(settings)
@@ -41,6 +42,7 @@ def create_access_token(
         "sub": str(user_id),
         "email": email,
         "role": role.value,
+        "tv": int(token_version),
         "iat": int(now.timestamp()),
         "exp": int(expires.timestamp()),
         "type": "access",

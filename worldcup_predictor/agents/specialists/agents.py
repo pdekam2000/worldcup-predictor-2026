@@ -35,22 +35,34 @@ class WeatherAgent(BaseAgent):
             wind = weather.get("wind_speed_kmh")
             humidity = weather.get("humidity_pct")
             impact = weather.get("weather_impact_score")
+            risk = weather.get("weather_risk_level")
+            summary = weather.get("weather_summary")
             source = weather.get("source") or weather.get("provider") or "live"
             status = "available"
             status_reason = weather_status_reason(report, provider_configured=provider_configured)
-            notes = f"Venue weather from {source} (backup enrichment when primary missing)."
+            notes = summary or f"Venue weather from {source}."
             signal = make_signal(
                 self.name,
                 self.domain,
                 status,
                 {
                     "temperature_c": temp,
+                    "feels_like_c": weather.get("feels_like_c"),
                     "rain_probability": rain,
+                    "rain_mm": weather.get("rain_mm"),
                     "wind_speed_kmh": wind,
+                    "wind_gust_kmh": weather.get("wind_gust_kmh"),
                     "humidity_pct": humidity,
+                    "visibility_km": weather.get("visibility_km"),
+                    "cloud_cover_pct": weather.get("cloud_cover_pct"),
                     "weather_impact_score": impact,
+                    "weather_risk_level": risk,
+                    "weather_summary": summary,
                     "weather_source": source,
                     "condition": weather.get("condition"),
+                    "kickoff_local_weather": weather.get("kickoff_local_weather"),
+                    "severe_weather_alerts": weather.get("severe_weather_alerts") or [],
+                    "impact_factors": weather.get("impact_factors") or [],
                     "venue": fixture.venue,
                     "kickoff_utc": fixture.kickoff_utc.isoformat(),
                 },

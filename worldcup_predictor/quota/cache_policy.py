@@ -77,7 +77,17 @@ def should_fetch_lineups(kickoff_utc: datetime | None) -> bool:
 
 
 def prediction_result_ttl_seconds(kickoff_utc: datetime | None) -> int:
-    """TTL for full prediction API payloads — shorter near kickoff."""
+    """TTL envelope for file cache — Phase 33 bands via freshness check at read time."""
+    try:
+        from worldcup_predictor.automation.worldcup_background.freshness import (
+            freshness_max_age_seconds,
+            hours_until_kickoff,
+        )
+
+        hours = hours_until_kickoff(kickoff_utc)
+        return int(freshness_max_age_seconds(hours)) + 300
+    except ImportError:
+        pass
     if kickoff_utc is None:
         return PREDICTION_RESULT_MIN_TTL_SECONDS + 900
     now = datetime.now(timezone.utc).replace(tzinfo=None)

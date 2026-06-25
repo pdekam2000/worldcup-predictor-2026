@@ -13,6 +13,9 @@ from fastapi.responses import JSONResponse
 from worldcup_predictor.api.audit_trace_helpers import build_audit_trace
 from worldcup_predictor.api.display_helpers import enrich_prediction_payload
 from worldcup_predictor.api.prediction_output import build_prediction_output
+from worldcup_predictor.providers.sportmonks_xg_extraction import load_sportmonks_xg_from_prediction
+from worldcup_predictor.providers.weather_extraction import load_weather_from_prediction
+from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
 from worldcup_predictor.api.deps import get_optional_current_user
 from worldcup_predictor.api.web_auth import WebAuthUser
 
@@ -33,6 +36,26 @@ from worldcup_predictor.quota.quota_guard import (
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["predictions"])
+
+_WRONG_ENDPOINT_MSG = (
+    "Wrong path: use GET or POST /api/predict/{fixture_id} — not /api/predictions/{fixture_id}."
+)
+
+
+@router.get("/predictions/{fixture_id}")
+@router.post("/predictions/{fixture_id}")
+def wrong_predictions_endpoint(fixture_id: int) -> None:
+    """Fast 404 for common typo — avoids hanging clients on non-existent route."""
+    raise HTTPException(
+        status_code=404,
+        detail={
+            "status": "error",
+            "code": "wrong_endpoint",
+            "message": _WRONG_ENDPOINT_MSG,
+            "fixture_id": fixture_id,
+            "correct_path": f"/api/predict/{fixture_id}",
+        },
+    )
 
 _SELECTION_TO_API = {
     "home_win": "home",
@@ -106,12 +129,53 @@ def _specialist_summary(
     return {}
 
 
+def _sportmonks_xg_block(prediction: MatchPrediction) -> dict[str, Any]:
+    loaded = load_sportmonks_xg_from_prediction(prediction)
+    if loaded is not None:
+        return loaded
+    try:
+        from worldcup_predictor.database.repository import FootballIntelligenceRepository
+        from worldcup_predictor.providers.sportmonks_xg_extraction import (
+            build_sportmonks_xg_api_block,
+            extract_fixture_xg_match,
+        )
+
+        row = FootballIntelligenceRepository().get_fixture_row(prediction.fixture_id)
+        if not row:
+            return {"available": False, "source": "sportmonks", "data_source": "none"}
+        extraction = extract_fixture_xg_match(
+            api_fixture_id=prediction.fixture_id,
+            home_team=str(row.get("home_team") or ""),
+            away_team=str(row.get("away_team") or ""),
+            kickoff_date=str(row.get("kickoff_utc") or "")[:10] or None,
+        )
+        return build_sportmonks_xg_api_block(extraction.parsed)
+    except Exception:
+        return {"available": False, "source": "sportmonks", "data_source": "none"}
+
+
+def _weather_intelligence_block(prediction: MatchPrediction) -> dict[str, Any]:
+    loaded = load_weather_from_prediction(prediction)
+    if loaded is not None:
+        return loaded
+    return {
+        "available": False,
+        "source": "none",
+        "data_source": "none",
+        "weather_summary": None,
+        "weather_impact_score": None,
+        "weather_risk_level": None,
+    }
+
+
 def _success_payload(result: PredictPipelineResult) -> dict[str, Any]:
+    from worldcup_predictor.api.prediction_metadata import stamp_prediction_engine_metadata
+
     prediction = result.prediction
     home_team, away_team = _split_teams(prediction.match_name)
     specialist_summary = _specialist_summary(result, prediction)
     output_block = build_prediction_output(prediction, specialist_summary=specialist_summary)
-    return {
+    payload = {
         "status": "ok",
         "fixture_id": prediction.fixture_id,
         "home_team": home_team,
@@ -126,13 +190,22 @@ def _success_payload(result: PredictPipelineResult) -> dict[str, Any]:
         "safe_pick": output_block.get("safe_pick"),
         "value_pick": output_block.get("value_pick"),
         "aggressive_pick": output_block.get("aggressive_pick"),
+        "caution_pick": output_block.get("caution_pick"),
+        "best_available_pick": output_block.get("best_available_pick"),
+        "user_visible_pick": output_block.get("user_visible_pick"),
+        "pick_tier": output_block.get("pick_tier"),
+        "caution_reason": output_block.get("caution_reason"),
+        "confidence_gap_to_threshold": output_block.get("confidence_gap_to_threshold"),
         "accuracy_tracking": output_block.get("accuracy_tracking"),
         "risk_level": output_block["risk_level"],
         "no_bet": output_block["no_bet"],
         "specialist_summary": specialist_summary,
         "audit_trace": build_audit_trace(prediction, specialist_summary),
         "data_quality": _data_quality_score(prediction),
+        "sportmonks_xg": _sportmonks_xg_block(prediction),
+        "weather_intelligence": _weather_intelligence_block(prediction),
     }
+    return stamp_prediction_engine_metadata(payload, prediction=prediction, generated_by="live")
 
 
 def _failure_payload(fixture_id: int, result: PredictPipelineResult) -> dict[str, Any]:
@@ -164,8 +237,13 @@ def _kickoff_for_fixture(fixture_id: int):
         row = FootballIntelligenceRepository().get_fixture_row(fixture_id)
         if row and row.get("kickoff_utc"):
             return datetime.fromisoformat(str(row["kickoff_utc"]).replace("Z", "+00:00"))
-    except Exception:
-        pass
+    except Exception as exc:
+        log_enrichment_failure(
+            "worldcup_predictor.api.routes.predictions",
+            exc,
+            fixture_id=fixture_id,
+            layer="kickoff_lookup",
+        )
     return None
 
 
@@ -208,12 +286,22 @@ def _cache_lookup(
     season: int,
     locale: Locale,
 ) -> dict[str, Any] | None:
-    cached = get_cached_prediction(
-        fixture_id,
-        competition_key=competition_key,
-        season=season,
-        locale=locale,
-    )
+    try:
+        from worldcup_predictor.automation.worldcup_background.prediction_store import WorldcupPredictionStore
+
+        cached = WorldcupPredictionStore().get(
+            fixture_id,
+            competition_key=competition_key,
+            season=season,
+            locale=locale,
+        )
+    except Exception:
+        cached = get_cached_prediction(
+            fixture_id,
+            competition_key=competition_key,
+            season=season,
+            locale=locale,
+        )
     if cached is None:
         return None
     if "audit_trace" not in cached:
@@ -254,6 +342,7 @@ def get_cached_prediction_endpoint(
         competition_key=comp.key,
         season=comp.season,
         user_id=user.id if user else None,
+        role=user.role if user else None,
     )
 
 
@@ -273,7 +362,12 @@ def predict_fixture(
     """
     comp = _resolve_competition(competition, season)
     settings = get_settings()
-    is_admin = user is not None and user.role == "admin"
+    is_admin = user is not None and user.role in ("admin", "super_admin")
+
+    if user is not None:
+        from worldcup_predictor.api.deps import assert_prediction_access
+
+        assert_prediction_access(user)
 
     if not force_refresh:
         cached = _cache_lookup(
@@ -288,7 +382,39 @@ def predict_fixture(
                 competition_key=comp.key,
                 season=comp.season,
                 user_id=user.id if user else None,
+                role=user.role if user else None,
             )
+
+    # Phase 34 — subscription quota (pipeline runs only; cache reuse exempt)
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail={
+                "status": "error",
+                "code": "auth_required",
+                "message": "Sign in to run a new prediction. Cached predictions may be viewed when available.",
+            },
+        )
+    try:
+        from worldcup_predictor.subscription.quota_service import assert_prediction_allowed
+
+        assert_prediction_allowed(user.id, role=user.role, fixture_id=fixture_id)
+    except Exception as exc:
+        from worldcup_predictor.subscription.quota_service import SubscriptionQuotaError
+
+        if isinstance(exc, SubscriptionQuotaError):
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "status": "error",
+                    "code": exc.code,
+                    "message": str(exc),
+                    "limit": exc.limit,
+                    "used": exc.used,
+                    "upgrade_url": "/subscription",
+                },
+            ) from exc
+        raise
 
     try:
         if force_refresh:
@@ -344,7 +470,16 @@ def predict_fixture(
         return JSONResponse(status_code=422, content=_failure_payload(fixture_id, result))
 
     payload = _success_payload(result)
-    payload["cache_source"] = "live"
+    try:
+        from worldcup_predictor.automation.worldcup_background.prediction_runner import build_api_payload
+
+        payload = build_api_payload(
+            result,
+            intelligence_report=result.intelligence_report,
+            specialist_report=result.specialist_report,
+        )
+    except Exception:
+        payload["cache_source"] = "live"
     kickoff = kickoff_from_payload(payload) or _kickoff_for_fixture(fixture_id)
     if kickoff is not None:
         payload["kickoff_utc"] = kickoff.isoformat()
@@ -356,12 +491,43 @@ def predict_fixture(
         locale=locale,
         kickoff_utc=kickoff,
         settings=settings,
+        prediction_is_placeholder=bool(getattr(result.prediction, "is_placeholder", False)),
     )
+    try:
+        from worldcup_predictor.automation.worldcup_background.prediction_store import WorldcupPredictionStore
+
+        WorldcupPredictionStore(settings).upsert(
+            fixture_id,
+            payload,
+            kickoff_utc=payload.get("kickoff_utc"),
+            source="user_predict",
+            prediction_is_placeholder=bool(getattr(result.prediction, "is_placeholder", False)),
+        )
+    except Exception as exc:
+        log_enrichment_failure(
+            "worldcup_predictor.api.routes.predictions",
+            exc,
+            fixture_id=fixture_id,
+            layer="prediction_store_upsert",
+        )
+    if user is not None and not is_admin:
+        try:
+            from worldcup_predictor.subscription.quota_service import record_prediction_usage
+
+            record_prediction_usage(user.id, fixture_id)
+        except Exception as exc:
+            log_enrichment_failure(
+                "worldcup_predictor.api.routes.predictions",
+                exc,
+                fixture_id=fixture_id,
+                layer="quota_usage_record",
+            )
     _record_user_history(user, payload)
     return enrich_prediction_payload(
         payload,
         competition_key=comp.key,
         season=comp.season,
         user_id=user.id if user else None,
+        role=user.role if user else None,
         settings=settings,
     )

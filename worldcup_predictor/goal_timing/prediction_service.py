@@ -13,6 +13,7 @@ from worldcup_predictor.goal_timing.engine import EliteGoalTimingEngine
 from worldcup_predictor.goal_timing.features.builder import GoalTimingFeatureBuilder
 from worldcup_predictor.goal_timing.leagues import is_goal_timing_prediction_league
 from worldcup_predictor.goal_timing.storage.repository import GoalTimingRepository
+from worldcup_predictor.egie.confidence.production_service import HybridConfidenceProductionService
 
 
 class GoalTimingPredictionService:
@@ -26,6 +27,7 @@ class GoalTimingPredictionService:
                 max_api_event_fetches=0,
             )
         )
+        self.hybrid_confidence = HybridConfidenceProductionService(stored=self.stored)
 
     def predict_fixture(
         self,
@@ -83,12 +85,23 @@ class GoalTimingPredictionService:
             context=context,
         )
 
+        hybrid_snapshot = self.hybrid_confidence.compute_snapshot(
+            result,
+            features=features,
+            context=context,
+        )
+
         prediction_id = None
         if persist:
             prediction_id = self.repository.save_prediction(
                 result,
                 feature_snapshot_id=feature_snapshot_id,
+                hybrid_confidence_snapshot=hybrid_snapshot,
             )
+
+        prediction_payload = result.to_dict()
+        if hybrid_snapshot:
+            prediction_payload["hybrid_confidence"] = hybrid_snapshot
 
         return {
             "fixture_id": fixture_id,
@@ -96,7 +109,7 @@ class GoalTimingPredictionService:
             "prediction_id": str(prediction_id) if prediction_id else None,
             "feature_snapshot_id": feature_snapshot_id,
             "persisted": bool(prediction_id),
-            "prediction": result.to_dict(),
+            "prediction": prediction_payload,
         }
 
     def list_today_picks(self, *, limit: int = 20) -> dict[str, Any]:
@@ -127,13 +140,27 @@ class GoalTimingPredictionService:
             "generated_at": datetime.now(timezone.utc).isoformat(),
         }
 
-    @staticmethod
-    def _serialize_prediction_row(row: dict[str, Any]) -> dict[str, Any]:
+    def list_stored_picks(self, *, limit: int = 50, upcoming_only: bool = True) -> dict[str, Any]:
+        """Read cached published picks from PostgreSQL only (fast, no generation)."""
+        rows = self.repository.list_predictions(
+            limit=limit,
+            upcoming_only=upcoming_only,
+        )
+        picks = [self._serialize_prediction_row(r) for r in rows if not r.get("no_prediction_flag")]
+        return {
+            "competition_keys": list(GOAL_TIMING_PREDICTION_LEAGUE_KEYS),
+            "picks": picks[:limit],
+            "count": len(picks[:limit]),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "source": "stored_only",
+        }
+
+    def _serialize_prediction_row(self, row: dict[str, Any]) -> dict[str, Any]:
         display_minute = row.get("display_estimated_first_goal_minute")
         if display_minute is None and row.get("estimated_first_goal_minute") is not None:
             display_minute = row.get("estimated_first_goal_minute")
         display_minute_f = float(display_minute) if display_minute is not None else None
-        return {
+        payload = {
             "fixture_id": row.get("fixture_id"),
             "competition_key": row.get("competition_key"),
             "home_team": row.get("home_team"),
@@ -144,9 +171,13 @@ class GoalTimingPredictionService:
             "display_estimated_first_goal_minute": display_minute_f,
             "estimated_first_goal_minute": display_minute_f,
             "confidence_score": float(row.get("confidence_score") or 0),
+            "model_confidence_score": float(row.get("model_confidence_score") or 0)
+            if row.get("model_confidence_score") is not None
+            else None,
             "data_quality_score": float(row.get("data_quality_score") or 0),
             "explanation": row.get("explanation"),
             "no_prediction_flag": bool(row.get("no_prediction_flag")),
             "no_bet_flag": bool(row.get("no_bet_flag")),
             "model_version": row.get("model_version"),
         }
+        return HybridConfidenceProductionService.enrich_payload(payload, row=row)

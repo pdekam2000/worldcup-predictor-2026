@@ -1,0 +1,15 @@
+# Phase 44A — evaluate finished stored predictions every 30 minutes
+#
+# NOT enabled by default — run install_phase44a_eval_timer.sh after approval.
+
+[Unit]
+Description=World Cup auto evaluation timer (every 30 minutes)
+
+[Timer]
+OnCalendar=*-*-* *:00,30:00
+Persistent=true
+RandomizedDelaySec=120
+Unit=worldcup-evaluate-results.service
+
+[Install]
+WantedBy=timers.target

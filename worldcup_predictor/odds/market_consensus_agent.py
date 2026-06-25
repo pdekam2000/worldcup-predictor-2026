@@ -42,8 +42,8 @@ def _average_decimal_odds(source_probs: dict[str, dict[str, float]]) -> dict[str
 def _consensus_strength(disagreement: float, source_count: int) -> float:
     if source_count == 0:
         return 0.0
-    base = min(100.0, 40.0 + source_count * 15.0)
-    penalty = disagreement * 200.0
+    base = min(100.0, 42.0 + source_count * 14.0)
+    penalty = disagreement * 180.0
     return round(max(0.0, min(100.0, base - penalty)), 1)
 
 

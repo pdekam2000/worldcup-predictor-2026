@@ -1,0 +1,13 @@
+[Unit]
+Description=Hourly WorldCup autonomous prediction cycle (Phase 61 — disabled by default)
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+Unit=worldcup-autonomous.service
+
+[Install]
+WantedBy=timers.target
+
+# NOT ENABLED BY DEFAULT — enable only after autonomous_once validation in production:
+#   sudo systemctl enable --now worldcup-autonomous.timer

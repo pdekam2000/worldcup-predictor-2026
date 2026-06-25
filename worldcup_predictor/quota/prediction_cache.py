@@ -18,6 +18,11 @@ from worldcup_predictor.quota.prediction_cache_policy import (
 )
 from worldcup_predictor.quota.quota_tracker import get_quota_tracker
 
+try:
+    from worldcup_predictor.automation.worldcup_background.freshness import is_prediction_fresh
+except ImportError:
+    is_prediction_fresh = None  # type: ignore[assignment]
+
 _lock = threading.Lock()
 _cache_singleton: ApiCache | None = None
 
@@ -77,11 +82,28 @@ def get_cached_prediction(
         get_quota_tracker().record_prediction_cache_miss()
         return None
 
+    if is_prediction_fresh is not None:
+        fresh, fresh_reason = is_prediction_fresh(payload, kickoff_utc=kickoff_from_payload(payload))
+        if not fresh:
+            get_quota_tracker().record_prediction_cache_miss()
+            return None
+        reason = fresh_reason
+
+    from worldcup_predictor.automation.worldcup_background.stale_prediction_policy import (
+        is_stored_prediction_quality_valid,
+    )
+
+    quality_ok, quality_reason = is_stored_prediction_quality_valid(payload)
+    if not quality_ok:
+        get_quota_tracker().record_prediction_cache_miss()
+        return None
+
     get_quota_tracker().record_prediction_cache_hit()
     out = dict(payload)
     out["cache_source"] = "cache"
     out["cache_validated"] = True
     out["cache_validation_reason"] = reason
+    out["quality_validation_reason"] = quality_reason
     return out
 
 
@@ -94,7 +116,21 @@ def store_prediction(
     locale: str,
     kickoff_utc: datetime | None = None,
     settings: Settings | None = None,
-) -> None:
+    prediction_is_placeholder: bool | None = None,
+    existing_payload: dict[str, Any] | None = None,
+) -> tuple[bool, str]:
+    settings = settings or get_settings()
+    from worldcup_predictor.automation.worldcup_background.prediction_store_guard import evaluate_prediction_storage
+
+    allow, reason = evaluate_prediction_storage(
+        payload,
+        settings=settings,
+        prediction_is_placeholder=prediction_is_placeholder,
+        existing_payload=existing_payload,
+    )
+    if not allow:
+        return False, reason
+
     ttl = prediction_result_ttl_seconds(kickoff_utc)
     enriched = stamp_prediction_cache(dict(payload))
     enriched["cached_at"] = time.time()
@@ -107,6 +143,7 @@ def store_prediction(
         enriched,
         ttl_seconds=ttl,
     )
+    return True, "ok"
 
 
 def kickoff_from_payload(payload: dict[str, Any]) -> datetime | None:

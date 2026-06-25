@@ -12,6 +12,7 @@ from worldcup_predictor.domain.prediction import (
     OneXTwoSelection,
     ScorelinePrediction,
 )
+from worldcup_predictor.prediction.rule_a_gate.policy import resolve_rule_a_1x2
 
 
 def _result_from_scoreline(home: int, away: int) -> OneXTwoSelection:
@@ -31,7 +32,17 @@ def harmonize_prediction(
     *,
     home_team: str,
     away_team: str,
+    wde_one_x_two: OneXTwoSelection | None = None,
+    odds_available: bool | None = None,
+    conditional_1x2: bool = False,
 ) -> MatchPrediction:
+    """
+    Align markets with primary scoreline.
+
+    Phase 47C: when ``conditional_1x2`` is True (Rule A active), only harmonize 1X2
+    to the scoreline when pre-match odds are available; otherwise keep the WDE winner.
+    O/U, halftime caps, and first-goal guards are always applied.
+    """
     notes: list[str] = []
     home = round(prediction.scoreline.home_goals) if prediction.scoreline else 1
     away = round(prediction.scoreline.away_goals) if prediction.scoreline else 1
@@ -41,12 +52,26 @@ def harmonize_prediction(
 
     implied_1x2 = _result_from_scoreline(home, away)
     implied_ou = _ou_from_total(total)
+    wde_pick = wde_one_x_two or prediction.one_x_two.selection
 
-    if prediction.one_x_two.selection != implied_1x2:
-        notes.append(
-            f"Adjusted 1X2 from {prediction.one_x_two.selection} to {implied_1x2} "
-            f"to match scoreline {home}-{away}."
-        )
+    final_1x2, harmonization_used, harmonization_source, harmonization_reason = resolve_rule_a_1x2(
+        wde_selection=wde_pick,
+        scoreline_implied=implied_1x2,
+        odds_available=bool(odds_available),
+        conditional_enabled=conditional_1x2,
+    )
+
+    if final_1x2 != prediction.one_x_two.selection:
+        if conditional_1x2 and not odds_available:
+            notes.append(
+                f"Rule A: kept WDE 1X2 {final_1x2} (odds absent; scoreline {home}-{away} implies {implied_1x2})."
+            )
+        else:
+            notes.append(
+                f"Adjusted 1X2 from {prediction.one_x_two.selection} to {final_1x2} "
+                f"to match scoreline {home}-{away}."
+            )
+
     if prediction.over_under.selection != implied_ou:
         notes.append(
             f"Adjusted O/U from {prediction.over_under.selection} to {implied_ou} "
@@ -87,7 +112,7 @@ def harmonize_prediction(
         scoreline=ScorelinePrediction(home_goals=float(home), away_goals=float(away)),
         one_x_two=replace(
             prediction.one_x_two,
-            selection=implied_1x2,
+            selection=final_1x2,
         ),
         over_under=replace(
             prediction.over_under,
@@ -107,17 +132,25 @@ def harmonize_prediction(
             **prediction.metadata,
             "consistency_checked": "true",
             "consistency_fixes": str(len([n for n in notes if n.startswith("Adjusted")])),
+            "harmonization_used": str(harmonization_used).lower(),
+            "harmonization_reason": harmonization_reason,
+            "harmonization_source": harmonization_source,
+            "rule_a_active": str(conditional_1x2).lower(),
+            "odds_available": str(bool(odds_available)).lower(),
         },
     )
 
 
-def is_consistent(prediction: MatchPrediction) -> bool:
+def is_consistent(prediction: MatchPrediction, *, require_1x2_match: bool = True) -> bool:
     if prediction.scoreline is None:
         return False
     home = round(prediction.scoreline.home_goals)
     away = round(prediction.scoreline.away_goals)
     total = home + away
+    ou_ok = prediction.over_under.selection == _ou_from_total(total)
+    if not require_1x2_match:
+        return ou_ok
     return (
         prediction.one_x_two.selection == _result_from_scoreline(home, away)
-        and prediction.over_under.selection == _ou_from_total(total)
+        and ou_ok
     )

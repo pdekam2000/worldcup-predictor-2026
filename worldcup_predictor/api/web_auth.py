@@ -5,19 +5,26 @@ from __future__ import annotations
 import hmac
 import uuid
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from worldcup_predictor.access.admin_auth import admin_username_normalized, verify_admin_credentials
 from worldcup_predictor.access.config import public_access_code
 from worldcup_predictor.access.repository import normalize_user_identity
+from worldcup_predictor.auth.email_verification import issue_verification_token
+from worldcup_predictor.auth.verification_config import email_verification_required as is_email_verification_required
 from worldcup_predictor.auth.jwt_tokens import TokenError, create_access_token, decode_access_token
 from worldcup_predictor.auth.passwords import hash_password, verify_password
-from worldcup_predictor.database.postgres.enums import UserRole
+from worldcup_predictor.database.postgres.enums import SubscriptionPlan, UserRole
 from worldcup_predictor.database.postgres.schemas import UserRecord
 from worldcup_predictor.database.saas_factory import saas_uow
 
-LoginRole = Literal["admin", "user"]
+LoginRole = str
 MIN_PASSWORD_LENGTH = 8
+
+
+def _record_get(record: UserRecord, name: str, default=None):
+    """Read user fields from legacy production UserRecord shapes."""
+    return getattr(record, name, default)
 
 
 @dataclass(frozen=True)
@@ -26,22 +33,43 @@ class WebAuthUser:
     email: str | None
     full_name: str
     role: LoginRole
+    email_verified: bool = False
+    is_banned: bool = False
+    is_active: bool = True
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "id": self.id,
             "email": self.email or "",
             "full_name": self.full_name,
             "role": self.role,
+            "email_verified": self.email_verified,
+            "is_banned": self.is_banned,
+            "is_active": self.is_active,
         }
+
+    def can_access_predictions(self) -> bool:
+        if self.is_banned or not self.is_active:
+            return False
+        if self.role in ("admin", "super_admin", "owner"):
+            return True
+        from worldcup_predictor.auth.verification_config import email_verification_required
+
+        if not email_verification_required():
+            return True
+        return self.email_verified
 
 
 def _to_web_user(record: UserRecord) -> WebAuthUser:
+    role_val = record.role.value if hasattr(record.role, "value") else str(record.role)
     return WebAuthUser(
         id=str(record.id),
         email=record.email,
         full_name=record.full_name or record.email,
-        role="admin" if record.role == UserRole.ADMIN else "user",
+        role=role_val,
+        email_verified=bool(_record_get(record, "email_verified", False)),
+        is_banned=bool(_record_get(record, "is_banned", False)),
+        is_active=bool(_record_get(record, "is_active", True)),
     )
 
 
@@ -77,9 +105,11 @@ def _admin_bootstrap_login(uow, email: str, password: str) -> UserRecord | None:
             password_hash=pwd_hash,
             full_name="Administrator",
             role=UserRole.ADMIN,
+            email_verified=True,
         )
         return _provision_new_user(uow, record)
     uow.users.update_password_hash(existing.id, pwd_hash)
+    uow.users.set_email_verified(existing.id, True)
     updated = uow.users.set_role(existing.id, UserRole.ADMIN)
     return updated or existing
 
@@ -89,66 +119,101 @@ def register_with_password(
     email: str,
     password: str,
     invite_code: str | None = None,
-) -> tuple[WebAuthUser | None, str | None]:
+) -> tuple[WebAuthUser | None, str | None, bool, bool, str | None]:
+    """Return (profile, error, verification_required, verification_email_sent, email_delivery_status)."""
     normalized = normalize_user_identity(email) or ""
     pwd = (password or "").strip()
     if not normalized:
-        return None, "Email is required."
+        return None, "Email is required.", False, False, None
     if "@" not in normalized and normalized == admin_username_normalized():
-        return None, "Use the login page for admin accounts."
+        return None, "Use the login page for admin accounts.", False, False, None
     if len(pwd) < MIN_PASSWORD_LENGTH:
-        return None, f"Password must be at least {MIN_PASSWORD_LENGTH} characters."
+        return None, f"Password must be at least {MIN_PASSWORD_LENGTH} characters.", False, False, None
     if invite_code_required() and not verify_invite_code(invite_code):
-        return None, "Invalid or missing invite code."
+        return None, "Invalid or missing invite code.", False, False, None
+
+    verification_on = is_email_verification_required()
 
     with saas_uow() as uow:
         if uow.users.get_by_email(normalized):
-            return None, "Email already registered."
+            return None, "Email already registered.", False, False, None
         record = uow.users.create(
             email=normalized,
             password_hash=hash_password(pwd),
             full_name=normalized.split("@")[0],
             role=UserRole.USER,
+            email_verified=not verification_on,
         )
         record = _provision_new_user(uow, record)
-        uow.users.touch_login(record.id)
-        return _to_web_user(record), None
+
+    if not verification_on:
+        return _to_web_user(record), None, False, False, "verification_disabled"
+
+    _, delivery = issue_verification_token(record.id, email=record.email)
+    return (
+        _to_web_user(record),
+        None,
+        True,
+        delivery.verification_email_sent,
+        delivery.email_delivery_status,
+    )
 
 
 def login_with_password(
     *,
     email: str,
     password: str,
-) -> tuple[WebAuthUser | None, str | None]:
+) -> tuple[WebAuthUser | None, str | None, str | None]:
+    """Return (profile, error, error_code). error_code may be 'banned' or 'email_verification_required'."""
     normalized = normalize_user_identity(email) or ""
     pwd = (password or "").strip()
     if not normalized:
-        return None, "Email or username is required."
+        return None, "Email or username is required.", None
     if not pwd:
-        return None, "Password is required."
+        return None, "Password is required.", None
 
     with saas_uow() as uow:
         admin_record = _admin_bootstrap_login(uow, normalized, pwd)
         if admin_record is not None:
+            if bool(_record_get(admin_record, "is_banned", False)):
+                return None, "Account has been banned.", "banned"
             uow.users.touch_login(admin_record.id)
-            return _to_web_user(admin_record), None
+            return _to_web_user(admin_record), None, None
 
         record = uow.users.verify_email_password(normalized, pwd, verify_password)
         if record is None:
-            return None, "Invalid email or password."
-        if not record.is_active:
-            return None, "Account is disabled."
+            return None, "Invalid email or password.", None
+        if bool(_record_get(record, "is_banned", False)):
+            return None, "Account has been banned.", "banned"
+        if not bool(_record_get(record, "is_active", True)):
+            return None, "Account is disabled.", "disabled"
         uow.users.touch_login(record.id)
-        return _to_web_user(record), None
+        profile = _to_web_user(record)
+        if (
+            is_email_verification_required()
+            and not profile.email_verified
+            and profile.role == "user"
+        ):
+            return profile, None, "email_verification_required"
+        return profile, None, None
 
 
-def issue_access_token(user: WebAuthUser) -> str:
-    role = UserRole.ADMIN if user.role == "admin" else UserRole.USER
+def issue_access_token(user: WebAuthUser, *, token_version: int = 0) -> str:
+    try:
+        role = UserRole(user.role)
+    except ValueError:
+        role = UserRole.FREE_USER if user.role in ("user", "free_user") else UserRole.USER
     return create_access_token(
         user_id=uuid.UUID(user.id),
         email=user.email or "",
         role=role,
+        token_version=token_version,
     )
+
+
+def issue_access_token_for_record(record: UserRecord) -> str:
+    user = _to_web_user(record)
+    return issue_access_token(user, token_version=int(_record_get(record, "token_version", 0) or 0))
 
 
 def resolve_bearer_token(token: str) -> WebAuthUser | None:
@@ -165,9 +230,14 @@ def resolve_bearer_token(token: str) -> WebAuthUser | None:
         user_id = uuid.UUID(str(sub))
     except ValueError:
         return None
+    token_tv = int(payload.get("tv") or 0)
     with saas_uow() as uow:
         record = uow.users.get_by_id(user_id)
-        if record is None or not record.is_active:
+        if record is None or not bool(_record_get(record, "is_active", True)):
+            return None
+        if bool(_record_get(record, "is_banned", False)):
+            return None
+        if int(_record_get(record, "token_version", 0) or 0) != token_tv:
             return None
         return _to_web_user(record)
 
@@ -176,9 +246,50 @@ def user_profile(user: WebAuthUser) -> WebAuthUser:
     return user
 
 
-def revoke_session_token(token: str) -> None:
-    """JWT logout is client-side; kept for API compatibility."""
-    return None
+def revoke_session_token(token: str) -> bool:
+    """Invalidate JWT server-side by bumping token_version."""
+    if not token or not token.strip():
+        return False
+    try:
+        payload = decode_access_token(token.strip())
+        sub = payload.get("sub")
+        if not sub:
+            return False
+        user_id = uuid.UUID(str(sub))
+    except (TokenError, ValueError):
+        return False
+    with saas_uow() as uow:
+        bumped = uow.users.bump_token_version(user_id)
+        return bumped is not None
+
+
+def seed_owner_account(
+    *,
+    email: str,
+    password_hash: str,
+    full_name: str | None = None,
+    plan: SubscriptionPlan = SubscriptionPlan.PRO,
+) -> UserRecord:
+    normalized = email.strip().lower()
+    with saas_uow() as uow:
+        existing = uow.users.get_by_email(normalized)
+        if existing is None:
+            record = uow.users.create(
+                email=normalized,
+                password_hash=password_hash,
+                full_name=full_name or normalized.split("@")[0],
+                role=UserRole.OWNER,
+                email_verified=True,
+            )
+        else:
+            uow.users.update_password_hash(existing.id, password_hash)
+            uow.users.set_email_verified(existing.id, True)
+            uow.users.clear_ban(existing.id)
+            uow.users.set_active(existing.id, True)
+            record = uow.users.set_role(existing.id, UserRole.OWNER) or existing
+        uow.settings.get_or_create(record.id)
+        uow.subscriptions.upsert(record.id, plan=plan)
+        return record
 
 
 # Backwards-compatible aliases for route module

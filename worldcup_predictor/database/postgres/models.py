@@ -17,6 +17,7 @@ from sqlalchemy import (
     Enum as SAEnum,
     ForeignKey,
     Index,
+    Integer,
     Numeric,
     String,
     Text,
@@ -65,7 +66,17 @@ class User(Base):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
     email_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    is_banned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    banned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    banned_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    token_version: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     settings: Mapped["UserSettings | None"] = relationship(back_populates="user", uselist=False)
@@ -76,6 +87,46 @@ class User(Base):
     prediction_history: Mapped[list["UserPredictionHistory"]] = relationship(back_populates="user")
 
     __table_args__ = (Index("ix_users_role", "role"),)
+
+
+class EmailVerificationToken(Base):
+    __tablename__ = "email_verification_tokens"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    __table_args__ = (
+        Index("ix_email_verification_tokens_user_id", "user_id"),
+        Index("ix_email_verification_tokens_token_hash", "token_hash"),
+    )
+
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    __table_args__ = (
+        Index("ix_password_reset_tokens_user_id", "user_id"),
+        Index("ix_password_reset_tokens_token_hash", "token_hash"),
+    )
 
 
 class UserSettings(Base):
@@ -204,6 +255,16 @@ class Subscription(Base):
     start_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     end_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     provider: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    # Phase 39B-1 — Stripe billing foundation
+    external_customer_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    external_price_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    billing_status: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    current_period_start: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    current_period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cancel_at_period_end: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    last_payment_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    last_payment_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    billing_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -213,8 +274,78 @@ class Subscription(Base):
     )
 
     user: Mapped[User] = relationship(back_populates="subscription")
+    billing_invoices: Mapped[list["BillingInvoice"]] = relationship(back_populates="subscription")
 
-    __table_args__ = (Index("ix_subscriptions_status", "status"),)
+    __table_args__ = (
+        Index("ix_subscriptions_status", "status"),
+        Index("ix_subscriptions_external_customer_id", "external_customer_id"),
+        Index("ix_subscriptions_external_subscription_id", "external_subscription_id"),
+        Index("ix_subscriptions_billing_status", "billing_status"),
+    )
+
+
+class BillingInvoice(Base):
+    __tablename__ = "billing_invoices"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    subscription_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("subscriptions.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    provider: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    external_invoice_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    external_subscription_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    amount_due: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    amount_paid: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    currency: Mapped[str | None] = mapped_column(String(3), nullable=True)
+    status: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    invoice_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    hosted_invoice_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    period_start: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    subscription: Mapped["Subscription | None"] = relationship(back_populates="billing_invoices")
+
+    __table_args__ = (
+        UniqueConstraint("external_invoice_id", name="uq_billing_invoices_external_invoice_id"),
+        Index("ix_billing_invoices_user_id", "user_id"),
+        Index("ix_billing_invoices_subscription_id", "subscription_id"),
+    )
+
+
+class StripeWebhookEvent(Base):
+    __tablename__ = "stripe_webhook_events"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    stripe_event_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    event_type: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    api_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    livemode: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    payload_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    processed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    processing_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint("stripe_event_id", name="uq_stripe_webhook_events_stripe_event_id"),
+        Index("ix_stripe_webhook_events_event_type", "event_type"),
+        Index("ix_stripe_webhook_events_processed", "processed"),
+    )
 
 
 class UserPredictionHistory(Base):

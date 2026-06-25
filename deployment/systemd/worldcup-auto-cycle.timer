@@ -1,0 +1,11 @@
+# Phase 33 — full auto cycle every 4 hours (PLAN ONLY — not enabled)
+[Unit]
+Description=World Cup predict + evaluate auto cycle every 4 hours
+
+[Timer]
+OnCalendar=*-*-* 02,06,10,14,18,22:00:00 UTC
+Persistent=true
+Unit=worldcup-auto-cycle.service
+
+[Install]
+WantedBy=timers.target

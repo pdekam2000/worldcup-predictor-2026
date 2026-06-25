@@ -63,6 +63,10 @@ class EnrichmentService:
 
         report = apply_sportmonks_consumption(report)
 
+        from worldcup_predictor.intelligence.provider_utilization.apply import apply_provider_utilization
+
+        report = apply_provider_utilization(report, fixture)
+
         sources = list(report.enrichment_sources or [])
         for name in outcome.applied_providers:
             if name not in sources:
@@ -350,6 +354,12 @@ class EnrichmentService:
         endpoint_log: list[EndpointInspection],
     ) -> tuple[MatchIntelligenceReport, EnrichmentOutcome]:
         if report.weather and report.weather.get("available"):
+            from worldcup_predictor.intelligence.weather_intelligence_engine import enrich_normalized_weather
+
+            wx = dict(report.weather)
+            if not wx.get("weather_risk_level"):
+                wx = enrich_normalized_weather(wx)
+                report = replace(report, weather=wx)
             outcome.skipped.append("weather:primary_present")
             return report, outcome
 
@@ -361,7 +371,10 @@ class EnrichmentService:
         kickoff_utc = fixture.kickoff_utc
 
         if self._registry.weather.is_configured:
-            result = self._registry.weather.get_venue_forecast(city=city)
+            result = self._registry.weather.get_venue_forecast(
+                city=city,
+                kickoff_utc=kickoff_utc,
+            )
             self._log_provider(endpoint_log, result)
             if result.available:
                 outcome.applied_providers.append(result.provider)

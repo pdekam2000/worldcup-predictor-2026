@@ -1,0 +1,35 @@
+# Phase 51F — EGIE goal timing auto evaluation (production)
+#
+# Install (operator approval required):
+#   sudo bash scripts/install_phase51f_egie_eval_timer.sh
+#
+# Manual run:
+#   sudo -u www-data bash -lc 'cd /opt/worldcup-predictor && .venv/bin/python main.py egie-goal-timing-evaluation'
+#
+# Rollback:
+#   sudo systemctl disable --now egie-goal-timing-evaluation.timer
+#   sudo rm /etc/systemd/system/egie-goal-timing-evaluation.service
+#   sudo rm /etc/systemd/system/egie-goal-timing-evaluation.timer
+#   sudo systemctl daemon-reload
+
+[Unit]
+Description=EGIE goal timing auto evaluation (Phase 51F)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=APP_ENV=production
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/worldcup-predictor/.venv/bin/python main.py egie-goal-timing-evaluation --limit 200 --max-api-calls 50
+Nice=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=egie-goal-timing-evaluation
+
+[Install]
+WantedBy=multi-user.target

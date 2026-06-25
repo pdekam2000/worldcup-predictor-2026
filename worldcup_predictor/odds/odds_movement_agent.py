@@ -8,6 +8,8 @@ from worldcup_predictor.agents.base import AgentResult, BaseAgent
 from worldcup_predictor.agents.specialists.helpers import make_signal, require_intelligence
 from worldcup_predictor.agents.specialists.odds_control_agent import _implied_from_decimal, _safe_float
 from worldcup_predictor.database.repository import FootballIntelligenceRepository
+from worldcup_predictor.intelligence.provider_utilization.apply import ODDS_MOVEMENT_INTEL_KEY
+from worldcup_predictor.intelligence.provider_utilization.models import OddsMovementIntelligence
 from worldcup_predictor.odds.models import OddsMovementSignal
 
 STEAM_MOVE_PCT = 8.0
@@ -214,14 +216,30 @@ class OddsMovementAgent(BaseAgent):
         except Exception:
             snapshots = []
 
-        signal_data = build_odds_movement(
-            fixture_id=fixture_id,
-            supplemental=supplemental,
-            stored_snapshots=snapshots,
+        from worldcup_predictor.intelligence.provider_utilization.odds_movement_intelligence import (
+            build_odds_movement_intelligence,
+            enrich_movement_signal_dict,
         )
 
+        cached_intel = supplemental.get(ODDS_MOVEMENT_INTEL_KEY)
+        if isinstance(cached_intel, dict) and cached_intel.get("odds_movement_score") is not None:
+            signal_data = build_odds_movement(
+                fixture_id=fixture_id,
+                supplemental=supplemental,
+                stored_snapshots=snapshots,
+            )
+            intel = OddsMovementIntelligence(**{k: cached_intel.get(k) for k in OddsMovementIntelligence.__dataclass_fields__})
+            signal_payload = enrich_movement_signal_dict(signal_data.to_dict(), intel)
+        else:
+            signal_data, intel = build_odds_movement_intelligence(
+                fixture_id=fixture_id,
+                supplemental=supplemental,
+                stored_snapshots=snapshots,
+            )
+            signal_payload = enrich_movement_signal_dict(signal_data.to_dict(), intel)
+
         status = "partial" if signal_data.snapshot_count < 2 else "available"
-        if signal_data.warning and "unavailable" in signal_data.warning.lower():
+        if signal_data.warning and "unavailable" in (signal_data.warning or "").lower():
             status = "unavailable"
 
         warnings: list[str] = []
@@ -234,7 +252,7 @@ class OddsMovementAgent(BaseAgent):
             self.name,
             self.domain,
             status,
-            signal_data.to_dict(),
+            signal_payload,
             warnings=warnings,
             missing_data=["odds_snapshots"] if signal_data.snapshot_count < 2 else [],
             impact_score=signal_data.movement_confidence,

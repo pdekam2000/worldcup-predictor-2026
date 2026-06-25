@@ -15,7 +15,7 @@ from worldcup_predictor.quota.prediction_cache_policy import specialist_agent_co
 from worldcup_predictor.results.match_results_store import MatchResultsStore
 from worldcup_predictor.schedule.match_center import FINISHED_STATUSES, actual_result
 
-ResultStatus = Literal["correct", "wrong", "pending", "unknown"]
+ResultStatus = Literal["correct", "wrong", "partial", "pending", "unknown"]
 
 _ACTUAL_TO_PICK: dict[str, Prediction1x2] = {
     "home_win": Prediction1x2.HOME,
@@ -37,6 +37,16 @@ class FixtureOutcome:
     final_score: str | None
     evaluated_at: str | None
     fixture_status: str | None
+    ht_score: str | None = None
+    ht_result: str | None = None
+    ht_home_goals: int | None = None
+    ht_away_goals: int | None = None
+    first_goal_team: str | None = None
+    first_goal_player: str | None = None
+    first_goal_minute: int | None = None
+    first_goal_extra_minute: int | None = None
+    match_outcome_type: str | None = None
+    goal_events: tuple[dict[str, Any], ...] = ()
 
 
 def _utc_now_iso() -> str:
@@ -61,7 +71,10 @@ def _outcome_from_goals(
     status: str | None,
     finished_at: str | None,
     is_finished: bool,
+    result_row: dict[str, Any] | None = None,
+    goal_events: list[dict[str, Any]] | None = None,
 ) -> FixtureOutcome:
+    extended = _extended_outcome_fields(result_row, goal_events)
     if not is_finished:
         return FixtureOutcome(
             is_finished=False,
@@ -69,6 +82,7 @@ def _outcome_from_goals(
             final_score=None,
             evaluated_at=None,
             fixture_status=status,
+            **extended,
         )
 
     if home_goals is None or away_goals is None:
@@ -86,6 +100,7 @@ def _outcome_from_goals(
             final_score=score_text,
             evaluated_at=finished_at or _utc_now_iso(),
             fixture_status=status,
+            **extended,
         )
 
     return FixtureOutcome(
@@ -94,7 +109,46 @@ def _outcome_from_goals(
         final_score=score_text,
         evaluated_at=finished_at or _utc_now_iso(),
         fixture_status=status,
+        **extended,
     )
+
+
+def _extended_outcome_fields(
+    result_row: dict[str, Any] | None,
+    goal_events: list[dict[str, Any]] | None,
+) -> dict[str, Any]:
+    if not result_row:
+        events_tuple = tuple(goal_events or ())
+        return {
+            "ht_score": None,
+            "ht_result": None,
+            "ht_home_goals": None,
+            "ht_away_goals": None,
+            "first_goal_team": None,
+            "first_goal_player": None,
+            "first_goal_minute": None,
+            "first_goal_extra_minute": None,
+            "match_outcome_type": None,
+            "goal_events": events_tuple,
+        }
+    ht_home = result_row.get("ht_home_goals")
+    ht_away = result_row.get("ht_away_goals")
+    ht_score = result_row.get("halftime_score")
+    if ht_score is None and ht_home is not None and ht_away is not None:
+        ht_score = f"{ht_home}-{ht_away}"
+    events_tuple = tuple(goal_events if goal_events is not None else [])
+    return {
+        "ht_score": ht_score,
+        "ht_result": result_row.get("ht_result"),
+        "ht_home_goals": ht_home,
+        "ht_away_goals": ht_away,
+        "first_goal_team": result_row.get("first_goal_team"),
+        "first_goal_player": result_row.get("first_goal_player"),
+        "first_goal_minute": result_row.get("first_goal_minute"),
+        "first_goal_extra_minute": result_row.get("first_goal_extra_minute"),
+        "match_outcome_type": result_row.get("match_outcome_type"),
+        "goal_events": events_tuple,
+    }
 
 
 class FixtureOutcomeResolver:
@@ -143,6 +197,7 @@ class FixtureOutcomeResolver:
         is_finished = status in FINISHED_STATUSES
 
         if result_row:
+            goal_events = repo.list_fixture_goal_events(fixture_id)
             return _outcome_from_goals(
                 home_goals=result_row.get("home_goals"),
                 away_goals=result_row.get("away_goals"),
@@ -150,6 +205,8 @@ class FixtureOutcomeResolver:
                 status=status,
                 finished_at=result_row.get("finished_at"),
                 is_finished=True,
+                result_row=result_row,
+                goal_events=goal_events,
             )
 
         return _outcome_from_goals(
@@ -210,12 +267,16 @@ def _cache_metadata(fixture_id: int, settings: Settings | None = None) -> dict[s
             "data_quality": None,
             "agent_count": None,
             "cache_schema_version": None,
+            "predicted_market_keys": [],
         }
+
+    from worldcup_predictor.api.global_prediction_archive import predicted_market_keys_from_payload
 
     return {
         "data_quality": cached.get("data_quality"),
         "agent_count": cached.get("specialist_agent_count") or specialist_agent_count(cached),
         "cache_schema_version": cached.get("cache_schema_version"),
+        "predicted_market_keys": predicted_market_keys_from_payload(cached),
     }
 
 

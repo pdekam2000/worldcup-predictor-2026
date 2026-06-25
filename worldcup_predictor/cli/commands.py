@@ -3363,3 +3363,204 @@ def run_import_league_history_command(
 
     out.write("\n" + "=" * 72 + "\n")
     return exit_code
+
+
+def run_daily_worldcup_predict_command(
+    *,
+    window_days: int | None = None,
+    force_refresh: bool = False,
+    limit: int | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.automation.worldcup_background.runner import run_daily_worldcup_predict
+
+    result = run_daily_worldcup_predict(
+        window_days=window_days,
+        force_refresh=force_refresh,
+        limit=limit,
+    )
+    out.write("Phase 33 — Daily World Cup prediction job\n")
+    out.write(f"  Scanned: {result.scanned}\n")
+    out.write(f"  Predicted: {result.predicted}\n")
+    out.write(f"  Skipped (fresh): {result.skipped_fresh}\n")
+    out.write(f"  Skipped (post-kickoff): {result.skipped_post_kickoff}\n")
+    out.write(f"  Errors: {result.errors}\n")
+    return 0 if result.errors == 0 else 1
+
+
+def run_evaluate_worldcup_results_command(*, limit: int | None = None, stream: TextIO | None = None) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.automation.worldcup_background.runner import run_evaluate_worldcup_results_cli
+
+    result = run_evaluate_worldcup_results_cli(limit=limit)
+    out.write("Phase 44A — Evaluate World Cup results (stored-first)\n")
+    out.write(f"  Scanned stored: {result.scanned}\n")
+    out.write(f"  Evaluated (new): {result.evaluated}\n")
+    out.write(f"  Updated: {result.updated}\n")
+    out.write(f"  Skipped (not finished): {result.skipped_not_finished}\n")
+    out.write(f"  Skipped (unchanged): {result.skipped_unchanged}\n")
+    out.write(f"  Skipped (no payload): {result.skipped_no_stored}\n")
+    out.write(f"  Pending: {result.pending}\n")
+    out.write(f"  Errors: {result.errors}\n")
+    out.write(f"  Summary rebuilt: {result.summary_rebuilt}\n")
+    return 0 if result.errors == 0 else 1
+
+
+def run_worldcup_refresh_results_command(
+    *,
+    limit: int | None = None,
+    dry_run: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.automation.worldcup_background.result_refresh import refresh_stored_prediction_results
+
+    result = refresh_stored_prediction_results(limit=limit, dry_run=dry_run)
+    out.write("Phase 45B — Refresh stored prediction results\n")
+    out.write(f"  Scanned (past kickoff): {result.scanned}\n")
+    out.write(f"  API fetches: {result.api_fetches}\n")
+    out.write(f"  Fixtures updated: {result.fixtures_updated}\n")
+    out.write(f"  Results updated: {result.results_updated}\n")
+    out.write(f"  JSONL saved: {result.jsonl_saved}\n")
+    out.write(f"  Outcomes persisted: {getattr(result, 'outcomes_persisted', 0)}\n")
+    out.write(f"  Outcome sync skipped (complete): {getattr(result, 'outcomes_skipped_complete', 0)}\n")
+    out.write(f"  API event fetches: {getattr(result, 'api_event_fetches', 0)}\n")
+    out.write(f"  Skipped (already finished): {result.skipped_already_finished}\n")
+    out.write(f"  Skipped (not due): {result.skipped_not_due}\n")
+    out.write(f"  Errors: {result.errors}\n")
+    return 0 if result.errors == 0 else 1
+
+
+def run_worldcup_import_legacy_command(
+    *,
+    dry_run: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.automation.worldcup_background.legacy_prediction_import import (
+        run_legacy_prediction_import,
+    )
+
+    result = run_legacy_prediction_import(dry_run=dry_run)
+    out.write("Phase 46B — Historical prediction recovery\n")
+    out.write(f"  Dry run: {result.dry_run}\n")
+    out.write(f"  Archive total before: {result.archive_total_before}\n")
+    out.write(f"  Archive total after: {result.archive_total_after}\n")
+    out.write(f"  Imported: {result.imported}\n")
+    out.write(f"  Quarantined: {result.quarantined}\n")
+    out.write(f"  Duplicates skipped: {result.duplicates_skipped}\n")
+    out.write(f"  Not recoverable skipped: {result.not_recoverable_skipped}\n")
+    out.write(f"  Errors: {len(result.errors)}\n")
+    if result.errors:
+        for err in result.errors[:10]:
+            out.write(f"    - {err}\n")
+    return 0 if not result.errors else 1
+
+
+def run_auto_evaluation_command(*, limit: int | None = None, stream: TextIO | None = None) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.automation.worldcup_background.auto_evaluation_job import (
+        auto_evaluation_exit_code,
+        run_production_auto_evaluation,
+    )
+
+    result = run_production_auto_evaluation(limit=limit)
+    out.write("Phase 44A — Production auto evaluation\n")
+    out.write(f"  Scanned stored: {result.scanned}\n")
+    out.write(f"  Evaluated (new): {result.evaluated}\n")
+    out.write(f"  Updated: {result.updated}\n")
+    out.write(f"  Skipped (not finished): {result.skipped_not_finished}\n")
+    out.write(f"  Skipped (unchanged): {result.skipped_unchanged}\n")
+    out.write(f"  Skipped (no payload): {result.skipped_no_stored}\n")
+    out.write(f"  Errors: {result.errors}\n")
+    return auto_evaluation_exit_code(result)
+
+
+def run_egie_goal_timing_auto_evaluation_command(
+    *,
+    limit: int | None = None,
+    max_api_calls: int | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.goal_timing.auto_evaluation_job import (
+        egie_evaluation_exit_code,
+        run_production_egie_goal_timing_evaluation,
+    )
+
+    payload = run_production_egie_goal_timing_evaluation(
+        limit=limit or 200,
+        max_api_calls=max_api_calls or 50,
+    )
+    job = payload.get("job") or {}
+    refresh = job.get("refresh") or {}
+    stats = payload.get("learning_stats") or {}
+
+    out.write("Phase 51F — EGIE goal timing auto evaluation\n")
+    out.write(f"  Scanned picks: {job.get('scanned', 0)}\n")
+    out.write(f"  Refresh scanned (past kickoff): {refresh.get('scanned', 0)}\n")
+    out.write(f"  Fixtures updated: {refresh.get('fixtures_updated', 0)}\n")
+    out.write(f"  Results updated: {refresh.get('results_updated', 0)}\n")
+    out.write(f"  Outcomes persisted: {refresh.get('outcomes_persisted', 0)}\n")
+    out.write(f"  Evaluated (new): {job.get('evaluated', 0)}\n")
+    out.write(f"  Updated: {job.get('updated', 0)}\n")
+    out.write(f"  Skipped (not finished): {job.get('skipped_not_finished', 0)}\n")
+    out.write(f"  Skipped (unchanged): {job.get('skipped_unchanged', 0)}\n")
+    out.write(f"  Skipped (no actuals): {job.get('skipped_no_actuals', 0)}\n")
+    out.write(f"  Pending markets: {job.get('pending', 0)}\n")
+    out.write(f"  Errors: {job.get('errors', 0)}\n")
+    out.write(f"  Learning sample size: {stats.get('sample_size', 0)}\n")
+    return egie_evaluation_exit_code(payload)
+
+
+def run_worldcup_auto_cycle_command(
+    *,
+    window_days: int | None = None,
+    report_path: str | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.automation.worldcup_background.runner import run_worldcup_auto_cycle
+
+    report = run_worldcup_auto_cycle(window_days=window_days, report_path=report_path)
+    out.write("Phase 33 — World Cup auto cycle complete\n")
+    out.write(f"  Predicted: {report['predict']['predicted']}\n")
+    out.write(f"  Evaluated: {report['evaluate']['evaluated']}\n")
+    out.write(f"  Winrate: {report['accuracy_summary'].get('winrate')}\n")
+    return 0
+
+
+def run_autonomous_once_command(
+    *,
+    dry_run: bool = False,
+    fixture_limit: int | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.autonomous.orchestrator import run_autonomous_cycle
+
+    report = run_autonomous_cycle(dry_run=dry_run, fixture_limit=fixture_limit)
+    out.write("Phase 61 — autonomous_once complete\n")
+    out.write(f"  Status: {report.get('status')}\n")
+    if report.get("status") == "ok":
+        out.write(f"  Fixtures discovered: {report.get('discovery', {}).get('fixture_count', 0)}\n")
+        out.write(f"  Production snapshots: {report.get('predictions', {}).get('production_snapshots', 0)}\n")
+        out.write(f"  Elite snapshots: {report.get('predictions', {}).get('elite_snapshots', 0)}\n")
+        out.write(f"  Evaluated: {report.get('evaluation', {}).get('evaluated', 0)}\n")
+        out.write(f"  API calls: {report.get('api_calls_used', 0)}\n")
+    return 0 if report.get("status") == "ok" else 1
+
+
+def run_autonomous_scheduler_command(
+    *,
+    interval_seconds: int = 3600,
+    max_iterations: int | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.autonomous.orchestrator import run_autonomous_scheduler_loop
+
+    out.write(f"Phase 61 — autonomous_scheduler (interval={interval_seconds}s)\n")
+    run_autonomous_scheduler_loop(interval_seconds=interval_seconds, max_iterations=max_iterations)
+    return 0

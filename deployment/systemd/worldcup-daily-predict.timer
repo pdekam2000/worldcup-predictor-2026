@@ -1,0 +1,11 @@
+# Phase 33 — daily prediction timer (PLAN ONLY — not enabled)
+[Unit]
+Description=Run World Cup daily background prediction at 06:00 UTC
+
+[Timer]
+OnCalendar=*-*-* 06:00:00 UTC
+Persistent=true
+Unit=worldcup-daily-predict.service
+
+[Install]
+WantedBy=timers.target

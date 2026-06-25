@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import replace
 from typing import Any
 
@@ -13,6 +14,8 @@ from worldcup_predictor.intelligence.sportmonks_odds_prediction_engine import (
 from worldcup_predictor.intelligence.sportmonks_xg_intelligence_engine import (
     parse_sportmonks_xg_from_fixture,
 )
+
+logger = logging.getLogger(__name__)
 
 SPORTMONKS_SUPPLEMENTAL_KEY = "sportmonks"
 SPORTMONKS_ODDS_PREDICTION_KEY = "sportmonks_odds_prediction"
@@ -340,8 +343,15 @@ def _premium_access_for_report(report: MatchIntelligenceReport) -> dict[str, boo
             row = repo.get_sportmonks_fixture_enrichment_by_api_fixture_id(int(fixture_id))
             if row:
                 return _premium_access_from_row(row)
-        except Exception:
-            pass
+        except Exception as exc:
+            from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
+
+            log_enrichment_failure(
+                "worldcup_predictor.providers.sportmonks_consumption",
+                exc,
+                fixture_id=int(fixture_id) if fixture_id is not None else None,
+                layer="premium_access_lookup",
+            )
     return None
 
 
@@ -361,8 +371,15 @@ def _resolve_raw_fixture_data(report: MatchIntelligenceReport) -> tuple[dict[str
                 data = payload.get("data") if isinstance(payload, dict) else None
                 if isinstance(data, dict):
                     return data, "sqlite_cache_complete"
-        except Exception:
-            pass
+        except Exception as exc:
+            from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
+
+            log_enrichment_failure(
+                "worldcup_predictor.providers.sportmonks_consumption",
+                exc,
+                fixture_id=int(fixture_id) if fixture_id is not None else None,
+                layer="sqlite_cache_complete",
+            )
 
     meta = report.provider_metadata or {}
     live = meta.get("sportmonks_fixture")
@@ -380,8 +397,15 @@ def _resolve_raw_fixture_data(report: MatchIntelligenceReport) -> tuple[dict[str
                 data = payload.get("data") if isinstance(payload, dict) else None
                 if isinstance(data, dict):
                     return data, "sqlite_cache"
-        except Exception:
-            pass
+        except Exception as exc:
+            from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
+
+            log_enrichment_failure(
+                "worldcup_predictor.providers.sportmonks_consumption",
+                exc,
+                fixture_id=int(fixture_id) if fixture_id is not None else None,
+                layer="sqlite_cache_fallback",
+            )
     return None, "none"
 
 
@@ -439,6 +463,15 @@ def apply_sportmonks_consumption(report: MatchIntelligenceReport) -> MatchIntell
     }
     supplemental[SPORTMONKS_ODDS_PREDICTION_KEY] = parse_odds_predictions_from_fixture(raw)
     supplemental[SPORTMONKS_XG_INTELLIGENCE_KEY] = parse_sportmonks_xg_from_fixture(raw)
+    try:
+        from worldcup_predictor.providers.sportmonks_xg_extraction import (
+            attach_sportmonks_xg_to_report,
+        )
+
+        report = attach_sportmonks_xg_to_report(report)
+        supplemental = dict(report.supplemental_sources or {})
+    except Exception:
+        logger.debug("Sportmonks xG match extraction skipped", exc_info=True)
 
     missing = list(report.missing_data or [])
     sources = list(report.enrichment_sources or [])

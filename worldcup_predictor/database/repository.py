@@ -1046,6 +1046,59 @@ class FootballIntelligenceRepository:
         ).fetchone()
         return int(row[0]) if row else 0
 
+    def update_fixture_outcome_detail(
+        self,
+        fixture_id: int,
+        *,
+        competition_key: str = "world_cup_2026",
+        ht_home_goals: int | None = None,
+        ht_away_goals: int | None = None,
+        ht_result: str | None = None,
+        first_goal_team: str | None = None,
+        first_goal_player: str | None = None,
+        first_goal_minute: int | None = None,
+        first_goal_extra_minute: int | None = None,
+        match_outcome_type: str | None = None,
+        outcome_persisted_at: str | None = None,
+        outcome_source: str | None = None,
+    ) -> bool:
+        ht_score = None
+        if ht_home_goals is not None and ht_away_goals is not None:
+            ht_score = f"{ht_home_goals}-{ht_away_goals}"
+        self._conn.execute(
+            """
+            UPDATE fixture_results SET
+                ht_home_goals = COALESCE(?, ht_home_goals),
+                ht_away_goals = COALESCE(?, ht_away_goals),
+                ht_result = COALESCE(?, ht_result),
+                halftime_score = COALESCE(?, halftime_score),
+                first_goal_team = COALESCE(?, first_goal_team),
+                first_goal_player = COALESCE(?, first_goal_player),
+                first_goal_minute = COALESCE(?, first_goal_minute),
+                first_goal_extra_minute = COALESCE(?, first_goal_extra_minute),
+                match_outcome_type = COALESCE(?, match_outcome_type),
+                outcome_persisted_at = COALESCE(?, outcome_persisted_at),
+                outcome_source = COALESCE(?, outcome_source)
+            WHERE fixture_id = ?
+            """,
+            (
+                ht_home_goals,
+                ht_away_goals,
+                ht_result,
+                ht_score,
+                first_goal_team,
+                first_goal_player,
+                first_goal_minute,
+                first_goal_extra_minute,
+                match_outcome_type,
+                outcome_persisted_at,
+                outcome_source,
+                int(fixture_id),
+            ),
+        )
+        self._conn.commit()
+        return self._conn.total_changes > 0
+
     def replace_fixture_goal_events(self, fixture_id: int, events: list[Any]) -> bool:
         from worldcup_predictor.outcomes.models import GoalEvent
 
@@ -1168,3 +1221,77 @@ class FootballIntelligenceRepository:
             competition_keys,
         ).fetchall()
         return [dict(r) for r in rows]
+
+    # --- Phase 33: World Cup stored predictions ---
+
+    def upsert_worldcup_stored_prediction(
+        self,
+        *,
+        fixture_id: int,
+        payload: dict[str, Any],
+        kickoff_utc: str | None = None,
+        source: str = "background",
+        predicted_at: str | None = None,
+        competition_key: str = "world_cup_2026",
+        superseded_from: int | None = None,
+    ) -> None:
+        now = _utc_now()
+        self._conn.execute(
+            """
+            INSERT INTO worldcup_stored_predictions (
+                fixture_id, competition_key, kickoff_utc, payload_json,
+                source, predicted_at, updated_at,
+                is_active, invalidated_at, invalidated_reason, superseded_by
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, 1, NULL, NULL, ?)
+            ON CONFLICT(fixture_id) DO UPDATE SET
+                kickoff_utc = excluded.kickoff_utc,
+                payload_json = excluded.payload_json,
+                source = excluded.source,
+                predicted_at = excluded.predicted_at,
+                updated_at = excluded.updated_at,
+                is_active = 1,
+                invalidated_at = NULL,
+                invalidated_reason = NULL,
+                superseded_by = excluded.superseded_by
+            """,
+            (
+                int(fixture_id),
+                competition_key,
+                kickoff_utc,
+                json.dumps(payload, ensure_ascii=False, default=str),
+                source,
+                predicted_at or now,
+                now,
+                superseded_from,
+            ),
+        )
+        self._conn.commit()
+
+    def get_worldcup_stored_prediction(
+        self,
+        fixture_id: int,
+        *,
+        include_inactive: bool = False,
+    ) -> dict[str, Any] | None:
+        if include_inactive:
+            row = self._conn.execute(
+                "SELECT * FROM worldcup_stored_predictions WHERE fixture_id = ?",
+                (int(fixture_id),),
+            ).fetchone()
+            return dict(row) if row else None
+        row = self._conn.execute(
+            """
+            SELECT * FROM worldcup_stored_predictions
+            WHERE fixture_id = ?
+              AND (is_active IS NULL OR is_active = 1)
+            """,
+            (int(fixture_id),),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def count_worldcup_stored_predictions(self, *, competition_key: str = "world_cup_2026") -> int:
+        row = self._conn.execute(
+            "SELECT COUNT(*) AS c FROM worldcup_stored_predictions WHERE competition_key = ?",
+            (competition_key,),
+        ).fetchone()
+        return int(row["c"]) if row else 0

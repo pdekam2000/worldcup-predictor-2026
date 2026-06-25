@@ -45,6 +45,15 @@ class PredictionHistoryRepository:
         ).all()
         return [_to_record(row) for row in rows]
 
+    def get_for_user(self, user_id: uuid.UUID, entry_id: uuid.UUID) -> PredictionHistoryRecord | None:
+        row = self._session.scalar(
+            select(UserPredictionHistory).where(
+                UserPredictionHistory.id == entry_id,
+                UserPredictionHistory.user_id == user_id,
+            )
+        )
+        return _to_record(row) if row else None
+
     def add(
         self,
         user_id: uuid.UUID,

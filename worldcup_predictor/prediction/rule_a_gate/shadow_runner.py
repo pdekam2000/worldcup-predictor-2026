@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from worldcup_predictor.prediction.rule_a_gate.models import RuleAGateMode
+from worldcup_predictor.prediction.rule_a_gate.policy import resolve_rule_a_1x2
 from worldcup_predictor.prediction.rule_a_gate.shadow_store import RuleAShadowRecord, RuleAShadowStore
 
 if TYPE_CHECKING:
@@ -30,9 +31,13 @@ def compute_rule_a_prediction(
     scoreline_prediction: str,
     odds_available: bool,
 ) -> tuple[str, str]:
-    if odds_available:
-        return scoreline_prediction, "scoreline"
-    return wde_prediction, "wde"
+    final, _, source, _ = resolve_rule_a_1x2(
+        wde_selection=wde_prediction,  # type: ignore[arg-type]
+        scoreline_implied=scoreline_prediction,  # type: ignore[arg-type]
+        odds_available=odds_available,
+        conditional_enabled=True,
+    )
+    return final, source
 
 
 def maybe_record_rule_a_shadow(

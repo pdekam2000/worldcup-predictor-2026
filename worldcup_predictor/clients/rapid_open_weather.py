@@ -162,20 +162,39 @@ class RapidOpenWeatherClient:
             rain_prob = max(rain_prob, k_rain)
 
         impact = compute_weather_impact(temp_c, rain_prob, wind_kmh)
-        return {
+        from worldcup_predictor.intelligence.weather_intelligence_engine import enrich_normalized_weather
+
+        base = {
             "available": True,
             "provider": "rapid_open_weather",
             "source": "rapid_open_weather",
             "city": city,
             "temperature_c": temp_c,
+            "feels_like_c": _to_celsius(_float(main.get("feels_like"))),
             "condition": condition,
             "rain_probability": rain_prob,
+            "rain_mm": rain_mm,
             "wind_speed_kmh": wind_kmh,
+            "wind_gust_kmh": _wind_to_kmh(_float(wind.get("gust"))),
             "humidity_pct": humidity,
-            "weather_impact_score": impact,
+            "visibility_km": _visibility_km(current.get("visibility")),
+            "cloud_cover_pct": (current.get("clouds") or {}).get("all"),
             "kickoff_forecast": kickoff_forecast,
             "forecast_periods": len(forecast_items),
+            "severe_weather_alerts": [],
+            "cached": False,
         }
+        if kickoff_utc is not None:
+            base["kickoff_utc"] = kickoff_utc.isoformat()
+        if kickoff_forecast:
+            from worldcup_predictor.intelligence.weather_intelligence_engine import (
+                kickoff_snapshot_from_hour,
+                merge_kickoff_weather_fields,
+            )
+
+            snap = kickoff_snapshot_from_hour(kickoff_forecast, provider="openweather")
+            base = merge_kickoff_weather_fields(base, snap)
+        return enrich_normalized_weather(base)
 
     def _get(self, logical: str, path: str, params: dict[str, Any]) -> RapidWeatherCallResult:
         url = f"{self._base_url}/{path.lstrip('/')}"
@@ -247,6 +266,16 @@ def _wind_to_kmh(speed: float | None) -> float | None:
     if speed is None:
         return None
     return round(speed * 3.6, 1)
+
+
+def _visibility_km(value: Any) -> float | None:
+    try:
+        if value is None:
+            return None
+        num = float(value)
+        return round(num / 1000.0, 1) if num > 100 else round(num, 1)
+    except (TypeError, ValueError):
+        return None
 
 
 def _forecast_item_to_current(item: dict[str, Any], payload: dict[str, Any]) -> dict[str, Any]:

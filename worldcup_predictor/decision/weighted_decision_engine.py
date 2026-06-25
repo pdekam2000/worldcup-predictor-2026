@@ -138,6 +138,20 @@ class WeightedDecisionEngine:
         reductions: list[str] = []
         no_bet_reasons: list[str] = []
 
+        try:
+            from worldcup_predictor.intelligence.national_team.integration import (
+                get_national_block,
+                national_wde_confidence_boost,
+            )
+
+            nat_block = get_national_block(report, specialist_report=specialist)
+            nat_boost = national_wde_confidence_boost(nat_block)
+            if nat_boost:
+                confidence += nat_boost
+                caps.append(f"national_intelligence_boost_plus_{nat_boost:.1f}")
+        except Exception:
+            pass
+
         promotion = self._last_lineup_promotion
         context_promo = self._last_context_promotion
         sm_promo = self._last_sportmonks_promotion
@@ -473,6 +487,18 @@ class WeightedDecisionEngine:
         form_score = (form_home + form_away) / 2
         form_edge = (form_home - form_away) / 100
 
+        try:
+            from worldcup_predictor.intelligence.national_team.integration import get_national_block
+
+            nat = get_national_block(report, specialist_report=specialist)
+            if nat:
+                form_score = float(nat.get("national_form_score") or form_score)
+                home_side = (nat.get("details") or {}).get("form") or {}
+                delta = float(home_side.get("form_differential") or 0)
+                form_edge += delta / 200
+        except Exception:
+            pass
+
         if specialist and specialist.signal("elo_team_strength_intelligence_agent"):
             ev2 = specialist.signal("elo_team_strength_intelligence_agent").signals
             ev2_impact = ev2.get("prediction_impact") or {}
@@ -491,6 +517,15 @@ class WeightedDecisionEngine:
         home_inj = len(report.home_team.injuries.players if report.home_team.injuries else [])
         away_inj = len(report.away_team.injuries.players if report.away_team.injuries else [])
         inj_edge = (away_inj - home_inj) * 0.03
+
+        try:
+            from worldcup_predictor.intelligence.national_team.integration import get_national_block
+
+            nat = get_national_block(report, specialist_report=specialist)
+            if nat:
+                inj_score = float(nat.get("injury_impact_score") or inj_score)
+        except Exception:
+            pass
 
         if specialist and specialist.signal("injury_suspension_intelligence_agent"):
             iv2 = specialist.signal("injury_suspension_intelligence_agent").signals
@@ -678,6 +713,15 @@ class WeightedDecisionEngine:
             implied = osig.get("implied_probabilities") or {}
             odds_edge = float(implied.get("home", 0.33)) - float(implied.get("away", 0.33))
 
+        try:
+            from worldcup_predictor.intelligence.national_team.integration import get_national_block
+
+            nat = get_national_block(report, specialist_report=specialist)
+            if nat:
+                odds_score = max(odds_score, float(nat.get("consensus_strength_score") or odds_score))
+        except Exception:
+            pass
+
         mot_score = 65.0
         mot_edge = 0.0
         if specialist and specialist.signal("motivation_psychology_agent"):
@@ -821,6 +865,20 @@ class WeightedDecisionEngine:
                             ),
                         )
                     )
+        pu = (getattr(report, "supplemental_sources", None) or {}).get("provider_utilization_v1")
+        if isinstance(pu, dict) and pu.get("version"):
+            om = pu.get("odds_movement") or {}
+            am = pu.get("advanced_match") or {}
+            items.append(
+                DataLimitation(
+                    field="provider_utilization_v1",
+                    impact=(
+                        f"events={((pu.get('unified_events') or {}).get('goal_count'))} "
+                        f"movement_score={om.get('odds_movement_score')} "
+                        f"xg_available={am.get('available')}"
+                    ),
+                )
+            )
         return items
 
     def _market_disagreement(

@@ -1,0 +1,36 @@
+# Phase 33 — World Cup background prediction timer (PLAN ONLY — do not enable yet)
+#
+# Install (when approved):
+#   sudo cp deployment/systemd/worldcup-daily-predict.service /etc/systemd/system/
+#   sudo cp deployment/systemd/worldcup-daily-predict.timer /etc/systemd/system/
+#   sudo cp deployment/systemd/worldcup-evaluate-results.service /etc/systemd/system/
+#   sudo cp deployment/systemd/worldcup-evaluate-results.timer /etc/systemd/system/
+#   sudo cp deployment/systemd/worldcup-auto-cycle.service /etc/systemd/system/
+#   sudo cp deployment/systemd/worldcup-auto-cycle.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now worldcup-daily-predict.timer
+#   sudo systemctl enable --now worldcup-evaluate-results.timer
+#   sudo systemctl enable --now worldcup-auto-cycle.timer
+#
+# Rollback:
+#   sudo systemctl disable --now worldcup-*.timer
+#   sudo rm /etc/systemd/system/worldcup-daily-predict.*
+#   sudo rm /etc/systemd/system/worldcup-evaluate-results.*
+#   sudo rm /etc/systemd/system/worldcup-auto-cycle.*
+
+[Unit]
+Description=World Cup daily background prediction (Phase 33)
+After=network.target worldcup-api.service
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=APP_ENV=production
+ExecStart=/opt/worldcup-predictor/.venv/bin/python main.py daily-worldcup-predict
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

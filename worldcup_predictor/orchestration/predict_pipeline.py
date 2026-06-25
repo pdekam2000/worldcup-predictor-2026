@@ -1,3 +1,5 @@
+"""Orchestration predict pipeline — enrichment steps with structured failure logging."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -7,8 +9,13 @@ from worldcup_predictor.agents.data_collector_agent import DataCollectorAgent
 from worldcup_predictor.agents.prediction_agent import PredictionAgent
 from worldcup_predictor.agents.specialists.orchestrator import SpecialistOrchestrator
 from worldcup_predictor.config.settings import Settings
+from worldcup_predictor.domain.intelligence import MatchIntelligenceReport
 from worldcup_predictor.domain.prediction import MatchPrediction
+from worldcup_predictor.domain.specialist import MatchSpecialistReport
+from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
 from worldcup_predictor.schedule.context_loader import load_tournament_context
+
+_MODULE = "worldcup_predictor.orchestration.predict_pipeline"
 
 
 @dataclass
@@ -16,6 +23,8 @@ class PredictPipelineResult:
     prediction: MatchPrediction
     agent_results: list[AgentResult]
     success: bool
+    intelligence_report: MatchIntelligenceReport | None = None
+    specialist_report: MatchSpecialistReport | None = None
 
 
 class PredictPipeline:
@@ -70,6 +79,7 @@ class PredictPipeline:
         prediction = predict_result.data
         intel = (context.shared.get("intelligence_reports") or {}).get(fixture_id)
         specialist_report = (context.shared.get("specialist_reports") or {}).get(fixture_id)
+
         try:
             from worldcup_predictor.intelligence.first_goal_intelligence_v2 import attach_first_goal_v2_to_prediction
 
@@ -78,8 +88,9 @@ class PredictPipeline:
                 intel,
                 specialist_report=specialist_report,
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            log_enrichment_failure(_MODULE, exc, fixture_id=fixture_id, layer="first_goal_v2")
+
         try:
             from worldcup_predictor.intelligence.first_goal_intelligence_v2 import (
                 load_first_goal_v2_from_prediction,
@@ -92,8 +103,9 @@ class PredictPipeline:
                 intel,
                 fg_v2=fg_v2,
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            log_enrichment_failure(_MODULE, exc, fixture_id=fixture_id, layer="extended_markets")
+
         try:
             from worldcup_predictor.fusion.fusion_applier import apply_fusion_enrichment
 
@@ -102,8 +114,22 @@ class PredictPipeline:
                 report=intel,
                 specialist_report=specialist_report,
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            log_enrichment_failure(_MODULE, exc, fixture_id=fixture_id, layer="fusion")
+
+        try:
+            from worldcup_predictor.providers.sportmonks_xg_extraction import attach_sportmonks_xg_to_prediction
+
+            attach_sportmonks_xg_to_prediction(prediction, intel, settings=self._settings)
+        except Exception as exc:
+            log_enrichment_failure(_MODULE, exc, fixture_id=fixture_id, layer="sportmonks_xg")
+
+        try:
+            from worldcup_predictor.providers.weather_extraction import attach_weather_to_prediction
+
+            attach_weather_to_prediction(prediction, intel, settings=self._settings)
+        except Exception as exc:
+            log_enrichment_failure(_MODULE, exc, fixture_id=fixture_id, layer="weather")
 
         if record_history:
             try:
@@ -119,15 +145,22 @@ class PredictPipeline:
                         prediction_id=hist_record.prediction_id,
                         specialist_report=specialist_report,
                     )
-                except Exception:
-                    pass
-            except OSError:
-                pass
+                except Exception as exc:
+                    log_enrichment_failure(
+                        _MODULE,
+                        exc,
+                        fixture_id=fixture_id,
+                        layer="learning_capture",
+                    )
+            except OSError as exc:
+                log_enrichment_failure(_MODULE, exc, fixture_id=fixture_id, layer="history_jsonl")
 
         return PredictPipelineResult(
             prediction=prediction,
             agent_results=results,
             success=True,
+            intelligence_report=intel if isinstance(intel, MatchIntelligenceReport) else None,
+            specialist_report=specialist_report if isinstance(specialist_report, MatchSpecialistReport) else None,
         )
 
 

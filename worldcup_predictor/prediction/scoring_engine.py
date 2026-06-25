@@ -61,6 +61,34 @@ class ScoringEngine:
         )
         all_placeholder = report.is_placeholder
 
+        nat_enabled = True
+        national_block = None
+        try:
+            from worldcup_predictor.config.settings import get_settings
+            from worldcup_predictor.intelligence.national_team.integration import (
+                apply_national_confidence_components,
+            )
+            from worldcup_predictor.intelligence.national_team.orchestrator import (
+                SUPPLEMENTAL_KEY,
+                attach_national_team_intelligence,
+                build_national_team_intelligence,
+                is_world_cup_report,
+            )
+
+            nat_enabled = get_settings().national_team_intelligence_enabled
+            if nat_enabled and is_world_cup_report(report):
+                attach_national_team_intelligence(report, specialist_report=specialist_report)
+                national_block = (report.supplemental_sources or {}).get(SUPPLEMENTAL_KEY)
+                if not national_block:
+                    national_block = build_national_team_intelligence(
+                        report, specialist_report=specialist_report
+                    )
+        except Exception as exc:
+            import logging
+
+            logging.getLogger(__name__).debug("National team intelligence attach failed: %s", exc)
+            national_block = None
+
         form_home = self._form_points(report.home_team.form, report.home_team.team_id)
         form_away = self._form_points(report.away_team.form, report.away_team.team_id)
         form_delta = form_home - form_away
@@ -73,6 +101,23 @@ class ScoringEngine:
 
         odds_score, odds_home_bias, odds_over_bias = self._score_odds(report.odds)
         data_quality_score = quality_pct
+
+        if nat_enabled and national_block:
+            try:
+                form_score, h2h_score, injuries_score, lineups_score, odds_score, national_block = (
+                    apply_national_confidence_components(
+                        form_score=form_score,
+                        h2h_score=h2h_score,
+                        injuries_score=injuries_score,
+                        lineups_score=lineups_score,
+                        odds_score=odds_score,
+                        report=report,
+                        specialist_report=specialist_report,
+                        enabled=True,
+                    )
+                )
+            except Exception:
+                pass
 
         breakdown = PredictionConfidenceBreakdown(
             form_score=round(form_score, 1),
@@ -247,6 +292,17 @@ class ScoringEngine:
                 "specialist_score": str(specialist_adj.get("aggregated_score", "")),
                 "expected_total_goals": f"{total_goals:.2f}",
                 "ou_low_confidence": str(low_goal_data).lower(),
+                **(
+                    {
+                        "national_form_score": str(national_block.get("national_form_score")),
+                        "national_h2h_score": str(national_block.get("national_h2h_score")),
+                        "squad_strength_score": str(national_block.get("squad_strength_score")),
+                        "injury_impact_score": str(national_block.get("injury_impact_score")),
+                        "consensus_strength_score": str(national_block.get("consensus_strength_score")),
+                    }
+                    if national_block
+                    else {}
+                ),
             },
         )
 
@@ -316,8 +372,22 @@ class ScoringEngine:
             scoreline=ScorelinePrediction(home_goals=float(h), away_goals=float(a)),
             scoreline_candidates=candidates,
         )
-        prediction = harmonize_prediction(prediction, home_team=home_name, away_team=away_name)
-        consistent = is_consistent(prediction)
+        from worldcup_predictor.config.settings import get_settings
+
+        settings = get_settings()
+        odds = report.odds
+        odds_available = bool(odds and odds.available and odds.bookmakers)
+        rule_a_active = settings.rule_a_gate_mode == "active"
+        prediction = harmonize_prediction(
+            prediction,
+            home_team=home_name,
+            away_team=away_name,
+            wde_one_x_two=wde_selection,
+            odds_available=odds_available,
+            conditional_1x2=rule_a_active,
+        )
+        require_1x2_match = not (rule_a_active and not odds_available)
+        consistent = is_consistent(prediction, require_1x2_match=require_1x2_match)
         pq = compute_prediction_quality(prediction, report, consistency_ok=consistent)
         from worldcup_predictor.adaptive_confidence.engine import AdaptiveConfidenceEngine
 
@@ -340,10 +410,8 @@ class ScoringEngine:
             },
         )
         try:
-            from worldcup_predictor.config.settings import get_settings
             from worldcup_predictor.prediction.lambda_bridge.shadow_runner import maybe_record_shadow
 
-            settings = get_settings()
             maybe_record_shadow(
                 production=final_prediction,
                 report=report,
@@ -358,13 +426,11 @@ class ScoringEngine:
         except Exception:
             pass
         try:
-            from worldcup_predictor.config.settings import get_settings
             from worldcup_predictor.prediction.rule_a_gate.live_validation_runner import (
                 maybe_record_rule_a_live,
             )
             from worldcup_predictor.prediction.rule_a_gate.shadow_runner import maybe_record_rule_a_shadow
 
-            settings = get_settings()
             maybe_record_rule_a_shadow(
                 production=final_prediction,
                 report=report,
@@ -386,10 +452,8 @@ class ScoringEngine:
         except Exception:
             pass
         try:
-            from worldcup_predictor.config.settings import get_settings
             from worldcup_predictor.validation.capture import maybe_record_real_world_validation
 
-            settings = get_settings()
             maybe_record_real_world_validation(
                 prediction=final_prediction,
                 report=report,
@@ -445,8 +509,14 @@ class ScoringEngine:
             result["confidence_delta"] -= min(absence / 20, 5)
 
         weather_sig = specialist_report.signal("weather_agent")
-        if weather_sig and weather_sig.signals.get("rain_probability", 0) > 0.4:
-            result["goals_adjustment"] -= 0.15
+        if weather_sig and weather_sig.is_usable:
+            rain = float(weather_sig.signals.get("rain_probability") or 0)
+            risk = str(weather_sig.signals.get("weather_risk_level") or "").lower()
+            wind = float(weather_sig.signals.get("wind_speed_kmh") or 0)
+            if rain > 0.4 or risk == "high":
+                result["goals_adjustment"] -= 0.15
+            elif rain > 0.3 or wind > 25 or risk == "medium":
+                result["goals_adjustment"] -= 0.08
 
         tactics_sig = specialist_report.signal("tactics_agent")
         if tactics_sig and tactics_sig.signals.get("over_under_tendency") == "over_lean":

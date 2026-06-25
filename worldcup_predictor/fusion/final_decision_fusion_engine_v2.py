@@ -466,8 +466,14 @@ def _confidence_adjustment(
         from worldcup_predictor.accuracy.live_calibration import fusion_diversity_penalty
 
         adj = fusion_diversity_penalty(diversity_score, adj)
-    except Exception:
-        pass
+    except Exception as exc:
+        from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
+
+        log_enrichment_failure(
+            "worldcup_predictor.fusion.final_decision_fusion_engine_v2",
+            exc,
+            layer="fusion_diversity_calibration",
+        )
     return round(_clamp(adj, -_ADJUSTMENT_CAP, _ADJUSTMENT_CAP), 2)
 
 

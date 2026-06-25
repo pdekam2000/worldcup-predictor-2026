@@ -10,6 +10,7 @@ from worldcup_predictor.goal_timing.data.api_football_fallback import ApiFootbal
 from worldcup_predictor.goal_timing.data.fixture_ids import is_valid_fixture_id
 from worldcup_predictor.goal_timing.data.sportmonks_coverage import probe_sportmonks_goal_timing_coverage
 from worldcup_predictor.goal_timing.data.stored_adapter import StoredGoalTimingAdapter
+from worldcup_predictor.egie.provider_features.store import EgieProviderFeatureStore
 from worldcup_predictor.goal_timing.features.aggregates import (
     accumulate_team_timing,
     league_baseline_timing,
@@ -38,6 +39,7 @@ class GoalTimingFeatureBuilder:
         self.api_fallback = api_fallback or ApiFootballGoalTimingFallback()
         self.max_api_event_fetches = max(0, int(max_api_event_fetches))
         self._api_budget_remaining = self.max_api_event_fetches
+        self._provider_store: EgieProviderFeatureStore | None = None
 
     def build(
         self,
@@ -118,6 +120,21 @@ class GoalTimingFeatureBuilder:
             provider_manifest,
         )
 
+        provider_vec = self._load_provider_features(
+            fixture_id,
+            comp_key=comp_key,
+            home_team=home_team,
+            away_team=away_team,
+            home_feats=home_feats,
+            away_feats=away_feats,
+        )
+        provider_features = provider_vec.to_dict() if provider_vec else None
+        if provider_vec:
+            provider_manifest["provider_feature_store"] = True
+            for k, v in (provider_vec.coverage or {}).items():
+                provider_manifest[f"paid_{k}"] = bool(v)
+        has_reliable_odds = bool(provider_vec and provider_vec.coverage.get("odds"))
+
         return {
             "fixture_id": fixture_id,
             "competition_key": comp_key,
@@ -178,9 +195,36 @@ class GoalTimingFeatureBuilder:
             },
             "provider_manifest": provider_manifest,
             "sportmonks_coverage": sportmonks,
+            "provider_features": provider_features,
             "has_historical_goal_events": provider_manifest["stored_goal_events"],
-            "has_reliable_goal_odds": False,
+            "has_reliable_goal_odds": has_reliable_odds,
         }
+
+    def _load_provider_features(
+        self,
+        fixture_id: int,
+        *,
+        comp_key: str,
+        home_team: str,
+        away_team: str,
+        home_feats: dict[str, Any],
+        away_feats: dict[str, Any],
+    ):
+        try:
+            if self._provider_store is None:
+                self._provider_store = EgieProviderFeatureStore()
+            home_fg = (home_feats.get("first_goal_team_distribution") or {}).get("scored_first")
+            away_fg = (away_feats.get("first_goal_team_distribution") or {}).get("scored_first")
+            return self._provider_store.build(
+                fixture_id,
+                competition_key=comp_key,
+                home_team=home_team,
+                away_team=away_team,
+                recent_first_goal_home=float(home_fg) if home_fg is not None else None,
+                recent_first_goal_away=float(away_fg) if away_fg is not None else None,
+            )
+        except Exception:
+            return None
 
     def _enriched_team_history(self, team_name: str, before_iso: str, comp_key: str):
         history = self.stored.team_history_before(

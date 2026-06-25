@@ -11,6 +11,31 @@ class FirstGoalPressureAgent(GoalTimingAgentBase):
     name = "first_goal_pressure"
 
     def analyze(self, fixture_id: int, *, features: dict[str, Any], context: dict[str, Any]) -> GoalTimingAgentOutput:
+        strategy = str(features.get("paid_provider_strategy") or "production")
+        pf = features.get("provider_features") or {}
+        if (
+            strategy != "A"
+            and pf.get("pressure_index_home") is not None
+            and pf.get("pressure_index_away") is not None
+        ):
+            pressure_home = round(float(pf["pressure_index_home"]), 4)
+            pressure_away = round(float(pf["pressure_index_away"]), 4)
+            edge = "home" if pressure_home > pressure_away + 0.02 else "away" if pressure_away > pressure_home + 0.02 else "neutral"
+            impact = min(1.0, 0.35 + abs(pressure_home - pressure_away))
+            return feature_agent_output(
+                self.name,
+                features=features,
+                signals={
+                    "home_early_pressure": pressure_home,
+                    "away_early_pressure": pressure_away,
+                    "pressure_edge": edge,
+                    "paid_provider_source": (pf.get("sources") or {}).get("pressure", "sportmonks"),
+                },
+                impact_score=impact,
+                missing=[],
+                notes="Pressure from stored Sportmonks / xG provider features.",
+            )
+
         recent = features.get("recent_form_timing") or {}
         home_recent = recent.get("home") or {}
         away_recent = recent.get("away") or {}

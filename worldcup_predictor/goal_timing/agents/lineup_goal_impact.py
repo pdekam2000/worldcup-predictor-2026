@@ -11,6 +11,25 @@ class LineupGoalImpactAgent(GoalTimingAgentBase):
     name = "lineup_goal_impact"
 
     def analyze(self, fixture_id: int, *, features: dict[str, Any], context: dict[str, Any]) -> GoalTimingAgentOutput:
+        strategy = str(features.get("paid_provider_strategy") or "production")
+        pf = features.get("provider_features") or {}
+        lh = pf.get("lineup_strength_home")
+        la = pf.get("lineup_strength_away")
+        if strategy == "F" and (lh is not None or la is not None):
+            return feature_agent_output(
+                self.name,
+                features=features,
+                signals={
+                    "lineups_available": True,
+                    "lineup_strength_home": lh,
+                    "lineup_strength_away": la,
+                    "lineup_edge": "home" if (lh or 0) > (la or 0) else "away",
+                },
+                impact_score=min(1.0, 0.45 + abs((lh or 0) - (la or 0))),
+                missing=[],
+                notes="Lineup strength from API-Football EGIE raw store.",
+            )
+
         manifest = features.get("provider_manifest") or {}
         has_lineups = bool(context.get("has_lineups") or manifest.get("expected_lineups"))
         impact = 0.55 if has_lineups else 0.25

@@ -29,7 +29,12 @@ class UserRecord:
     role: UserRole
     is_active: bool
     email_verified: bool
+    is_banned: bool
+    banned_at: datetime | None
+    banned_reason: str | None
+    token_version: int
     created_at: datetime
+    updated_at: datetime
     last_login_at: datetime | None
 
 

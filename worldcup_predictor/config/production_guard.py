@@ -55,6 +55,11 @@ def validate_production_settings(settings: Settings) -> list[str]:
     if not invite:
         errors.append("PUBLIC_ACCESS_CODE is recommended in production (registration gate)")
 
+    if not (settings.admin_access_key or "").strip():
+        errors.append("ADMIN_ACCESS_KEY is required when APP_ENV=production")
+    if not (settings.super_admin_access_key or "").strip():
+        errors.append("SUPER_ADMIN_ACCESS_KEY is required when APP_ENV=production")
+
     cors = (os.getenv("CORS_ALLOWED_ORIGINS") or "").strip()
     if cors:
         for origin in cors.split(","):

@@ -9,12 +9,28 @@ from datetime import datetime, timezone
 from typing import Any
 
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from worldcup_predictor.config.settings import Settings, get_settings
 from worldcup_predictor.database.postgres.session import postgres_configured, session_scope
-from worldcup_predictor.goal_timing.models import GoalTimingAgentOutput, GoalTimingPredictionResult
+from worldcup_predictor.goal_timing.models import (
+    GoalTimingAgentOutput,
+    GoalTimingEvaluationResult,
+    GoalTimingPredictionResult,
+)
 
 logger = logging.getLogger(__name__)
+
+
+def _postgres_read_safe(settings: Settings, default: Any, fn: Any) -> Any:
+    """Return default when PostgreSQL is down or unreachable (avoids 500 on dashboard)."""
+    if not postgres_configured(settings):
+        return default
+    try:
+        return fn()
+    except SQLAlchemyError as exc:
+        logger.warning("goal_timing_postgres_read_failed: %s", exc)
+        return default
 
 
 class GoalTimingRepository:
@@ -71,6 +87,7 @@ class GoalTimingRepository:
         *,
         agent_outputs: dict[str, GoalTimingAgentOutput] | None = None,
         feature_snapshot_id: str | None = None,
+        hybrid_confidence_snapshot: dict[str, Any] | None = None,
     ) -> uuid.UUID | None:
         if not postgres_configured(self.settings):
             logger.warning("PostgreSQL not configured — skipping goal_timing_predictions persist")
@@ -100,6 +117,7 @@ class GoalTimingRepository:
                         no_goal_before_minute_probability, confidence_score, data_quality_score,
                         explanation, specialist_agent_breakdown, model_version,
                         no_prediction_flag, no_bet_flag, feature_snapshot_id, status,
+                        hybrid_confidence_snapshot,
                         created_at, updated_at
                     ) VALUES (
                         :id, :fixture_id, :competition_key, :home_team, :away_team, :match_date,
@@ -110,6 +128,7 @@ class GoalTimingRepository:
                         CAST(:no_goal_probs AS jsonb), :confidence_score, :data_quality_score,
                         :explanation, CAST(:agent_breakdown AS jsonb), :model_version,
                         :no_prediction_flag, :no_bet_flag, :feature_snapshot_id, 'published',
+                        CAST(:hybrid_confidence_snapshot AS jsonb),
                         NOW(), NOW()
                     )
                     """
@@ -140,6 +159,11 @@ class GoalTimingRepository:
                     "no_prediction_flag": result.no_prediction_flag,
                     "no_bet_flag": result.no_bet_flag,
                     "feature_snapshot_id": snap_uuid,
+                    "hybrid_confidence_snapshot": json.dumps(
+                        hybrid_confidence_snapshot, ensure_ascii=False
+                    )
+                    if hybrid_confidence_snapshot
+                    else None,
                 },
             )
 
@@ -205,20 +229,24 @@ class GoalTimingRepository:
     def get_prediction_by_fixture(self, fixture_id: int) -> dict[str, Any] | None:
         if not postgres_configured(self.settings):
             return None
-        with session_scope(self.settings) as session:
-            row = session.execute(
-                text(
-                    """
-                    SELECT *
-                    FROM goal_timing_predictions
-                    WHERE fixture_id = :fixture_id
-                    ORDER BY predicted_at DESC
-                    LIMIT 1
-                    """
-                ),
-                {"fixture_id": int(fixture_id)},
-            ).mappings().first()
-        return dict(row) if row else None
+
+        def _run() -> dict[str, Any] | None:
+            with session_scope(self.settings) as session:
+                row = session.execute(
+                    text(
+                        """
+                        SELECT *
+                        FROM goal_timing_predictions
+                        WHERE fixture_id = :fixture_id
+                        ORDER BY predicted_at DESC
+                        LIMIT 1
+                        """
+                    ),
+                    {"fixture_id": int(fixture_id)},
+                ).mappings().first()
+            return dict(row) if row else None
+
+        return _postgres_read_safe(self.settings, None, _run)
 
     def list_predictions(
         self,
@@ -244,6 +272,267 @@ class GoalTimingRepository:
             query += " AND (match_date IS NULL OR match_date >= NOW())"
         query += " ORDER BY match_date ASC NULLS LAST, predicted_at DESC LIMIT :limit OFFSET :offset"
 
+        def _run() -> list[dict[str, Any]]:
+            with session_scope(self.settings) as session:
+                rows = session.execute(text(query), params).mappings().all()
+            return [dict(r) for r in rows]
+
+        return _postgres_read_safe(self.settings, [], _run)
+
+    def list_published_predictions(
+        self,
+        *,
+        competition_key: str | None = None,
+        limit: int = 500,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        """All published picks (upcoming and finished) for evaluation refresh."""
+        return self.list_predictions(
+            competition_key=competition_key,
+            limit=limit,
+            offset=offset,
+            upcoming_only=False,
+        )
+
+    def save_evaluation(self, result: GoalTimingEvaluationResult) -> str | None:
+        if not postgres_configured(self.settings):
+            logger.warning("PostgreSQL not configured — skipping goal_timing_evaluations persist")
+            return None
+
+        eval_id = uuid.uuid4()
+        evaluated_at = result.evaluated_at or datetime.now(timezone.utc)
+        try:
+            prediction_uuid = uuid.UUID(str(result.prediction_id))
+        except ValueError:
+            logger.warning("Invalid prediction_id for evaluation: %s", result.prediction_id)
+            return None
+
         with session_scope(self.settings) as session:
-            rows = session.execute(text(query), params).mappings().all()
-        return [dict(r) for r in rows]
+            session.execute(
+                text(
+                    """
+                    INSERT INTO goal_timing_evaluations (
+                        id, prediction_id, fixture_id,
+                        actual_first_goal_team, actual_first_goal_minute, actual_first_goal_time_range,
+                        first_goal_team_status, time_range_status, minute_tolerance_status,
+                        evaluated_at
+                    ) VALUES (
+                        :id, :prediction_id, :fixture_id,
+                        :actual_first_goal_team, :actual_first_goal_minute, :actual_first_goal_time_range,
+                        :first_goal_team_status, :time_range_status, :minute_tolerance_status,
+                        :evaluated_at
+                    )
+                    ON CONFLICT (prediction_id) DO UPDATE SET
+                        fixture_id = EXCLUDED.fixture_id,
+                        actual_first_goal_team = EXCLUDED.actual_first_goal_team,
+                        actual_first_goal_minute = EXCLUDED.actual_first_goal_minute,
+                        actual_first_goal_time_range = EXCLUDED.actual_first_goal_time_range,
+                        first_goal_team_status = EXCLUDED.first_goal_team_status,
+                        time_range_status = EXCLUDED.time_range_status,
+                        minute_tolerance_status = EXCLUDED.minute_tolerance_status,
+                        evaluated_at = EXCLUDED.evaluated_at
+                    """
+                ),
+                {
+                    "id": eval_id,
+                    "prediction_id": prediction_uuid,
+                    "fixture_id": int(result.fixture_id),
+                    "actual_first_goal_team": result.actual_first_goal_team,
+                    "actual_first_goal_minute": result.actual_first_goal_minute,
+                    "actual_first_goal_time_range": result.actual_first_goal_time_range,
+                    "first_goal_team_status": result.first_goal_team_status,
+                    "time_range_status": result.time_range_status,
+                    "minute_tolerance_status": result.minute_tolerance_status,
+                    "evaluated_at": evaluated_at,
+                },
+            )
+        return str(eval_id)
+
+    def get_evaluation_by_prediction_id(self, prediction_id: str) -> dict[str, Any] | None:
+        if not postgres_configured(self.settings):
+            return None
+        try:
+            pred_uuid = uuid.UUID(str(prediction_id))
+        except ValueError:
+            return None
+        with session_scope(self.settings) as session:
+            row = session.execute(
+                text(
+                    """
+                    SELECT *
+                    FROM goal_timing_evaluations
+                    WHERE prediction_id = :prediction_id
+                    LIMIT 1
+                    """
+                ),
+                {"prediction_id": pred_uuid},
+            ).mappings().first()
+        return dict(row) if row else None
+
+    def get_evaluation_by_fixture(self, fixture_id: int) -> dict[str, Any] | None:
+        if not postgres_configured(self.settings):
+            return None
+        with session_scope(self.settings) as session:
+            row = session.execute(
+                text(
+                    """
+                    SELECT e.*
+                    FROM goal_timing_evaluations e
+                    JOIN goal_timing_predictions p ON p.id = e.prediction_id
+                    WHERE e.fixture_id = :fixture_id
+                    ORDER BY e.evaluated_at DESC
+                    LIMIT 1
+                    """
+                ),
+                {"fixture_id": int(fixture_id)},
+            ).mappings().first()
+        return dict(row) if row else None
+
+    def list_evaluations_joined(
+        self,
+        *,
+        competition_key: str | None = None,
+        limit: int = 50,
+        offset: int = 0,
+        evaluated_only: bool = False,
+    ) -> list[dict[str, Any]]:
+        if not postgres_configured(self.settings):
+            return []
+
+        query = """
+            SELECT
+                e.id AS evaluation_id,
+                e.prediction_id,
+                e.fixture_id,
+                e.actual_first_goal_team,
+                e.actual_first_goal_minute,
+                e.actual_first_goal_time_range,
+                e.first_goal_team_status,
+                e.time_range_status,
+                e.minute_tolerance_status,
+                e.evaluated_at,
+                p.competition_key,
+                p.home_team,
+                p.away_team,
+                p.match_date,
+                p.first_goal_team,
+                p.first_goal_time_range,
+                p.display_estimated_first_goal_minute,
+                p.estimated_first_goal_minute,
+                p.confidence_score,
+                p.data_quality_score,
+                p.model_version,
+                p.hybrid_confidence_snapshot
+            FROM goal_timing_evaluations e
+            JOIN goal_timing_predictions p ON p.id = e.prediction_id
+            WHERE p.no_prediction_flag = false
+        """
+        params: dict[str, Any] = {"limit": int(limit), "offset": int(offset)}
+        if competition_key:
+            query += " AND p.competition_key = :competition_key"
+            params["competition_key"] = competition_key
+        if evaluated_only:
+            query += """
+                AND (
+                    e.first_goal_team_status != 'pending'
+                    OR e.time_range_status != 'pending'
+                    OR e.minute_tolerance_status != 'pending'
+                )
+            """
+        query += " ORDER BY COALESCE(p.match_date, e.evaluated_at) DESC LIMIT :limit OFFSET :offset"
+
+        def _run() -> list[dict[str, Any]]:
+            with session_scope(self.settings) as session:
+                rows = session.execute(text(query), params).mappings().all()
+            return [dict(r) for r in rows]
+
+        return _postgres_read_safe(self.settings, [], _run)
+
+    def count_evaluations(self, *, competition_key: str | None = None) -> int:
+        if not postgres_configured(self.settings):
+            return 0
+        query = """
+            SELECT COUNT(*) AS cnt
+            FROM goal_timing_evaluations e
+            JOIN goal_timing_predictions p ON p.id = e.prediction_id
+            WHERE p.no_prediction_flag = false
+        """
+        params: dict[str, Any] = {}
+        if competition_key:
+            query += " AND p.competition_key = :competition_key"
+            params["competition_key"] = competition_key
+
+        def _run() -> int:
+            with session_scope(self.settings) as session:
+                row = session.execute(text(query), params).mappings().first()
+            return int(row["cnt"]) if row else 0
+
+        return _postgres_read_safe(self.settings, 0, _run)
+
+    def prediction_monitoring_counts(self) -> dict[str, int]:
+        zeros = {
+            "published_picks": 0,
+            "no_pick_count": 0,
+            "evaluated_picks": 0,
+            "total_predictions": 0,
+        }
+        if not postgres_configured(self.settings):
+            return zeros
+
+        def _run() -> dict[str, int]:
+            with session_scope(self.settings) as session:
+                pub = session.execute(
+                    text(
+                        """
+                        SELECT COUNT(*) AS cnt
+                        FROM goal_timing_predictions
+                        WHERE no_prediction_flag = false
+                        """
+                    )
+                ).mappings().first()
+                no_pick = session.execute(
+                    text(
+                        """
+                        SELECT COUNT(*) AS cnt
+                        FROM goal_timing_predictions
+                        WHERE no_prediction_flag = true
+                        """
+                    )
+                ).mappings().first()
+                evaluated = session.execute(
+                    text("SELECT COUNT(*) AS cnt FROM goal_timing_evaluations")
+                ).mappings().first()
+                total = session.execute(
+                    text("SELECT COUNT(*) AS cnt FROM goal_timing_predictions")
+                ).mappings().first()
+            return {
+                "published_picks": int(pub["cnt"]) if pub else 0,
+                "no_pick_count": int(no_pick["cnt"]) if no_pick else 0,
+                "evaluated_picks": int(evaluated["cnt"]) if evaluated else 0,
+                "total_predictions": int(total["cnt"]) if total else 0,
+            }
+
+        return _postgres_read_safe(self.settings, zeros, _run)
+
+    def list_no_pick_predictions(self, *, limit: int = 20) -> list[dict[str, Any]]:
+        if not postgres_configured(self.settings):
+            return []
+
+        def _run() -> list[dict[str, Any]]:
+            with session_scope(self.settings) as session:
+                rows = session.execute(
+                    text(
+                        """
+                        SELECT fixture_id, home_team, away_team, match_date,
+                               data_quality_score, explanation, no_prediction_flag
+                        FROM goal_timing_predictions
+                        WHERE no_prediction_flag = true
+                        ORDER BY match_date ASC NULLS LAST, predicted_at DESC
+                        LIMIT :limit
+                        """
+                    ),
+                    {"limit": int(limit)},
+                ).mappings().all()
+            return [dict(r) for r in rows]
+
+        return _postgres_read_safe(self.settings, [], _run)

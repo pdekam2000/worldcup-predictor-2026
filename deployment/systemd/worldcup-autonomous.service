@@ -1,0 +1,17 @@
+[Unit]
+Description=WorldCup Predictor autonomous platform cycle (Phase 61)
+After=network.target worldcup-api.service
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+Environment=PYTHONPATH=/opt/worldcup-predictor
+Environment=APP_ENV=production
+EnvironmentFile=-/opt/worldcup-predictor/.env.production
+ExecStart=/opt/worldcup-predictor/.venv/bin/python main.py autonomous_once
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

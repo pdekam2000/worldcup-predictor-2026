@@ -1,21 +1,31 @@
-"""Weather provider — WeatherAPI or OpenWeather (optional enrichment)."""
+"""Weather provider — WeatherAPI or OpenWeather (optional enrichment) — Phase 43."""
 
 from __future__ import annotations
 
 import logging
-from typing import Any, Literal
+from datetime import datetime
+from typing import Any
 
 import httpx
 
 from worldcup_predictor.config.settings import Settings, WeatherProviderKind
+from worldcup_predictor.intelligence.weather_intelligence_engine import (
+    enrich_normalized_weather,
+    extract_severe_alerts_weatherapi,
+    kickoff_snapshot_from_hour,
+    merge_kickoff_weather_fields,
+    pick_openweather_kickoff_hour,
+    pick_weatherapi_kickoff_hour,
+)
 from worldcup_predictor.providers.base import ProviderCallResult, ProviderTier
-from worldcup_predictor.weather_impact import compute_weather_impact, rain_probability_from_condition
+from worldcup_predictor.providers.weather_cache import weather_cache_get, weather_cache_set
+from worldcup_predictor.weather_impact import rain_probability_from_condition
 
 logger = logging.getLogger(__name__)
 
 
 class WeatherProvider:
-    """Optional venue weather — never replaces API-Sports fixture payload when present."""
+    """Optional venue weather — cache-first; never replaces API-Sports fixture payload."""
 
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
@@ -39,6 +49,7 @@ class WeatherProvider:
         *,
         city: str,
         country: str | None = None,
+        kickoff_utc: datetime | None = None,
     ) -> ProviderCallResult:
         if not self.is_configured:
             return ProviderCallResult(
@@ -50,19 +61,46 @@ class WeatherProvider:
                 error=f"{self.active_env_var} not configured for {self.active_provider_name}",
             )
 
-        query = f"{city},{country}" if country and country != "TBD" else city
-        if self._settings.weather_provider == "openweather":
-            return self._fetch_openweather(query)
-        return self._fetch_weatherapi(query)
+        query = f"{city},{country}" if country and country not in {"", "TBD"} else city
+        kickoff_iso = kickoff_utc.isoformat() if kickoff_utc else None
+        provider = self._settings.weather_provider
 
-    def _fetch_weatherapi(self, query: str) -> ProviderCallResult:
+        cached = weather_cache_get(provider, query, kickoff_iso=kickoff_iso, settings=self._settings)
+        if cached and cached.get("available"):
+            cached = dict(cached)
+            cached["cached"] = True
+            cached["cache_source"] = "weather_cache"
+            return ProviderCallResult(
+                data=cached,
+                provider=provider,
+                tier=ProviderTier.ENRICHMENT,
+                endpoint="forecast",
+                trace={"cache_hit": True},
+            )
+
+        if provider == "openweather":
+            result = self._fetch_openweather(query, kickoff_utc=kickoff_utc)
+        else:
+            result = self._fetch_weatherapi(query, kickoff_utc=kickoff_utc)
+
+        if result.available and isinstance(result.data, dict):
+            weather_cache_set(
+                provider,
+                query,
+                result.data,
+                kickoff_iso=kickoff_iso,
+                settings=self._settings,
+            )
+        return result
+
+    def _fetch_weatherapi(self, query: str, *, kickoff_utc: datetime | None) -> ProviderCallResult:
         endpoint = "forecast.json"
         params = {
             "key": self._settings.weather_api_key,
             "q": query,
-            "days": 1,
+            "days": 3,
             "aqi": "no",
-            "alerts": "no",
+            "alerts": "yes",
         }
         try:
             url = "https://api.weatherapi.com/v1/forecast.json"
@@ -70,12 +108,7 @@ class WeatherProvider:
                 response = client.get(url, params=params)
                 response.raise_for_status()
                 payload = response.json()
-            normalized = self._normalize_weatherapi(payload)
-            normalized["weather_impact_score"] = compute_weather_impact(
-                normalized.get("temperature_c"),
-                normalized.get("rain_probability"),
-                normalized.get("wind_speed_kmh"),
-            )
+            normalized = self._normalize_weatherapi(payload, kickoff_utc=kickoff_utc)
             return ProviderCallResult(
                 data=normalized,
                 provider="weatherapi",
@@ -92,7 +125,7 @@ class WeatherProvider:
                 error=str(exc),
             )
 
-    def _fetch_openweather(self, query: str) -> ProviderCallResult:
+    def _fetch_openweather(self, query: str, *, kickoff_utc: datetime | None) -> ProviderCallResult:
         endpoint = "forecast"
         params = {
             "appid": self._settings.effective_openweather_key,
@@ -105,12 +138,7 @@ class WeatherProvider:
                 response = client.get(url, params=params)
                 response.raise_for_status()
                 payload = response.json()
-            normalized = self._normalize_openweather(payload)
-            normalized["weather_impact_score"] = compute_weather_impact(
-                normalized.get("temperature_c"),
-                normalized.get("rain_probability"),
-                normalized.get("wind_speed_kmh"),
-            )
+            normalized = self._normalize_openweather(payload, kickoff_utc=kickoff_utc)
             return ProviderCallResult(
                 data=normalized,
                 provider="openweather",
@@ -127,45 +155,96 @@ class WeatherProvider:
                 error=str(exc),
             )
 
-    @staticmethod
-    def _normalize_weatherapi(payload: dict[str, Any]) -> dict[str, Any]:
+    def _normalize_weatherapi(
+        self,
+        payload: dict[str, Any],
+        *,
+        kickoff_utc: datetime | None,
+    ) -> dict[str, Any]:
         current = payload.get("current") or {}
         condition = (current.get("condition") or {}).get("text", "")
-        return {
+        rain_mm = _float(current.get("precip_mm"))
+        base = {
             "available": True,
             "provider": "weatherapi",
             "source": "weatherapi",
             "temperature_c": current.get("temp_c"),
+            "feels_like_c": current.get("feelslike_c"),
             "condition": condition,
-            "rain_probability": rain_probability_from_condition(condition),
-            "wind_speed_kmh": (current.get("wind_kph") or 0),
+            "rain_probability": rain_probability_from_condition(condition, rain_mm=rain_mm),
+            "rain_mm": rain_mm,
+            "wind_speed_kmh": current.get("wind_kph"),
+            "wind_gust_kmh": current.get("gust_kph"),
             "humidity_pct": current.get("humidity"),
-            "raw": payload,
+            "visibility_km": current.get("vis_km"),
+            "cloud_cover_pct": current.get("cloud"),
+            "severe_weather_alerts": extract_severe_alerts_weatherapi(payload),
+            "cached": False,
         }
+        if kickoff_utc is not None:
+            base["kickoff_utc"] = kickoff_utc.isoformat()
+        hour = pick_weatherapi_kickoff_hour(payload, kickoff_utc)
+        kickoff_snap = kickoff_snapshot_from_hour(hour, provider="weatherapi")
+        merged = merge_kickoff_weather_fields(base, kickoff_snap)
+        return enrich_normalized_weather(merged)
 
-    @staticmethod
-    def _normalize_openweather(payload: dict[str, Any]) -> dict[str, Any]:
+    def _normalize_openweather(
+        self,
+        payload: dict[str, Any],
+        *,
+        kickoff_utc: datetime | None,
+    ) -> dict[str, Any]:
         items = payload.get("list") or []
         first = items[0] if items else {}
         weather = (first.get("weather") or [{}])[0]
         condition = weather.get("main", "")
-        return {
+        rain_mm = _float((first.get("rain") or {}).get("3h"))
+        wind = first.get("wind") or {}
+        base = {
             "available": True,
             "provider": "openweather",
             "source": "openweather",
             "temperature_c": (first.get("main") or {}).get("temp"),
+            "feels_like_c": (first.get("main") or {}).get("feels_like"),
             "condition": condition,
-            "rain_probability": rain_probability_from_condition(condition),
-            "wind_speed_kmh": _wind_to_kmh((first.get("wind") or {}).get("speed")),
+            "rain_probability": rain_probability_from_condition(condition, rain_mm=rain_mm),
+            "rain_mm": rain_mm,
+            "wind_speed_kmh": _wind_to_kmh(_float(wind.get("speed"))),
+            "wind_gust_kmh": _wind_to_kmh(_float(wind.get("gust"))),
             "humidity_pct": (first.get("main") or {}).get("humidity"),
-            "raw": payload,
+            "visibility_km": _visibility_km(first.get("visibility")),
+            "cloud_cover_pct": (first.get("clouds") or {}).get("all"),
+            "severe_weather_alerts": [],
+            "cached": False,
         }
+        if kickoff_utc is not None:
+            base["kickoff_utc"] = kickoff_utc.isoformat()
+        hour = pick_openweather_kickoff_hour(payload, kickoff_utc)
+        kickoff_snap = kickoff_snapshot_from_hour(hour, provider="openweather")
+        merged = merge_kickoff_weather_fields(base, kickoff_snap)
+        return enrich_normalized_weather(merged)
 
 
-def _wind_to_kmh(speed: Any) -> float | None:
+def _float(value: Any) -> float | None:
     try:
-        if speed is None:
+        if value is None:
             return None
-        return round(float(speed) * 3.6, 1)
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _wind_to_kmh(speed: float | None) -> float | None:
+    if speed is None:
+        return None
+    return round(speed * 3.6, 1)
+
+
+def _visibility_km(value: Any) -> float | None:
+    try:
+        if value is None:
+            return None
+        num = float(value)
+        return round(num / 1000.0, 1) if num > 100 else round(num, 1)
     except (TypeError, ValueError):
         return None

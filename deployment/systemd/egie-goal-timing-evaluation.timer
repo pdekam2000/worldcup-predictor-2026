@@ -1,0 +1,15 @@
+# Phase 51F — evaluate finished EGIE goal-timing picks every 30 minutes
+#
+# NOT enabled by default — run install_phase51f_egie_eval_timer.sh after approval.
+
+[Unit]
+Description=EGIE goal timing auto evaluation timer (every 30 minutes)
+
+[Timer]
+OnCalendar=*-*-* *:00,30:00
+Persistent=true
+RandomizedDelaySec=120
+Unit=egie-goal-timing-evaluation.service
+
+[Install]
+WantedBy=timers.target

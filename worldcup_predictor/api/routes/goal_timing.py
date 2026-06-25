@@ -82,15 +82,76 @@ def goal_timing_get_prediction(fixture_id: int) -> dict[str, Any]:
 
 @router.get("/dashboard")
 def goal_timing_dashboard() -> dict[str, Any]:
-    """Dashboard payload with engine status and today's picks."""
-    from worldcup_predictor.goal_timing.prediction_service import GoalTimingPredictionService
+    """Monitoring dashboard — live picks, evaluations, accuracy, scheduler (Phase 51G)."""
+    from worldcup_predictor.goal_timing.dashboard_service import GoalTimingDashboardService
 
-    status = _get_engine().foundation_status()
-    picks_payload = GoalTimingPredictionService().list_today_picks(limit=12)
+    engine_status = _get_engine().foundation_status()
+    monitoring = GoalTimingDashboardService().build_monitoring_dashboard()
     return {
-        **status,
-        "picks_today": picks_payload.get("picks") or [],
-        "picks_count": picks_payload.get("count", 0),
-        "recent_evaluations": [],
+        **engine_status,
+        **monitoring,
+        # Legacy keys for backward compatibility
+        "picks_today": monitoring.get("upcoming_picks") or [],
+        "picks_count": (monitoring.get("counts") or {}).get("upcoming_picks", 0),
+        "evaluation_count": (monitoring.get("counts") or {}).get("evaluated_picks", 0),
+        "accuracy_summary": {
+            "sample_size": (monitoring.get("accuracy") or {}).get("sample_size", 0),
+            "markets": (monitoring.get("accuracy") or {}).get("markets"),
+            "overall": {
+                "first_goal_team_winrate": (monitoring.get("accuracy") or {}).get("team_winrate"),
+                "goal_range_winrate": (monitoring.get("accuracy") or {}).get("range_winrate"),
+                "goal_minute_winrate": (monitoring.get("accuracy") or {}).get("minute_winrate"),
+                "goal_minute_soft_winrate": (monitoring.get("accuracy") or {}).get("minute_soft_winrate"),
+            },
+        },
         "backtest_summary": None,
     }
+
+
+@router.get("/history")
+def goal_timing_history(
+    limit: int = 50,
+    offset: int = 0,
+    competition_key: str | None = None,
+) -> dict[str, Any]:
+    """Evaluated goal-timing predictions with correct/wrong/partial status."""
+    from worldcup_predictor.goal_timing.history_service import GoalTimingHistoryService
+
+    return GoalTimingHistoryService().list_history(
+        limit=min(max(limit, 1), 200),
+        offset=max(offset, 0),
+        competition_key=competition_key,
+    )
+
+
+@router.get("/accuracy")
+def goal_timing_accuracy(competition_key: str | None = None) -> dict[str, Any]:
+    """Aggregate winrates for First Goal Team, Goal Range, and Goal Minute markets."""
+    from worldcup_predictor.goal_timing.history_service import GoalTimingHistoryService
+
+    return GoalTimingHistoryService().accuracy_summary(competition_key=competition_key)
+
+
+@router.get("/performance")
+def goal_timing_performance(competition_key: str | None = None) -> dict[str, Any]:
+    """Learning statistics: winrate by market, league, DQ, confidence, and predicted first-goal team."""
+    from worldcup_predictor.goal_timing.history_service import GoalTimingHistoryService
+
+    return GoalTimingHistoryService().performance_report(competition_key=competition_key)
+
+
+@router.post("/evaluations/run")
+def goal_timing_run_evaluations(
+    limit: int = 200,
+    max_api_calls: int = 50,
+    refresh_first: bool = True,
+) -> dict[str, Any]:
+    """Run finish detection, result refresh, and evaluation for published picks."""
+    from worldcup_predictor.goal_timing.evaluation_job import run_goal_timing_evaluations
+
+    job = run_goal_timing_evaluations(
+        limit=min(max(limit, 1), 500),
+        refresh_first=refresh_first,
+        max_api_calls=min(max(max_api_calls, 0), 100),
+    )
+    return job.to_dict()

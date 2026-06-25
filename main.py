@@ -622,6 +622,67 @@ def build_parser() -> argparse.ArgumentParser:
     replay_recent.add_argument("--locale", choices=["en", "de", "fa", "sr", "bs", "hr"], default=None)
     add_competition_argument(replay_recent)
 
+    daily_wc = subparsers.add_parser(
+        "daily-worldcup-predict",
+        help="Phase 33: background predict upcoming World Cup fixtures",
+    )
+    daily_wc.add_argument("--window-days", type=int, default=None, help="Days ahead (default: 3)")
+    daily_wc.add_argument("--force-refresh", action="store_true")
+    daily_wc.add_argument("--limit", type=int, default=None)
+
+    eval_wc = subparsers.add_parser(
+        "evaluate-worldcup-results",
+        help="Phase 44A: evaluate finished WC fixtures against stored predictions (stored-first)",
+    )
+    eval_wc.add_argument("--limit", type=int, default=None, help="Max stored predictions to scan")
+
+    auto_eval = subparsers.add_parser(
+        "worldcup-auto-evaluation",
+        help="Phase 44A: production auto evaluation job (systemd entry point)",
+    )
+    auto_eval.add_argument("--limit", type=int, default=None, help="Max stored predictions to scan")
+
+    egie_eval = subparsers.add_parser(
+        "egie-goal-timing-evaluation",
+        help="Phase 51F: EGIE goal timing auto evaluation (systemd entry point)",
+    )
+    egie_eval.add_argument("--limit", type=int, default=200, help="Max published picks to scan")
+    egie_eval.add_argument("--max-api-calls", type=int, default=50, help="API-Football cap for result refresh")
+
+    refresh_results = subparsers.add_parser(
+        "worldcup-refresh-results",
+        help="Phase 45B: refresh fixture results for stored predictions past kickoff",
+    )
+    refresh_results.add_argument("--limit", type=int, default=None)
+    refresh_results.add_argument("--dry-run", action="store_true")
+
+    import_legacy = subparsers.add_parser(
+        "worldcup-import-legacy",
+        help="Phase 46B: import recoverable historical predictions into archive",
+    )
+    import_legacy.add_argument("--dry-run", action="store_true")
+
+    auto_cycle = subparsers.add_parser(
+        "worldcup-auto-cycle",
+        help="Phase 33: predict upcoming + evaluate finished + write summary",
+    )
+    auto_cycle.add_argument("--window-days", type=int, default=None)
+    auto_cycle.add_argument("--report-path", type=str, default=None)
+
+    autonomous_once = subparsers.add_parser(
+        "autonomous_once",
+        help="Phase 61: one autonomous discovery/predict/evaluate/certify cycle",
+    )
+    autonomous_once.add_argument("--dry-run", action="store_true")
+    autonomous_once.add_argument("--fixture-limit", type=int, default=None)
+
+    autonomous_scheduler = subparsers.add_parser(
+        "autonomous_scheduler",
+        help="Phase 61: hourly autonomous loop (use with care)",
+    )
+    autonomous_scheduler.add_argument("--interval-seconds", type=int, default=3600)
+    autonomous_scheduler.add_argument("--max-iterations", type=int, default=None)
+
     tournament_intel = subparsers.add_parser(
         "tournament-intelligence",
         help="Show Tournament Intelligence V2 for a fixture (analysis only)",
@@ -798,6 +859,14 @@ def main(argv: list[str] | None = None) -> int:
         run_recent_accuracy_audit_command,
         run_recalibration_report_command,
         run_replay_recent_predictions_command,
+        run_daily_worldcup_predict_command,
+        run_evaluate_worldcup_results_command,
+        run_auto_evaluation_command,
+        run_worldcup_refresh_results_command,
+        run_worldcup_import_legacy_command,
+        run_worldcup_auto_cycle_command,
+        run_autonomous_once_command,
+        run_autonomous_scheduler_command,
         run_tournament_intelligence_command,
         run_elo_intelligence_command,
         run_xg_intelligence_command,
@@ -997,6 +1066,54 @@ def main(argv: list[str] | None = None) -> int:
             limit=getattr(args, "limit", 50),
             locale=args.locale,
             competition=_competition_arg(args),
+        )
+
+    if args.command == "daily-worldcup-predict":
+        return run_daily_worldcup_predict_command(
+            window_days=getattr(args, "window_days", None),
+            force_refresh=getattr(args, "force_refresh", False),
+            limit=getattr(args, "limit", None),
+        )
+
+    if args.command == "evaluate-worldcup-results":
+        return run_evaluate_worldcup_results_command(limit=getattr(args, "limit", None))
+
+    if args.command == "worldcup-auto-evaluation":
+        return run_auto_evaluation_command(limit=getattr(args, "limit", None))
+
+    if args.command == "egie-goal-timing-evaluation":
+        from worldcup_predictor.cli.commands import run_egie_goal_timing_auto_evaluation_command
+
+        return run_egie_goal_timing_auto_evaluation_command(
+            limit=getattr(args, "limit", None),
+            max_api_calls=getattr(args, "max_api_calls", None),
+        )
+
+    if args.command == "worldcup-refresh-results":
+        return run_worldcup_refresh_results_command(
+            limit=getattr(args, "limit", None),
+            dry_run=getattr(args, "dry_run", False),
+        )
+
+    if args.command == "worldcup-import-legacy":
+        return run_worldcup_import_legacy_command(dry_run=getattr(args, "dry_run", False))
+
+    if args.command == "worldcup-auto-cycle":
+        return run_worldcup_auto_cycle_command(
+            window_days=getattr(args, "window_days", None),
+            report_path=getattr(args, "report_path", None),
+        )
+
+    if args.command == "autonomous_once":
+        return run_autonomous_once_command(
+            dry_run=getattr(args, "dry_run", False),
+            fixture_limit=getattr(args, "fixture_limit", None),
+        )
+
+    if args.command == "autonomous_scheduler":
+        return run_autonomous_scheduler_command(
+            interval_seconds=getattr(args, "interval_seconds", 3600),
+            max_iterations=getattr(args, "max_iterations", None),
         )
 
     if args.command == "tournament-intelligence":

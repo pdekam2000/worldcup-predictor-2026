@@ -117,7 +117,12 @@ def prediction_history_to_dict(record: PredictionHistoryRecord) -> dict[str, Any
     }
 
 
-def user_admin_to_dict(record: UserRecord, *, plan: str = "free") -> dict[str, Any]:
+def user_admin_to_dict(
+    record: UserRecord,
+    *,
+    plan: str = "free",
+    predictions_used_month: int | None = None,
+) -> dict[str, Any]:
     return {
         "id": str(record.id),
         "email": record.email,
@@ -125,8 +130,14 @@ def user_admin_to_dict(record: UserRecord, *, plan: str = "free") -> dict[str, A
         "role": _enum(record.role),
         "plan": plan,
         "is_active": record.is_active,
+        "email_verified": record.email_verified,
+        "is_banned": record.is_banned,
+        "banned_at": _iso(record.banned_at),
+        "banned_reason": record.banned_reason,
         "created_at": _iso(record.created_at),
         "created_date": record.created_at.date().isoformat() if record.created_at else None,
+        "last_login_at": _iso(record.last_login_at),
+        "predictions_used_month": predictions_used_month,
     }
 
 

@@ -2,4 +2,4 @@ from __future__ import annotations
 
 from typing import Literal
 
-RuleAGateMode = Literal["off", "shadow"]
+RuleAGateMode = Literal["off", "shadow", "active"]

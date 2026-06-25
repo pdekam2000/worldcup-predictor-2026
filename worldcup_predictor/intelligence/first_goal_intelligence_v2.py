@@ -83,8 +83,15 @@ def _has_xg_data(report: MatchIntelligenceReport) -> bool:
             val, _ = extract_real_xg(report, side=side, team_stats=profile)
             if val is not None:
                 return True
-    except Exception:
-        pass
+    except Exception as exc:
+        from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
+
+        log_enrichment_failure(
+            "worldcup_predictor.intelligence.first_goal_intelligence_v2",
+            exc,
+            fixture_id=getattr(report, "fixture_id", None),
+            layer="xg_probe",
+        )
     return False
 
 

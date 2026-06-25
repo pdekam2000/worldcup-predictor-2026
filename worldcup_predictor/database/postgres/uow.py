@@ -8,13 +8,17 @@ from sqlalchemy.orm import Session
 
 from worldcup_predictor.database.postgres.repositories import (
     AlertsRepository,
+    BillingInvoicesRepository,
     FavoritesRepository,
     NotificationsRepository,
     PredictionHistoryRepository,
     SubscriptionsRepository,
     UserRepository,
     UserSettingsRepository,
+    WebhookEventsRepository,
 )
+from worldcup_predictor.database.postgres.repositories.email_verification import EmailVerificationRepository
+from worldcup_predictor.database.postgres.repositories.password_reset import PasswordResetRepository
 
 
 @dataclass
@@ -27,6 +31,10 @@ class SaasUnitOfWork:
     notifications: NotificationsRepository
     subscriptions: SubscriptionsRepository
     prediction_history: PredictionHistoryRepository
+    email_verification: EmailVerificationRepository
+    password_reset: PasswordResetRepository
+    webhook_events: WebhookEventsRepository
+    billing_invoices: BillingInvoicesRepository
 
     def commit(self) -> None:
         self.session.commit()
@@ -45,4 +53,8 @@ def build_uow(session: Session) -> SaasUnitOfWork:
         notifications=NotificationsRepository(session),
         subscriptions=SubscriptionsRepository(session),
         prediction_history=PredictionHistoryRepository(session),
+        email_verification=EmailVerificationRepository(session),
+        password_reset=PasswordResetRepository(session),
+        webhook_events=WebhookEventsRepository(session),
+        billing_invoices=BillingInvoicesRepository(session),
     )

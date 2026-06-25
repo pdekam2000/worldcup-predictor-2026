@@ -178,5 +178,11 @@ def build_audit_trace(
             "reductions": list(trace.confidence_reductions or []),
             "no_bet_reasons": list(trace.no_bet_reasons or []),
         }
+        if prediction:
+            from worldcup_predictor.api.prediction_metadata import build_adaptive_confidence_trace
+
+            adaptive = build_adaptive_confidence_trace(prediction)
+            if adaptive:
+                out["confidence"]["adaptive"] = adaptive
 
     return out

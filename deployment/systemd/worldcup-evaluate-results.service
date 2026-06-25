@@ -1,0 +1,35 @@
+# Phase 44A — World Cup auto evaluation (production)
+#
+# Install (operator approval required):
+#   sudo bash scripts/install_phase44a_eval_timer.sh
+#
+# Manual run:
+#   sudo -u www-data bash -lc 'cd /opt/worldcup-predictor && .venv/bin/python main.py worldcup-auto-evaluation'
+#
+# Rollback:
+#   sudo systemctl disable --now worldcup-evaluate-results.timer
+#   sudo rm /etc/systemd/system/worldcup-evaluate-results.service
+#   sudo rm /etc/systemd/system/worldcup-evaluate-results.timer
+#   sudo systemctl daemon-reload
+
+[Unit]
+Description=World Cup stored-prediction auto evaluation (Phase 44A)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=APP_ENV=production
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/worldcup-predictor/.venv/bin/python main.py worldcup-auto-evaluation
+Nice=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-evaluate-results
+
+[Install]
+WantedBy=multi-user.target

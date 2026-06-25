@@ -1,0 +1,15 @@
+[Unit]
+Description=World Cup auto cycle — predict + evaluate (Phase 33)
+After=network.target worldcup-api.service
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+ExecStart=/opt/worldcup-predictor/.venv/bin/python main.py worldcup-auto-cycle
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

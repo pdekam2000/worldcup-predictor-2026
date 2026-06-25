@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal
 
+from worldcup_predictor.api.pick_visibility import OFFICIAL_CONFIDENCE_THRESHOLD
 from worldcup_predictor.domain.prediction import MatchPrediction
 
 Bucket = Literal["safe", "value", "aggressive"]
@@ -433,27 +434,16 @@ def build_market_ranking(
     source_agents: list[str] | None = None,
     risk_level: str = "medium",
 ) -> dict[str, Any]:
-    """Rank all candidates and assign safe / value / aggressive picks."""
+    """Rank all candidates; official buckets when confidence >= threshold else caution picks."""
     agents = list(source_agents or [])
     confidence = float(prediction.confidence_score or 0.0)
     data_quality = _data_quality(prediction)
 
-    no_bet = (
+    internal_no_bet = (
         prediction.no_bet_flag
-        or confidence < _MIN_CONFIDENCE
+        or confidence < OFFICIAL_CONFIDENCE_THRESHOLD
         or data_quality < _MIN_DATA_QUALITY
     )
-
-    empty = {
-        "market_ranking": [],
-        "safe_pick": None,
-        "value_pick": None,
-        "aggressive_pick": None,
-        "accuracy_tracking": _accuracy_tracking(None, None, None, no_bet=no_bet),
-        "no_bet": no_bet,
-    }
-    if no_bet:
-        return empty
 
     candidates = build_market_candidates(prediction, detailed_markets)
     ranked: list[tuple[MarketCandidate, float, str]] = []
@@ -463,8 +453,7 @@ def build_market_ranking(
             prediction=prediction,
             specialist_summary=specialist_summary,
         )
-        if _meets_bucket_threshold(cand):
-            ranked.append((cand, score, explanation))
+        ranked.append((cand, score, explanation))
 
     ranked.sort(key=lambda row: row[1], reverse=True)
 
@@ -479,12 +468,31 @@ def build_market_ranking(
         for cand, score, explanation in ranked
     ]
 
+    if internal_no_bet:
+        caution = market_ranking[0] if market_ranking else None
+        best = market_ranking[1] if len(market_ranking) > 1 else caution
+        return {
+            "market_ranking": market_ranking,
+            "safe_pick": None,
+            "value_pick": None,
+            "aggressive_pick": None,
+            "caution_pick": caution,
+            "best_available_pick": best,
+            "accuracy_tracking": _accuracy_tracking(None, None, None, no_bet=True, pick_tier="caution"),
+            "no_bet": True,
+            "pick_tier": "caution",
+        }
+
+    ranked_official: list[tuple[MarketCandidate, float, str]] = [
+        row for row in ranked if _meets_bucket_threshold(row[0])
+    ]
+
     safe_pick: dict[str, Any] | None = None
     value_pick: dict[str, Any] | None = None
     aggressive_pick: dict[str, Any] | None = None
     used: list[MarketCandidate] = []
 
-    for cand, score, explanation in ranked:
+    for cand, score, explanation in ranked_official:
         if cand.bucket != "safe" or safe_pick is not None:
             continue
         if any(_is_correlated(cand, u) for u in used):
@@ -495,7 +503,7 @@ def build_market_ranking(
         )
         used.append(cand)
 
-    for cand, score, explanation in ranked:
+    for cand, score, explanation in ranked_official:
         if cand.bucket != "value" or value_pick is not None:
             continue
         if any(_is_correlated(cand, u) for u in used):
@@ -506,7 +514,7 @@ def build_market_ranking(
         )
         used.append(cand)
 
-    for cand, score, explanation in ranked:
+    for cand, score, explanation in ranked_official:
         if cand.bucket != "aggressive" or aggressive_pick is not None:
             continue
         if any(_is_correlated(cand, u) for u in used):
@@ -522,8 +530,13 @@ def build_market_ranking(
         "safe_pick": safe_pick,
         "value_pick": value_pick,
         "aggressive_pick": aggressive_pick,
-        "accuracy_tracking": _accuracy_tracking(safe_pick, value_pick, aggressive_pick, no_bet=False),
+        "caution_pick": None,
+        "best_available_pick": None,
+        "accuracy_tracking": _accuracy_tracking(
+            safe_pick, value_pick, aggressive_pick, no_bet=False, pick_tier="official",
+        ),
         "no_bet": False,
+        "pick_tier": "official",
     }
 
 
@@ -533,8 +546,9 @@ def _accuracy_tracking(
     aggressive: dict[str, Any] | None,
     *,
     no_bet: bool,
+    pick_tier: str = "official",
 ) -> dict[str, Any]:
-    """Future-proof structure for winrate evaluation — not wired to history yet."""
+    """Future-proof structure for winrate evaluation — official vs caution split (Phase 33B)."""
 
     def _slot(pick: dict[str, Any] | None) -> dict[str, Any] | None:
         if not pick:
@@ -549,9 +563,14 @@ def _accuracy_tracking(
             "bucket": pick.get("bucket"),
         }
 
+    official = pick_tier == "official" and not no_bet
     return {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "no_bet": no_bet,
+        "official_recommended": official,
+        "pick_tier": pick_tier,
+        "caution_pick": None,
+        "best_available_pick": None,
         "safe_pick": _slot(safe),
         "value_pick": _slot(value),
         "aggressive_pick": _slot(aggressive),
@@ -569,23 +588,47 @@ def ranked_to_recommended_bets(
     """Build backward-compatible recommended_bets from ranked picks."""
     agents = list(source_agents or [])
 
-    if ranking.get("no_bet"):
+    if ranking.get("no_bet") or ranking.get("pick_tier") == "caution":
         confidence = float(prediction.confidence_score or 0.0) if prediction else 0.0
-        reason = "Model flagged elevated uncertainty (no-bet review)."
-        if prediction and not prediction.no_bet_flag:
-            reason = "Confidence or data quality below threshold for a clear bet recommendation."
-        return [
-            {
-                "market": "none",
-                "pick": "No Bet",
-                "display_text": "No Bet — confidence or data quality too low",
-                "confidence": round(confidence / 100.0, 3) if confidence > 1 else round(confidence, 3),
-                "risk_level": risk_level,
-                "reasoning": reason,
+        picks: list[dict[str, Any]] = []
+        seen: set[tuple[str, str]] = set()
+        for key, label in (("caution_pick", "Low Confidence Pick"), ("best_available_pick", "Best Available Pick")):
+            pick = ranking.get(key)
+            if not pick:
+                continue
+            dedupe = (str(pick.get("market") or ""), str(pick.get("pick") or ""))
+            if dedupe in seen:
+                continue
+            seen.add(dedupe)
+            picks.append({
+                "market": pick["market"],
+                "pick": pick["pick"],
+                "display_text": f"{label}: {pick['pick']}",
+                "confidence": pick.get("confidence") or round(confidence / 100.0, 3),
+                "risk_level": "high" if confidence < 50 else "medium",
+                "reasoning": "Confidence is below premium threshold, but this is the strongest available market.",
+                "source_agents": pick.get("source_agents") or agents,
+                "status": "caution",
+                "pick_tier": "caution",
+                "market_rank_score": pick.get("market_rank_score"),
+                "bucket": pick.get("bucket"),
+            })
+        if picks:
+            return picks
+        if ranking.get("market_ranking"):
+            top = ranking["market_ranking"][0]
+            return [{
+                "market": top.get("market"),
+                "pick": top.get("pick"),
+                "display_text": f"Caution Pick: {top.get('pick')}",
+                "confidence": top.get("confidence") or round(confidence / 100.0, 3),
+                "risk_level": "medium",
+                "reasoning": "Confidence is below premium threshold, but this is the strongest available market.",
                 "source_agents": agents,
-                "status": "no_bet",
-            }
-        ]
+                "status": "caution",
+                "pick_tier": "caution",
+            }]
+        return []
 
     picks: list[dict[str, Any]] = []
     for key in ("safe_pick", "value_pick"):
@@ -610,12 +653,20 @@ def ranked_to_recommended_bets(
             break
 
     if not picks:
-        return ranked_to_recommended_bets(
-            {"no_bet": True},
-            source_agents=agents,
-            prediction=prediction,
-            risk_level=risk_level,
-        )
+        top = (ranking.get("market_ranking") or [None])[0]
+        if top:
+            return [{
+                "market": top.get("market"),
+                "pick": top.get("pick"),
+                "display_text": f"Bet on {top.get('pick')}",
+                "confidence": top.get("confidence"),
+                "risk_level": risk_level,
+                "reasoning": top.get("reasoning", "Cross-market ranking signal."),
+                "source_agents": agents,
+                "status": "recommended",
+                "pick_tier": "official",
+            }]
+        return []
 
     tracking = ranking.get("accuracy_tracking") or {}
     tracking["recommended_bets_slots"] = [

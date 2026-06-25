@@ -12,9 +12,11 @@ from worldcup_predictor.agents.specialists.status_reasons import (
     MISSING_REQUIRED_FIXTURE_FIELDS,
 )
 from worldcup_predictor.config.settings import Settings, get_settings
+from worldcup_predictor.config.provider_readiness import stamp_provider_readiness
 from worldcup_predictor.domain.schedule import TournamentFixture
 from worldcup_predictor.quota.fixtures_list_cache import get_cached as get_fixtures_list_cached
 from worldcup_predictor.api.prediction_output import enrich_cached_prediction_output
+from worldcup_predictor.prediction.market_consistency_guard import apply_market_consistency_guard
 from worldcup_predictor.quota.quota_guard import refresh_cooldown_remaining_seconds
 
 LineupCoverage = Literal["official", "projected", "pending", "missing"]
@@ -205,12 +207,109 @@ def data_signals_from_specialist_summary(
     }
 
 
+def _refresh_weather_intelligence_on_serve(
+    out: dict[str, Any],
+    *,
+    fixture_id: int,
+    settings: Settings,
+) -> dict[str, Any]:
+    """Refresh weather block on cached payloads — never mutates frozen post-kickoff snapshots."""
+    from datetime import datetime
+
+    from worldcup_predictor.intelligence.weather_intelligence_engine import (
+        build_weather_api_block,
+        enrich_normalized_weather,
+    )
+
+    wi = dict(out.get("weather_intelligence") or {})
+    if wi.get("available"):
+        return wi
+
+    frozen = str(out.get("cache_validation_reason") or "") == "post_kickoff_frozen"
+
+    if not settings.weather_provider_configured:
+        wi.setdefault("unavailable_reason", "provider_not_configured")
+        return build_weather_api_block(wi, venue=wi.get("venue"), kickoff_utc=wi.get("kickoff_utc"))
+
+    if frozen:
+        wi.setdefault("unavailable_reason", "frozen_post_kickoff_snapshot")
+        wi["provider_now_configured"] = True
+        wi.setdefault(
+            "note",
+            "Weather was not captured when this prediction was frozen; historical snapshots are not backfilled.",
+        )
+        return build_weather_api_block(wi, venue=out.get("venue"), kickoff_utc=out.get("kickoff_utc"))
+
+    city = out.get("city")
+    country = out.get("country")
+    venue = out.get("venue")
+    kickoff_raw = out.get("kickoff_utc")
+    if fixture_id and (not city or str(city).strip().upper() in {"", "TBD", "UNKNOWN"}):
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+            row = FootballIntelligenceRepository(settings.sqlite_path or None).get_fixture_row(fixture_id)
+            if row:
+                city = row.get("city") or city
+                country = row.get("country") or country
+                venue = row.get("venue") or venue
+                kickoff_raw = kickoff_raw or row.get("kickoff_utc")
+        except Exception as exc:
+            from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
+
+            log_enrichment_failure(
+                "worldcup_predictor.api.display_helpers",
+                exc,
+                fixture_id=fixture_id,
+                layer="fixture_metadata_lookup",
+            )
+
+    if not city or str(city).strip().upper() in {"", "TBD", "UNKNOWN"}:
+        wi["unavailable_reason"] = "venue_city_missing"
+        wi["provider_now_configured"] = True
+        return build_weather_api_block(wi, venue=venue, kickoff_utc=kickoff_raw)
+
+    kickoff_utc = None
+    if kickoff_raw:
+        try:
+            kickoff_utc = datetime.fromisoformat(str(kickoff_raw).replace("Z", "+00:00"))
+        except ValueError:
+            kickoff_utc = None
+
+    try:
+        from worldcup_predictor.providers.weather_provider import WeatherProvider
+
+        result = WeatherProvider(settings).get_venue_forecast(
+            city=str(city),
+            country=str(country) if country and str(country) not in {"", "TBD"} else None,
+            kickoff_utc=kickoff_utc,
+        )
+        if result.data and result.data.get("available"):
+            enriched = enrich_normalized_weather(result.data)
+            return build_weather_api_block(enriched, venue=venue, kickoff_utc=str(kickoff_raw) if kickoff_raw else None)
+        wi["unavailable_reason"] = result.error or "weather_fetch_failed"
+        wi["provider_now_configured"] = True
+    except Exception as exc:
+        from worldcup_predictor.providers.safe_enrichment_logger import log_enrichment_failure
+
+        log_enrichment_failure(
+            "worldcup_predictor.api.display_helpers",
+            exc,
+            fixture_id=fixture_id,
+            layer="weather_fetch",
+        )
+        wi["unavailable_reason"] = "weather_fetch_error"
+        wi["provider_now_configured"] = True
+    return build_weather_api_block(wi, venue=venue, kickoff_utc=str(kickoff_raw) if kickoff_raw else None)
+
+
 def enrich_prediction_payload(
     payload: dict[str, Any],
     *,
     competition_key: str,
     season: int,
     user_id: str | None = None,
+    role: str | None = None,
     settings: Settings | None = None,
 ) -> dict[str, Any]:
     """Add display-only fields; safe to call on cached payloads."""
@@ -242,4 +341,69 @@ def enrich_prediction_payload(
         )
         if remaining is not None:
             out["refresh_cooldown_remaining_seconds"] = remaining
-    return enrich_cached_prediction_output(out)
+    if fixture_id and "sportmonks_xg" not in out:
+        try:
+            from worldcup_predictor.providers.sportmonks_xg_extraction import (
+                build_sportmonks_xg_api_block,
+                extract_fixture_xg_match,
+            )
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+            row = FootballIntelligenceRepository(settings.sqlite_path or None).get_fixture_row(fixture_id)
+            if row:
+                extraction = extract_fixture_xg_match(
+                    api_fixture_id=fixture_id,
+                    home_team=str(row.get("home_team") or out.get("home_team") or ""),
+                    away_team=str(row.get("away_team") or out.get("away_team") or ""),
+                    kickoff_date=str(row.get("kickoff_utc") or "")[:10] or None,
+                    settings=settings,
+                )
+                out["sportmonks_xg"] = build_sportmonks_xg_api_block(extraction.parsed)
+        except Exception:
+            out.setdefault("sportmonks_xg", {"available": False, "source": "sportmonks", "data_source": "none"})
+    out.setdefault(
+        "weather_intelligence",
+        out.get("weather_intelligence")
+        or {
+            "available": False,
+            "source": "none",
+            "data_source": "none",
+            "weather_summary": None,
+            "weather_impact_score": None,
+            "weather_risk_level": None,
+        },
+    )
+    out = stamp_provider_readiness(out, settings=settings)
+    if fixture_id:
+        out["weather_intelligence"] = _refresh_weather_intelligence_on_serve(
+            out,
+            fixture_id=fixture_id,
+            settings=settings,
+        )
+    enriched = enrich_cached_prediction_output(out)
+    guarded = apply_market_consistency_guard(enriched)
+    if role not in ("admin", "super_admin"):
+        cg = guarded.get("consistency_guard")
+        if isinstance(cg, dict):
+            cg = dict(cg)
+            cg.pop("raw_markets_audit", None)
+            guarded["consistency_guard"] = cg
+    return _apply_user_plan_markets(guarded, user_id=user_id, role=role)
+
+
+def _apply_user_plan_markets(
+    payload: dict[str, Any],
+    *,
+    user_id: str | None,
+    role: str | None = None,
+) -> dict[str, Any]:
+    from worldcup_predictor.subscription.market_gating import apply_plan_market_gate
+    from worldcup_predictor.subscription.quota_service import _resolve_subscription
+    from worldcup_predictor.subscription.plan_limits import normalize_plan
+
+    if role in ("admin", "super_admin"):
+        return apply_plan_market_gate(payload, "pro")
+    if not user_id:
+        return apply_plan_market_gate(payload, "free")
+    plan_enum, _ = _resolve_subscription(user_id)
+    return apply_plan_market_gate(payload, normalize_plan(plan_enum))
