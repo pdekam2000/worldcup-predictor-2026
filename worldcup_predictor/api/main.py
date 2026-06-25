@@ -16,6 +16,7 @@ from worldcup_predictor.api.routes.admin_accuracy import router as admin_accurac
 from worldcup_predictor.api.routes.auth import router as auth_router
 from worldcup_predictor.api.routes.goal_timing import router as goal_timing_router
 from worldcup_predictor.api.routes.health import router as health_router
+from worldcup_predictor.api.routes.competitions import router as competitions_router
 from worldcup_predictor.api.routes.matches import router as matches_router
 from worldcup_predictor.api.routes.predictions import router as predictions_router
 from worldcup_predictor.api.routes.elite_world_cup import router as elite_world_cup_router
@@ -76,6 +77,7 @@ app.include_router(admin_elite_shadow_router, prefix="/api")
 app.include_router(admin_performance_router, prefix="/api")
 app.include_router(owner_router, prefix="/api")
 app.include_router(matches_router, prefix="/api")
+app.include_router(competitions_router, prefix="/api")
 app.include_router(predictions_router, prefix="/api")
 app.include_router(goal_timing_router, prefix="/api")
 app.include_router(research_highlights_router, prefix="/api")

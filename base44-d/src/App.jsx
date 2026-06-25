@@ -6,6 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
+import { BetSlipProvider } from '@/context/BetSlipContext';
 
 // Auth pages
 import Login from './pages/Login';
@@ -28,6 +29,8 @@ import ImprintPage from './pages/legal/ImprintPage';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import MatchCenter from './pages/MatchCenter';
+import MatchDetailPage from './pages/MatchDetailPage';
+import ComboTipsPage from './pages/ComboTipsPage';
 import PredictionDetail from './pages/PredictionDetail';
 import AccuracyCenter from './pages/AccuracyCenter';
 import SubscriptionPage from './pages/SubscriptionPage';
@@ -95,7 +98,7 @@ const AuthenticatedApp = () => {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/imprint" element={<ImprintPage />} />
       <Route path="/research/highlights" element={<ResearchHighlights />} />
-      <Route path="/world-cup" element={<Navigate to="/matches?hub=worldcup" replace />} />
+      <Route path="/world-cup" element={<Navigate to="/matches?competition=world_cup_2026" replace />} />
       <Route path="/account/settings" element={<Navigate to="/settings" replace />} />
       <Route path="/analytics/accuracy" element={<Navigate to="/accuracy" replace />} />
       <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
@@ -119,11 +122,13 @@ const AuthenticatedApp = () => {
       </Route>
 
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        <Route element={<DashboardLayout />}>
+        <Route element={<BetSlipProvider><DashboardLayout /></BetSlipProvider>}>
           <Route element={<OwnerDashboardGate />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
           <Route path="/matches" element={<MatchCenter />} />
+          <Route path="/matches/:fixtureId" element={<MatchDetailPage />} />
+          <Route path="/combo-tips" element={<ComboTipsPage />} />
           <Route path="/prediction/:id" element={<PredictionDetail />} />
           <Route path="/goal-timing" element={<Navigate to="/goal-timing/dashboard" replace />} />
           <Route path="/goal-timing/dashboard" element={<GoalTimingDashboardPage />} />

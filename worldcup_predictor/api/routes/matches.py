@@ -8,6 +8,12 @@ from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException, Query
 
+from worldcup_predictor.api.match_center_helpers import (
+    apply_season_override,
+    competition_emoji,
+    list_enabled_competitions,
+    load_prediction_summaries,
+)
 from worldcup_predictor.config.competitions import DEFAULT_COMPETITION_KEY, get_competition
 from worldcup_predictor.config.settings import get_settings
 from worldcup_predictor.api.display_helpers import fixture_to_match_display
@@ -35,7 +41,6 @@ def _predicted_fixture_ids(settings, competition_key: str) -> set[int]:
         competition_key=competition_key,
         limit=500,
         offset=0,
-        include_quarantined=False,
     )
     return {int(r["fixture_id"]) for r in rows if r.get("fixture_id") is not None}
 
@@ -82,57 +87,179 @@ def _bucket_fixtures(
     return out
 
 
+def _load_competition_fixtures(
+    comp_key: str,
+    season: int,
+    settings,
+) -> tuple[list[TournamentFixture], str | None]:
+    service = build_schedule_service(
+        settings,
+        competition_key=comp_key,
+        season=season,
+    )
+    snapshot = build_match_center(service, settings, enrich_live=False, enrich_finished_limit=0)
+    fixtures = snapshot.upcoming + snapshot.live + snapshot.finished
+    fixtures = [f for f in fixtures if _is_real_fixture(f)]
+    return fixtures, snapshot.source_label
+
+
+def _fixture_row(
+    fixture: TournamentFixture,
+    *,
+    comp,
+    predicted_ids: set[int],
+    summaries: dict[int, dict[str, Any]],
+    include_summary: bool,
+) -> dict[str, Any]:
+    row = {
+        **fixture_to_match_display(fixture, league=comp.display_name, season=comp.season),
+        "competition_key": comp.key,
+        "competition_name": comp.name,
+        "competition_emoji": competition_emoji(comp.key),
+        "competition_country": comp.country,
+        "has_prediction": fixture.fixture_id in predicted_ids,
+        "bucket": classify_status(fixture.status),
+    }
+    if include_summary:
+        summary = summaries.get(fixture.fixture_id)
+        if summary:
+            row["prediction_summary"] = summary
+    return row
+
+
 @router.get("")
 def list_matches(
     status: MatchStatusFilter = Query(default="upcoming", description="Fixture bucket filter"),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=50, ge=1, le=100),
     team: str | None = Query(default=None, description="Filter by team name substring"),
-    competition: str = Query(default=DEFAULT_COMPETITION_KEY),
+    competition: str = Query(default=DEFAULT_COMPETITION_KEY, description="Competition key or 'all'"),
     season: int | None = Query(default=None),
     has_prediction: bool | None = Query(default=None, description="Only fixtures with stored predictions"),
+    include_summary: bool = Query(default=True, description="Attach cached prediction summary when available"),
+    country: str | None = Query(default=None, description="Filter by competition country"),
+    elite_only: bool = Query(default=False, description="Only fixtures with elite-tier cached picks"),
 ) -> dict[str, Any]:
-    """Paginated match listing — upcoming, live, finished, all, or predicted fixtures."""
+    """Paginated match listing — single competition or aggregated across all enabled leagues."""
+    settings = get_settings()
+
+    if competition.strip().lower() in ("all", "*"):
+        comps = list_enabled_competitions()
+        if country:
+            needle = country.strip().lower()
+            comps = [c for c in comps if needle in (c.country or "").lower()]
+        all_fixtures: list[tuple[TournamentFixture, Any, set[int], str | None]] = []
+        predicted_total: set[int] = set()
+        summaries = load_prediction_summaries(settings) if include_summary else {}
+        source_labels: list[str] = []
+
+        for comp in comps:
+            comp = apply_season_override(comp, season)
+            try:
+                fixtures, source_label = _load_competition_fixtures(comp.key, comp.season, settings)
+                predicted_ids = _predicted_fixture_ids(settings, comp.key)
+                predicted_total |= predicted_ids
+                if source_label:
+                    source_labels.append(source_label)
+                for fixture in fixtures:
+                    all_fixtures.append((fixture, comp, predicted_ids, source_label))
+            except Exception as exc:
+                logger.warning("Skipping competition %s: %s", comp.key, exc)
+                continue
+
+        flat_fixtures = [t[0] for t in all_fixtures]
+        filtered = _bucket_fixtures(flat_fixtures, status=status, predicted_ids=predicted_total)
+        filtered = _filter_team(filtered, team)
+
+        comp_by_fixture = {t[0].fixture_id: t[1] for t in all_fixtures}
+        pred_by_fixture: dict[int, set[int]] = {}
+        for fixture, comp, predicted_ids, _ in all_fixtures:
+            pred_by_fixture[fixture.fixture_id] = predicted_ids
+
+        if has_prediction is True:
+            filtered = [f for f in filtered if f.fixture_id in predicted_total]
+        elif has_prediction is False:
+            filtered = [f for f in filtered if f.fixture_id not in predicted_total]
+
+        if elite_only and include_summary:
+            filtered = [
+                f
+                for f in filtered
+                if summaries.get(f.fixture_id, {}).get("is_elite_pick")
+            ]
+
+        total_count = len(filtered)
+        start = (page - 1) * page_size
+        page_rows = filtered[start : start + page_size]
+
+        matches = []
+        for fixture in page_rows:
+            comp = comp_by_fixture.get(fixture.fixture_id)
+            if not comp:
+                continue
+            pids = pred_by_fixture.get(fixture.fixture_id, set())
+            matches.append(
+                _fixture_row(
+                    fixture,
+                    comp=comp,
+                    predicted_ids=pids,
+                    summaries=summaries,
+                    include_summary=include_summary,
+                )
+            )
+
+        return {
+            "status": "ok",
+            "competition": "all",
+            "season": season,
+            "filter_status": status,
+            "total_count": total_count,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": max(1, (total_count + page_size - 1) // page_size) if total_count else 0,
+            "count": len(matches),
+            "matches": matches,
+            "predicted_fixture_count": len(predicted_total),
+            "source_label": source_labels[0] if source_labels else "Live API",
+            "competitions_included": [c.key for c in comps],
+        }
+
     try:
         comp = get_competition(competition)
     except KeyError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    if season is not None:
-        comp = replace(comp, season=season)
+    comp = apply_season_override(comp, season)
 
-    settings = get_settings()
     try:
-        service = build_schedule_service(
-            settings,
-            competition_key=comp.key,
-            season=comp.season,
-        )
-        snapshot = build_match_center(service, settings, enrich_live=False, enrich_finished_limit=0)
-        fixtures = snapshot.upcoming + snapshot.live + snapshot.finished
-        fixtures = [f for f in fixtures if _is_real_fixture(f)]
+        fixtures, source_label = _load_competition_fixtures(comp.key, comp.season, settings)
     except Exception as exc:
         logger.exception("Match list API error")
         raise HTTPException(status_code=500, detail="Failed to load matches.") from exc
 
     predicted_ids = _predicted_fixture_ids(settings, comp.key)
+    summaries = load_prediction_summaries(settings, competition_key=comp.key) if include_summary else {}
     filtered = _bucket_fixtures(fixtures, status=status, predicted_ids=predicted_ids)
     filtered = _filter_team(filtered, team)
     if has_prediction is True:
         filtered = [f for f in filtered if f.fixture_id in predicted_ids]
     elif has_prediction is False:
         filtered = [f for f in filtered if f.fixture_id not in predicted_ids]
+    if elite_only and include_summary:
+        filtered = [f for f in filtered if summaries.get(f.fixture_id, {}).get("is_elite_pick")]
 
     total_count = len(filtered)
     start = (page - 1) * page_size
     page_rows = filtered[start : start + page_size]
 
     matches = [
-        {
-            **fixture_to_match_display(fixture, league=comp.display_name, season=comp.season),
-            "has_prediction": fixture.fixture_id in predicted_ids,
-            "bucket": classify_status(fixture.status),
-        }
+        _fixture_row(
+            fixture,
+            comp=comp,
+            predicted_ids=predicted_ids,
+            summaries=summaries,
+            include_summary=include_summary,
+        )
         for fixture in page_rows
     ]
 
@@ -148,7 +275,7 @@ def list_matches(
         "count": len(matches),
         "matches": matches,
         "predicted_fixture_count": len(predicted_ids),
-        "source_label": snapshot.source_label,
+        "source_label": source_label,
     }
 
 
@@ -212,7 +339,10 @@ def upcoming_matches(
 
     real_fixtures = [fixture for fixture in fixtures if _is_real_fixture(fixture)]
     matches = [
-        fixture_to_match_display(fixture, league=comp.display_name, season=comp.season)
+        {
+            **fixture_to_match_display(fixture, league=comp.display_name, season=comp.season),
+            "competition_key": comp.key,
+        }
         for fixture in real_fixtures
     ]
 

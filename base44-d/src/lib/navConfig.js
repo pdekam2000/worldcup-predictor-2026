@@ -18,6 +18,7 @@ import {
   FlaskConical,
   Beaker,
   Layers,
+  Ticket,
 } from "lucide-react";
 
 /** Phase 62/64 — unified navigation architecture */
@@ -28,6 +29,7 @@ export const MAIN_NAV_SECTION = {
   items: [
     { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { label: "Match Center", path: "/matches", icon: Trophy },
+    { label: "Combo Tips", path: "/combo-tips", icon: Ticket },
     { label: "World Cup", path: "/world-cup", icon: Globe2 },
     { label: "Predictions", path: "/dashboard", icon: Sparkles, matchPath: "/prediction" },
     { label: "Goal Timing", path: "/goal-timing/dashboard", icon: Timer },

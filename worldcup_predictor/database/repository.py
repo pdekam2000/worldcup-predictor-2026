@@ -1295,3 +1295,22 @@ class FootballIntelligenceRepository:
             (competition_key,),
         ).fetchone()
         return int(row["c"]) if row else 0
+
+    def list_worldcup_stored_predictions(
+        self,
+        *,
+        competition_key: str = "world_cup_2026",
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        rows = self._conn.execute(
+            """
+            SELECT * FROM worldcup_stored_predictions
+            WHERE competition_key = ?
+              AND (is_active IS NULL OR is_active = 1)
+            ORDER BY predicted_at DESC
+            LIMIT ? OFFSET ?
+            """,
+            (competition_key, int(limit), int(offset)),
+        ).fetchall()
+        return [dict(r) for r in rows]

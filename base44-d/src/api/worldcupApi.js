@@ -41,6 +41,10 @@ export function mapUpcomingMatch(row) {
     fixture_id: row.fixture_id,
     match_date: row.date,
     league: row.league,
+    competition_key: row.competition_key ?? null,
+    competition_name: row.competition_name ?? row.league,
+    competition_emoji: row.competition_emoji ?? null,
+    competition_country: row.competition_country ?? row.country ?? null,
     home_team: row.home_team,
     away_team: row.away_team,
     status: row.status,
@@ -52,6 +56,7 @@ export function mapUpcomingMatch(row) {
     venue: row.venue ?? null,
     city: row.city ?? null,
     has_prediction: Boolean(row.has_prediction),
+    prediction_summary: row.prediction_summary ?? null,
   };
 }
 
@@ -64,6 +69,9 @@ export function mapUpcomingMatch(row) {
  *   competition?: string,
  *   season?: number,
  *   has_prediction?: boolean,
+ *   include_summary?: boolean,
+ *   country?: string,
+ *   elite_only?: boolean,
  * }} params
  */
 export async function fetchMatches(params = {}) {
@@ -72,6 +80,7 @@ export async function fetchMatches(params = {}) {
   const rows = Array.isArray(payload?.matches) ? payload.matches : [];
   return {
     status: payload?.status ?? "ok",
+    competition: payload?.competition ?? null,
     total_count: payload?.total_count ?? rows.length,
     page: payload?.page ?? 1,
     page_size: payload?.page_size ?? rows.length,
@@ -79,7 +88,21 @@ export async function fetchMatches(params = {}) {
     count: payload?.count ?? rows.length,
     predicted_fixture_count: payload?.predicted_fixture_count ?? 0,
     source_label: payload?.source_label ?? null,
+    competitions_included: payload?.competitions_included ?? null,
     matches: rows.map(mapUpcomingMatch),
+  };
+}
+
+export async function fetchCompetitions({ includeCounts = true } = {}) {
+  const response = await fetch(
+    buildApiUrl("/api/competitions", includeCounts ? { include_counts: true } : {})
+  );
+  const payload = await parseJsonResponse(response);
+  return {
+    status: payload?.status ?? "ok",
+    count: payload?.count ?? 0,
+    total_upcoming: payload?.total_upcoming ?? 0,
+    competitions: payload?.competitions ?? [],
   };
 }
 
