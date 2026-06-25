@@ -1,0 +1,59 @@
+"""Phase 63 — owner command center API routes."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from fastapi import APIRouter, Depends
+
+from worldcup_predictor.api.deps import require_owner_user
+from worldcup_predictor.api.web_auth import WebAuthUser
+from worldcup_predictor.owner.platform_service import OwnerPlatformService
+
+router = APIRouter(prefix="/owner", tags=["owner"])
+_service = OwnerPlatformService()
+
+
+@router.get("/overview")
+def owner_overview(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.overview()
+
+
+@router.get("/monitoring")
+def owner_monitoring(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.monitoring()
+
+
+@router.get("/autonomous/status")
+def owner_autonomous_status(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return {"status": "ok", **(_service.autonomous_status())}
+
+
+@router.post("/autonomous/run-once")
+def owner_autonomous_run_once(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.run_once()
+
+
+@router.post("/autonomous/evaluation")
+def owner_autonomous_evaluation(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.run_evaluation()
+
+
+@router.post("/autonomous/certification")
+def owner_autonomous_certification(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.run_certification()
+
+
+@router.post("/autonomous/scheduler/enable")
+def owner_scheduler_enable(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.enable_scheduler()
+
+
+@router.post("/autonomous/scheduler/disable")
+def owner_scheduler_disable(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.disable_scheduler()
+
+
+@router.get("/notifications")
+def owner_notifications(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.notifications()

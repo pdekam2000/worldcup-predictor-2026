@@ -34,7 +34,10 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import Notifications from './pages/Notifications';
 import SettingsPage from './pages/SettingsPage';
 import AdminPanel from './pages/AdminPanel';
+import EliteShadowPreview from './pages/EliteShadowPreview';
 import SuperAdminPanel from './pages/SuperAdminPanel';
+import AdminRoute from './components/AdminRoute';
+import SuperAdminRoute from './components/SuperAdminRoute';
 import PredictionHistoryPage from './pages/PredictionHistoryPage';
 import FavoritesPage from './pages/FavoritesPage';
 import AlertsPage from './pages/AlertsPage';
@@ -42,8 +45,23 @@ import ApiSettingsPage from './pages/ApiSettingsPage';
 import GoalTimingDashboardPage from './pages/goalTiming/GoalTimingDashboardPage';
 import GoalTimingPicksPage from './pages/goalTiming/GoalTimingPicksPage';
 import GoalTimingHistoryPage from './pages/goalTiming/GoalTimingHistoryPage';
+import GoalTimingAccuracyPage from './pages/goalTiming/GoalTimingAccuracyPage';
+import GoalTimingPerformancePage from './pages/goalTiming/GoalTimingPerformancePage';
 import GoalTimingBacktestPage from './pages/goalTiming/GoalTimingBacktestPage';
 import GoalTimingInsightsPage from './pages/goalTiming/GoalTimingInsightsPage';
+import ResearchHighlights from './pages/ResearchHighlights';
+import EliteWorldCupPage from './pages/EliteWorldCupPage';
+import AdminPerformancePage from './pages/AdminPerformancePage';
+import OwnerLogin from './pages/OwnerLogin';
+import OwnerRoute from './components/OwnerRoute';
+import OwnerDashboardGate from './components/OwnerDashboardGate';
+import OwnerLayout from './components/owner/OwnerLayout';
+import OwnerCommandCenter from './pages/owner/OwnerCommandCenter';
+import OwnerAutonomousPage from './pages/owner/OwnerAutonomousPage';
+import OwnerMonitoringPage from './pages/owner/OwnerMonitoringPage';
+import OwnerNotificationsPage from './pages/owner/OwnerNotificationsPage';
+import OwnerPerformancePage from './pages/owner/OwnerPerformancePage';
+import OwnerHealthPage, { OwnerApiUsagePage, OwnerDatabasePage, OwnerLogsPage } from './pages/owner/OwnerHealthPage';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth } = useAuth();
@@ -63,6 +81,8 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/owner-login" element={<OwnerLogin />} />
+      <Route path="/system/owner-access" element={<Navigate to="/owner-login" replace />} />
 
       {/* Legal */}
       <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -70,16 +90,38 @@ const AuthenticatedApp = () => {
       <Route path="/disclaimer" element={<DisclaimerPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/imprint" element={<ImprintPage />} />
+      <Route path="/research/highlights" element={<ResearchHighlights />} />
+      <Route path="/account/settings" element={<Navigate to="/settings" replace />} />
+      <Route path="/analytics/accuracy" element={<Navigate to="/accuracy" replace />} />
+      <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+
+      <Route element={<OwnerRoute />}>
+        <Route element={<OwnerLayout />}>
+          <Route path="/owner" element={<OwnerCommandCenter />} />
+          <Route path="/owner/autonomous" element={<OwnerAutonomousPage />} />
+          <Route path="/owner/monitoring" element={<OwnerMonitoringPage />} />
+          <Route path="/owner/notifications" element={<OwnerNotificationsPage />} />
+          <Route path="/owner/performance" element={<OwnerPerformancePage />} />
+          <Route path="/owner/health" element={<OwnerHealthPage />} />
+          <Route path="/owner/api-usage" element={<OwnerApiUsagePage />} />
+          <Route path="/owner/database" element={<OwnerDatabasePage />} />
+          <Route path="/owner/logs" element={<OwnerLogsPage />} />
+        </Route>
+      </Route>
 
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route element={<OwnerDashboardGate />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
           <Route path="/matches" element={<MatchCenter />} />
           <Route path="/prediction/:id" element={<PredictionDetail />} />
           <Route path="/goal-timing" element={<Navigate to="/goal-timing/dashboard" replace />} />
           <Route path="/goal-timing/dashboard" element={<GoalTimingDashboardPage />} />
           <Route path="/goal-timing/picks" element={<GoalTimingPicksPage />} />
           <Route path="/goal-timing/history" element={<GoalTimingHistoryPage />} />
+          <Route path="/goal-timing/accuracy" element={<GoalTimingAccuracyPage />} />
+          <Route path="/goal-timing/performance" element={<GoalTimingPerformancePage />} />
           <Route path="/goal-timing/backtest" element={<GoalTimingBacktestPage />} />
           <Route path="/goal-timing/insights" element={<GoalTimingInsightsPage />} />
           <Route path="/accuracy" element={<AccuracyCenter />} />
@@ -90,8 +132,11 @@ const AuthenticatedApp = () => {
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
           <Route path="/api-settings" element={<ApiSettingsPage />} />
-          <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/super-admin" element={<SuperAdminPanel />} />
+          <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
+          <Route path="/admin/elite-shadow" element={<SuperAdminRoute><EliteShadowPreview /></SuperAdminRoute>} />
+          <Route path="/elite/world-cup" element={<SuperAdminRoute><EliteWorldCupPage /></SuperAdminRoute>} />
+          <Route path="/admin/performance" element={<SuperAdminRoute><AdminPerformancePage /></SuperAdminRoute>} />
+          <Route path="/super-admin" element={<SuperAdminRoute><SuperAdminPanel /></SuperAdminRoute>} />
         </Route>
       </Route>
 
