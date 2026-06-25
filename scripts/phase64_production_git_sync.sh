@@ -77,6 +77,8 @@ echo "=== 6. Restore runtime data ==="
 mkdir -p data/shadow data/enterprise
 cp -a "${RUNTIME_STASH}/shadow/"*.jsonl data/shadow/ 2>/dev/null || true
 cp -a "${RUNTIME_STASH}/enterprise/"*.json data/enterprise/ 2>/dev/null || true
+chown -R www-data:www-data data/enterprise 2>/dev/null || true
+chmod 775 data/enterprise 2>/dev/null || true
 
 echo "=== 7. Build frontend ==="
 cd "${APP}/base44-d"
