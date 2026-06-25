@@ -64,7 +64,8 @@ nginx -t && systemctl reload nginx
 echo "=== 7. Autonomous runs (2x cache-first, limit 10) ==="
 for i in 1 2; do
   echo "--- autonomous run ${i}/2 ---"
-  sudo -u www-data "${APP}/.venv/bin/python" - <<'PY'
+  cd "${APP}"
+  sudo -u www-data env PYTHONPATH="${APP}" "${APP}/.venv/bin/python" - <<'PY'
 import json
 from worldcup_predictor.owner.platform_service import OwnerPlatformService
 svc = OwnerPlatformService()
