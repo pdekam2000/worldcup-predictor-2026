@@ -180,13 +180,13 @@ export function flagImageUrl(code, width = 80) {
   return `https://flagcdn.com/w${width}/${code}.png`;
 }
 
-export function resolveTeamVisual(teamName, { logoUrl = null, countryHint = null } = {}) {
+export function resolveTeamVisual(teamName, { logoUrl = null, countryHint = null, flagWidth = 96 } = {}) {
   const safeLogo = logoUrl && String(logoUrl).startsWith("http") ? logoUrl : null;
   const flagCode = flagCodeForTeam(teamName, countryHint);
   return {
     logoUrl: safeLogo,
     flagCode,
-    flagUrl: flagCode ? flagImageUrl(flagCode, 80) : null,
+    flagUrl: flagCode ? flagImageUrl(flagCode, flagWidth) : null,
     initials: initialsForTeam(teamName),
   };
 }

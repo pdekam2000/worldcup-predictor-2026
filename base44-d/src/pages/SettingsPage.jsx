@@ -1,13 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
+import { changePassword } from "@/api/authApi";
 import { fetchSettings, updateSettings } from "@/api/saasApi";
 import { motion } from "framer-motion";
-import { User, Globe, Bell, Moon, Shield, Save } from "lucide-react";
+import { User, Globe, Bell, Moon, Shield, Save, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import PasswordInput from "@/components/auth/PasswordInput";
+
+const PASSWORD_ERROR_MESSAGES = {
+  current_password_invalid: "Current password is incorrect.",
+  password_mismatch: "New password and confirmation do not match.",
+  password_too_weak: "Password must be at least 8 characters.",
+  password_same_as_old: "New password must be different from your current password.",
+  unauthorized: "Please log in again to change your password.",
+};
 
 const DEFAULT_PREFS = {
   emailNotifications: true,
@@ -19,9 +30,15 @@ const DEFAULT_PREFS = {
 
 export default function SettingsPage() {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [settings, setSettings] = useState({
     language: "en",
     timezone: "Europe/London",
@@ -72,7 +89,12 @@ export default function SettingsPage() {
           twoFactor: settings.twoFactor,
         },
       });
-      toast({ title: "Settings saved", description: "Your preferences have been updated." });
+      await load();
+      toast({
+        title: "Settings saved",
+        description: "Your preferences have been updated.",
+        duration: 4000,
+      });
     } catch (err) {
       toast({
         title: "Save failed",
@@ -81,6 +103,47 @@ export default function SettingsPage() {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setPasswordError("");
+    if (newPassword !== confirmPassword) {
+      setPasswordError(PASSWORD_ERROR_MESSAGES.password_mismatch);
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordError(PASSWORD_ERROR_MESSAGES.password_too_weak);
+      return;
+    }
+    if (currentPassword === newPassword) {
+      setPasswordError(PASSWORD_ERROR_MESSAGES.password_same_as_old);
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      await changePassword({
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      toast({
+        title: "Password changed",
+        description: "Please log in again with your new password.",
+        duration: 5000,
+      });
+      await logout(false);
+      navigate("/login", { replace: true, state: { message: "Password changed. Please log in again." } });
+    } catch (err) {
+      const message =
+        PASSWORD_ERROR_MESSAGES[err.code] || err.message || "Could not change password.";
+      setPasswordError(message);
+    } finally {
+      setChangingPassword(false);
     }
   };
 
@@ -177,14 +240,65 @@ export default function SettingsPage() {
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-xl p-6">
         <h2 className="font-display font-semibold mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-primary" /> Security</h2>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
           <div>
             <div className="text-sm font-medium">Two-Factor Authentication</div>
             <div className="text-xs text-muted-foreground">Coming soon — stored as preference only</div>
           </div>
           <Switch checked={settings.twoFactor} onCheckedChange={(v) => setSettings((p) => ({ ...p, twoFactor: v }))} />
         </div>
-        <Button variant="outline" size="sm" className="border-white/10 rounded-lg" disabled>Change Password</Button>
+        <h3 className="text-sm font-medium mb-3 flex items-center gap-2"><Lock className="w-4 h-4 text-primary" /> Change Password</h3>
+        {passwordError && (
+          <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">{passwordError}</div>
+        )}
+        <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block" htmlFor="currentPassword">Current password</label>
+            <PasswordInput
+              id="currentPassword"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              autoComplete="current-password"
+              leftIcon={Lock}
+              label="Current password"
+              disabled={changingPassword}
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block" htmlFor="newPassword">New password</label>
+            <PasswordInput
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              autoComplete="new-password"
+              leftIcon={Lock}
+              label="New password"
+              disabled={changingPassword}
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block" htmlFor="confirmPassword">Confirm new password</label>
+            <PasswordInput
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="new-password"
+              leftIcon={Lock}
+              label="Confirm new password"
+              disabled={changingPassword}
+            />
+          </div>
+          <Button type="submit" variant="outline" size="sm" className="border-white/10 rounded-lg" disabled={changingPassword}>
+            {changingPassword ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Changing…
+              </>
+            ) : (
+              "Change Password"
+            )}
+          </Button>
+        </form>
       </motion.div>
 
       <div className="flex justify-end">

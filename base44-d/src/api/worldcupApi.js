@@ -22,6 +22,9 @@ async function parseJsonResponse(response) {
     if (payload?.detail?.code) {
       err.code = payload.detail.code;
     }
+    if (payload?.detail?.upgrade_url) {
+      err.upgradeUrl = payload.detail.upgrade_url;
+    }
     const waitMatch = typeof message === "string" ? message.match(/wait (\d+)s/i) : null;
     if (waitMatch) {
       err.cooldownSeconds = parseInt(waitMatch[1], 10);
@@ -35,17 +38,48 @@ async function parseJsonResponse(response) {
 export function mapUpcomingMatch(row) {
   return {
     id: String(row.fixture_id),
+    fixture_id: row.fixture_id,
     match_date: row.date,
     league: row.league,
     home_team: row.home_team,
     away_team: row.away_team,
     status: row.status,
+    bucket: row.bucket,
     season: row.season,
     home_team_logo: row.home_team_logo ?? null,
     away_team_logo: row.away_team_logo ?? null,
     country: row.country ?? null,
     venue: row.venue ?? null,
     city: row.city ?? null,
+    has_prediction: Boolean(row.has_prediction),
+  };
+}
+
+/**
+ * @param {{
+ *   status?: 'upcoming'|'live'|'finished'|'all'|'predicted',
+ *   page?: number,
+ *   page_size?: number,
+ *   team?: string,
+ *   competition?: string,
+ *   season?: number,
+ *   has_prediction?: boolean,
+ * }} params
+ */
+export async function fetchMatches(params = {}) {
+  const response = await fetch(buildApiUrl("/api/matches", params));
+  const payload = await parseJsonResponse(response);
+  const rows = Array.isArray(payload?.matches) ? payload.matches : [];
+  return {
+    status: payload?.status ?? "ok",
+    total_count: payload?.total_count ?? rows.length,
+    page: payload?.page ?? 1,
+    page_size: payload?.page_size ?? rows.length,
+    total_pages: payload?.total_pages ?? 1,
+    count: payload?.count ?? rows.length,
+    predicted_fixture_count: payload?.predicted_fixture_count ?? 0,
+    source_label: payload?.source_label ?? null,
+    matches: rows.map(mapUpcomingMatch),
   };
 }
 
@@ -127,6 +161,12 @@ export function normalizePredictionPayload(data) {
     safe_pick: data.safe_pick ?? null,
     value_pick: data.value_pick ?? null,
     aggressive_pick: data.aggressive_pick ?? null,
+    caution_pick: data.caution_pick ?? null,
+    best_available_pick: data.best_available_pick ?? null,
+    user_visible_pick: data.user_visible_pick ?? null,
+    pick_tier: data.pick_tier ?? (data.no_bet ? "caution" : "official"),
+    caution_reason: data.caution_reason ?? null,
+    confidence_gap_to_threshold: data.confidence_gap_to_threshold ?? null,
     accuracy_tracking: data.accuracy_tracking ?? null,
     probabilities: {
       ...(data.probabilities ?? {}),

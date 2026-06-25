@@ -1,12 +1,12 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from "react";
-import {
-  clearAuthToken,
+import { clearAuthToken,
   fetchMe,
   getAuthToken,
   login as apiLogin,
   logout as apiLogout,
   register as apiRegister,
 } from "@/api/authApi";
+import { clearAdminGateTokens } from "@/lib/adminGate";
 import { DEV_MOCK_USER, isDevAuthBypass } from "@/lib/devAuth";
 
 const AuthContext = createContext();
@@ -74,8 +74,14 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (email, password, inviteCode = null) => {
     const payload = await apiRegister(email, password, inviteCode);
-    setUser(payload.user);
-    setIsAuthenticated(true);
+    if (payload?.access_token && payload?.user) {
+      setUser(payload.user);
+      setIsAuthenticated(true);
+    } else {
+      setUser(null);
+      setIsAuthenticated(false);
+      clearAuthToken();
+    }
     setAuthError(null);
     setAuthChecked(true);
     return payload;
@@ -83,14 +89,17 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async (shouldRedirect = true) => {
     if (isDevAuthBypass()) {
-      setUser(DEV_MOCK_USER);
-      setIsAuthenticated(true);
+      clearAdminGateTokens();
+      clearAuthToken();
+      setUser(null);
+      setIsAuthenticated(false);
       if (shouldRedirect) {
-        window.location.href = "/dashboard";
+        window.location.href = "/login";
       }
       return;
     }
     await apiLogout();
+    clearAdminGateTokens();
     setUser(null);
     setIsAuthenticated(false);
     if (shouldRedirect) {

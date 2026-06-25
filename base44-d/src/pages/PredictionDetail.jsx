@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import TeamBadge from "@/components/match/TeamBadge";
+import MatchTeamsRow from "@/components/match/MatchTeamsRow";
 import DataQualityBadge from "@/components/match/DataQualityBadge";
 import PredictionCacheBanner from "@/components/match/PredictionCacheBanner";
 import { labelForStatusReason } from "@/lib/specialistReasons";
@@ -70,16 +70,111 @@ function formatMarketSelection(selection) {
   return map[selection] || String(selection).replace(/_/g, " ");
 }
 
-function recommendedHeadline(recommendedBets) {
+function weatherRiskBadgeClass(level) {
+  const v = String(level || "").toLowerCase();
+  if (v === "high") return "bg-red-500/20 text-red-300 border-red-500/30";
+  if (v === "medium") return "bg-yellow-500/20 text-yellow-200 border-yellow-500/30";
+  if (v === "low") return "bg-green-500/20 text-green-300 border-green-500/30";
+  return "bg-white/10 text-muted-foreground border-white/10";
+}
+
+function formatWeatherRisk(level) {
+  if (!level) return "—";
+  return String(level).charAt(0).toUpperCase() + String(level).slice(1);
+}
+
+function pctWeather(value) {
+  if (value == null || Number.isNaN(Number(value))) return "—";
+  const num = Number(value);
+  if (num <= 1) return `${Math.round(num * 100)}%`;
+  return `${Math.round(num)}%`;
+}
+
+function PredictionDetailWeatherSection({ weather }) {
+  if (!weather?.available) {
+    return (
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }} className="glass rounded-2xl p-6">
+        <h2 className="font-display font-semibold mb-2 flex items-center gap-2">
+          <Cloud className="w-5 h-5 text-primary" /> Weather Intelligence
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Weather data unavailable for this fixture — prediction continues without weather enrichment.
+        </p>
+      </motion.div>
+    );
+  }
+
+  const factors = Array.isArray(weather.impact_factors) ? weather.impact_factors : [];
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }} className="glass rounded-2xl p-6 space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <h2 className="font-display font-semibold flex items-center gap-2">
+          <Cloud className="w-5 h-5 text-primary" /> Weather Intelligence
+        </h2>
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${weatherRiskBadgeClass(weather.weather_risk_level)}`}>
+          Impact: {formatWeatherRisk(weather.weather_risk_level)}
+        </span>
+      </div>
+
+      {weather.weather_summary && (
+        <p className="text-sm text-muted-foreground leading-relaxed">{weather.weather_summary}</p>
+      )}
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+        <div>
+          <div className="text-xs text-muted-foreground">Temperature</div>
+          <div className="font-semibold mt-0.5">
+            {weather.temperature_c != null ? `${Math.round(Number(weather.temperature_c))}°C` : "—"}
+          </div>
+        </div>
+        <div>
+          <div className="text-xs text-muted-foreground">Rain</div>
+          <div className="font-semibold mt-0.5">{pctWeather(weather.rain_probability)}</div>
+        </div>
+        <div>
+          <div className="text-xs text-muted-foreground">Wind</div>
+          <div className="font-semibold mt-0.5">
+            {weather.wind_speed_kmh != null ? `${Math.round(Number(weather.wind_speed_kmh))} km/h` : "—"}
+          </div>
+        </div>
+        <div>
+          <div className="text-xs text-muted-foreground">Humidity</div>
+          <div className="font-semibold mt-0.5">{pctWeather(weather.humidity_pct)}</div>
+        </div>
+      </div>
+
+      {(weather.feels_like_c != null || weather.wind_gust_kmh != null || weather.visibility_km != null) && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-muted-foreground pt-2 border-t border-white/5">
+          {weather.feels_like_c != null && <span>Feels like: {Math.round(Number(weather.feels_like_c))}°C</span>}
+          {weather.wind_gust_kmh != null && <span>Gusts: {Math.round(Number(weather.wind_gust_kmh))} km/h</span>}
+          {weather.visibility_km != null && <span>Visibility: {weather.visibility_km} km</span>}
+          {weather.cloud_cover_pct != null && <span>Cloud cover: {Math.round(Number(weather.cloud_cover_pct))}%</span>}
+          {weather.condition && <span>Condition: {weather.condition}</span>}
+        </div>
+      )}
+
+      {factors.length > 0 && (
+        <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside pt-2 border-t border-white/5">
+          {factors.slice(0, 4).map((f, i) => (
+            <li key={i}>{f}</li>
+          ))}
+        </ul>
+      )}
+    </motion.div>
+  );
+}
+
+function recommendedHeadline(recommendedBets, pickTier) {
   if (!Array.isArray(recommendedBets) || recommendedBets.length === 0) {
     return null;
   }
   const primary = recommendedBets[0];
-  if (primary?.status === "no_bet") {
-    return { type: "no_bet", text: primary.display_text || "No Bet — confidence too low" };
+  if (primary?.status === "caution" || pickTier === "caution") {
+    return { type: "caution", text: primary.display_text || "Low Confidence Pick" };
   }
   const labels = recommendedBets
-    .filter((b) => b.status === "recommended")
+    .filter((b) => b.status === "recommended" || b.status === "caution")
     .map((b) => b.pick)
     .filter(Boolean);
   if (labels.length === 0) return null;
@@ -124,6 +219,30 @@ function roundPercent(value) {
   return Math.round(Number(value) * 10) / 10;
 }
 
+const WITHHELD_MARKET_MESSAGE =
+  "This market was withheld because it conflicts with stronger model signals.";
+
+function isMarketDisplayAllowed(block) {
+  return block?.display_allowed !== false;
+}
+
+function WithheldMarketPanel({ reason }) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-3 text-sm text-muted-foreground">
+      {reason || WITHHELD_MARKET_MESSAGE}
+    </div>
+  );
+}
+
+function ConsistencyWarning({ messages }) {
+  if (!Array.isArray(messages) || messages.length === 0) return null;
+  return (
+    <p className="text-xs text-yellow-300/80 mb-2 leading-relaxed">
+      {messages[0]}
+    </p>
+  );
+}
+
 function pctFromProb(value) {
   if (value == null || Number.isNaN(Number(value))) return null;
   const n = Number(value);
@@ -136,6 +255,14 @@ function RankingPickCard({ title, pick, accentClass, icon: Icon }) {
       <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-sm text-muted-foreground">
         <div className="font-semibold text-foreground/80 mb-1">{title}</div>
         <span>Not available for this fixture</span>
+      </div>
+    );
+  }
+  if (pick.display_allowed === false) {
+    return (
+      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4 text-sm text-muted-foreground">
+        <div className="font-semibold text-foreground/80 mb-1">{title}</div>
+        <WithheldMarketPanel reason={pick?.withheld_reason} />
       </div>
     );
   }
@@ -172,6 +299,7 @@ export default function PredictionDetail() {
   const [apiError, setApiError] = useState(null);
   const [cacheSource, setCacheSource] = useState(null);
   const [cooldownRemaining, setCooldownRemaining] = useState(null);
+  const [quotaExceeded, setQuotaExceeded] = useState(false);
 
   const loadCached = useCallback(async () => {
     if (!id) return;
@@ -200,6 +328,7 @@ export default function PredictionDetail() {
     if (!id) return;
     setRunning(true);
     setApiError(null);
+    setQuotaExceeded(false);
     try {
       const data = await runPrediction(id, { forceRefresh });
       setResult(normalizePredictionPayload(data));
@@ -207,6 +336,9 @@ export default function PredictionDetail() {
       setCacheSource(data.cache_source || (forceRefresh ? "live" : "live"));
       setCooldownRemaining(data.refresh_cooldown_remaining_seconds ?? null);
     } catch (err) {
+      if (err?.code === "quota_exceeded") {
+        setQuotaExceeded(true);
+      }
       if (err?.code === "refresh_cooldown" || err?.cooldownSeconds) {
         setCooldownRemaining(err.cooldownSeconds ?? cooldownRemaining);
       }
@@ -247,6 +379,17 @@ export default function PredictionDetail() {
             Fixture #{id} — run a full analysis only when you need it. Browsing Match Center does not consume prediction quota.
           </p>
           {apiError && <p className="text-xs text-red-300 mb-4">{apiError}</p>}
+          {quotaExceeded && (
+            <div className="mb-4 p-3 rounded-xl border border-yellow-500/30 bg-yellow-500/5 text-sm">
+              <p className="font-medium text-yellow-200 mb-1">Daily limit reached</p>
+              <p className="text-xs text-muted-foreground mb-2">
+                Free plan includes 1 new prediction per day. Cached predictions are still available when stored.
+              </p>
+              <Link to="/subscription" className="text-primary text-xs font-semibold hover:underline">
+                Upgrade to PRO →
+              </Link>
+            </div>
+          )}
           <Button type="button" size="sm" onClick={() => executePrediction(false)} disabled={running}>
             {running ? (
               <>
@@ -292,11 +435,17 @@ export default function PredictionDetail() {
   const pred = result?.prediction;
   const predLabel = predictionLabel(pred);
   const recommendedBets = result?.recommended_bets ?? [];
-  const headline = recommendedHeadline(recommendedBets);
+  const pickTier = result?.pick_tier ?? (result?.no_bet ? "caution" : "official");
+  const headline = recommendedHeadline(recommendedBets, pickTier);
   const primaryRec = result?.primary_recommendation ?? recommendedBets[0];
   const safePick = result?.safe_pick ?? null;
   const valuePick = result?.value_pick ?? null;
   const aggressivePick = result?.aggressive_pick ?? null;
+  const cautionPick = result?.caution_pick ?? null;
+  const bestAvailablePick = result?.best_available_pick ?? null;
+  const cautionReason = result?.caution_reason ?? null;
+  const confidenceGap = result?.confidence_gap_to_threshold ?? null;
+  const isCautionTier = pickTier === "caution" || result?.no_bet;
   const markets = result?.detailed_markets ?? {};
   const riskLevel = result?.risk_level ?? "medium";
 
@@ -315,6 +464,10 @@ export default function PredictionDetail() {
   const firstGoal = markets.first_goal ?? {};
   const goalscorer = markets.goalscorer ?? {};
   const doubleChance = markets.double_chance ?? {};
+  const correctScores = Array.isArray(markets.correct_scores) ? markets.correct_scores : [];
+  const visibleRecommendedBets = recommendedBets.filter(
+    (b) => b.display_allowed !== false && b.status !== "withheld",
+  );
 
   const specialists = Object.entries(result?.specialist_summary?.agents ?? {}).map(([name, agent]) => ({
     name,
@@ -361,37 +514,25 @@ export default function PredictionDetail() {
           <Trophy className="w-3.5 h-3.5" /> Fixture #{result?.fixture_id ?? id}
         </div>
         <DataQualityBadge dataSignals={dataSignals} dataQualityPct={dataQuality} />
-        <div className="flex items-center justify-between">
-          <div className="flex-1 text-center">
-            <TeamBadge
-              teamName={homeTeam}
-              logoUrl={result?.home_team_logo}
-              countryHint={result?.country}
-              size="lg"
-            />
-            <div className="font-display font-bold text-lg">{homeTeam}</div>
-            <div className="text-xs text-muted-foreground mt-1">Home</div>
-          </div>
-          <div className="px-6 text-center">
-            <div className="text-2xl font-display font-bold text-muted-foreground mb-2">VS</div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">{pred || "—"}</div>
-          </div>
-          <div className="flex-1 text-center">
-            <TeamBadge
-              teamName={awayTeam}
-              logoUrl={result?.away_team_logo}
-              countryHint={result?.country}
-              size="lg"
-              className="text-accent"
-            />
-            <div className="font-display font-bold text-lg">{awayTeam}</div>
-            <div className="text-xs text-muted-foreground mt-1">Away</div>
-          </div>
-        </div>
+        <MatchTeamsRow
+          homeTeam={homeTeam}
+          awayTeam={awayTeam}
+          homeLogo={result?.home_team_logo}
+          awayLogo={result?.away_team_logo}
+          countryHint={result?.country}
+          size="xl"
+          className="mt-4"
+          center={
+            <div className="text-center">
+              <div className="text-xl sm:text-2xl font-display font-bold text-muted-foreground">VS</div>
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mt-1">{pred || "—"}</div>
+            </div>
+          }
+        />
       </motion.div>
 
-      {/* Phase 30C — ranked pick buckets */}
-      {!result?.no_bet && (safePick || valuePick || aggressivePick) && (
+      {/* Phase 30C — ranked pick buckets (official) */}
+      {!isCautionTier && (safePick || valuePick || aggressivePick) && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -422,32 +563,79 @@ export default function PredictionDetail() {
         </motion.div>
       )}
 
+      {/* Phase 33B — caution picks when below premium threshold */}
+      {isCautionTier && (cautionPick || bestAvailablePick || recommendedBets.length > 0) && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.04 }}
+          className="space-y-3"
+        >
+          <h2 className="font-display font-semibold text-lg">Caution Prediction</h2>
+          <p className="text-sm text-muted-foreground -mt-1">
+            Confidence is below premium threshold, but this is the strongest available market.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <RankingPickCard
+              title="Low Confidence Pick"
+              pick={cautionPick || recommendedBets[0]}
+              accentClass="border-yellow-500/25 bg-yellow-500/5"
+              icon={ShieldAlert}
+            />
+            <RankingPickCard
+              title="Best Available Pick"
+              pick={bestAvailablePick || recommendedBets[1] || cautionPick}
+              accentClass="border-orange-500/20 bg-orange-500/5"
+              icon={Target}
+            />
+          </div>
+        </motion.div>
+      )}
+
       {/* Recommended bet — primary UX */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
         className={`glass rounded-2xl p-6 border ${
-          headline?.type === "no_bet" ? "border-yellow-500/30 bg-yellow-500/5" : "border-primary/30 bg-primary/5"
+          isCautionTier ? "border-yellow-500/30 bg-yellow-500/5" : "border-primary/30 bg-primary/5"
         }`}
       >
         <div className="flex items-start gap-3">
-          {headline?.type === "no_bet" ? (
+          {isCautionTier ? (
             <ShieldAlert className="w-8 h-8 text-yellow-400 shrink-0" />
           ) : (
             <Target className="w-8 h-8 text-primary shrink-0" />
           )}
           <div className="flex-1 min-w-0">
             <h2 className="font-display font-bold text-xl sm:text-2xl mb-2">
-              {headline?.text || `Recommended Bet: ${predLabel}`}
+              {headline?.text || (isCautionTier ? "Caution Pick" : `Recommended Bet: ${predLabel}`)}
             </h2>
             <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
-              <span>Confidence: <strong className="text-foreground">{confidence}%</strong></span>
+              <span title="Model trust in this recommendation — not the same as outcome probability.">
+                Model confidence: <strong className="text-foreground">{confidence}%</strong>
+              </span>
               <span>Risk: <strong className="text-foreground capitalize">{riskLevel}</strong></span>
               {dataQuality != null && (
                 <span>Data quality: <strong className="text-foreground">{dataQuality}%</strong></span>
               )}
+              {isCautionTier && confidenceGap != null && confidenceGap > 0 && (
+                <span>Gap to premium: <strong className="text-foreground">{confidenceGap} pts</strong></span>
+              )}
             </div>
+            <p className="text-xs text-muted-foreground mb-2">
+              <strong className="text-foreground/80">Model confidence</strong> = how much the system trusts this recommendation.
+              {" "}
+              <strong className="text-foreground/80">Outcome probability</strong> (below) = predicted chance of that market result.
+            </p>
+            {isCautionTier && (
+              <p className="text-sm text-yellow-200/80 mb-2">
+                Confidence is below premium threshold, but this is the strongest available market.
+              </p>
+            )}
+            {cautionReason && isCautionTier && (
+              <p className="text-xs text-muted-foreground mb-2">{cautionReason}</p>
+            )}
             {primaryRec?.reasoning && (
               <p className="text-sm text-muted-foreground leading-relaxed">{primaryRec.reasoning}</p>
             )}
@@ -458,10 +646,10 @@ export default function PredictionDetail() {
             )}
           </div>
         </div>
-        {recommendedBets.filter((b) => b.status === "recommended").length > 1 && (
+        {visibleRecommendedBets.filter((b) => b.status === "recommended" || b.status === "caution").length > 1 && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {recommendedBets
-              .filter((b) => b.status === "recommended")
+            {visibleRecommendedBets
+              .filter((b) => b.status === "recommended" || b.status === "caution")
               .map((bet) => (
                 <span
                   key={`${bet.market}-${bet.pick}`}
@@ -485,7 +673,7 @@ export default function PredictionDetail() {
           <LineChart className="w-5 h-5 text-primary" /> Detailed Probabilities
         </h2>
         <p className="text-xs text-muted-foreground -mt-1 mb-2">
-          Raw model outputs for transparency — recommendations above use only the strongest signals.
+          Outcome probability = predicted chance of this market outcome. Model confidence (above) measures trust in the recommendation — they are different concepts.
         </p>
 
         <MarketDetailSection title="Match Winner (1X2)" defaultOpen>
@@ -533,55 +721,126 @@ export default function PredictionDetail() {
         </MarketDetailSection>
 
         <MarketDetailSection title="First Goal & Timing">
-          <div className="space-y-2 pt-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">First team to score</span>
-              <span className="font-medium">{firstGoal.team || "—"}</span>
+          {!isMarketDisplayAllowed(firstGoal) ? (
+            <div className="pt-2">
+              <WithheldMarketPanel reason={firstGoal.withheld_reason} />
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Minute range</span>
-              <span className="font-medium">{firstGoal.minute_range || "—"}</span>
-            </div>
-            {firstGoal.expected_minute != null && (
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Expected minute</span>
-                <span className="font-medium">{firstGoal.expected_minute}&apos;</span>
-              </div>
-            )}
-          </div>
-        </MarketDetailSection>
-
-        {goalscorer?.available !== false && (goalscorer?.player || goalscorer?.available) && (
-          <MarketDetailSection title="Likely Goalscorer">
+          ) : (
             <div className="space-y-2 pt-2 text-sm">
-              {goalscorer?.player ? (
-                <>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Player</span>
-                    <span className="font-medium">{goalscorer.player}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Team</span>
-                    <span className="font-medium">{goalscorer.team || "—"}</span>
-                  </div>
-                </>
-              ) : (
-                <p className="text-muted-foreground">Lineup/player data not available for goalscorer pick.</p>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">First team to score</span>
+                <span className="font-medium">{firstGoal.team || "—"}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Minute range</span>
+                <span className="font-medium">{firstGoal.minute_range || "—"}</span>
+              </div>
+              {firstGoal.expected_minute != null && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Expected minute</span>
+                  <span className="font-medium">{firstGoal.expected_minute}&apos;</span>
+                </div>
               )}
             </div>
+          )}
+        </MarketDetailSection>
+
+        {(goalscorer?.available !== false || goalscorer?.display_allowed === false) && (
+          <MarketDetailSection title="Likely Goalscorer">
+            {!isMarketDisplayAllowed(goalscorer) ? (
+              <div className="pt-2">
+                <WithheldMarketPanel reason={goalscorer.withheld_reason} />
+              </div>
+            ) : goalscorer?.player ? (
+              <div className="space-y-2 pt-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Player</span>
+                  <span className="font-medium">{goalscorer.player}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Team</span>
+                  <span className="font-medium">{goalscorer.team || "—"}</span>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground pt-2">
+                Lineup/player data not available for goalscorer pick.
+              </p>
+            )}
           </MarketDetailSection>
         )}
 
         {(doubleChance.home_or_draw != null || doubleChance.draw_or_away != null) && (
           <MarketDetailSection title="Double Chance">
-            <div className="space-y-3 pt-2">
-              <ProbBar label="Home or Draw" value={doubleChance.home_or_draw} />
-              <ProbBar label="Home or Away" value={doubleChance.home_or_away} />
-              <ProbBar label="Draw or Away" value={doubleChance.draw_or_away} />
+            <ConsistencyWarning messages={doubleChance.consistency_messages} />
+            {doubleChance.display_allowed === false ? (
+              <div className="pt-2">
+                <WithheldMarketPanel reason={doubleChance.withheld_reason} />
+              </div>
+            ) : (
+              <div className="space-y-3 pt-2">
+                <ProbBar label="Home or Draw" value={doubleChance.home_or_draw} />
+                <ProbBar label="Home or Away" value={doubleChance.home_or_away} />
+                <ProbBar label="Draw or Away" value={doubleChance.draw_or_away} />
+              </div>
+            )}
+          </MarketDetailSection>
+        )}
+
+        {correctScores.length > 0 && (
+          <MarketDetailSection title="Correct Score">
+            <div className="space-y-2 pt-2 text-sm">
+              {correctScores.map((row) => {
+                const label = row.label || row.scoreline || row.score || "—";
+                if (!isMarketDisplayAllowed(row)) {
+                  return (
+                    <div key={label} className="py-1">
+                      <WithheldMarketPanel reason={row.withheld_reason} />
+                    </div>
+                  );
+                }
+                return (
+                  <div key={label} className="flex justify-between">
+                    <span className="text-muted-foreground">{label}</span>
+                    <span className="font-medium">
+                      {row.probability != null ? `${roundPercent(row.probability)}%` : "—"}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </MarketDetailSection>
         )}
       </motion.div>
+
+      <PredictionDetailWeatherSection weather={result?.weather_intelligence} />
+
+      {(result?.harmonization_used != null || result?.consistency_guard) && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }} className="glass rounded-2xl p-6">
+          <h2 className="font-display font-semibold mb-3 flex items-center gap-2">
+            <Scale className="w-5 h-5 text-primary" /> Rule A Harmonization
+          </h2>
+          <dl className="grid sm:grid-cols-2 gap-3 text-sm">
+            <div>
+              <dt className="text-muted-foreground text-xs">Harmonization applied</dt>
+              <dd className="font-medium mt-0.5">
+                {String(result?.harmonization_used ?? result?.consistency_guard?.harmonization_used ?? "—")}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground text-xs">Source</dt>
+              <dd className="font-medium mt-0.5">{result?.harmonization_source || result?.consistency_guard?.harmonization_source || "—"}</dd>
+            </div>
+            <div className="sm:col-span-2">
+              <dt className="text-muted-foreground text-xs">Reason</dt>
+              <dd className="font-medium mt-0.5">{result?.harmonization_reason || result?.consistency_guard?.harmonization_reason || "—"}</dd>
+            </div>
+          </dl>
+          <p className="text-xs text-muted-foreground mt-3">
+            Rule A: when odds are present, 1X2 follows scoreline harmonization; otherwise WDE pick is preserved.
+          </p>
+        </motion.div>
+      )}
 
       {result?.specialist_summary?.aggregated_score != null && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="glass rounded-2xl p-6">

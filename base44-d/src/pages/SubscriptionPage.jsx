@@ -1,34 +1,112 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Check, Crown, Zap, User, CreditCard, Calendar, ArrowUpRight, AlertTriangle } from "lucide-react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import {
+  Crown,
+  CreditCard,
+  Calendar,
+  ArrowUpRight,
+  AlertTriangle,
+  MessageSquare,
+  AlertCircle,
+  Loader2,
+  ExternalLink,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { fetchSubscription } from "@/api/saasApi";
+import {
+  contactAdmin,
+  fetchSubscription,
+  fetchUserQuota,
+  fetchBillingStatus,
+  fetchBillingHistory,
+  createCustomerPortalSession,
+  fetchBillingReadiness,
+} from "@/api/saasApi";
+import {
+  CONTACT_CATEGORIES,
+  normalizePlanKey,
+  canUpgradeTo,
+  isPremiumPlan,
+  displayPlanLabel,
+  isLegacyElitePlan,
+} from "@/lib/pricingPlans";
+import UpgradeComingSoonDialog from "@/components/subscription/UpgradeComingSoonDialog";
+import QuotaWarningBanner from "@/components/subscription/QuotaWarningBanner";
+import PlanUsageBar from "@/components/subscription/PlanUsageBar";
+import PlanLadder from "@/components/subscription/PlanLadder";
+import SubscriptionComparisonTable from "@/components/subscription/SubscriptionComparisonTable";
 
-const plans = [
-  { name: "Free", key: "free", icon: User, monthly: 0, yearly: 0, features: ["1 prediction/day", "1X2 predictions", "Basic match info"], color: "border-white/10" },
-  { name: "Pro", key: "pro", icon: Zap, monthly: 5, yearly: 50, features: ["3 predictions/day", "Over/Under & BTTS", "Confidence scores", "Match reports", "Specialist analysis"], color: "border-white/10" },
-  { name: "Elite", key: "elite", icon: Crown, monthly: 19, yearly: 190, features: ["10 predictions/day", "Everything in Pro", "Premium analytics", "Historical data", "Priority support"], color: "border-primary", popular: true },
-  { name: "Unlimited", key: "unlimited", icon: Crown, monthly: 85, yearly: 850, features: ["Unlimited predictions", "All Elite features", "API access", "Early predictions", "Dedicated support"], color: "border-accent" },
-];
-
-const planLabels = { free: "Free", pro: "Pro", elite: "Elite", unlimited: "Unlimited" };
+function formatDate(iso) {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+  } catch {
+    return "—";
+  }
+}
 
 export default function SubscriptionPage() {
   const { toast } = useToast();
-  const [yearly, setYearly] = useState(false);
+  const contactRef = useRef(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [billingHistory, setBillingHistory] = useState([]);
+  const [quota, setQuota] = useState(null);
+  const [contactSubject, setContactSubject] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactCategory, setContactCategory] = useState("subscription");
+  const [contactSending, setContactSending] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [upgradePlanName, setUpgradePlanName] = useState("");
+  const [upgradePlanKey, setUpgradePlanKey] = useState("starter");
+  const [billingStatus, setBillingStatus] = useState(null);
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [readiness, setReadiness] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
-      const data = await fetchSubscription();
+      const [data, quotaData, statusData, historyData, readinessData] = await Promise.all([
+        fetchSubscription(),
+        fetchUserQuota().catch(() => null),
+        fetchBillingStatus().catch(() => null),
+        fetchBillingHistory().catch(() => ({ invoices: [] })),
+        fetchBillingReadiness().catch(() => null),
+      ]);
       setSubscription(data.subscription);
-      setBillingHistory(data.billing_history || []);
-      setYearly(data.subscription?.billing_cycle === "yearly");
+      setBillingHistory(
+        historyData?.invoices?.length
+          ? historyData.invoices.map((inv) => ({
+              date: inv.date
+                ? new Date(inv.date).toLocaleDateString([], {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })
+                : "—",
+              desc: `${(inv.currency || "EUR").toUpperCase()} subscription`,
+              amount: inv.amount_paid != null ? `€${Number(inv.amount_paid).toFixed(2)}` : "—",
+              status: inv.status || "—",
+              hosted_invoice_url: inv.hosted_invoice_url || "",
+            }))
+          : data.billing_history || []
+      );
+      setQuota(quotaData);
+      setBillingStatus(statusData);
+      setReadiness(readinessData);
     } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Could not load subscription data");
       toast({
         title: "Could not load subscription",
         description: err instanceof Error ? err.message : "Unknown error",
@@ -43,113 +121,322 @@ export default function SubscriptionPage() {
     load();
   }, [load]);
 
-  const currentPlan = subscription?.plan || "free";
-  const planLabel = planLabels[currentPlan] || "Free";
-  const amount = subscription?.amount != null ? `€${Number(subscription.amount).toFixed(2)}` : "€0.00";
-  const cycleLabel = subscription?.billing_cycle === "yearly" ? "year" : "month";
-  const renewDate = subscription?.end_date
-    ? new Date(subscription.end_date).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })
-    : null;
+  const rawPlan = subscription?.plan || "free";
+  const currentPlan = normalizePlanKey(rawPlan);
+  const isPremiumActive = isPremiumPlan(currentPlan);
+  const planLabel = displayPlanLabel(rawPlan);
+  const priceEur = quota?.price_eur ?? (currentPlan === "starter" ? 5 : currentPlan === "pro" ? 19 : 0);
+  const limit = quota?.monthly_limit ?? quota?.daily_limit ?? 0;
+  const used = quota?.used_this_period ?? quota?.used_today ?? 0;
+  const remaining = quota?.remaining ?? 0;
+  const percent = quota?.percent_used ?? (limit > 0 ? Math.round((used / limit) * 100) : 0);
 
-  const onPlanSwitch = () => {
-    toast({
-      title: "Coming soon",
-      description: "Stripe billing integration is planned for a future release.",
-    });
+  const checkoutConfigured =
+    readiness?.checkout_enabled === true || readiness?.checkout_configured === true;
+  const checkoutPending = billingStatus?.checkout_pending === true;
+  const cancelAtPeriodEnd = billingStatus?.cancel_at_period_end === true;
+  const portalEnabled = billingStatus?.portal_enabled === true || readiness?.portal_enabled === true;
+  const renewalDate = billingStatus?.current_period_end || quota?.period_end || quota?.next_reset_date;
+  const billingStatusLabel = billingStatus?.billing_status || subscription?.status || "active";
+  const lastPaymentStatus = billingStatus?.last_payment_status;
+
+  const openUpgrade = (planName, planKey) => {
+    if (!canUpgradeTo(currentPlan, planKey)) return;
+    setUpgradePlanName(planName || "Starter");
+    setUpgradePlanKey(planKey);
+    setUpgradeOpen(true);
+  };
+
+  const scrollToContact = () => {
+    setUpgradeOpen(false);
+    setContactCategory("subscription");
+    contactRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleManageSubscription = async () => {
+    setPortalLoading(true);
+    try {
+      const result = await createCustomerPortalSession(`${window.location.origin}/subscription`);
+      const url = result?.portal_url;
+      if (!url) throw new Error("Billing portal URL is not available from the server.");
+      window.location.href = url;
+    } catch (err) {
+      toast({
+        title: "Could not open billing portal",
+        description: err instanceof Error ? err.message : "Unknown error",
+        variant: "destructive",
+      });
+    } finally {
+      setPortalLoading(false);
+    }
+  };
+
+  const onContactAdmin = async (e) => {
+    e.preventDefault();
+    if (!contactSubject.trim() || !contactMessage.trim()) return;
+    setContactSending(true);
+    try {
+      const res = await contactAdmin({
+        subject: contactSubject.trim(),
+        message: contactMessage.trim(),
+        category: contactCategory,
+      });
+      setContactSubject("");
+      setContactMessage("");
+      toast({ title: res.message || "Message sent successfully" });
+    } catch (err) {
+      toast({
+        title: "Could not send message",
+        description: err instanceof Error ? err.message : "Unknown error",
+        variant: "destructive",
+      });
+    } finally {
+      setContactSending(false);
+    }
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center py-20">
-        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      <div className="space-y-6 max-w-5xl mx-auto">
+        <div>
+          <h1 className="text-2xl font-display font-bold">Subscription</h1>
+          <p className="text-sm text-muted-foreground mt-1">Loading your plan and billing details…</p>
+        </div>
+        <div className="flex justify-center py-20">
+          <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError && !subscription && !quota) {
+    return (
+      <div className="space-y-6 max-w-5xl mx-auto">
+        <div>
+          <h1 className="text-2xl font-display font-bold">Subscription</h1>
+        </div>
+        <div className="glass rounded-xl p-8 border border-red-500/30 text-center space-y-4">
+          <AlertCircle className="w-10 h-10 text-red-400 mx-auto" />
+          <p className="text-red-200">{loadError}</p>
+          <Button variant="secondary" onClick={load}>
+            <RefreshCw className="w-4 h-4 mr-2" /> Retry
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-2xl font-display font-bold">Subscription</h1>
-        <p className="text-sm text-muted-foreground mt-1">Manage your plan and billing.</p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-display font-bold">Subscription & Billing</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Your plan, monthly quota, and billing — all data from live account APIs.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={load} className="rounded-lg gap-2">
+          <RefreshCw className="w-4 h-4" /> Refresh
+        </Button>
       </div>
 
-      <div className="glass rounded-xl p-6 glow-blue">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-              <Crown className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <div className="font-display font-bold text-lg">{planLabel} Plan</div>
-              <div className="text-sm text-muted-foreground">
-                {currentPlan === "free"
-                  ? "Free tier — upgrade anytime"
-                  : `${amount}/${cycleLabel}${renewDate ? ` • Renews ${renewDate}` : ""}`}
-              </div>
-              <div className="text-xs text-muted-foreground mt-1 capitalize">Status: {subscription?.status || "active"}</div>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="outline" size="sm" className="border-white/10 rounded-lg" disabled={currentPlan === "free"} onClick={onPlanSwitch}>
-              Cancel Plan
-            </Button>
-            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-lg glow-gold" disabled={currentPlan === "unlimited"} onClick={onPlanSwitch}>
-              Upgrade <ArrowUpRight className="w-4 h-4 ml-1" />
-            </Button>
+      {quota && !quota.bypass && (
+        <QuotaWarningBanner warning={quota.quota_warning} percent={percent} remaining={remaining} />
+      )}
+
+      {checkoutPending && (
+        <div className="rounded-xl p-4 border border-primary/40 bg-primary/10 flex gap-3 items-start text-primary">
+          <Loader2 className="w-5 h-5 animate-spin flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-sm">Payment processing</p>
+            <p className="text-xs opacity-90 mt-0.5">
+              Waiting for Stripe confirmation. Your plan will update automatically.
+            </p>
           </div>
         </div>
+      )}
+
+      {cancelAtPeriodEnd && currentPlan !== "free" && (
+        <div className="rounded-xl p-4 border border-yellow-500/40 bg-yellow-500/10 flex gap-3 items-start text-yellow-200">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-sm">Cancellation scheduled</p>
+            <p className="text-xs opacity-90 mt-0.5">
+              Your subscription ends on {formatDate(renewalDate)}. You keep access until then.
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="glass rounded-xl p-6 glow-blue space-y-5">
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+          <div className="flex items-start gap-4 flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <Crown className="w-6 h-6 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="font-display font-bold text-lg">{planLabel} Plan</div>
+                {isPremiumActive && (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent/20 text-accent border border-accent/30">
+                    Premium active
+                  </span>
+                )}
+                {isLegacyElitePlan(rawPlan) && (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-violet-500/15 text-violet-200 border border-violet-500/30">
+                    Legacy tier mapped to Pro
+                  </span>
+                )}
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">
+                {currentPlan === "free" ? "€0/month" : `€${priceEur}/month`}
+              </div>
+              <dl className="text-xs text-muted-foreground mt-3 space-y-1">
+                <div className="flex gap-2">
+                  <dt className="shrink-0">Billing cycle start:</dt>
+                  <dd>{formatDate(quota?.period_start)}</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="shrink-0">Next reset / renewal:</dt>
+                  <dd>{formatDate(renewalDate)}</dd>
+                </div>
+                <div className="flex gap-2 capitalize">
+                  <dt className="shrink-0">Subscription:</dt>
+                  <dd>{billingStatus?.subscription_status || subscription?.status || "active"}</dd>
+                </div>
+                {billingStatusLabel && (
+                  <div className="flex gap-2 capitalize">
+                    <dt className="shrink-0">Billing status:</dt>
+                    <dd>{billingStatusLabel.replace(/_/g, " ")}</dd>
+                  </div>
+                )}
+                {lastPaymentStatus && (
+                  <div className="flex gap-2 capitalize">
+                    <dt className="shrink-0">Last payment:</dt>
+                    <dd>{lastPaymentStatus.replace(/_/g, " ")}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          </div>
+
+          <div className="flex gap-2 flex-shrink-0 flex-wrap lg:flex-col lg:items-stretch">
+            {portalEnabled && currentPlan !== "free" && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-lg"
+                disabled={portalLoading}
+                onClick={handleManageSubscription}
+              >
+                {portalLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Manage billing"
+                )}
+              </Button>
+            )}
+            {canUpgradeTo(currentPlan, "pro") && (
+              <Button
+                size="sm"
+                className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-lg glow-gold"
+                onClick={() =>
+                  openUpgrade(currentPlan === "free" ? "Starter" : "Pro", currentPlan === "free" ? "starter" : "pro")
+                }
+              >
+                Upgrade <ArrowUpRight className="w-4 h-4 ml-1" />
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <PlanUsageBar
+          used={used}
+          limit={limit}
+          remaining={remaining}
+          percent={percent}
+          bypass={quota?.bypass}
+        />
       </div>
+
+      <div>
+        <h2 className="font-display font-semibold mb-1">Plan ladder</h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          Free → Starter → Pro. Elite is shown as coming soon — not available for self-serve checkout.
+        </p>
+        <PlanLadder
+          currentPlan={currentPlan}
+          checkoutConfigured={checkoutConfigured}
+          portalEnabled={portalEnabled}
+          onUpgrade={openUpgrade}
+          onPortal={handleManageSubscription}
+          onContact={scrollToContact}
+        />
+      </div>
+
+      <SubscriptionComparisonTable currentPlan={currentPlan} />
 
       <div className="glass rounded-xl p-4 border border-yellow-500/30 flex gap-3 items-start">
         <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground leading-relaxed">
-          <span className="text-yellow-400 font-semibold">Entertainment purposes only.</span> This platform is for informational and entertainment use only.
+          <span className="text-yellow-400 font-semibold">Entertainment purposes only.</span> For
+          informational and entertainment use only.
         </p>
       </div>
 
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-semibold">Available Plans</h2>
-          <div className="inline-flex items-center glass rounded-full p-1">
-            <button onClick={() => setYearly(false)} className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${!yearly ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>Monthly</button>
-            <button onClick={() => setYearly(true)} className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${yearly ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>Yearly</button>
-          </div>
-        </div>
-        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {plans.map((plan) => (
-            <div key={plan.key} className={`glass rounded-xl p-5 border ${plan.color} ${plan.popular ? "glow-blue" : ""} relative`}>
-              {plan.key === currentPlan && (
-                <div className="absolute -top-2.5 right-4 px-3 py-0.5 bg-primary text-primary-foreground text-xs font-semibold rounded-full">Current</div>
-              )}
-              <div className="flex items-center gap-2 mb-3">
-                <plan.icon className={`w-5 h-5 ${plan.popular ? "text-primary" : plan.key === "elite" ? "text-accent" : "text-muted-foreground"}`} />
-                <h3 className="font-display font-bold">{plan.name}</h3>
-              </div>
-              <div className="mb-4">
-                <span className="text-3xl font-display font-bold">€{yearly ? plan.yearly : plan.monthly}</span>
-                {plan.monthly > 0 && <span className="text-muted-foreground text-sm">/{yearly ? "yr" : "mo"}</span>}
-              </div>
-              <ul className="space-y-2 mb-4">
-                {plan.features.map((f, fi) => (
-                  <li key={fi} className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" /> {f}
-                  </li>
-                ))}
-              </ul>
-              <Button size="sm" className="w-full rounded-lg" variant={plan.key === currentPlan ? "outline" : "default"} disabled={plan.key === currentPlan} onClick={onPlanSwitch}>
-                {plan.key === currentPlan ? "Current Plan" : `Switch to ${plan.name}`}
-              </Button>
-            </div>
-          ))}
-        </div>
+      <div ref={contactRef} className="glass rounded-xl p-5">
+        <h2 className="font-display font-semibold mb-4 flex items-center gap-2">
+          <MessageSquare className="w-4 h-4" /> Message Admin
+        </h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          Use this if checkout or billing portal is unavailable, or for plan change requests.
+        </p>
+        <form onSubmit={onContactAdmin} className="space-y-3 max-w-lg">
+          <Select value={contactCategory} onValueChange={setContactCategory}>
+            <SelectTrigger className="bg-white/5 border-white/10 rounded-lg">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-white/10">
+              {CONTACT_CATEGORIES.map((c) => (
+                <SelectItem key={c.value} value={c.value}>
+                  {c.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Subject"
+            value={contactSubject}
+            onChange={(e) => setContactSubject(e.target.value)}
+            className="bg-white/5 border-white/10 rounded-lg"
+            maxLength={200}
+            required
+          />
+          <Textarea
+            placeholder="Your message…"
+            value={contactMessage}
+            onChange={(e) => setContactMessage(e.target.value)}
+            className="bg-white/5 border-white/10 rounded-lg min-h-[100px]"
+            maxLength={4000}
+            required
+          />
+          <Button type="submit" disabled={contactSending} className="rounded-lg">
+            {contactSending ? "Sending…" : "Send Message"}
+          </Button>
+        </form>
       </div>
 
       <div className="glass rounded-xl p-5">
-        <h2 className="font-display font-semibold mb-4 flex items-center gap-2"><CreditCard className="w-4 h-4" /> Billing History</h2>
+        <h2 className="font-display font-semibold mb-4 flex items-center gap-2">
+          <CreditCard className="w-4 h-4" /> Billing History
+        </h2>
         {billingHistory.length === 0 ? (
           <div className="text-center py-10 text-sm text-muted-foreground">
             <Calendar className="w-8 h-8 mx-auto mb-2 opacity-40" />
-            No billing history yet. Payments will appear here after Stripe is connected.
+            <p className="font-medium text-foreground">No invoices yet</p>
+            <p className="text-xs mt-1 max-w-sm mx-auto">
+              Paid subscriptions will show Stripe invoice history here once billing is active.
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -167,8 +454,23 @@ export default function SubscriptionPage() {
                   <tr key={i}>
                     <td className="py-3 text-muted-foreground">{b.date}</td>
                     <td className="py-3 font-medium">{b.desc}</td>
-                    <td className="py-3">{b.amount}</td>
-                    <td className="py-3"><span className="px-2 py-1 rounded-md text-xs font-medium bg-green-500/10 text-green-400">{b.status}</span></td>
+                    <td className="py-3 tabular-nums">{b.amount}</td>
+                    <td className="py-3">
+                      <span className="px-2 py-1 rounded-md text-xs font-medium bg-green-500/10 text-green-400 capitalize">
+                        {b.status}
+                      </span>
+                      {b.hosted_invoice_url && (
+                        <a
+                          href={b.hosted_invoice_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-2 inline-flex text-primary"
+                          aria-label="Open invoice"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -176,6 +478,15 @@ export default function SubscriptionPage() {
           </div>
         )}
       </div>
+
+      <UpgradeComingSoonDialog
+        open={upgradeOpen}
+        onOpenChange={setUpgradeOpen}
+        planName={upgradePlanName}
+        planKey={upgradePlanKey}
+        currentPlan={currentPlan}
+        onContactAdmin={scrollToContact}
+      />
     </div>
   );
 }

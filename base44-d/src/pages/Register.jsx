@@ -4,7 +4,8 @@ import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserPlus, Mail, Lock, Loader2, KeyRound } from "lucide-react";
+import PasswordInput from "@/components/auth/PasswordInput";
+import { UserPlus, Mail, Loader2, KeyRound, Lock } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 
 export default function Register() {
@@ -30,8 +31,28 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await register(email, password, inviteCode || null);
-      navigate("/dashboard", { replace: true });
+      const payload = await register(email, password, inviteCode || null);
+      const verificationRequired =
+        payload?.email_verification_required !== false &&
+        payload?.verification_required !== false &&
+        payload?.email_delivery_status !== "verification_disabled";
+      if (verificationRequired) {
+        navigate(`/verify-email?email=${encodeURIComponent(email)}`, {
+          replace: true,
+          state: {
+            registrationMessage: payload?.message,
+            verification_email_sent: payload?.verification_email_sent,
+            email_delivery_status: payload?.email_delivery_status,
+          },
+        });
+      } else {
+        navigate("/login", {
+          replace: true,
+          state: {
+            message: payload?.message || "Account created. You can now log in.",
+          },
+        });
+      }
     } catch (err) {
       setError(err.message || "Registration failed");
     } finally {
@@ -101,35 +122,25 @@ export default function Register() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 h-12"
-              required
-            />
-          </div>
+          <PasswordInput
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+            leftIcon={Lock}
+            label="Password"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="confirmPassword">Confirm password</Label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              id="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="pl-10 h-12"
-              required
-            />
-          </div>
+          <PasswordInput
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            autoComplete="new-password"
+            leftIcon={Lock}
+            label="Confirm password"
+          />
         </div>
         <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
           {loading ? (

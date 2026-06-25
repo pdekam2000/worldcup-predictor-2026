@@ -6,12 +6,15 @@ import {
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { fetchAdminStats, fetchAdminUsers, fetchAdminHealth, fetchAdminQuota } from "@/api/saasApi";
+import { fetchAdminStats, fetchAdminUsers, fetchAdminHealth, fetchAdminQuota, fetchAdminUserUsage, resetAdminUserQuota } from "@/api/saasApi";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 const statusIcon = { operational: CheckCircle, degraded: AlertCircle, down: XCircle };
 const statusColor = { operational: "text-green-400", degraded: "text-yellow-400", down: "text-red-400" };
 
 export default function AdminPanel() {
+  const { toast } = useToast();
   const [users, setUsers] = useState([]);
   const [stats, setStats] = useState(null);
   const [services, setServices] = useState([]);
@@ -51,6 +54,28 @@ export default function AdminPanel() {
     { label: "Predictions Today", value: stats ? String(stats.predictions_today) : "0", icon: Target, color: "text-accent", bg: "bg-yellow-500/10", change: "Tracking coming soon" },
     { label: "System Status", value: services.some((s) => s.status !== "operational") ? "Degraded" : "Healthy", icon: Server, color: "text-purple-400", bg: "bg-purple-500/10", change: "Live health check" },
   ];
+
+  const handleViewUsage = async (userId) => {
+    try {
+      const data = await fetchAdminUserUsage(userId);
+      const u = data.usage || {};
+      toast({
+        title: "Plan usage",
+        description: `${u.plan}: ${u.used_this_period}/${u.monthly_limit} used · ${u.remaining} remaining`,
+      });
+    } catch (err) {
+      toast({ title: "Failed", description: err instanceof Error ? err.message : "Error", variant: "destructive" });
+    }
+  };
+
+  const handleResetQuota = async (userId) => {
+    try {
+      await resetAdminUserQuota(userId);
+      toast({ title: "Quota reset", description: "Current billing period usage cleared." });
+    } catch (err) {
+      toast({ title: "Reset failed", description: err instanceof Error ? err.message : "Error", variant: "destructive" });
+    }
+  };
 
   const filteredUsers = users.filter((u) =>
     `${u.full_name} ${u.email}`.toLowerCase().includes(search.toLowerCase())
@@ -112,6 +137,7 @@ export default function AdminPanel() {
                       <th className="pb-3 font-medium">Role</th>
                       <th className="pb-3 font-medium">Plan</th>
                       <th className="pb-3 font-medium">Joined</th>
+                      <th className="pb-3 font-medium">Usage</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -132,6 +158,12 @@ export default function AdminPanel() {
                           }`}>{u.plan}</span>
                         </td>
                         <td className="py-3 text-muted-foreground">{u.created_date ? new Date(u.created_date).toLocaleDateString() : "—"}</td>
+                        <td className="py-3">
+                          <div className="flex gap-1">
+                            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleViewUsage(u.id)}>Usage</Button>
+                            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleResetQuota(u.id)}>Reset</Button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

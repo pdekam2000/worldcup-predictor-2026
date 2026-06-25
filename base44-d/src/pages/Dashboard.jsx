@@ -1,35 +1,59 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useAuth } from "@/lib/AuthContext";
-import { fetchDashboard, fetchGoalTimingStatus } from "@/api/saasApi";
-import { fetchUpcomingMatches } from "@/api/worldcupApi";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useAuth } from "@/lib/AuthContext";
+import { fetchDashboard, fetchGoalTimingPicks, fetchGoalTimingAccuracy } from "@/api/saasApi";
+import { fetchUpcomingMatches, fetchMatches } from "@/api/worldcupApi";
+import { fetchSubscription } from "@/api/saasApi";
 import {
-  TrendingUp, Target, Trophy, Activity, ArrowRight, Clock, Calendar,
-  AlertCircle, RefreshCw,
+  TrendingUp, Target, Trophy, Activity, Crown, Zap, Radio, Calendar,
+  AlertCircle, RefreshCw, Sparkles,
 } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Button } from "@/components/ui/button";
+import {
+  SectionHeader,
+  WinrateCard,
+  PredictionCard,
+  TerminalCard,
+  LivePulse,
+} from "@/components/terminal";
+
+function isLiveMatch(m) {
+  const s = String(m.status || m.bucket || "").toLowerCase();
+  return ["live", "1h", "2h", "ht"].includes(s);
+}
+
+function isWorldCup(league) {
+  const l = String(league || "").toLowerCase();
+  return l.includes("world cup") || l.includes("world_cup") || l.includes("wc ");
+}
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [matches, setMatches] = useState([]);
+  const [liveMatches, setLiveMatches] = useState([]);
   const [matchesLoading, setMatchesLoading] = useState(true);
   const [matchesError, setMatchesError] = useState(null);
   const [dashboard, setDashboard] = useState(null);
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [dashboardError, setDashboardError] = useState(null);
-  const [goalTimingStatus, setGoalTimingStatus] = useState(null);
+  const [bestPick, setBestPick] = useState(null);
+  const [accuracy, setAccuracy] = useState(null);
+  const [subscription, setSubscription] = useState(null);
 
   const loadMatches = useCallback(async () => {
     setMatchesLoading(true);
     setMatchesError(null);
     try {
-      const result = await fetchUpcomingMatches({ limit: 5 });
-      setMatches(result.matches);
+      const [upcoming, live] = await Promise.all([
+        fetchUpcomingMatches({ limit: 8 }),
+        fetchMatches({ status: "live", page_size: 6 }).catch(() => ({ matches: [] })),
+      ]);
+      setMatches(upcoming.matches || []);
+      setLiveMatches(live.matches || []);
     } catch (err) {
       setMatches([]);
-      setMatchesError(err instanceof Error ? err.message : "Failed to load matches from API.");
+      setLiveMatches([]);
+      setMatchesError(err instanceof Error ? err.message : "Failed to load matches.");
     } finally {
       setMatchesLoading(false);
     }
@@ -39,11 +63,19 @@ export default function Dashboard() {
     setDashboardLoading(true);
     setDashboardError(null);
     try {
-      const data = await fetchDashboard();
-      setDashboard(data);
+      const [dash, picks, acc, sub] = await Promise.all([
+        fetchDashboard(),
+        fetchGoalTimingPicks({ limit: 1 }).catch(() => null),
+        fetchGoalTimingAccuracy().catch(() => null),
+        fetchSubscription().catch(() => null),
+      ]);
+      setDashboard(dash);
+      setBestPick(picks?.picks?.[0] || null);
+      setAccuracy(acc);
+      setSubscription(sub?.subscription || sub);
     } catch (err) {
       setDashboard(null);
-      setDashboardError(err instanceof Error ? err.message : "Failed to load dashboard data.");
+      setDashboardError(err instanceof Error ? err.message : "Failed to load dashboard.");
     } finally {
       setDashboardLoading(false);
     }
@@ -52,231 +84,223 @@ export default function Dashboard() {
   useEffect(() => {
     loadMatches();
     loadDashboard();
-    fetchGoalTimingStatus()
-      .then(setGoalTimingStatus)
-      .catch(() => setGoalTimingStatus(null));
   }, [loadMatches, loadDashboard]);
 
   const statsData = dashboard?.stats;
-  const stats = [
-    { label: "Predictions Viewed", value: String(statsData?.predictions_viewed ?? 0), icon: Target, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Win Rate", value: statsData?.settled ? `${statsData.win_rate}%` : "—", icon: TrendingUp, color: "text-green-400", bg: "bg-green-500/10" },
-    { label: "Matches Analyzed", value: String(statsData?.matches_analyzed ?? 0), icon: Trophy, color: "text-accent", bg: "bg-yellow-500/10" },
-    { label: "Streak", value: statsData?.streak ?? "0", icon: Activity, color: "text-purple-400", bg: "bg-purple-500/10" },
-  ];
+  const bestMarket = useMemo(() => {
+    const markets = accuracy?.markets || accuracy?.accuracy_by_market || [];
+    if (!Array.isArray(markets) || !markets.length) return null;
+    const sorted = [...markets].sort((a, b) => (b.accuracy || b.winrate_pct || 0) - (a.accuracy || a.winrate_pct || 0));
+    return sorted[0];
+  }, [accuracy]);
 
-  const chartData = dashboard?.performance_trend?.length ? dashboard.performance_trend : [];
-  const recentPredictions = dashboard?.recent_predictions ?? [];
-  const matchesEmpty = !matchesLoading && !matchesError && matches.length === 0;
+  const planLabel = subscription?.plan_name || subscription?.plan || "Free";
+  const planStatus = subscription?.status || "active";
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div>
-        <h1 className="text-2xl font-display font-bold">Welcome back{user?.full_name ? `, ${user.full_name}` : ""}</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Your hub for Elite Goal Timing predictions — first goal team, minute ranges, and timing intelligence.
-        </p>
-      </div>
-
-      <div className="glass rounded-2xl p-5 border border-primary/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-8 max-w-7xl mx-auto">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Elite Goal Timing Engine</p>
-          <p className="text-sm text-muted-foreground">
-            {goalTimingStatus?.message || "Premier League baseline predictions — Phase 51D prototype."}
+          <p className="terminal-section-title mb-2">Intelligence terminal</p>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#F8FAFC]">
+            {user?.full_name ? `Welcome, ${user.full_name.split(" ")[0]}` : "Command Center"}
+          </h1>
+          <p className="text-sm text-[#94A3B8] mt-1 max-w-xl">
+            Your best picks, live fixtures, and model trust — at a glance.
           </p>
         </div>
-        <Link
-          to="/goal-timing/dashboard"
-          className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-        >
-          Open Goal Timing <ArrowRight className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <LivePulse className="sm:hidden" />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => { loadMatches(); loadDashboard(); }}
+            className="border-white/10 bg-[#101827] text-[#F8FAFC] hover:bg-white/5"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${dashboardLoading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {dashboardError && (
-        <div className="glass rounded-xl p-4 flex items-center justify-between gap-3 text-sm text-red-300">
-          <span>{dashboardError}</span>
+        <TerminalCard className="border-[#FF4D4D]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <span className="text-sm text-[#FF4D4D]">{dashboardError}</span>
           <Button type="button" variant="outline" size="sm" onClick={loadDashboard}>Retry</Button>
-        </div>
+        </TerminalCard>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((s, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="glass rounded-xl p-4"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-muted-foreground">{s.label}</span>
-              <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center`}>
-                <s.icon className={`w-4 h-4 ${s.color}`} />
-              </div>
-            </div>
-            <div className="text-2xl font-display font-bold">{dashboardLoading ? "…" : s.value}</div>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="grid lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3 glass rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display font-semibold">Performance Trend</h2>
-            <span className="text-xs text-muted-foreground">From your prediction history</span>
-          </div>
+      {/* Hero: Today's Best Pick */}
+      <section>
+        <SectionHeader eyebrow="Signal" title="Today's Best Pick" actionLabel="All picks" actionTo="/goal-timing/picks" />
+        <div className="mt-4">
           {dashboardLoading ? (
-            <div className="flex items-center justify-center h-[220px]">
-              <div className="w-6 h-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-            </div>
-          ) : chartData.length === 0 ? (
-            <div className="flex items-center justify-center h-[220px] text-sm text-muted-foreground text-center px-4">
-              No settled predictions yet. View matches to build your performance trend.
-            </div>
+            <TerminalCard className="h-48 flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-[#00E676]/20 border-t-[#00E676] rounded-full animate-spin" />
+            </TerminalCard>
+          ) : bestPick ? (
+            <PredictionCard pick={bestPick} match={bestPick} variant="goal_timing" featured />
           ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="hsl(217, 91%, 60%)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="month" tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis domain={[0, 100]} tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 12 }} axisLine={false} tickLine={false} />
-                <Tooltip
-                  contentStyle={{ background: "hsl(222, 47%, 9%)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", fontSize: "12px" }}
-                  itemStyle={{ color: "hsl(210, 40%, 98%)" }}
-                  labelStyle={{ color: "hsl(215, 20%, 55%)" }}
-                />
-                <Area type="monotone" dataKey="accuracy" stroke="hsl(217, 91%, 60%)" fill="url(#blueGrad)" strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
+            <TerminalCard glow>
+              <p className="text-[#94A3B8] text-sm">No EGIE pick published yet today.</p>
+              <Link to="/goal-timing/picks" className="text-[#00E676] text-sm font-medium mt-2 inline-block">
+                Check goal timing picks →
+              </Link>
+            </TerminalCard>
           )}
         </div>
+      </section>
 
-        <div className="lg:col-span-2 glass rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display font-semibold">Today's Matches</h2>
-            <Link to="/matches" className="text-primary text-xs font-medium flex items-center gap-1 hover:underline">
-              View All <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-
-          {matchesLoading && (
-            <div className="flex items-center justify-center py-10">
-              <div className="w-6 h-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-            </div>
-          )}
-
-          {matchesError && (
-            <div className="text-center py-6">
-              <AlertCircle className="w-8 h-8 mx-auto mb-2 text-red-400" />
-              <p className="text-xs text-red-300 mb-1">Could not load matches from API</p>
-              <p className="text-xs text-muted-foreground mb-3">{matchesError}</p>
-              <Button type="button" variant="outline" size="sm" className="border-white/10" onClick={loadMatches}>
-                <RefreshCw className="w-3.5 h-3.5 mr-2" />
-                Retry
-              </Button>
-            </div>
-          )}
-
-          {matchesEmpty && (
-            <div className="text-center py-10 text-muted-foreground">
-              <Target className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No live backend matches available right now.</p>
-            </div>
-          )}
-
-          {!matchesLoading && !matchesError && matches.length > 0 && (
-            <div className="space-y-3">
-              {matches.map((m) => (
-                <Link
-                  key={m.id}
-                  to={`/prediction/${m.id}`}
-                  className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{m.home_team} vs {m.away_team}</div>
-                    <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5 flex-wrap">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {m.league}
-                      </span>
-                      {m.match_date && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {new Date(m.match_date).toLocaleDateString([], { month: "short", day: "numeric" })}
-                          {" "}
-                          {new Date(m.match_date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium uppercase ml-2 shrink-0">
-                    {m.status || "NS"}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+      {/* KPI row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <WinrateCard
+          label="Model Winrate"
+          value={statsData?.settled ? `${statsData.win_rate}%` : accuracy?.overall_winrate_pct != null ? `${accuracy.overall_winrate_pct}%` : "—"}
+          sub="Settled predictions"
+          icon={TrendingUp}
+          accent="green"
+          loading={dashboardLoading}
+        />
+        <WinrateCard
+          label="Best Market Today"
+          value={bestMarket ? (bestMarket.market_name || bestMarket.market || "—") : "—"}
+          sub={bestMarket?.accuracy != null ? `${Math.round(bestMarket.accuracy * (bestMarket.accuracy <= 1 ? 100 : 1))}% hit rate` : "From accuracy API"}
+          icon={Sparkles}
+          accent="gold"
+          loading={dashboardLoading}
+        />
+        <WinrateCard
+          label="Matches Analyzed"
+          value={String(statsData?.matches_analyzed ?? "—")}
+          icon={Trophy}
+          accent="blue"
+          loading={dashboardLoading}
+        />
+        <WinrateCard
+          label="Subscription"
+          value={planLabel}
+          sub={planStatus}
+          icon={Crown}
+          accent={planLabel.toLowerCase() === "free" ? "neutral" : "gold"}
+          loading={dashboardLoading}
+        />
       </div>
 
-      <div className="glass rounded-xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-semibold">Recent Predictions</h2>
-          <Link to="/accuracy" className="text-primary text-xs font-medium flex items-center gap-1 hover:underline">
-            View History <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-        {dashboardLoading ? (
-          <div className="flex justify-center py-10">
-            <div className="w-6 h-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Live */}
+        <section>
+          <SectionHeader
+            eyebrow="Now"
+            title="Live Matches"
+            actionLabel="Match center"
+            actionTo="/matches?status=live"
+          />
+          <div className="mt-4 space-y-3">
+            {matchesLoading ? (
+              <TerminalCard className="py-12 flex justify-center">
+                <div className="w-6 h-6 border-2 border-[#00E676]/20 border-t-[#00E676] rounded-full animate-spin" />
+              </TerminalCard>
+            ) : liveMatches.length > 0 ? (
+              liveMatches.slice(0, 4).map((m) => (
+                <PredictionCard key={m.id} match={m} variant="match" />
+              ))
+            ) : matches.filter(isLiveMatch).length > 0 ? (
+              matches.filter(isLiveMatch).slice(0, 4).map((m) => (
+                <PredictionCard key={m.id} match={m} variant="match" />
+              ))
+            ) : (
+              <TerminalCard>
+                <Radio className="w-8 h-8 text-[#94A3B8] mb-2 opacity-50" />
+                <p className="text-sm text-[#94A3B8]">No live fixtures right now.</p>
+              </TerminalCard>
+            )}
           </div>
-        ) : recentPredictions.length === 0 ? (
-          <div className="text-center py-10 text-muted-foreground text-sm">
-            No predictions viewed yet. Open a match from Match Center to run your first prediction.
+        </section>
+
+        {/* Upcoming */}
+        <section>
+          <SectionHeader eyebrow="Next" title="Upcoming Picks" actionLabel="View all" actionTo="/matches" />
+          <div className="mt-4 space-y-3">
+            {matchesError && (
+              <TerminalCard className="text-center text-sm text-[#FF4D4D]">{matchesError}</TerminalCard>
+            )}
+            {!matchesLoading && !matchesError && matches.length === 0 && (
+              <TerminalCard className="text-center text-sm text-[#94A3B8]">No upcoming matches.</TerminalCard>
+            )}
+            {!matchesLoading &&
+              matches
+                .filter((m) => !isLiveMatch(m))
+                .slice(0, 4)
+                .map((m) => (
+                  <PredictionCard key={m.id} match={m} variant="match" />
+                ))}
           </div>
-        ) : (
-          <div className="overflow-x-auto">
+        </section>
+      </div>
+
+      {/* Quick hubs */}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <Link to="/matches?hub=worldcup" className="terminal-card-glow p-5 block hover:border-[#FFD166]/30 transition-colors group">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">🏆</span>
+            <h3 className="font-display font-bold text-[#F8FAFC]">World Cup Center</h3>
+          </div>
+          <p className="text-sm text-[#94A3B8]">Groups, flags, fixtures & WC predictions</p>
+          <span className="text-[#00E676] text-sm font-medium mt-3 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+            Enter <Zap className="w-3.5 h-3.5" />
+          </span>
+        </Link>
+        <Link to="/matches?hub=leagues" className="terminal-card p-5 block hover:border-[#3B82F6]/30 transition-colors group">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">⚽</span>
+            <h3 className="font-display font-bold text-[#F8FAFC]">League Center</h3>
+          </div>
+          <p className="text-sm text-[#94A3B8]">Premier League, La Liga & club competitions</p>
+          <span className="text-[#3B82F6] text-sm font-medium mt-3 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+            Browse leagues <Activity className="w-3.5 h-3.5" />
+          </span>
+        </Link>
+      </div>
+
+      {/* Recent activity */}
+      {(dashboard?.recent_predictions?.length > 0) && (
+        <section>
+          <SectionHeader title="Recent Activity" actionLabel="Full history" actionTo="/history" />
+          <TerminalCard className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-muted-foreground text-xs">
+                <tr className="text-left text-[#94A3B8] text-xs border-b border-white/[0.06]">
                   <th className="pb-3 font-medium">Match</th>
-                  <th className="pb-3 font-medium">League</th>
-                  <th className="pb-3 font-medium">Prediction</th>
-                  <th className="pb-3 font-medium">Confidence</th>
+                  <th className="pb-3 font-medium">Pick</th>
                   <th className="pb-3 font-medium">Result</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
-                {recentPredictions.map((p) => (
-                  <tr key={p.id} className="hover:bg-white/5">
-                    <td className="py-3 font-medium">{p.home_team} vs {p.away_team}</td>
-                    <td className="py-3 text-muted-foreground">{p.league || "—"}</td>
+              <tbody className="divide-y divide-white/[0.04]">
+                {dashboard.recent_predictions.slice(0, 5).map((p) => (
+                  <tr key={p.id} className="hover:bg-white/[0.02]">
+                    <td className="py-3 font-medium text-[#F8FAFC]">{p.home_team} vs {p.away_team}</td>
                     <td className="py-3">
-                      <span className="px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary uppercase">
+                      <span className="terminal-chip border-[#00E676]/30 bg-[#00E676]/10 text-[#00E676]">
                         {p.prediction_1x2 === "home" ? "1" : p.prediction_1x2 === "draw" ? "X" : "2"}
                       </span>
                     </td>
-                    <td className="py-3">{p.confidence != null ? `${Math.round(p.confidence)}%` : "—"}</td>
                     <td className="py-3">
-                      <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                        p.result === "correct" ? "bg-green-500/10 text-green-400" :
-                        p.result === "incorrect" ? "bg-red-500/10 text-red-400" :
-                        "bg-yellow-500/10 text-yellow-400"
+                      <span className={`terminal-chip ${
+                        p.result === "correct" ? "border-[#00E676]/40 bg-[#00E676]/10 text-[#00E676]" :
+                        p.result === "incorrect" ? "border-[#FF4D4D]/40 bg-[#FF4D4D]/10 text-[#FF4D4D]" :
+                        "border-[#FFD166]/40 bg-[#FFD166]/10 text-[#FFD166]"
                       }`}>
-                        {p.result ? p.result.charAt(0).toUpperCase() + p.result.slice(1) : "Pending"}
+                        {p.result || "Pending"}
                       </span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        )}
-      </div>
+          </TerminalCard>
+        </section>
+      )}
     </div>
   );
 }

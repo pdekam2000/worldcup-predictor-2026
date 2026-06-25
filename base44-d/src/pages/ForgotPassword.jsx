@@ -17,11 +17,14 @@ export default function ForgotPassword() {
     e.preventDefault();
     setError("");
     setMessage("");
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
     setLoading(true);
     try {
-      const result = await requestPasswordReset();
+      const result = await requestPasswordReset(email.trim());
       setMessage(result?.message || "If your account exists, instructions have been sent.");
-      void email;
     } catch (err) {
       setError(err.message || "Request failed");
     } finally {
@@ -57,6 +60,8 @@ export default function ForgotPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="h-12"
+            required
+            autoComplete="email"
           />
         </div>
         <Button type="submit" className="w-full h-12" disabled={loading}>

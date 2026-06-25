@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Users, CreditCard, Server, Trophy, Target, Shield, Settings,
-  CheckCircle, AlertCircle, XCircle,
+  CheckCircle, AlertCircle, XCircle, BarChart3, MessageSquare, TrendingUp, Zap, Crown,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -15,15 +15,32 @@ import {
   fetchAdminHealth,
   updateAdminUserRole,
   updateAdminUserPlan,
+  banAdminUser,
+  unbanAdminUser,
+  kickAdminUser,
+  resetAdminUserQuota,
+  fetchCommercialAnalytics,
+  fetchCommercialReadiness,
+  fetchAdminUserBilling,
 } from "@/api/saasApi";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-const ROLES = ["user", "admin"];
-const PLANS = ["free", "pro", "elite", "unlimited"];
+const ROLES = ["user", "admin", "super_admin"];
+const PLANS = ["free", "starter", "pro", "elite", "unlimited"];
 
 const statusIcon = { operational: CheckCircle, degraded: AlertCircle, down: XCircle };
 const statusColor = { operational: "text-green-400", degraded: "text-yellow-400", down: "text-red-400" };
-const roleColor = { admin: "bg-accent/10 text-accent", user: "bg-white/5 text-muted-foreground" };
-const planColor = { unlimited: "bg-red-500/10 text-red-400", elite: "bg-yellow-500/10 text-accent", pro: "bg-primary/10 text-primary", free: "bg-white/5 text-muted-foreground" };
+const roleColor = {
+  super_admin: "bg-red-500/10 text-red-400",
+  admin: "bg-accent/10 text-accent",
+  user: "bg-white/5 text-muted-foreground",
+};
+const planColor = { starter: "bg-primary/10 text-primary", unlimited: "bg-red-500/10 text-red-400", elite: "bg-yellow-500/10 text-accent", pro: "bg-accent/10 text-accent", free: "bg-white/5 text-muted-foreground" };
 
 export default function SuperAdminPanel() {
   const { toast } = useToast();
@@ -33,19 +50,28 @@ export default function SuperAdminPanel() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [commercial, setCommercial] = useState(null);
+  const [readiness, setReadiness] = useState(null);
+  const [billingUser, setBillingUser] = useState(null);
+  const [billingDetail, setBillingDetail] = useState(null);
+  const [billingLoading, setBillingLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [statsData, usersData, healthData] = await Promise.all([
+      const [statsData, usersData, healthData, commercialData, readinessData] = await Promise.all([
         fetchAdminStats(),
         fetchAdminUsers({ limit: 200 }),
         fetchAdminHealth(),
+        fetchCommercialAnalytics().catch(() => null),
+        fetchCommercialReadiness().catch(() => null),
       ]);
       setStats(statsData);
       setUsers(usersData.users || []);
       setServices(healthData.services || []);
+      setCommercial(commercialData?.analytics || null);
+      setReadiness(readinessData || null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load admin data");
     } finally {
@@ -56,6 +82,39 @@ export default function SuperAdminPanel() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const handleBan = async (userId, isBanned) => {
+    try {
+      if (isBanned) {
+        await unbanAdminUser(userId);
+        toast({ title: "User unbanned" });
+      } else {
+        await banAdminUser(userId, "Banned by super admin");
+        toast({ title: "User banned" });
+      }
+      await load();
+    } catch (err) {
+      toast({ title: "Action failed", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleKick = async (userId) => {
+    try {
+      await kickAdminUser(userId);
+      toast({ title: "Session revoked", description: "User must log in again." });
+    } catch (err) {
+      toast({ title: "Kick failed", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleQuotaReset = async (userId) => {
+    try {
+      await resetAdminUserQuota(userId);
+      toast({ title: "Quota reset" });
+    } catch (err) {
+      toast({ title: "Reset failed", description: err.message, variant: "destructive" });
+    }
+  };
 
   const handleRoleChange = async (userId, newRole) => {
     try {
@@ -82,6 +141,34 @@ export default function SuperAdminPanel() {
         description: err instanceof Error ? err.message : "Unknown error",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleViewBilling = async (user) => {
+    setBillingUser(user);
+    setBillingDetail(null);
+    setBillingLoading(true);
+    try {
+      const data = await fetchAdminUserBilling(user.id);
+      setBillingDetail(data);
+    } catch (err) {
+      toast({
+        title: "Could not load billing",
+        description: err instanceof Error ? err.message : "Unknown error",
+        variant: "destructive",
+      });
+      setBillingUser(null);
+    } finally {
+      setBillingLoading(false);
+    }
+  };
+
+  const formatBillingDate = (iso) => {
+    if (!iso) return "—";
+    try {
+      return new Date(iso).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+    } catch {
+      return "—";
     }
   };
 
@@ -128,14 +215,66 @@ export default function SuperAdminPanel() {
         ))}
       </div>
 
-      <Tabs defaultValue="users">
+      <Tabs defaultValue="commercial">
         <TabsList className="glass border-white/10 rounded-xl p-1 flex-wrap h-auto gap-1">
-          {["users", "roles", "system", "leagues", "predictions", "settings"].map((tab) => (
+          {["commercial", "users", "roles", "system", "leagues", "predictions", "settings"].map((tab) => (
             <TabsTrigger key={tab} value={tab} className="rounded-lg capitalize data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs">
-              {tab}
+              {tab === "commercial" ? "Commercial" : tab}
             </TabsTrigger>
           ))}
         </TabsList>
+
+        <TabsContent value="commercial" className="mt-4 space-y-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: "Total Users", value: commercial?.total_users ?? stats?.total_users ?? "—", icon: Users, color: "text-primary", bg: "bg-primary/10" },
+              { label: "Free", value: commercial?.free_users ?? "—", icon: Users, color: "text-muted-foreground", bg: "bg-white/5" },
+              { label: "Starter", value: commercial?.starter_users ?? "—", icon: Zap, color: "text-primary", bg: "bg-primary/10" },
+              { label: "Pro", value: commercial?.pro_users ?? "—", icon: Crown, color: "text-accent", bg: "bg-accent/10" },
+            ].map((s, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-muted-foreground">{s.label}</span>
+                  <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center`}>
+                    <s.icon className={`w-4 h-4 ${s.color}`} />
+                  </div>
+                </div>
+                <div className="text-2xl font-display font-bold">{s.value}</div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="glass rounded-xl p-5">
+              <h3 className="font-display font-semibold mb-3 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" /> Monthly prediction usage
+              </h3>
+              <p className="text-3xl font-display font-bold">{commercial?.monthly_prediction_usage ?? "—"}</p>
+              <p className="text-xs text-muted-foreground mt-1">Successful pipeline runs this UTC month (all users)</p>
+            </div>
+            <div className="glass rounded-xl p-5">
+              <h3 className="font-display font-semibold mb-3 flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-accent" /> Contact messages
+              </h3>
+              <p className="text-3xl font-display font-bold">{commercial?.contact_messages_count ?? "—"}</p>
+              <p className="text-xs text-muted-foreground mt-1">Total Message Admin submissions</p>
+            </div>
+          </div>
+          {readiness && (
+            <div className="glass rounded-xl p-5">
+              <h3 className="font-display font-semibold mb-3 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" /> Commercial readiness
+              </h3>
+              <div className="flex items-end gap-3 mb-4">
+                <span className="text-4xl font-display font-bold text-primary">{readiness.readiness_score}</span>
+                <span className="text-muted-foreground text-sm pb-1">/ 100</span>
+              </div>
+              {readiness.gaps?.length > 0 && (
+                <p className="text-xs text-muted-foreground">Gaps: {readiness.gaps.join(", ")}</p>
+              )}
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground">Read-only analytics · No prediction logic changes</p>
+        </TabsContent>
 
         <TabsContent value="users" className="mt-4">
           <div className="glass rounded-xl p-5">
@@ -147,28 +286,64 @@ export default function SuperAdminPanel() {
               <div className="text-center py-10 text-muted-foreground text-sm">No users found.</div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm min-w-[900px]">
                   <thead>
                     <tr className="text-left text-muted-foreground text-xs border-b border-white/10">
-                      <th className="pb-3 font-medium px-2">Name</th>
                       <th className="pb-3 font-medium px-2">Email</th>
                       <th className="pb-3 font-medium px-2">Role</th>
                       <th className="pb-3 font-medium px-2">Plan</th>
-                      <th className="pb-3 font-medium px-2">Joined</th>
+                      <th className="pb-3 font-medium px-2">Verified</th>
+                      <th className="pb-3 font-medium px-2">Status</th>
+                      <th className="pb-3 font-medium px-2">Predictions</th>
+                      <th className="pb-3 font-medium px-2">Last login</th>
+                      <th className="pb-3 font-medium px-2">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {filtered.map((u) => (
-                      <tr key={u.id} className="hover:bg-white/5">
-                        <td className="py-3 px-2 font-medium">{u.full_name}</td>
-                        <td className="py-3 px-2 text-muted-foreground text-xs">{u.email}</td>
+                      <tr key={u.id} className="hover:bg-white/5 align-top">
                         <td className="py-3 px-2">
-                          <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${roleColor[u.role] || roleColor.user}`}>{u.role}</span>
+                          <div className="font-medium text-xs">{u.full_name}</div>
+                          <div className="text-muted-foreground text-xs">{u.email}</div>
                         </td>
                         <td className="py-3 px-2">
-                          <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${planColor[u.plan] || planColor.free}`}>{u.plan}</span>
+                          <Select value={u.role} onValueChange={(v) => handleRoleChange(u.id, v)}>
+                            <SelectTrigger className="w-28 bg-white/5 border-white/10 rounded-lg text-xs h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-card border-white/10">
+                              {ROLES.map((r) => <SelectItem key={r} value={r} className="text-xs">{r}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
                         </td>
-                        <td className="py-3 px-2 text-muted-foreground text-xs">{u.created_date ? new Date(u.created_date).toLocaleDateString() : "—"}</td>
+                        <td className="py-3 px-2">
+                          <Select value={u.plan} onValueChange={(v) => handlePlanChange(u.id, v)}>
+                            <SelectTrigger className="w-24 bg-white/5 border-white/10 rounded-lg text-xs h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-card border-white/10">
+                              {PLANS.map((p) => <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="py-3 px-2 text-xs">{u.email_verified ? "Yes" : "No"}</td>
+                        <td className="py-3 px-2 text-xs">
+                          {u.is_banned ? <span className="text-red-400">Banned</span> : u.is_active ? "Active" : "Inactive"}
+                        </td>
+                        <td className="py-3 px-2 text-xs">{u.predictions_used_month ?? 0}</td>
+                        <td className="py-3 px-2 text-xs text-muted-foreground">
+                          {u.last_login_at ? new Date(u.last_login_at).toLocaleDateString() : "—"}
+                        </td>
+                        <td className="py-3 px-2">
+                          <div className="flex flex-wrap gap-1">
+                            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => handleKick(u.id)}>Kick</Button>
+                            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => handleBan(u.id, u.is_banned)}>
+                              {u.is_banned ? "Unban" : "Ban"}
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleQuotaReset(u.id)}>Reset quota</Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleViewBilling(u)}>Billing</Button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -254,6 +429,30 @@ export default function SuperAdminPanel() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={!!billingUser} onOpenChange={(open) => !open && setBillingUser(null)}>
+        <DialogContent className="glass border-white/10 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">User billing</DialogTitle>
+          </DialogHeader>
+          {billingUser && (
+            <p className="text-xs text-muted-foreground mb-3">{billingUser.email}</p>
+          )}
+          {billingLoading ? (
+            <p className="text-sm text-muted-foreground py-6 text-center">Loading billing…</p>
+          ) : billingDetail ? (
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between"><span className="text-muted-foreground">Plan</span><span className="capitalize">{billingDetail.plan}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Subscription</span><span className="capitalize">{billingDetail.subscription_status}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Billing status</span><span>{billingDetail.billing_status || "—"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Stripe customer</span><span className="font-mono text-xs">{billingDetail.stripe_customer_id_masked || "—"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Period end</span><span>{formatBillingDate(billingDetail.current_period_end)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Last payment</span><span className="capitalize">{billingDetail.last_payment_status || "—"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Invoices</span><span>{billingDetail.invoice_count ?? 0}</span></div>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

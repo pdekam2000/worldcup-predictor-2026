@@ -19,7 +19,6 @@ export default function LandingNav() {
         <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
           <a href="#features" className="hover:text-foreground transition-colors">Features</a>
           <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
-          <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
           <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
         </div>
 
@@ -41,7 +40,6 @@ export default function LandingNav() {
         <div className="md:hidden glass border-t border-white/10 p-4 space-y-3">
           <a href="#features" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Features</a>
           <a href="#pricing" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Pricing</a>
-          <a href="#testimonials" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Testimonials</a>
           <a href="#faq" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>FAQ</a>
           <div className="flex gap-3 pt-2">
             <Link to="/login" className="flex-1"><Button variant="outline" size="sm" className="w-full">Sign In</Button></Link>
