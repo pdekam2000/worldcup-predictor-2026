@@ -35,8 +35,38 @@ _ODDS_AGENT_KEYS = (
 _LIVE_FIXTURE_STATUSES = frozenset({"1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"})
 
 
+def api_football_team_logo_url(team_id: int | None) -> str | None:
+    """Derive API-Football team crest URL from numeric team id (display-only)."""
+    try:
+        tid = int(team_id) if team_id is not None else 0
+    except (TypeError, ValueError):
+        return None
+    if tid <= 0:
+        return None
+    return f"https://media.api-sports.io/football/teams/{tid}.png"
+
+
+def _logo_from_row(row: dict[str, Any]) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    home = row.get("home_team_logo")
+    away = row.get("away_team_logo")
+    if home:
+        out["home_team_logo"] = home
+    elif row.get("home_team_id"):
+        out["home_team_logo"] = api_football_team_logo_url(row.get("home_team_id"))
+    if away:
+        out["away_team_logo"] = away
+    elif row.get("away_team_id"):
+        out["away_team_logo"] = api_football_team_logo_url(row.get("away_team_id"))
+    if row.get("country"):
+        out["country"] = row.get("country")
+    return out
+
+
 def fixture_to_match_display(fixture: TournamentFixture, *, league: str, season: int) -> dict[str, Any]:
     """Serialize fixture with team logos and venue hints for Match Center cards."""
+    home_logo = fixture.home_team_logo or api_football_team_logo_url(fixture.home_team_id)
+    away_logo = fixture.away_team_logo or api_football_team_logo_url(fixture.away_team_id)
     return {
         "fixture_id": fixture.fixture_id,
         "date": fixture.kickoff_time.isoformat(),
@@ -45,8 +75,10 @@ def fixture_to_match_display(fixture: TournamentFixture, *, league: str, season:
         "home_team": fixture.home_team,
         "away_team": fixture.away_team,
         "status": fixture.status or "NS",
-        "home_team_logo": fixture.home_team_logo,
-        "away_team_logo": fixture.away_team_logo,
+        "home_team_logo": home_logo,
+        "away_team_logo": away_logo,
+        "home_team_id": fixture.home_team_id,
+        "away_team_id": fixture.away_team_id,
         "country": fixture.country or None,
         "venue": fixture.venue or None,
         "city": fixture.city or None,
@@ -81,14 +113,37 @@ def team_logos_for_fixture(
     settings = settings or get_settings()
     row = _match_from_cached_list(fixture_id, competition_key=competition_key, season=season, settings=settings)
     if row is None:
+        from worldcup_predictor.config.competitions import list_competition_keys
+
+        for alt_key in list_competition_keys(enabled_only=True):
+            if alt_key == competition_key:
+                continue
+            row = _match_from_cached_list(
+                fixture_id,
+                competition_key=alt_key,
+                season=season,
+                settings=settings,
+            )
+            if row is not None:
+                break
+    if row is None:
+        from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+        repo = FootballIntelligenceRepository(settings.sqlite_path or None)
+        db_row = repo.get_fixture_row(fixture_id)
+        if db_row:
+            return _logo_from_row(db_row)
         return {}
-    out: dict[str, Any] = {}
-    if row.get("home_team_logo"):
-        out["home_team_logo"] = row["home_team_logo"]
-    if row.get("away_team_logo"):
-        out["away_team_logo"] = row["away_team_logo"]
-    if row.get("country"):
-        out["country"] = row["country"]
+    out = _logo_from_row(row)
+    if out.get("home_team_logo") and out.get("away_team_logo"):
+        return out
+    from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+    db_row = FootballIntelligenceRepository(settings.sqlite_path or None).get_fixture_row(fixture_id)
+    if db_row:
+        merged = _logo_from_row(db_row)
+        for k, v in merged.items():
+            out.setdefault(k, v)
     return out
 
 
@@ -388,6 +443,27 @@ def enrich_prediction_payload(
             cg = dict(cg)
             cg.pop("raw_markets_audit", None)
             guarded["consistency_guard"] = cg
+    from worldcup_predictor.publication.bet_quality_overlay import apply_plan_gating, build_publication_overlay
+    from worldcup_predictor.api.deps import user_has_owner_access
+
+    is_owner = user_has_owner_access(role or "") or role in ("admin", "super_admin")
+    overlay = build_publication_overlay(guarded, include_debug=is_owner)
+    if not is_owner:
+        plan = "free"
+        if user_id:
+            from worldcup_predictor.subscription.quota_service import _resolve_subscription
+            from worldcup_predictor.subscription.plan_limits import normalize_plan
+
+            plan_enum, _ = _resolve_subscription(user_id)
+            plan = normalize_plan(plan_enum)
+        overlay = apply_plan_gating(overlay, plan)
+    guarded["publication_overlay"] = overlay
+    guarded["bet_quality_score"] = overlay.get("bet_quality_score")
+    guarded["bet_quality_tier"] = overlay.get("bet_quality_tier")
+    guarded["bet_quality_color"] = overlay.get("bet_quality_color")
+    from worldcup_predictor.api.match_evaluation import attach_match_evaluation
+
+    guarded = attach_match_evaluation(guarded, settings=settings)
     return _apply_user_plan_markets(guarded, user_id=user_id, role=role)
 
 

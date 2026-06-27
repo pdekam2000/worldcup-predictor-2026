@@ -4,17 +4,19 @@ import { useAuth } from "@/lib/AuthContext";
 import { fetchDashboard, fetchGoalTimingPicks, fetchGoalTimingAccuracy } from "@/api/saasApi";
 import { fetchUpcomingMatches, fetchMatches } from "@/api/worldcupApi";
 import { fetchSubscription } from "@/api/saasApi";
+import { TRUST_RESEARCH_ONLY } from "@/lib/trustCopy";
 import {
   TrendingUp, Target, Trophy, Activity, Crown, Zap, Radio, Calendar,
   AlertCircle, RefreshCw, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SoftLaunchWelcome from "@/components/onboarding/SoftLaunchWelcome";
 import {
-  SectionHeader,
   WinrateCard,
   PredictionCard,
   TerminalCard,
   LivePulse,
+  SectionHeader,
 } from "@/components/terminal";
 
 function isLiveMatch(m) {
@@ -96,17 +98,20 @@ export default function Dashboard() {
 
   const planLabel = subscription?.plan_name || subscription?.plan || "Free";
   const planStatus = subscription?.status || "active";
+  const isSuperAdmin = user?.role === "super_admin";
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
+      <SoftLaunchWelcome />
+      <p className="text-xs text-slate-500 -mt-2 mb-2">{TRUST_RESEARCH_ONLY}</p>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="terminal-section-title mb-2">Intelligence terminal</p>
-          <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#F8FAFC]">
+          <p className="terminal-section-title mb-2">Your hub</p>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900">
             {user?.full_name ? `Welcome, ${user.full_name.split(" ")[0]}` : "Command Center"}
           </h1>
-          <p className="text-sm text-[#94A3B8] mt-1 max-w-xl">
-            Your best picks, live fixtures, and model trust — at a glance.
+          <p className="text-sm text-slate-600 mt-1 max-w-xl">
+            Your best picks, live fixtures, and evaluated results — at a glance.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -133,18 +138,31 @@ export default function Dashboard() {
 
       {/* Hero: Today's Best Pick */}
       <section>
-        <SectionHeader eyebrow="Signal" title="Today's Best Pick" actionLabel="All picks" actionTo="/goal-timing/picks" />
+        <SectionHeader
+          eyebrow="Signal"
+          title={isSuperAdmin ? "Today's Best Pick" : "Recommended next step"}
+          actionLabel={isSuperAdmin ? "All picks" : "Best tips"}
+          actionTo={isSuperAdmin ? "/goal-timing/picks" : "/best-tips"}
+        />
         <div className="mt-4">
           {dashboardLoading ? (
             <TerminalCard className="h-48 flex items-center justify-center">
-              <div className="w-8 h-8 border-2 border-[#00E676]/20 border-t-[#00E676] rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-amber-400/30 border-t-amber-600 rounded-full animate-spin" />
             </TerminalCard>
-          ) : bestPick ? (
+          ) : isSuperAdmin && bestPick ? (
             <PredictionCard pick={bestPick} match={bestPick} variant="goal_timing" featured />
+          ) : !isSuperAdmin ? (
+            <TerminalCard glow>
+              <p className="text-slate-600 text-sm">Open Match Center, pick a fixture, and run a full prediction.</p>
+              <div className="flex flex-wrap gap-3 mt-3">
+                <Link to="/matches" className="text-amber-800 text-sm font-medium">Match Center →</Link>
+                <Link to="/best-tips" className="text-amber-800 text-sm font-medium">Best tips →</Link>
+              </div>
+            </TerminalCard>
           ) : (
             <TerminalCard glow>
-              <p className="text-[#94A3B8] text-sm">No EGIE pick published yet today.</p>
-              <Link to="/goal-timing/picks" className="text-[#00E676] text-sm font-medium mt-2 inline-block">
+              <p className="text-slate-600 text-sm">No EGIE pick published yet today.</p>
+              <Link to="/goal-timing/picks" className="text-amber-800 text-sm font-medium mt-2 inline-block">
                 Check goal timing picks →
               </Link>
             </TerminalCard>

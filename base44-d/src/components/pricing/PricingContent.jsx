@@ -26,7 +26,7 @@ export default function PricingContent({ showHeader = true, ctaBase = "/register
           <span className="text-primary text-sm font-semibold tracking-widest uppercase">Pricing</span>
           <h2 className="text-3xl sm:text-4xl font-display font-bold mt-3 mb-4">Simple, transparent plans</h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Start free. Upgrade when you need more predictions and markets. No payment processing yet — early access via Message Admin.
+            Start free with a monthly quota. Upgrade for higher limits and Pro markets. Paid plans use Stripe when billing is enabled; otherwise contact admin for early access.
           </p>
         </motion.div>
       )}

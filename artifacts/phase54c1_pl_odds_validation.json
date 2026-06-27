@@ -1,0 +1,73 @@
+{
+  "passed": 5,
+  "total": 11,
+  "all_pass": false,
+  "checks": [
+    {
+      "name": "fixtures_scanned",
+      "pass": true,
+      "detail": "targets=380"
+    },
+    {
+      "name": "api_calls_documented",
+      "pass": true,
+      "detail": "live=380 cache=0"
+    },
+    {
+      "name": "odds_snapshots_inserted",
+      "pass": false,
+      "detail": "created=0"
+    },
+    {
+      "name": "parseable_1x2_odds",
+      "pass": false,
+      "detail": "parseable=0/380 (0.0%)"
+    },
+    {
+      "name": "pl_coverage_after",
+      "pass": false,
+      "detail": "before=0 after=0"
+    },
+    {
+      "name": "egie_odds_coverage_after",
+      "pass": false,
+      "detail": "before=0.0% after=0.0%"
+    },
+    {
+      "name": "goal_timing_has_reliable_goal_odds",
+      "pass": false,
+      "detail": "sample=0/50 (0.0%)"
+    },
+    {
+      "name": "has_reliable_goal_odds_status",
+      "pass": false,
+      "detail": "reliable_count=0"
+    },
+    {
+      "name": "no_world_cup_contamination",
+      "pass": true,
+      "detail": "wc_ids_in_pl_competition_key=0"
+    },
+    {
+      "name": "no_duplicate_snapshot_explosion",
+      "pass": true,
+      "detail": "fixtures_with_gt3_snapshots=0"
+    },
+    {
+      "name": "world_cup_rows_preserved",
+      "pass": true,
+      "detail": "wc_orphan_snapshot_rows=527"
+    }
+  ],
+  "metrics": {
+    "fixtures_scanned": 380,
+    "api_calls_live": 380,
+    "snapshots_created": 0,
+    "pl_odds_before": 0,
+    "pl_odds_after": 0,
+    "parseable_1x2": 0,
+    "egie_odds_coverage_before_pct": 0.0,
+    "egie_odds_coverage_after_pct": 0.0,
+    "goal_timing_reliable_sample_pct": 0.0
+  }
+}

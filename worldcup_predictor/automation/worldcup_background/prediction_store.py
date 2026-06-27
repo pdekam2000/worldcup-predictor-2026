@@ -110,6 +110,12 @@ class WorldcupPredictionStore:
             source=source,
             predicted_at=payload.get("predicted_at") or _utc_now(),
         )
+        try:
+            from worldcup_predictor.lifecycle.hooks import hook_after_prediction_upsert
+
+            hook_after_prediction_upsert(fixture_id, payload, source=source)
+        except Exception:
+            pass
         return True, "ok"
 
     def list_in_window(

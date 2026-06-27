@@ -1,0 +1,83 @@
+{
+  "fts_per_bookmaker": [
+    {
+      "bookmaker": "bwin",
+      "tier": "soft",
+      "fts_fg_hit_rate": 0.9231,
+      "sample_size": 13
+    },
+    {
+      "bookmaker": "sportingbet",
+      "tier": "other",
+      "fts_fg_hit_rate": 0.9231,
+      "sample_size": 13
+    },
+    {
+      "bookmaker": "marathon",
+      "tier": "other",
+      "fts_fg_hit_rate": 0.8611,
+      "sample_size": 36
+    },
+    {
+      "bookmaker": "betcris",
+      "tier": "other",
+      "fts_fg_hit_rate": 0.8171,
+      "sample_size": 82
+    },
+    {
+      "bookmaker": "tipico",
+      "tier": "soft",
+      "fts_fg_hit_rate": 0.8171,
+      "sample_size": 82
+    },
+    {
+      "bookmaker": "betway",
+      "tier": "soft",
+      "fts_fg_hit_rate": 0.7789,
+      "sample_size": 95
+    },
+    {
+      "bookmaker": "10bet",
+      "tier": "soft",
+      "fts_fg_hit_rate": 0.7667,
+      "sample_size": 90
+    },
+    {
+      "bookmaker": "bet365",
+      "tier": "soft",
+      "fts_fg_hit_rate": 0.766,
+      "sample_size": 94
+    },
+    {
+      "bookmaker": "marathonbet",
+      "tier": "other",
+      "fts_fg_hit_rate": 0.7091,
+      "sample_size": 55
+    }
+  ],
+  "focus_bookmakers": [
+    {
+      "bookmaker": "betway",
+      "tier": "soft",
+      "fts_fg_hit_rate": 0.7789,
+      "sample_size": 95
+    },
+    {
+      "bookmaker": "bet365",
+      "tier": "soft",
+      "fts_fg_hit_rate": 0.766,
+      "sample_size": 94
+    }
+  ],
+  "focus_bookmakers_absent": [
+    "pinnacle",
+    "sbo",
+    "1xbet",
+    "williamhill"
+  ],
+  "baseline_consensus_mw": {
+    "correct": 73,
+    "total": 94
+  },
+  "note": "Per-book accuracy uses First Team To Score market only"
+}

@@ -31,6 +31,7 @@ export default function FooterSection() {
             <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
             <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
             <Link to="/disclaimer" className="hover:text-foreground transition-colors">Disclaimer</Link>
+            <Link to="/public/accuracy" className="hover:text-foreground transition-colors">Public Accuracy</Link>
             <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
             <Link to="/imprint" className="hover:text-foreground transition-colors">Imprint</Link>
           </div>

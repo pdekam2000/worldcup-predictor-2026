@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { UserPlus, Mail, Loader2, KeyRound, Lock } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import { trackEvent } from "@/lib/analytics";
 
 export default function Register() {
   const { register } = useAuth();
@@ -36,6 +37,7 @@ export default function Register() {
         payload?.email_verification_required !== false &&
         payload?.verification_required !== false &&
         payload?.email_delivery_status !== "verification_disabled";
+      trackEvent("register_success", { verification_required: verificationRequired });
       if (verificationRequired) {
         navigate(`/verify-email?email=${encodeURIComponent(email)}`, {
           replace: true,

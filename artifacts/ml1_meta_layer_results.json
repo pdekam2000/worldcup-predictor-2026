@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-06-23T10:37:27.395661Z",
+  "isolated_model_accuracy": {
+    "MW_Model": 0.4012,
+    "BTTS_Model": 0.5525,
+    "OU15_Model": 0.8056,
+    "OU25_Model": 0.5463,
+    "OU35_Model": 0.5556,
+    "FG_Engine_best": 0.7872,
+    "Market_Intelligence_FG": 0.7835
+  },
+  "meta_hybrid_score_proxy": 0.7012,
+  "unified_confidence_formula": "0.6*FG_odds + 0.4*mean(LGBM_markets)",
+  "meta_beats_isolated": false,
+  "test_fixtures": 324,
+  "note": "Meta layer is research-only; not wired to production"
+}

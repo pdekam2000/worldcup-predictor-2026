@@ -103,73 +103,151 @@ class GoalTimingRepository:
 
         predicted_at = result.predicted_at or datetime.now(timezone.utc)
         match_date = result.match_date
+        range_value = result.first_goal_time_range or "unavailable"
+
+        hybrid_json = (
+            json.dumps(hybrid_confidence_snapshot, ensure_ascii=False)
+            if hybrid_confidence_snapshot
+            else None
+        )
 
         with session_scope(self.settings) as session:
-            session.execute(
+            existing = session.execute(
                 text(
                     """
-                    INSERT INTO goal_timing_predictions (
-                        id, fixture_id, competition_key, home_team, away_team, match_date,
-                        predicted_at, first_goal_team, first_goal_time_range, estimated_first_goal_minute,
-                        display_estimated_first_goal_minute, bucket_representative_minute,
-                        weighted_average_minute, model_confidence_score,
-                        home_team_goal_probability_by_range, away_team_goal_probability_by_range,
-                        no_goal_before_minute_probability, confidence_score, data_quality_score,
-                        explanation, specialist_agent_breakdown, model_version,
-                        no_prediction_flag, no_bet_flag, feature_snapshot_id, status,
-                        hybrid_confidence_snapshot,
-                        created_at, updated_at
-                    ) VALUES (
-                        :id, :fixture_id, :competition_key, :home_team, :away_team, :match_date,
-                        :predicted_at, :first_goal_team, :first_goal_time_range, :estimated_first_goal_minute,
-                        :display_estimated_first_goal_minute, :bucket_representative_minute,
-                        :weighted_average_minute, :model_confidence_score,
-                        CAST(:home_probs AS jsonb), CAST(:away_probs AS jsonb),
-                        CAST(:no_goal_probs AS jsonb), :confidence_score, :data_quality_score,
-                        :explanation, CAST(:agent_breakdown AS jsonb), :model_version,
-                        :no_prediction_flag, :no_bet_flag, :feature_snapshot_id, 'published',
-                        CAST(:hybrid_confidence_snapshot AS jsonb),
-                        NOW(), NOW()
-                    )
+                    SELECT id FROM goal_timing_predictions
+                    WHERE fixture_id = :fixture_id
+                    ORDER BY predicted_at DESC
+                    LIMIT 1
                     """
                 ),
-                {
-                    "id": prediction_id,
-                    "fixture_id": int(result.fixture_id),
-                    "competition_key": result.competition_key,
-                    "home_team": result.home_team,
-                    "away_team": result.away_team,
-                    "match_date": match_date,
-                    "predicted_at": predicted_at,
-                    "first_goal_team": result.first_goal_team,
-                    "first_goal_time_range": result.first_goal_time_range,
-                    "estimated_first_goal_minute": result.display_estimated_first_goal_minute,
-                    "display_estimated_first_goal_minute": result.display_estimated_first_goal_minute,
-                    "bucket_representative_minute": result.bucket_representative_minute,
-                    "weighted_average_minute": result.weighted_average_minute,
-                    "model_confidence_score": result.model_confidence_score,
-                    "home_probs": json.dumps(result.home_team_goal_probability_by_range),
-                    "away_probs": json.dumps(result.away_team_goal_probability_by_range),
-                    "no_goal_probs": json.dumps(result.no_goal_before_minute_probability),
-                    "confidence_score": result.confidence_score,
-                    "data_quality_score": result.data_quality_score,
-                    "explanation": result.explanation,
-                    "agent_breakdown": json.dumps(result.specialist_agent_breakdown, ensure_ascii=False),
-                    "model_version": result.model_version,
-                    "no_prediction_flag": result.no_prediction_flag,
-                    "no_bet_flag": result.no_bet_flag,
-                    "feature_snapshot_id": snap_uuid,
-                    "hybrid_confidence_snapshot": json.dumps(
-                        hybrid_confidence_snapshot, ensure_ascii=False
-                    )
-                    if hybrid_confidence_snapshot
-                    else None,
-                },
-            )
+                {"fixture_id": int(result.fixture_id)},
+            ).mappings().first()
+
+            if existing:
+                prediction_id = existing["id"]
+                session.execute(
+                    text(
+                        """
+                        UPDATE goal_timing_predictions SET
+                            competition_key = :competition_key,
+                            home_team = :home_team,
+                            away_team = :away_team,
+                            match_date = :match_date,
+                            predicted_at = :predicted_at,
+                            first_goal_team = :first_goal_team,
+                            first_goal_time_range = :first_goal_time_range,
+                            estimated_first_goal_minute = :estimated_first_goal_minute,
+                            display_estimated_first_goal_minute = :display_estimated_first_goal_minute,
+                            bucket_representative_minute = :bucket_representative_minute,
+                            weighted_average_minute = :weighted_average_minute,
+                            model_confidence_score = :model_confidence_score,
+                            home_team_goal_probability_by_range = CAST(:home_probs AS jsonb),
+                            away_team_goal_probability_by_range = CAST(:away_probs AS jsonb),
+                            no_goal_before_minute_probability = CAST(:no_goal_probs AS jsonb),
+                            confidence_score = :confidence_score,
+                            data_quality_score = :data_quality_score,
+                            explanation = :explanation,
+                            specialist_agent_breakdown = CAST(:agent_breakdown AS jsonb),
+                            model_version = :model_version,
+                            no_prediction_flag = :no_prediction_flag,
+                            no_bet_flag = :no_bet_flag,
+                            feature_snapshot_id = :feature_snapshot_id,
+                            hybrid_confidence_snapshot = CAST(:hybrid_confidence_snapshot AS jsonb),
+                            updated_at = NOW()
+                        WHERE id = :id
+                        """
+                    ),
+                    {
+                        "id": prediction_id,
+                        "competition_key": result.competition_key,
+                        "home_team": result.home_team,
+                        "away_team": result.away_team,
+                        "match_date": match_date,
+                        "predicted_at": predicted_at,
+                        "first_goal_team": result.first_goal_team,
+                        "first_goal_time_range": range_value,
+                        "estimated_first_goal_minute": result.display_estimated_first_goal_minute,
+                        "display_estimated_first_goal_minute": result.display_estimated_first_goal_minute,
+                        "bucket_representative_minute": result.bucket_representative_minute,
+                        "weighted_average_minute": result.weighted_average_minute,
+                        "model_confidence_score": result.model_confidence_score,
+                        "home_probs": json.dumps(result.home_team_goal_probability_by_range),
+                        "away_probs": json.dumps(result.away_team_goal_probability_by_range),
+                        "no_goal_probs": json.dumps(result.no_goal_before_minute_probability),
+                        "confidence_score": result.confidence_score,
+                        "data_quality_score": result.data_quality_score,
+                        "explanation": result.explanation,
+                        "agent_breakdown": json.dumps(result.specialist_agent_breakdown, ensure_ascii=False),
+                        "model_version": result.model_version,
+                        "no_prediction_flag": result.no_prediction_flag,
+                        "no_bet_flag": result.no_bet_flag,
+                        "feature_snapshot_id": snap_uuid,
+                        "hybrid_confidence_snapshot": hybrid_json or "null",
+                    },
+                )
+            else:
+                session.execute(
+                    text(
+                        """
+                        INSERT INTO goal_timing_predictions (
+                            id, fixture_id, competition_key, home_team, away_team, match_date,
+                            predicted_at, first_goal_team, first_goal_time_range, estimated_first_goal_minute,
+                            display_estimated_first_goal_minute, bucket_representative_minute,
+                            weighted_average_minute, model_confidence_score,
+                            home_team_goal_probability_by_range, away_team_goal_probability_by_range,
+                            no_goal_before_minute_probability, confidence_score, data_quality_score,
+                            explanation, specialist_agent_breakdown, model_version,
+                            no_prediction_flag, no_bet_flag, feature_snapshot_id, status,
+                            hybrid_confidence_snapshot,
+                            created_at, updated_at
+                        ) VALUES (
+                            :id, :fixture_id, :competition_key, :home_team, :away_team, :match_date,
+                            :predicted_at, :first_goal_team, :first_goal_time_range, :estimated_first_goal_minute,
+                            :display_estimated_first_goal_minute, :bucket_representative_minute,
+                            :weighted_average_minute, :model_confidence_score,
+                            CAST(:home_probs AS jsonb), CAST(:away_probs AS jsonb),
+                            CAST(:no_goal_probs AS jsonb), :confidence_score, :data_quality_score,
+                            :explanation, CAST(:agent_breakdown AS jsonb), :model_version,
+                            :no_prediction_flag, :no_bet_flag, :feature_snapshot_id, 'published',
+                            CAST(:hybrid_confidence_snapshot AS jsonb),
+                            NOW(), NOW()
+                        )
+                        """
+                    ),
+                    {
+                        "id": prediction_id,
+                        "fixture_id": int(result.fixture_id),
+                        "competition_key": result.competition_key,
+                        "home_team": result.home_team,
+                        "away_team": result.away_team,
+                        "match_date": match_date,
+                        "predicted_at": predicted_at,
+                        "first_goal_team": result.first_goal_team,
+                        "first_goal_time_range": range_value,
+                        "estimated_first_goal_minute": result.display_estimated_first_goal_minute,
+                        "display_estimated_first_goal_minute": result.display_estimated_first_goal_minute,
+                        "bucket_representative_minute": result.bucket_representative_minute,
+                        "weighted_average_minute": result.weighted_average_minute,
+                        "model_confidence_score": result.model_confidence_score,
+                        "home_probs": json.dumps(result.home_team_goal_probability_by_range),
+                        "away_probs": json.dumps(result.away_team_goal_probability_by_range),
+                        "no_goal_probs": json.dumps(result.no_goal_before_minute_probability),
+                        "confidence_score": result.confidence_score,
+                        "data_quality_score": result.data_quality_score,
+                        "explanation": result.explanation,
+                        "agent_breakdown": json.dumps(result.specialist_agent_breakdown, ensure_ascii=False),
+                        "model_version": result.model_version,
+                        "no_prediction_flag": result.no_prediction_flag,
+                        "no_bet_flag": result.no_bet_flag,
+                        "feature_snapshot_id": snap_uuid,
+                        "hybrid_confidence_snapshot": hybrid_json or "null",
+                    },
+                )
 
             markets = [
                 ("first_goal_team", result.first_goal_team, None, result.confidence_score),
-                ("first_goal_time_range", result.first_goal_time_range, None, result.confidence_score),
+                ("first_goal_time_range", range_value, None, result.confidence_score),
             ]
             match_probs = result.specialist_agent_breakdown.get("match_first_goal_range_probs") or {}
             if isinstance(match_probs, dict):

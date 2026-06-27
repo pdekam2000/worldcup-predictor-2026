@@ -1,0 +1,245 @@
+{
+  "phase": "52D",
+  "phase_52d_status": "PRODUCTION_ACTIVE",
+  "model_version": "egie_hybrid_confidence_v0.1_phase52d_shadow",
+  "shadow_mode_only": false,
+  "production_active": true,
+  "cohort": {
+    "total_fixtures": 359,
+    "published": 349,
+    "train_size": 279,
+    "test_size": 70,
+    "holdout_train_ratio": 0.8
+  },
+  "tier_calibration": {
+    "team": {
+      "q25": 0.1547,
+      "q50": 0.3438,
+      "q75": 0.42
+    },
+    "range": {
+      "q25": 0.1383,
+      "q50": 0.1643,
+      "q75": 0.1935
+    },
+    "minute": {
+      "q25": 0.4621,
+      "q50": 0.4813,
+      "q75": 0.5038
+    }
+  },
+  "isotonic_calibrators": {
+    "team": {
+      "market": "team",
+      "x_thresholds": [
+        0.2655,
+        0.4025,
+        0.4026,
+        0.4971
+      ],
+      "y_thresholds": [
+        0.5147058823529411,
+        0.5147058823529411,
+        0.5348837209302325,
+        0.5348837209302325
+      ],
+      "cal_q25": 0.5147,
+      "cal_q50": 0.5349,
+      "cal_q75": 0.5349
+    },
+    "range": {
+      "market": "range",
+      "x_thresholds": [
+        0.0981,
+        0.1075,
+        0.1107,
+        0.1262,
+        0.1265,
+        0.2369,
+        0.2396,
+        0.287,
+        0.299,
+        0.4673
+      ],
+      "y_thresholds": [
+        0.0,
+        0.0,
+        0.21428571428571427,
+        0.21428571428571427,
+        0.2743362831858407,
+        0.2743362831858407,
+        0.36363636363636365,
+        0.36363636363636365,
+        0.7,
+        0.7
+      ],
+      "cal_q25": 0.2743,
+      "cal_q50": 0.2743,
+      "cal_q75": 0.2743
+    },
+    "minute": {
+      "market": "minute",
+      "x_thresholds": [
+        0.4103,
+        0.4147,
+        0.4213,
+        0.4442,
+        0.445,
+        0.4461,
+        0.4462,
+        0.4621,
+        0.4623,
+        0.4659,
+        0.4662,
+        0.5063,
+        0.5064,
+        0.5178,
+        0.5182,
+        0.5366,
+        0.5376,
+        0.5839,
+        0.5905,
+        0.6742
+      ],
+      "y_thresholds": [
+        0.0,
+        0.0,
+        0.2222222222222222,
+        0.2222222222222222,
+        0.25,
+        0.25,
+        0.2553191489361702,
+        0.2553191489361702,
+        0.3,
+        0.3,
+        0.3360655737704918,
+        0.3360655737704918,
+        0.37037037037037035,
+        0.37037037037037035,
+        0.4,
+        0.4,
+        0.5,
+        0.5,
+        0.625,
+        0.625
+      ],
+      "cal_q25": 0.2553,
+      "cal_q50": 0.3361,
+      "cal_q75": 0.3361
+    }
+  },
+  "holdout_test": {
+    "team": {
+      "tier_stats": {
+        "A": {
+          "count": 0,
+          "accuracy": null
+        },
+        "B": {
+          "count": 0,
+          "accuracy": null
+        },
+        "C": {
+          "count": 43,
+          "accuracy": 0.4419
+        },
+        "D": {
+          "count": 0,
+          "accuracy": null
+        }
+      },
+      "monotonic": true,
+      "ece_legacy": 0.3128,
+      "ece_hybrid": 0.2119
+    },
+    "range": {
+      "tier_stats": {
+        "A": {
+          "count": 56,
+          "accuracy": 0.2857
+        },
+        "B": {
+          "count": 0,
+          "accuracy": null
+        },
+        "C": {
+          "count": 0,
+          "accuracy": null
+        },
+        "D": {
+          "count": 14,
+          "accuracy": 0.1429
+        }
+      },
+      "monotonic": true,
+      "ece_legacy": 0.3929,
+      "ece_hybrid": 0.1438
+    },
+    "minute": {
+      "tier_stats": {
+        "A": {
+          "count": 4,
+          "accuracy": 0.25
+        },
+        "B": {
+          "count": 0,
+          "accuracy": null
+        },
+        "C": {
+          "count": 62,
+          "accuracy": 0.3871
+        },
+        "D": {
+          "count": 4,
+          "accuracy": 0.0
+        }
+      },
+      "monotonic": true,
+      "experimental": true
+    }
+  },
+  "monotonicity": {
+    "team": true,
+    "range": true,
+    "minute": true,
+    "overall_pass": true,
+    "required": true
+  },
+  "distribution": {
+    "legacy_confidence": {
+      "min": 0.571,
+      "max": 0.65,
+      "mean": 0.6461,
+      "p25": 0.65,
+      "p50": 0.65,
+      "p75": 0.65,
+      "at_0_65_pct": 91.69
+    },
+    "conf_team": {
+      "min": 0.1025,
+      "max": 0.4971,
+      "mean": 0.2944,
+      "p25": 0.1557,
+      "p50": 0.35,
+      "p75": 0.4132,
+      "at_0_65_pct": 0.0
+    },
+    "conf_range": {
+      "min": 0.0981,
+      "max": 0.4673,
+      "mean": 0.1696,
+      "p25": 0.1358,
+      "p50": 0.1583,
+      "p75": 0.1874,
+      "at_0_65_pct": 0.0
+    }
+  },
+  "success_criteria": {
+    "monotonic_tiers_required": true,
+    "ece_team_max": 0.25,
+    "ece_range_max": 0.3,
+    "min_tier_separation_pp": 0.03
+  },
+  "deploy_allowed": true,
+  "deploy_rule": "Deploy only if confidence tiers are monotonic on hold-out test"
+}

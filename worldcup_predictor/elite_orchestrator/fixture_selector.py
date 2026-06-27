@@ -160,6 +160,34 @@ def select_uefa_from_enrichment(
     return rows[:limit]
 
 
+def select_fixtures_by_ids(fixture_ids: list[int]) -> list[dict[str, Any]]:
+    """Resolve fixture metadata for queued PredOps shadow analysis."""
+    if not fixture_ids or not DB_PATH.is_file():
+        return []
+    wanted = {int(x) for x in fixture_ids if int(x) > 0}
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    rows: list[dict[str, Any]] = []
+    for fid in sorted(wanted):
+        fx = conn.execute("SELECT * FROM fixtures WHERE fixture_id=?", (fid,)).fetchone()
+        if not fx:
+            continue
+        rows.append(
+            _fixture_row(
+                fixture_id=int(fx["fixture_id"]),
+                sportmonks_fixture_id=int(fx["sportmonks_fixture_id"]) if fx["sportmonks_fixture_id"] else None,
+                competition_key=str(fx["competition_key"] or "unknown"),
+                league_id=None,
+                home_team=str(fx["home_team"] or ""),
+                away_team=str(fx["away_team"] or ""),
+                kickoff_utc=str(fx["kickoff_utc"] or ""),
+                source="queue_fixture_lookup",
+            )
+        )
+    conn.close()
+    return rows
+
+
 def select_upcoming_fixtures(
     *,
     days_ahead: int = 7,

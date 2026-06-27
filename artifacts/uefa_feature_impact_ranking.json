@@ -1,0 +1,101 @@
+{
+  "baseline_a": {
+    "fg_team_hit_rate": 0.4583,
+    "goal_range_hit_rate": 0.2313,
+    "soft_minute_hit_rate": 0.2836,
+    "with_paid_data": 0
+  },
+  "ranked_features": [
+    {
+      "feature": "odds",
+      "strategy": "D",
+      "label": "baseline_plus_odds",
+      "coverage_with_paid_data": 98,
+      "coverage_delta_vs_a": 98,
+      "fg_team_hit_rate": 0.7453,
+      "fg_team_delta_vs_a": 0.287,
+      "goal_range_hit_rate": 0.2313,
+      "goal_range_delta_vs_a": 0.0,
+      "soft_minute_hit_rate": 0.2836,
+      "soft_minute_delta_vs_a": 0.0,
+      "fg_pending": 28,
+      "fg_pending_delta_vs_a": -82,
+      "tier": "S"
+    },
+    {
+      "feature": "xg_pressure_odds",
+      "strategy": "E",
+      "label": "baseline_plus_xg_pressure_odds",
+      "coverage_with_paid_data": 106,
+      "coverage_delta_vs_a": 106,
+      "fg_team_hit_rate": 0.7453,
+      "fg_team_delta_vs_a": 0.287,
+      "goal_range_hit_rate": 0.2313,
+      "goal_range_delta_vs_a": 0.0,
+      "soft_minute_hit_rate": 0.2836,
+      "soft_minute_delta_vs_a": 0.0,
+      "fg_pending": 28,
+      "fg_pending_delta_vs_a": -82,
+      "tier": "S"
+    },
+    {
+      "feature": "full_provider",
+      "strategy": "F",
+      "label": "full_provider",
+      "coverage_with_paid_data": 135,
+      "coverage_delta_vs_a": 135,
+      "fg_team_hit_rate": 0.7453,
+      "fg_team_delta_vs_a": 0.287,
+      "goal_range_hit_rate": 0.2313,
+      "goal_range_delta_vs_a": 0.0,
+      "soft_minute_hit_rate": 0.2836,
+      "soft_minute_delta_vs_a": 0.0,
+      "fg_pending": 28,
+      "fg_pending_delta_vs_a": -82,
+      "tier": "S"
+    },
+    {
+      "feature": "pressure",
+      "strategy": "C",
+      "label": "baseline_plus_pressure",
+      "coverage_with_paid_data": 43,
+      "coverage_delta_vs_a": 43,
+      "fg_team_hit_rate": 0.4643,
+      "fg_team_delta_vs_a": 0.006000000000000005,
+      "goal_range_hit_rate": 0.2313,
+      "goal_range_delta_vs_a": 0.0,
+      "soft_minute_hit_rate": 0.2836,
+      "soft_minute_delta_vs_a": 0.0,
+      "fg_pending": 78,
+      "fg_pending_delta_vs_a": -32,
+      "tier": "B"
+    },
+    {
+      "feature": "xg",
+      "strategy": "B",
+      "label": "baseline_plus_xg",
+      "coverage_with_paid_data": 8,
+      "coverage_delta_vs_a": 8,
+      "fg_team_hit_rate": 0.4576,
+      "fg_team_delta_vs_a": -0.0006999999999999784,
+      "goal_range_hit_rate": 0.2313,
+      "goal_range_delta_vs_a": 0.0,
+      "soft_minute_hit_rate": 0.2836,
+      "soft_minute_delta_vs_a": 0.0,
+      "fg_pending": 75,
+      "fg_pending_delta_vs_a": -35,
+      "tier": "B"
+    }
+  ],
+  "component_notes": {
+    "lineups": "Coverage via strategy F; FG impact only when enrichment shifts picks",
+    "events": "Required for FG evaluation; not a paid enrichment tier",
+    "predictions": "0% historical coverage \u2014 no measurable backtest lift"
+  },
+  "tier_legend": {
+    "S": "Material FG lift (>=15pp) with coverage",
+    "A": "Moderate lift (>=3pp) with coverage",
+    "B": "No coverage or no measurable lift"
+  },
+  "xg_historical_note": "Strategy B tier depends on xG availability; if xG coverage=0%, B cannot diverge from A on xG signal."
+}

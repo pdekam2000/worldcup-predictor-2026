@@ -1,0 +1,87 @@
+{
+  "version": "elite_adaptive_weights_v1",
+  "defaults": {
+    "first_goal_team": {
+      "first_goal_team_v2": 0.45,
+      "egie_historical_baseline": 0.3,
+      "goalscorer_intelligence": 0.15,
+      "odds_intelligence": 0.1,
+      "market_behavior_intelligence": 0.05,
+      "lineup_intelligence": 0.05,
+      "hybrid_confidence_engine": 0.0
+    },
+    "team_to_score_first": {
+      "first_goal_team_v2": 0.45,
+      "egie_historical_baseline": 0.3,
+      "goalscorer_intelligence": 0.15,
+      "odds_intelligence": 0.1,
+      "market_behavior_intelligence": 0.05,
+      "lineup_intelligence": 0.05,
+      "hybrid_confidence_engine": 0.0
+    },
+    "anytime_goalscorer": {
+      "goalscorer_intelligence": 0.55,
+      "player_form_store": 0.2,
+      "lineup_intelligence": 0.15,
+      "odds_intelligence": 0.1,
+      "hybrid_confidence_engine": 0.0
+    },
+    "1x2": {
+      "odds_intelligence": 0.55,
+      "market_behavior_intelligence": 0.15,
+      "egie_historical_baseline": 0.15,
+      "hybrid_confidence_engine": 0.15
+    }
+  },
+  "config": {
+    "learning_rate": 0.02,
+    "max_delta_per_cycle": 0.05,
+    "min_weight": 0.02,
+    "max_weight": 0.6,
+    "min_samples_window": 100,
+    "hold_band": 0.02,
+    "shadow_only": true,
+    "production_write": false
+  },
+  "evolution_rules": [
+    "If help_rate - hurt_rate > 0.08 over window>=100 \u2192 increase weight by learning_rate",
+    "If hurt_rate - help_rate > 0.08 over window>=100 \u2192 decrease weight by learning_rate",
+    "Within hold_band \u2192 no change",
+    "Renormalize market weights to sum=1 after each cycle",
+    "Never modify production PredictPipeline weights \u2014 shadow JSON only"
+  ],
+  "safeguards": [
+    {
+      "id": "shadow_only_gate",
+      "description": "Adaptive outputs write to elite_learning_store recommendations \u2014 never WDE"
+    },
+    {
+      "id": "max_delta_cap",
+      "description": "Single cycle weight change capped at 5%"
+    },
+    {
+      "id": "min_sample_floor",
+      "description": "No adaptation until 100 evaluations per component/market"
+    },
+    {
+      "id": "weight_bounds",
+      "description": "Components clamped [2%, 60%] to prevent single-source dominance"
+    },
+    {
+      "id": "tier_calibration_check",
+      "description": "If Tier A hit rate < Tier B for 200 samples \u2192 freeze confidence tiers"
+    },
+    {
+      "id": "league_isolation",
+      "description": "UEFA weight changes cannot propagate to WC without 100 league samples"
+    },
+    {
+      "id": "human_approval_gate",
+      "description": "Weight shift >10% cumulative requires manual review flag"
+    },
+    {
+      "id": "no_model_retrain",
+      "description": "Self-learning adjusts fusion weights only \u2014 no automatic model updates"
+    }
+  ]
+}

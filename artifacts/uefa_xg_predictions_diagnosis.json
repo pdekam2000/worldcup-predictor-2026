@@ -1,0 +1,92 @@
+{
+  "fixtures_audited": 105,
+  "ingest_includes": "participants;scores;state;events.type;events.period;statistics.type;lineups.player;lineups.details.type;formations;xGFixture.type;pressure;odds.bookmaker;odds.market;predictions.type;form",
+  "xgfixture": {
+    "fixtures_with_xgfixture_key": 44,
+    "fixtures_with_true_xg_type_5304": 0,
+    "coverage_pct": 0.0,
+    "type_id_histogram": {
+      "34": 86,
+      "41": 86,
+      "86": 86,
+      "45": 84,
+      "84": 80,
+      "52": 78,
+      "43": 70,
+      "44": 70,
+      "47": 70,
+      "59": 70,
+      "83": 70,
+      "46": 68,
+      "85": 68,
+      "87": 52,
+      "51": 16
+    },
+    "expected_xg_type_ids": {
+      "5304": "xg",
+      "5305": "xgot",
+      "7943": "npxg"
+    },
+    "sample_rows": [
+      {
+        "fixture_id": 1058445,
+        "type_id": 52,
+        "type_name": "Goals",
+        "value": 1
+      },
+      {
+        "fixture_id": 1058445,
+        "type_id": 52,
+        "type_name": "Goals",
+        "value": 7
+      },
+      {
+        "fixture_id": 1058457,
+        "type_id": 34,
+        "type_name": "Corners",
+        "value": 9
+      },
+      {
+        "fixture_id": 1058457,
+        "type_id": 34,
+        "type_name": "Corners",
+        "value": 9
+      },
+      {
+        "fixture_id": 1058457,
+        "type_id": 41,
+        "type_name": "Shots Off Target",
+        "value": 4
+      }
+    ],
+    "parser_home_xg_non_null": 0
+  },
+  "predictions": {
+    "fixtures_with_nonempty_predictions_array": 0,
+    "coverage_pct": 0.0,
+    "sample_row": null,
+    "parser_home_win_non_null": 0
+  },
+  "pressure": {
+    "fixtures_with_nonempty_pressure_array": 0,
+    "coverage_pct": 0.0
+  },
+  "season_distribution": {
+    "18283": 35,
+    "5326": 34,
+    "5308": 18,
+    "5315": 4,
+    "5310": 3,
+    "5311": 2,
+    "5313": 2,
+    "5318": 2,
+    "5322": 2,
+    "5309": 1
+  },
+  "diagnosis": {
+    "xg": "Historical UEFA cache contains xGFixture include responses but rows are match statistics (corners, shots) not expected-goals metrics (type_id 5304). True xG unavailable for 2014-era seasons in cache.",
+    "predictions": "predictions[] is empty for all cached historical fixtures; Sportmonks pre-match predictions are not retained in finished-match payloads for these seasons.",
+    "live_vs_historical": "Live probe (CL 168925) returns same include keys; xGFixture holds non-xG stats for old seasons. Pressure array empty in cache; possession fallback used from statistics."
+  },
+  "recommendation": "Do not fabricate xG/predictions. For Phase API-J consider re-ingesting recent-season UEFA fixtures (2023+) where Sportmonks xG add-on may populate type_id 5304, or accept A-only backtest for historical UEFA."
+}

@@ -1,0 +1,958 @@
+{
+  "passed": 9,
+  "total": 9,
+  "checks": [
+    [
+      "team_ids_resolved",
+      true,
+      "resolved=20/20"
+    ],
+    [
+      "form_cache_created",
+      true,
+      "teams=40"
+    ],
+    [
+      "h2h_cache_created",
+      true,
+      "pairs=20"
+    ],
+    [
+      "cache_hit_rate_measured",
+      true,
+      "form+fixture=100.0%, overall=87.0%"
+    ],
+    [
+      "no_external_api_on_backfill",
+      true,
+      ""
+    ],
+    [
+      "no_external_api_on_replay",
+      true,
+      "replayed=20/20, guard_blocked=275"
+    ],
+    [
+      "confidence_comparison_generated",
+      true,
+      ""
+    ],
+    [
+      "form_scores_populated",
+      true,
+      ""
+    ],
+    [
+      "h2h_scores_populated",
+      true,
+      ""
+    ]
+  ],
+  "backfill": {
+    "phase": "32C",
+    "audit_before": {
+      "competition_key": "world_cup_2026",
+      "fixtures_audited": 20,
+      "resolved_team_ids": [
+        {
+          "fixture_id": 1489369,
+          "match": "Mexico vs South Africa",
+          "home_team_id": 16,
+          "away_team_id": 1531,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1538999,
+          "match": "South Korea vs Czechia",
+          "home_team_id": 17,
+          "away_team_id": 770,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1539000,
+          "match": "Canada vs Bosnia & Herzegovina",
+          "home_team_id": 5529,
+          "away_team_id": 1113,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489370,
+          "match": "USA vs Paraguay",
+          "home_team_id": 2384,
+          "away_team_id": 2380,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489373,
+          "match": "Qatar vs Switzerland",
+          "home_team_id": 1569,
+          "away_team_id": 15,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489371,
+          "match": "Brazil vs Morocco",
+          "home_team_id": 6,
+          "away_team_id": 31,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489372,
+          "match": "Haiti vs Scotland",
+          "home_team_id": 2386,
+          "away_team_id": 1108,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1539001,
+          "match": "Australia vs T\u00fcrkiye",
+          "home_team_id": 20,
+          "away_team_id": 777,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489374,
+          "match": "Germany vs Cura\u00e7ao",
+          "home_team_id": 25,
+          "away_team_id": 5530,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489376,
+          "match": "Netherlands vs Japan",
+          "home_team_id": 1118,
+          "away_team_id": 12,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489375,
+          "match": "Ivory Coast vs Ecuador",
+          "home_team_id": 1501,
+          "away_team_id": 2382,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1539002,
+          "match": "Sweden vs Tunisia",
+          "home_team_id": 5,
+          "away_team_id": 28,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489380,
+          "match": "Spain vs Cape Verde Islands",
+          "home_team_id": 9,
+          "away_team_id": 1533,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489377,
+          "match": "Belgium vs Egypt",
+          "home_team_id": 1,
+          "away_team_id": 32,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489379,
+          "match": "Saudi Arabia vs Uruguay",
+          "home_team_id": 23,
+          "away_team_id": 7,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489378,
+          "match": "Iran vs New Zealand",
+          "home_team_id": 22,
+          "away_team_id": 4673,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489383,
+          "match": "France vs Senegal",
+          "home_team_id": 2,
+          "away_team_id": 13,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1539016,
+          "match": "Iraq vs Norway",
+          "home_team_id": 1567,
+          "away_team_id": 1090,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489381,
+          "match": "Argentina vs Algeria",
+          "home_team_id": 26,
+          "away_team_id": 1532,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489382,
+          "match": "Austria vs Jordan",
+          "home_team_id": 775,
+          "away_team_id": 1548,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        }
+      ],
+      "missing_team_ids": [],
+      "resolved_count": 20,
+      "missing_count": 0,
+      "root_causes": [
+        "fixtures.home_team_id/away_team_id NULL in SQLite seed rows",
+        "no fixtures?id= cache payload for upcoming WC fixture IDs",
+        "fixture_enrichment lineups lack national-team API ids for WC rows",
+        "teams table empty before Phase 32C name-index build"
+      ]
+    },
+    "sync_disk_to_sqlite": {
+      "synced": 0,
+      "skipped": 212,
+      "by_endpoint": {}
+    },
+    "team_id_backfill": {
+      "rows_scanned": 72,
+      "rows_repaired": 0,
+      "rows_still_unresolved": 0,
+      "updates_by_source": {},
+      "name_index": {
+        "unique_team_ids": 393,
+        "name_aliases": 397
+      }
+    },
+    "audit_after": {
+      "competition_key": "world_cup_2026",
+      "fixtures_audited": 20,
+      "resolved_team_ids": [
+        {
+          "fixture_id": 1489369,
+          "match": "Mexico vs South Africa",
+          "home_team_id": 16,
+          "away_team_id": 1531,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1538999,
+          "match": "South Korea vs Czechia",
+          "home_team_id": 17,
+          "away_team_id": 770,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1539000,
+          "match": "Canada vs Bosnia & Herzegovina",
+          "home_team_id": 5529,
+          "away_team_id": 1113,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489370,
+          "match": "USA vs Paraguay",
+          "home_team_id": 2384,
+          "away_team_id": 2380,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489373,
+          "match": "Qatar vs Switzerland",
+          "home_team_id": 1569,
+          "away_team_id": 15,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489371,
+          "match": "Brazil vs Morocco",
+          "home_team_id": 6,
+          "away_team_id": 31,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489372,
+          "match": "Haiti vs Scotland",
+          "home_team_id": 2386,
+          "away_team_id": 1108,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1539001,
+          "match": "Australia vs T\u00fcrkiye",
+          "home_team_id": 20,
+          "away_team_id": 777,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489374,
+          "match": "Germany vs Cura\u00e7ao",
+          "home_team_id": 25,
+          "away_team_id": 5530,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489376,
+          "match": "Netherlands vs Japan",
+          "home_team_id": 1118,
+          "away_team_id": 12,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489375,
+          "match": "Ivory Coast vs Ecuador",
+          "home_team_id": 1501,
+          "away_team_id": 2382,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1539002,
+          "match": "Sweden vs Tunisia",
+          "home_team_id": 5,
+          "away_team_id": 28,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489380,
+          "match": "Spain vs Cape Verde Islands",
+          "home_team_id": 9,
+          "away_team_id": 1533,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489377,
+          "match": "Belgium vs Egypt",
+          "home_team_id": 1,
+          "away_team_id": 32,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489379,
+          "match": "Saudi Arabia vs Uruguay",
+          "home_team_id": 23,
+          "away_team_id": 7,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489378,
+          "match": "Iran vs New Zealand",
+          "home_team_id": 22,
+          "away_team_id": 4673,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489383,
+          "match": "France vs Senegal",
+          "home_team_id": 2,
+          "away_team_id": 13,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1539016,
+          "match": "Iraq vs Norway",
+          "home_team_id": 1567,
+          "away_team_id": 1090,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489381,
+          "match": "Argentina vs Algeria",
+          "home_team_id": 26,
+          "away_team_id": 1532,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        },
+        {
+          "fixture_id": 1489382,
+          "match": "Austria vs Jordan",
+          "home_team_id": 775,
+          "away_team_id": 1548,
+          "home_present": true,
+          "away_present": true,
+          "resolution_source": "historical_fixture_cache"
+        }
+      ],
+      "missing_team_ids": [],
+      "resolved_count": 20,
+      "missing_count": 0,
+      "root_causes": [
+        "fixtures.home_team_id/away_team_id NULL in SQLite seed rows",
+        "no fixtures?id= cache payload for upcoming WC fixture IDs",
+        "fixture_enrichment lineups lack national-team API ids for WC rows",
+        "teams table empty before Phase 32C name-index build"
+      ]
+    },
+    "form_cache": {
+      "teams_built": 40,
+      "teams_empty": 0,
+      "teams_with_matches": 40
+    },
+    "h2h_cache": {
+      "pairs_built": 20,
+      "pairs_empty": 14,
+      "pairs_with_meetings": 6
+    },
+    "cache_hit_rate": {
+      "fixtures": 20,
+      "hits": {
+        "form_home": 20,
+        "form_away": 20,
+        "h2h": 7,
+        "fixtures": 20
+      },
+      "fixture_id_hit_rate": 1.0,
+      "form_hit_rate": 1.0,
+      "h2h_hit_rate": 0.35,
+      "form_fixture_hit_rate": 1.0,
+      "overall_hit_rate": 0.87,
+      "non_neutral_form_fixtures": 20,
+      "non_neutral_h2h_fixtures": 6,
+      "target_met_90pct": true
+    },
+    "validation": {
+      "external_api_calls": 0
+    }
+  },
+  "comparison": {
+    "fixtures": 20,
+    "before_32b": {
+      "fixtures": 20,
+      "avg_confidence": 66.49,
+      "max_confidence": 88.1,
+      "no_bet_rate": 0.7,
+      "recommendation_rate": 0.3,
+      "fixtures_gte_60": 16,
+      "fixtures_gte_70": 6
+    },
+    "after_32b": {
+      "avg_confidence": 59.24,
+      "max_confidence": 76.7,
+      "no_bet_rate": 0.65,
+      "recommendation_rate": 0.35
+    },
+    "after_32c": {
+      "fixtures": 20,
+      "avg_confidence": 79.47,
+      "max_confidence": 92.5,
+      "no_bet_rate": 0.2,
+      "recommendation_rate": 0.8,
+      "fixtures_gte_60": 20,
+      "fixtures_gte_70": 15
+    },
+    "delta_32c_vs_32b": {
+      "avg_confidence": 20.23,
+      "recommendation_rate": 0.45,
+      "fixtures_gte_60": 20
+    },
+    "contribution_analysis": {
+      "factors": {
+        "national_form": {
+          "avg": 65.58,
+          "max": 76.9,
+          "non_neutral_pct": 1.0,
+          "count": 20
+        },
+        "national_h2h": {
+          "avg": 51.65,
+          "max": 66.8,
+          "non_neutral_pct": 0.15,
+          "count": 20
+        },
+        "squad_strength": {
+          "avg": 66.05,
+          "max": 82.8,
+          "non_neutral_pct": 1.0,
+          "count": 20
+        },
+        "injury_impact": {
+          "avg": 79.25,
+          "max": 95.0,
+          "non_neutral_pct": 0.65,
+          "count": 20
+        },
+        "consensus_strength": {
+          "avg": 95.0,
+          "max": 95.0,
+          "non_neutral_pct": 1.0,
+          "count": 20
+        }
+      },
+      "top_contributor": "consensus_strength"
+    },
+    "per_fixture": [
+      {
+        "fixture_id": 1539007,
+        "match": "Netherlands vs Sweden",
+        "after_32c": {
+          "confidence": 92.5,
+          "national": {
+            "national_form_score": 68.0,
+            "national_h2h_score": 62.2,
+            "squad_strength_score": 82.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 2
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489393,
+        "match": "Germany vs Ivory Coast",
+        "after_32c": {
+          "confidence": 91.2,
+          "national": {
+            "national_form_score": 75.2,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 75.3,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489392,
+        "match": "Ecuador vs Cura\u00e7ao",
+        "after_32c": {
+          "confidence": 72.2,
+          "national": {
+            "national_form_score": 55.2,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 75.3,
+            "injury_impact_score": 50.0,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489394,
+        "match": "Tunisia vs Japan",
+        "after_32c": {
+          "confidence": 75.8,
+          "national": {
+            "national_form_score": 65.7,
+            "national_h2h_score": 54.0,
+            "squad_strength_score": 82.8,
+            "injury_impact_score": 50.0,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 2
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489397,
+        "match": "Spain vs Saudi Arabia",
+        "after_32c": {
+          "confidence": 84.2,
+          "national": {
+            "national_form_score": 66.7,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 9,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489395,
+        "match": "Belgium vs Iran",
+        "after_32c": {
+          "confidence": 84.2,
+          "national": {
+            "national_form_score": 67.5,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 8,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489398,
+        "match": "Uruguay vs Cape Verde Islands",
+        "after_32c": {
+          "confidence": 80.8,
+          "national": {
+            "national_form_score": 55.6,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489396,
+        "match": "New Zealand vs Egypt",
+        "after_32c": {
+          "confidence": 68.9,
+          "national": {
+            "national_form_score": 56.8,
+            "national_h2h_score": 66.8,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 50.0,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 1
+            }
+          },
+          "no_bet": true
+        }
+      },
+      {
+        "fixture_id": 1489399,
+        "match": "Argentina vs Austria",
+        "after_32c": {
+          "confidence": 82.6,
+          "national": {
+            "national_form_score": 71.0,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 8,
+              "away_recent_matches": 9,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1539017,
+        "match": "France vs Iraq",
+        "after_32c": {
+          "confidence": 69.2,
+          "national": {
+            "national_form_score": 70.0,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 50.0,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": true
+        }
+      },
+      {
+        "fixture_id": 1489401,
+        "match": "Norway vs Senegal",
+        "after_32c": {
+          "confidence": 68.3,
+          "national": {
+            "national_form_score": 67.5,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 50.0,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 9,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": true
+        }
+      },
+      {
+        "fixture_id": 1489400,
+        "match": "Jordan vs Algeria",
+        "after_32c": {
+          "confidence": 83.2,
+          "national": {
+            "national_form_score": 69.1,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489404,
+        "match": "Portugal vs Uzbekistan",
+        "after_32c": {
+          "confidence": 83.2,
+          "national": {
+            "national_form_score": 65.5,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489402,
+        "match": "England vs Ghana",
+        "after_32c": {
+          "confidence": 86.4,
+          "national": {
+            "national_form_score": 76.9,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489403,
+        "match": "Panama vs Croatia",
+        "after_32c": {
+          "confidence": 84.2,
+          "national": {
+            "national_form_score": 68.1,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1539008,
+        "match": "Colombia vs Congo DR",
+        "after_32c": {
+          "confidence": 82.6,
+          "national": {
+            "national_form_score": 66.2,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489408,
+        "match": "Switzerland vs Canada",
+        "after_32c": {
+          "confidence": 83.5,
+          "national": {
+            "national_form_score": 65.6,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1539009,
+        "match": "Bosnia & Herzegovina vs Qatar",
+        "after_32c": {
+          "confidence": 63.8,
+          "national": {
+            "national_form_score": 46.6,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 50.0,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 7,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": true
+        }
+      },
+      {
+        "fixture_id": 1489405,
+        "match": "Morocco vs Haiti",
+        "after_32c": {
+          "confidence": 69.6,
+          "national": {
+            "national_form_score": 72.0,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 50.0,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489406,
+        "match": "Scotland vs Brazil",
+        "after_32c": {
+          "confidence": 83.0,
+          "national": {
+            "national_form_score": 62.5,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 95,
+            "consensus_strength_score": 95,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      }
+    ]
+  }
+}

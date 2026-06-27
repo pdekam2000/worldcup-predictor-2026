@@ -19,10 +19,24 @@ from worldcup_predictor.api.routes.health import router as health_router
 from worldcup_predictor.api.routes.competitions import router as competitions_router
 from worldcup_predictor.api.routes.matches import router as matches_router
 from worldcup_predictor.api.routes.predictions import router as predictions_router
+from worldcup_predictor.api.routes.unified_hybrid import router as unified_hybrid_router
 from worldcup_predictor.api.routes.elite_world_cup import router as elite_world_cup_router
 from worldcup_predictor.api.routes.admin_performance import router as admin_performance_router
+from worldcup_predictor.api.routes.history import router as history_router
+from worldcup_predictor.api.routes.performance import router as performance_router
+from worldcup_predictor.api.routes.predops import router as predops_router
+from worldcup_predictor.api.routes.betting_plan import router as betting_plan_router
+from worldcup_predictor.api.routes.daily_picks import router as daily_picks_router
+from worldcup_predictor.api.routes.paper_betting import admin_router as paper_betting_admin_router
+from worldcup_predictor.api.routes.paper_betting import router as paper_betting_router
+from worldcup_predictor.api.routes.ai_assistant import admin_router as assistant_admin_router
+from worldcup_predictor.api.routes.ai_assistant import router as assistant_router
+from worldcup_predictor.api.routes.social_trust import router as social_trust_router
+from worldcup_predictor.api.routes.prediction_lifecycle import admin_router as lifecycle_admin_router
+from worldcup_predictor.api.routes.prediction_lifecycle import router as lifecycle_router
 from worldcup_predictor.api.routes.owner import router as owner_router
 from worldcup_predictor.api.routes.research_highlights import router as research_highlights_router
+from worldcup_predictor.api.routes.results import router as results_router
 from worldcup_predictor.api.routes.user import router as user_router
 from worldcup_predictor.config.production_guard import assert_production_ready
 from worldcup_predictor.config.settings import get_settings
@@ -79,6 +93,20 @@ app.include_router(owner_router, prefix="/api")
 app.include_router(matches_router, prefix="/api")
 app.include_router(competitions_router, prefix="/api")
 app.include_router(predictions_router, prefix="/api")
+app.include_router(unified_hybrid_router, prefix="/api")
 app.include_router(goal_timing_router, prefix="/api")
 app.include_router(research_highlights_router, prefix="/api")
 app.include_router(elite_world_cup_router, prefix="/api")
+app.include_router(history_router, prefix="/api")
+app.include_router(results_router, prefix="/api")
+app.include_router(performance_router, prefix="/api")
+app.include_router(predops_router, prefix="/api")
+app.include_router(betting_plan_router, prefix="/api")
+app.include_router(daily_picks_router)
+app.include_router(paper_betting_router, prefix="/api")
+app.include_router(paper_betting_admin_router, prefix="/api")
+app.include_router(assistant_router, prefix="/api")
+app.include_router(assistant_admin_router, prefix="/api")
+app.include_router(social_trust_router, prefix="/api")
+app.include_router(lifecycle_router, prefix="/api")
+app.include_router(lifecycle_admin_router, prefix="/api")

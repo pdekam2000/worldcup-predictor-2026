@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-06-23T12:11:39.889302+00:00",
+  "is_oddalerts_useful": true,
+  "strengths": [
+    "Core endpoints reachable (fixture detail, odds/history, value, trends)",
+    "Rich opening/closing/peak odds history per fixture"
+  ],
+  "gaps": [
+    "No first_team_to_score market in odds history sample",
+    "FG Team accuracy not measurable \u2014 zero finished fixtures in sampled pool",
+    "Low Premier League visibility in upcoming value pool during audit window"
+  ],
+  "provider_ranking": [
+    {
+      "provider": "Sportmonks",
+      "score": 88,
+      "fg_team_evidence": "78.7% sharp MW (K2, n=104 UEFA)",
+      "role": "UEFA odds + enrichment"
+    },
+    {
+      "provider": "OddAlerts",
+      "score": 72,
+      "fg_team_evidence": "Not measured \u2014 no finished FG sample",
+      "role": "Probability model + multi-book odds history"
+    },
+    {
+      "provider": "API-Football",
+      "score": 65,
+      "fg_team_evidence": "EGIE events + 1617 finished rows; odds enrichment 4.3%",
+      "role": "Primary fixtures/results/events store"
+    }
+  ],
+  "recommended_architecture": "Keep API-Football as fixture/results spine; keep Sportmonks for UEFA sharp odds; add OddAlerts as OPTIONAL enrichment shadow for probability model + odds history (not primary FG path until finished-fixture API access and FTS market verified).",
+  "worth_monthly_pay": "Conditional \u2014 yes for probability+odds-history bundle if PL/BL list access unlocked; no as FG primary replacement for Sportmonks today"
+}

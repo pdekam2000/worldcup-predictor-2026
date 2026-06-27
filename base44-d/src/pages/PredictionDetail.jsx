@@ -531,6 +531,22 @@ export default function PredictionDetail() {
         />
       </motion.div>
 
+      {result?.no_bet && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4 flex gap-3 items-start"
+        >
+          <ShieldAlert className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-sm text-yellow-100">No Bet Recommended</p>
+            <p className="text-sm text-yellow-200/80 mt-1">
+              No Bet Recommended means model found no strong edge on this fixture. Market probabilities below remain available for research only — not betting advice.
+            </p>
+          </div>
+        </motion.div>
+      )}
+
       {/* Phase 30C — ranked pick buckets (official) */}
       {!isCautionTier && (safePick || valuePick || aggressivePick) && (
         <motion.div

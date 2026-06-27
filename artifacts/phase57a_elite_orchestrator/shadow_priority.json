@@ -1,0 +1,64 @@
+[
+  {
+    "rank": 1,
+    "market_id": "first_goal_team",
+    "readiness": "READY",
+    "primary_components": [
+      "first_goal_team_v2",
+      "egie_historical_baseline",
+      "goalscorer_intelligence"
+    ],
+    "notes": "55C HIGH_VALUE. Best path: FGT V2 + EGIE ensemble. Shadow before WDE."
+  },
+  {
+    "rank": 2,
+    "market_id": "team_to_score_first",
+    "readiness": "READY",
+    "primary_components": [
+      "first_goal_team_v2",
+      "egie_historical_baseline",
+      "odds_intelligence"
+    ],
+    "notes": "Alias fusion path to first_goal_team. Same validated stack."
+  },
+  {
+    "rank": 3,
+    "market_id": "1x2",
+    "readiness": "PARTIAL",
+    "primary_components": [
+      "odds_intelligence",
+      "market_behavior_intelligence"
+    ],
+    "notes": "MBI improves calibration modestly. Shadow odds+MBI blend first."
+  },
+  {
+    "rank": 4,
+    "market_id": "anytime_goalscorer",
+    "readiness": "PARTIAL",
+    "primary_components": [
+      "goalscorer_intelligence",
+      "player_form_store",
+      "lineup_intelligence"
+    ],
+    "notes": "WC shadow-ready (77% top-3 with odds). UEFA needs odds expansion (55B blocked)."
+  },
+  {
+    "rank": 5,
+    "market_id": "goal_timing",
+    "readiness": "PARTIAL",
+    "primary_components": [
+      "egie_historical_baseline",
+      "hybrid_confidence_engine"
+    ],
+    "notes": "Production exists but elite layer adds confidence only \u2014 no new timing model."
+  },
+  {
+    "rank": 6,
+    "market_id": "first_goalscorer",
+    "readiness": "RESEARCH",
+    "primary_components": [
+      "goalscorer_intelligence"
+    ],
+    "notes": "Include in shadow object but tier-capped at B. Research track only."
+  }
+]

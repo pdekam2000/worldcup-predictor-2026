@@ -1,0 +1,14 @@
+[Unit]
+Description=Daily Picks Result Updater
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/update_pick_results.py
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

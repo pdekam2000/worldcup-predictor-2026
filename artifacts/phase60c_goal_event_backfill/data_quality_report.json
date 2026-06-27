@@ -1,0 +1,45 @@
+{
+  "api_calls_used": 0,
+  "candidate_count": 881,
+  "fixtures_backfilled": 100,
+  "comparison": {
+    "reliable_fixtures_before": 632,
+    "reliable_fixtures_after": 1032,
+    "reliable_delta": 400,
+    "excluded_before": 1181,
+    "excluded_after": 781,
+    "excluded_delta": -400,
+    "with_goal_before": 503,
+    "with_goal_after": 903,
+    "pct_1_30_with_goal_before": 61.23,
+    "pct_1_30_with_goal_after": 62.02,
+    "pct_31_plus_with_goal_before": 38.77,
+    "pct_31_plus_with_goal_after": 37.98,
+    "pct_no_goal_before": 20.41,
+    "pct_no_goal_after": 12.5,
+    "bucket_counts_before": {
+      "1-15": 175,
+      "16-30": 133,
+      "31-45+": 78,
+      "46-60": 54,
+      "61-75": 31,
+      "76-90+": 32,
+      "no_goal": 129,
+      "data_missing": 0
+    },
+    "bucket_counts_after": {
+      "1-15": 322,
+      "16-30": 238,
+      "31-45+": 159,
+      "46-60": 86,
+      "61-75": 58,
+      "76-90+": 40,
+      "no_goal": 129,
+      "data_missing": 0
+    }
+  },
+  "warnings": [
+    "Bundesliga bulk fixtures may still lack events if not cached",
+    "Live API used only for priority competitions within budget"
+  ]
+}

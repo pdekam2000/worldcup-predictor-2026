@@ -1,0 +1,170 @@
+{
+  "ranked_xg_features": [
+    {
+      "feature": "away_recent_xga",
+      "importance_sum": 0.399582,
+      "share_pct": 14.77
+    },
+    {
+      "feature": "home_recent_xga",
+      "importance_sum": 0.358233,
+      "share_pct": 13.24
+    },
+    {
+      "feature": "rolling_xg_10_away",
+      "importance_sum": 0.294284,
+      "share_pct": 10.88
+    },
+    {
+      "feature": "xg_momentum_difference",
+      "importance_sum": 0.269091,
+      "share_pct": 9.95
+    },
+    {
+      "feature": "rolling_xg_3_away",
+      "importance_sum": 0.253912,
+      "share_pct": 9.39
+    },
+    {
+      "feature": "rolling_xg_10_home",
+      "importance_sum": 0.213803,
+      "share_pct": 7.9
+    },
+    {
+      "feature": "defensive_weakness_difference",
+      "importance_sum": 0.199093,
+      "share_pct": 7.36
+    },
+    {
+      "feature": "rolling_xg_3_home",
+      "importance_sum": 0.166671,
+      "share_pct": 6.16
+    },
+    {
+      "feature": "attack_strength_difference",
+      "importance_sum": 0.146177,
+      "share_pct": 5.4
+    },
+    {
+      "feature": "xg_difference",
+      "importance_sum": 0.103137,
+      "share_pct": 3.81
+    },
+    {
+      "feature": "home_recent_xg",
+      "importance_sum": 0.089347,
+      "share_pct": 3.3
+    },
+    {
+      "feature": "rolling_xg_5_away",
+      "importance_sum": 0.074164,
+      "share_pct": 2.74
+    },
+    {
+      "feature": "away_recent_xg",
+      "importance_sum": 0.070155,
+      "share_pct": 2.59
+    },
+    {
+      "feature": "rolling_xg_5_home",
+      "importance_sum": 0.067318,
+      "share_pct": 2.49
+    }
+  ],
+  "strongest_features": [
+    "away_recent_xga",
+    "home_recent_xga",
+    "rolling_xg_10_away",
+    "xg_momentum_difference",
+    "rolling_xg_3_away"
+  ],
+  "stable_features": [
+    "away_recent_xga",
+    "home_recent_xga",
+    "rolling_xg_10_away",
+    "xg_momentum_difference",
+    "rolling_xg_3_away",
+    "rolling_xg_10_home",
+    "defensive_weakness_difference",
+    "rolling_xg_3_home",
+    "attack_strength_difference"
+  ],
+  "noisy_features": [],
+  "markets_xg_helps": [
+    "goal_range",
+    "team_goals"
+  ],
+  "markets_xg_hurts": [
+    "first_goal_team"
+  ],
+  "per_market_xg_importance": {
+    "first_goal_team": {
+      "home_recent_xg": 0.015844714615855893,
+      "away_recent_xg": 0.025198227122556198,
+      "home_recent_xga": 0.08542211683753605,
+      "away_recent_xga": 0.17590299775576462,
+      "xg_difference": 0.02720819949446938,
+      "attack_strength_difference": 0.04959507115636853,
+      "defensive_weakness_difference": 0.050870151082155105,
+      "xg_momentum_difference": 0.13778249913178975,
+      "rolling_xg_3_home": 0.04639261277144999,
+      "rolling_xg_3_away": 0.0973617750349928,
+      "rolling_xg_5_home": 0.018443619707974052,
+      "rolling_xg_5_away": 0.01927157281417202,
+      "rolling_xg_10_home": 0.056202196571037415,
+      "rolling_xg_10_away": 0.10642150901203125
+    },
+    "goal_range": {
+      "home_recent_xg": 0.03459107441242532,
+      "away_recent_xg": 0.026557297355432427,
+      "home_recent_xga": 0.11703020337319742,
+      "away_recent_xga": 0.11909289674162873,
+      "xg_difference": 0.041912302963671794,
+      "attack_strength_difference": 0.04562782701511191,
+      "defensive_weakness_difference": 0.06296755073281861,
+      "xg_momentum_difference": 0.07246325292705971,
+      "rolling_xg_3_home": 0.05965304893003262,
+      "rolling_xg_3_away": 0.08666101598451323,
+      "rolling_xg_5_home": 0.02473282863290606,
+      "rolling_xg_5_away": 0.039657393614519004,
+      "rolling_xg_10_home": 0.08874034506959805,
+      "rolling_xg_10_away": 0.08845950162476858
+    },
+    "team_goals": {
+      "home_recent_xg": 0.03891138489583023,
+      "away_recent_xg": 0.018399405041103687,
+      "home_recent_xga": 0.15578067756615452,
+      "away_recent_xga": 0.10458621520611402,
+      "xg_difference": 0.03401617306130944,
+      "attack_strength_difference": 0.05095399096222037,
+      "defensive_weakness_difference": 0.08525543036012344,
+      "xg_momentum_difference": 0.058844995702897966,
+      "rolling_xg_3_home": 0.06062503271166371,
+      "rolling_xg_3_away": 0.06988940213732962,
+      "rolling_xg_5_home": 0.024141267313656126,
+      "rolling_xg_5_away": 0.015235020049480436,
+      "rolling_xg_10_home": 0.0688606179132956,
+      "rolling_xg_10_away": 0.09940277616738814
+    }
+  },
+  "per_market_delta": {
+    "first_goal_team": {
+      "accuracy": -0.0462,
+      "log_loss": 0.1023,
+      "brier_score": 0.0389,
+      "calibration_ece": 0.0747
+    },
+    "goal_range": {
+      "accuracy": 0.0084,
+      "log_loss": 0.0554,
+      "brier_score": null,
+      "calibration_ece": null
+    },
+    "team_goals": {
+      "accuracy": 0.0276,
+      "log_loss": 0.0172,
+      "brier_score": 0.0032,
+      "calibration_ece": -0.0055
+    }
+  }
+}

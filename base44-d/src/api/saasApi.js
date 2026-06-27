@@ -153,13 +153,30 @@ export async function fetchBestTips({ competition = "world_cup_2026", limit = 12
   return saasFetch(`/api/best-tips?${qs}`);
 }
 
+export async function fetchUnifiedEngineStatus() {
+  return saasFetch("/api/unified/status");
+}
+
+export async function fetchUnifiedPrediction(fixtureId, { competition, compare = false } = {}) {
+  const qs = new URLSearchParams();
+  if (competition) qs.set("competition", competition);
+  if (compare) qs.set("compare", "true");
+  const suffix = qs.toString() ? `?${qs}` : "";
+  return saasFetch(`/api/unified/predict/${fixtureId}${suffix}`, { adminGate: true });
+}
+
+export async function fetchUnifiedBacktestSummary({ limit = 200, competition = "world_cup_2026" } = {}) {
+  const qs = new URLSearchParams({ limit: String(limit), competition });
+  return saasFetch(`/api/unified/backtest/summary?${qs}`, { adminGate: true });
+}
+
 export async function fetchHistoryArchive({
   limit = 50,
   offset = 0,
   resultFilter = "all",
   scope = "all",
   sort = "newest",
-  competition = "world_cup_2026",
+  competition = "all",
 } = {}) {
   const qs = new URLSearchParams({
     limit: String(limit),
@@ -170,6 +187,29 @@ export async function fetchHistoryArchive({
     competition,
   });
   return saasFetch(`/api/history?${qs}`);
+}
+
+export async function fetchEvaluatedResults({
+  range = "all",
+  status = "all",
+  market = "best_bets",
+  limit = 100,
+  offset = 0,
+  competition = "all",
+  utcOffsetMinutes = null,
+} = {}) {
+  const qs = new URLSearchParams({
+    range,
+    status,
+    market,
+    limit: String(limit),
+    offset: String(offset),
+    competition,
+  });
+  if (utcOffsetMinutes != null && !Number.isNaN(Number(utcOffsetMinutes))) {
+    qs.set("utc_offset_minutes", String(utcOffsetMinutes));
+  }
+  return saasFetch(`/api/results/evaluated?${qs}`);
 }
 
 export async function fetchPredictionHistoryEntry(entryId) {
@@ -279,6 +319,23 @@ export async function fetchAdminEliteShadowSummary() {
   return saasFetch("/api/admin/elite-shadow/summary", { superAdminGate: true });
 }
 
+/** Phase A22 — Elite Shadow scheduler health */
+export async function fetchAdminEliteShadowHealth() {
+  return saasFetch("/api/admin/elite-shadow/health", { superAdminGate: true });
+}
+
+/** Phase A22 — Elite Shadow admin maintenance action */
+export async function postAdminEliteShadowAction(action, params = {}) {
+  const qs = new URLSearchParams();
+  if (params.force) qs.set("force", "true");
+  if (params.dry_run) qs.set("dry_run", "true");
+  const suffix = qs.toString() ? `?${qs}` : "";
+  return saasFetch(`/api/admin/elite-shadow/actions/${encodeURIComponent(action)}${suffix}`, {
+    method: "POST",
+    superAdminGate: true,
+  });
+}
+
 export async function fetchAdminEliteShadowPredictions(params = {}) {
   const qs = new URLSearchParams({
     market: params.market || "all",
@@ -375,6 +432,14 @@ export async function fetchOwnerModelCenter() {
   return saasFetch("/api/owner/model-center");
 }
 
+export async function fetchOwnerPerformanceCenter() {
+  return saasFetch("/api/owner/performance-center");
+}
+
+export async function fetchOwnerHealthDashboard() {
+  return saasFetch("/api/owner/health-dashboard");
+}
+
 export async function fetchOwnerResearchLab({ refresh = false } = {}) {
   const qs = refresh ? "?refresh=true" : "";
   return saasFetch(`/api/owner/research-lab${qs}`);
@@ -407,6 +472,48 @@ export async function ownerEnableScheduler() {
 
 export async function ownerDisableScheduler() {
   return saasFetch("/api/owner/autonomous/disable-scheduler", { method: "POST" });
+}
+
+export async function fetchOwnerPrefetchCoverage(windowDays = 7) {
+  const qs = new URLSearchParams({ window_days: String(windowDays) });
+  return saasFetch(`/api/owner/prefetch/coverage?${qs}`);
+}
+
+export async function runOwnerPrefetchOnce({ windowDays = 7, maxPerCycle = 24 } = {}) {
+  const qs = new URLSearchParams({
+    window_days: String(windowDays),
+    max_per_cycle: String(maxPerCycle),
+  });
+  return saasFetch(`/api/owner/prefetch/run-once?${qs}`, { method: "POST" });
+}
+
+export async function fetchPredOpsCoverage() {
+  return saasFetch("/api/predops/coverage");
+}
+
+export async function fetchPredOpsCoverageAdmin() {
+  return saasFetch("/api/predops/coverage/admin");
+}
+
+export async function fetchPredOpsQueue() {
+  return saasFetch("/api/predops/queue");
+}
+
+export async function fetchPredOpsComboReadiness() {
+  return saasFetch("/api/predops/combo-readiness");
+}
+
+export async function fetchPredOpsSnapshotLatest(fixtureId) {
+  return saasFetch(`/api/predops/snapshots/latest?fixture_id=${encodeURIComponent(fixtureId)}`);
+}
+
+export async function runPredOpsOnce({ windowDays = 7, maxJobs = 12, dryRun = false } = {}) {
+  const qs = new URLSearchParams({
+    window_days: String(windowDays),
+    max_jobs: String(maxJobs),
+    dry_run: dryRun ? "true" : "false",
+  });
+  return saasFetch(`/api/predops/run-once?${qs}`, { method: "POST" });
 }
 
 /** Phase 51 — Elite Goal Timing engine */

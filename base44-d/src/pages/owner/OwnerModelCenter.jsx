@@ -2,17 +2,26 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Layers, Shield, FlaskConical } from "lucide-react";
 import { fetchOwnerModelCenter } from "@/api/saasApi";
 import { classifyApiError } from "@/lib/apiError";
+import { formatPercent } from "@/lib/formatPercent";
 import { IntelligenceCard, LoadingSkeleton, ErrorState } from "@/components/intelligence";
 
-function CertBadge({ level }) {
+function CertBadge({ level, code }) {
   const colors = {
-    PRODUCTION_READY: "text-[#00E676] border-[#00E676]/30 bg-[#00E676]/10",
+    CERTIFIED: "text-[#00E676] border-[#00E676]/30 bg-[#00E676]/10",
+    PROMOTED: "text-[#7DD3FC] border-[#7DD3FC]/30 bg-[#7DD3FC]/10",
     PAPER_READY: "text-[#FFD166] border-[#FFD166]/30 bg-[#FFD166]/10",
+    PRODUCTION_READY: "text-[#00E676] border-[#00E676]/30 bg-[#00E676]/10",
     RESEARCH_ONLY: "text-[#94A3B8] border-white/10 bg-white/5",
+    SHADOW_ONLY: "text-[#94A3B8] border-white/10 bg-white/5",
+    SHADOW_RESEARCH_ONLY: "text-[#94A3B8] border-white/10 bg-white/5",
+    WAITING_DATA: "text-[#FFD166] border-[#FFD166]/30 bg-[#FFD166]/10",
+    LOW_SAMPLE: "text-[#FFD166] border-[#FFD166]/30 bg-[#FFD166]/10",
+    LOW_WINRATE: "text-red-300 border-red-500/30 bg-red-500/10",
     BLOCKED: "text-red-300 border-red-500/30 bg-red-500/10",
   };
-  const cls = colors[level] || colors.BLOCKED;
-  return <span className={`text-xs px-2 py-0.5 rounded-full border ${cls}`}>{level || "BLOCKED"}</span>;
+  const label = level || code || "BLOCKED";
+  const cls = colors[code] || colors[level] || colors.BLOCKED;
+  return <span className={`text-xs px-2 py-0.5 rounded-full border ${cls}`}>{label}</span>;
 }
 
 function MarketTable({ rows }) {
@@ -40,10 +49,10 @@ function MarketTable({ rows }) {
               <td className="py-2 pr-3">{row.evaluated ?? 0}</td>
               <td className="py-2 pr-3">{row.pending ?? 0}</td>
               <td className="py-2 pr-3">
-                {row.winrate != null ? `${(row.winrate * 100).toFixed(1)}%` : "—"}
+                {formatPercent(row.winrate)}
               </td>
               <td className="py-2 pr-3">
-                <CertBadge level={row.certification} />
+                <CertBadge level={row.certification} code={row.certification_code} />
               </td>
             </tr>
           ))}
@@ -80,6 +89,7 @@ export default function OwnerModelCenter() {
   const prod = data?.production_engine || {};
   const elite = data?.elite_engine || {};
   const rec = data?.recommendations || {};
+  const sources = data?.data_sources || {};
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -108,6 +118,16 @@ export default function OwnerModelCenter() {
         </div>
         <p className="text-xs text-[#94A3B8] mb-3">Experimental shadow — not promoted to production.</p>
         <MarketTable rows={elite.market_rows} />
+      </IntelligenceCard>
+
+      <IntelligenceCard>
+        <h2 className="font-semibold text-[#F8FAFC] mb-3">Data sources</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+          <div><p className="text-xs text-[#94A3B8]">Autonomous snapshots</p><p className="font-bold">{sources.autonomous_snapshots ?? 0}</p></div>
+          <div><p className="text-xs text-[#94A3B8]">Shadow JSONL</p><p className="font-bold">{sources.shadow_jsonl?.prediction_total ?? 0}</p></div>
+          <div><p className="text-xs text-[#94A3B8]">PredOps snapshots</p><p className="font-bold">{sources.predops_snapshots ?? 0}</p></div>
+          <div><p className="text-xs text-[#94A3B8]">Stored predictions</p><p className="font-bold">{sources.worldcup_stored_predictions ?? 0}</p></div>
+        </div>
       </IntelligenceCard>
 
       <IntelligenceCard>

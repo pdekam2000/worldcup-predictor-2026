@@ -1,0 +1,177 @@
+{
+  "sportmonks_fixture_id": 1059935,
+  "fetched_at": "2026-06-23T07:01:25.953925+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059935,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25140,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": null,
+      "name": "Sevilla vs FSV Mainz 05",
+      "starting_at": "2005-09-14 22:00:00",
+      "result_info": "Game ended in draw.",
+      "leg": "1/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1126735200,
+      "participants": [
+        {
+          "id": 676,
+          "sport_id": 1,
+          "country_id": 32,
+          "venue_id": 177,
+          "gender": "male",
+          "name": "Sevilla",
+          "short_code": "SEV",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/4/676.png",
+          "founded": 1890,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-23 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": false,
+            "position": null
+          }
+        },
+        {
+          "id": 794,
+          "sport_id": 1,
+          "country_id": 11,
+          "venue_id": 2103,
+          "gender": "male",
+          "name": "FSV Mainz 05",
+          "short_code": "M05",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/26/794.png",
+          "founded": 1905,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-16 13:30:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5661924,
+          "fixture_id": 1059935,
+          "type_id": 1,
+          "participant_id": 676,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661925,
+          "fixture_id": 1059935,
+          "type_id": 1,
+          "participant_id": 794,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661926,
+          "fixture_id": 1059935,
+          "type_id": 2,
+          "participant_id": 676,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661927,
+          "fixture_id": 1059935,
+          "type_id": 2,
+          "participant_id": 794,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661928,
+          "fixture_id": 1059935,
+          "type_id": 1525,
+          "participant_id": 676,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661929,
+          "fixture_id": 1059935,
+          "type_id": 1525,
+          "participant_id": 794,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782198086,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 3594,
+      "remaining": 2487,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  }
+}

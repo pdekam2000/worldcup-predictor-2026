@@ -1,0 +1,144 @@
+{
+  "fixtures_audited": 185,
+  "first_goal_related_markets": [
+    {
+      "market_key": "first_team_to_score",
+      "market_name": "First Team To Score",
+      "pattern": "first team to score|team to score first",
+      "fixture_coverage": 105,
+      "fixture_coverage_pct": 56.76,
+      "odds_row_count": 1891,
+      "sample_labels": [
+        "1",
+        "X",
+        "2",
+        "No Goals",
+        "Away",
+        "Home",
+        "Draw"
+      ],
+      "egie_usage": "D5/D6 enrichment"
+    },
+    {
+      "market_key": "last_team_to_score",
+      "market_name": "Last Team To Score",
+      "pattern": "last team to score",
+      "fixture_coverage": 105,
+      "fixture_coverage_pct": 56.76,
+      "odds_row_count": 1404,
+      "sample_labels": [
+        "1",
+        "2",
+        "No goal",
+        "Draw",
+        "Home",
+        "Away",
+        "No Goal"
+      ],
+      "egie_usage": "not wired"
+    },
+    {
+      "market_key": "home_team_score_goal",
+      "market_name": "Home Team Score a Goal",
+      "pattern": "home team score a goal",
+      "fixture_coverage": 105,
+      "fixture_coverage_pct": 56.76,
+      "odds_row_count": 935,
+      "sample_labels": [
+        "Yes",
+        "No"
+      ],
+      "egie_usage": "not wired"
+    },
+    {
+      "market_key": "away_team_score_goal",
+      "market_name": "Away Team Score a Goal",
+      "pattern": "away team score a goal",
+      "fixture_coverage": 105,
+      "fixture_coverage_pct": 56.76,
+      "odds_row_count": 938,
+      "sample_labels": [
+        "Yes",
+        "No"
+      ],
+      "egie_usage": "not wired"
+    },
+    {
+      "market_key": "first_half_exact_goals",
+      "market_name": "First Half Exact Goals",
+      "pattern": "first half exact goals",
+      "fixture_coverage": 90,
+      "fixture_coverage_pct": 48.65,
+      "odds_row_count": 1151,
+      "sample_labels": [
+        "2",
+        "1",
+        "0",
+        "more 3",
+        "more 4",
+        "3",
+        "0 Goals",
+        "1 Goal"
+      ],
+      "egie_usage": "not wired"
+    },
+    {
+      "market_key": "first_10_min_winner",
+      "market_name": "First 10 min Winner",
+      "pattern": "first 10 min winner",
+      "fixture_coverage": 65,
+      "fixture_coverage_pct": 35.14,
+      "odds_row_count": 195,
+      "sample_labels": [
+        "Home",
+        "Draw",
+        "Away"
+      ],
+      "egie_usage": "not wired"
+    },
+    {
+      "market_key": "time_of_first_corner",
+      "market_name": "Time of First Corner",
+      "pattern": "time of first corner",
+      "fixture_coverage": 13,
+      "fixture_coverage_pct": 7.03,
+      "odds_row_count": 32,
+      "sample_labels": [
+        "Corner before 8:00",
+        "No Corner before 8:00",
+        "Corner before 7:00",
+        "No Corner before 7:00"
+      ],
+      "egie_usage": "not wired"
+    },
+    {
+      "market_key": "team_goalscorer",
+      "market_name": "Team Goalscorer",
+      "pattern": "team goalscorer",
+      "fixture_coverage": 3,
+      "fixture_coverage_pct": 1.62,
+      "odds_row_count": 286,
+      "sample_labels": [
+        "First",
+        "Last"
+      ],
+      "egie_usage": "not wired"
+    }
+  ],
+  "top_bookmakers_in_fg_markets": {
+    "bet365": 1041,
+    "NordicBet": 900,
+    "Betsson": 900,
+    "10Bet": 856,
+    "Tipico": 701,
+    "Marathonbet": 640,
+    "Marathon": 400,
+    "Betway": 312,
+    "BetCRIS": 279,
+    "WilliamHill": 223,
+    "bwin": 210,
+    "Sportingbet": 210,
+    "Pinnacle": 160
+  },
+  "primary_direct_fg_market": "first_team_to_score"
+}

@@ -1,0 +1,346 @@
+{
+  "generated_at": "2026-06-24T01:33:17.884626+00:00",
+  "phase": "54F-5-modern",
+  "backtest_only": true,
+  "production_changes": false,
+  "coverage": {
+    "fixtures_total": 126,
+    "fixtures_with_xg": 126
+  },
+  "train_size": 84,
+  "test_size": 42,
+  "markets": {
+    "first_goal_team": {
+      "arm_a_baseline": {
+        "status": "ok",
+        "train_n": 76,
+        "test_n": 39,
+        "accuracy": 0.5128,
+        "log_loss": 1.2305,
+        "brier_score": 0.3757,
+        "precision": 0.6296,
+        "recall": 0.6538,
+        "calibration_ece": 0.379,
+        "roi_proxy": -0.4872,
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.3678923841775211,
+          "away_goal_rate_proxy": 0.477955751721922,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.10116861938352882,
+          "away_history_samples": 0.0529832447170281
+        },
+        "classes": [
+          0,
+          1
+        ]
+      },
+      "arm_b_xg": {
+        "status": "ok",
+        "train_n": 76,
+        "test_n": 39,
+        "accuracy": 0.4872,
+        "log_loss": 1.8135,
+        "brier_score": 0.4587,
+        "precision": 0.6071,
+        "recall": 0.6538,
+        "calibration_ece": 0.4637,
+        "roi_proxy": -0.5128,
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.01712306270673923,
+          "away_goal_rate_proxy": 0.02827471228716296,
+          "data_quality_score": 0.0,
+          "home_history_samples": 3.219419095937691e-05,
+          "away_history_samples": 0.005668062493864682,
+          "home_recent_xg": 0.00892218414029776,
+          "away_recent_xg": 0.014581780757675633,
+          "home_recent_xga": 0.21737225438496696,
+          "away_recent_xga": 0.0794025647669397,
+          "xg_difference": 0.08522855846281757,
+          "attack_strength_difference": 0.017557894441330185,
+          "defensive_weakness_difference": 0.07497564900176096,
+          "xg_momentum_difference": 0.16449524003104204,
+          "rolling_xg_3_home": 0.1607765288035961,
+          "rolling_xg_3_away": 0.03296659594199047,
+          "rolling_xg_5_home": 0.013642721854417032,
+          "rolling_xg_5_away": 0.016389213021472622,
+          "rolling_xg_10_home": 0.05603648655427126,
+          "rolling_xg_10_away": 0.006554296158695473
+        },
+        "classes": [
+          0,
+          1
+        ]
+      },
+      "delta": {
+        "accuracy": -0.0256,
+        "log_loss": 0.583,
+        "brier_score": 0.083,
+        "calibration_ece": 0.0847
+      }
+    },
+    "goal_range": {
+      "arm_a_baseline": {
+        "status": "ok",
+        "train_n": 76,
+        "test_n": 39,
+        "accuracy": 0.4615,
+        "log_loss": 1.8849,
+        "brier_score": null,
+        "precision": 0.569,
+        "recall": 0.4615,
+        "calibration_ece": null,
+        "roi_proxy": -0.5385,
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.34628337321671515,
+          "away_goal_rate_proxy": 0.49659567662825344,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.124810398339396,
+          "away_history_samples": 0.03231055181563525
+        },
+        "classes": [
+          "0-15",
+          "16-30",
+          "31-45+"
+        ]
+      },
+      "arm_b_xg": {
+        "status": "ok",
+        "train_n": 76,
+        "test_n": 39,
+        "accuracy": 0.3077,
+        "log_loss": 2.1109,
+        "brier_score": null,
+        "precision": 0.3661,
+        "recall": 0.3077,
+        "calibration_ece": null,
+        "roi_proxy": -0.6923,
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.02331363442004214,
+          "away_goal_rate_proxy": 0.027208022659391276,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.03309552367621281,
+          "away_history_samples": 0.016779854217641544,
+          "home_recent_xg": 0.014214802662462667,
+          "away_recent_xg": 0.03494014127905589,
+          "home_recent_xga": 0.3032792531243193,
+          "away_recent_xga": 0.036022708721233324,
+          "xg_difference": 0.02522995469049375,
+          "attack_strength_difference": 0.049664540486483284,
+          "defensive_weakness_difference": 0.10807713762874485,
+          "xg_momentum_difference": 0.047798585009770356,
+          "rolling_xg_3_home": 0.01742243639965907,
+          "rolling_xg_3_away": 0.13135283499917366,
+          "rolling_xg_5_home": 0.02542432340434486,
+          "rolling_xg_5_away": 0.0534904788299134,
+          "rolling_xg_10_home": 0.03187445077521409,
+          "rolling_xg_10_away": 0.020811317015843846
+        },
+        "classes": [
+          "0-15",
+          "16-30",
+          "31-45+"
+        ]
+      },
+      "delta": {
+        "accuracy": -0.1538,
+        "log_loss": 0.226,
+        "brier_score": null,
+        "calibration_ece": null
+      }
+    },
+    "team_goals": {
+      "arm_a_baseline": {
+        "status": "ok",
+        "train_n": 84,
+        "test_n": 42,
+        "accuracy": 0.6429,
+        "log_loss": 0.9786,
+        "brier_score": 0.2952,
+        "precision": 0.8,
+        "recall": 0.5926,
+        "calibration_ece": 0.2704,
+        "roi_proxy": -0.3571,
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.43235296661049194,
+          "away_goal_rate_proxy": 0.3306366116958727,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.0697324762685484,
+          "away_history_samples": 0.16727794542508695
+        },
+        "classes": [
+          0,
+          1
+        ]
+      },
+      "arm_b_xg": {
+        "status": "ok",
+        "train_n": 84,
+        "test_n": 42,
+        "accuracy": 0.4762,
+        "log_loss": 1.0138,
+        "brier_score": 0.3239,
+        "precision": 0.6471,
+        "recall": 0.4074,
+        "calibration_ece": 0.3009,
+        "roi_proxy": -0.5238,
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.030183048419700775,
+          "away_goal_rate_proxy": 0.01265488332525745,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.04345665199853438,
+          "away_history_samples": 0.07559877197547242,
+          "home_recent_xg": 0.020799300253612624,
+          "away_recent_xg": 0.04470420879271786,
+          "home_recent_xga": 0.15025000861266694,
+          "away_recent_xga": 0.0901751771967881,
+          "xg_difference": 0.06111767966301875,
+          "attack_strength_difference": 0.07171347502542513,
+          "defensive_weakness_difference": 0.12649475698176674,
+          "xg_momentum_difference": 0.04101706368494629,
+          "rolling_xg_3_home": 0.03351698767534034,
+          "rolling_xg_3_away": 0.04361240500225764,
+          "rolling_xg_5_home": 0.031485880828455694,
+          "rolling_xg_5_away": 0.04361545510804119,
+          "rolling_xg_10_home": 0.04163318644332932,
+          "rolling_xg_10_away": 0.03797105901266842
+        },
+        "classes": [
+          0,
+          1
+        ]
+      },
+      "delta": {
+        "accuracy": -0.1667,
+        "log_loss": 0.0352,
+        "brier_score": 0.0287,
+        "calibration_ece": 0.0305
+      }
+    }
+  },
+  "egie_rule_baseline_engine": {
+    "fixtures_scanned": 42,
+    "published_predictions": 0,
+    "no_pick_count": 42,
+    "evaluable_published": 0,
+    "skipped_not_evaluable": 0,
+    "by_market": {
+      "first_goal_team": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "total": 0,
+        "winrate": null,
+        "soft_winrate": null
+      },
+      "goal_range": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "total": 0,
+        "winrate": null,
+        "soft_winrate": null
+      },
+      "goal_minute": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "total": 0,
+        "winrate": null,
+        "soft_winrate": null
+      }
+    },
+    "by_league": {},
+    "by_dq_bucket": {
+      "first_goal_team": {},
+      "goal_range": {},
+      "goal_minute": {}
+    },
+    "by_confidence_bucket": {
+      "first_goal_team": {},
+      "goal_range": {},
+      "goal_minute": {}
+    }
+  },
+  "feature_importance_top20": [
+    {
+      "feature": "home_recent_xga",
+      "importance_sum": 0.670902
+    },
+    {
+      "feature": "defensive_weakness_difference",
+      "importance_sum": 0.309548
+    },
+    {
+      "feature": "xg_momentum_difference",
+      "importance_sum": 0.253311
+    },
+    {
+      "feature": "rolling_xg_3_home",
+      "importance_sum": 0.211716
+    },
+    {
+      "feature": "rolling_xg_3_away",
+      "importance_sum": 0.207932
+    },
+    {
+      "feature": "away_recent_xga",
+      "importance_sum": 0.2056
+    },
+    {
+      "feature": "xg_difference",
+      "importance_sum": 0.171576
+    },
+    {
+      "feature": "attack_strength_difference",
+      "importance_sum": 0.138936
+    },
+    {
+      "feature": "rolling_xg_10_home",
+      "importance_sum": 0.129544
+    },
+    {
+      "feature": "rolling_xg_5_away",
+      "importance_sum": 0.113495
+    },
+    {
+      "feature": "away_history_samples",
+      "importance_sum": 0.098047
+    },
+    {
+      "feature": "away_recent_xg",
+      "importance_sum": 0.094226
+    },
+    {
+      "feature": "home_history_samples",
+      "importance_sum": 0.076584
+    },
+    {
+      "feature": "home_goal_rate_proxy",
+      "importance_sum": 0.07062
+    },
+    {
+      "feature": "rolling_xg_5_home",
+      "importance_sum": 0.070553
+    },
+    {
+      "feature": "away_goal_rate_proxy",
+      "importance_sum": 0.068138
+    },
+    {
+      "feature": "rolling_xg_10_away",
+      "importance_sum": 0.065337
+    },
+    {
+      "feature": "home_recent_xg",
+      "importance_sum": 0.043936
+    },
+    {
+      "feature": "data_quality_score",
+      "importance_sum": 0.0
+    }
+  ],
+  "dataset_path": "artifacts/phase54f5_modern_egie_dataset/modern_egie_dataset.parquet"
+}

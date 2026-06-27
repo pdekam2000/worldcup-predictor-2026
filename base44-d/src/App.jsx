@@ -11,8 +11,11 @@ import { BetSlipProvider } from '@/context/BetSlipContext';
 // Auth pages
 import Login from './pages/Login';
 import Register from './pages/Register';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import PricingPage from './pages/PricingPage';
+import BillingCheckoutSuccess from './pages/BillingCheckoutSuccess';
 
 // Public
 import Landing from './pages/Landing';
@@ -31,6 +34,13 @@ import Dashboard from './pages/Dashboard';
 import MatchCenter from './pages/MatchCenter';
 import MatchDetailPage from './pages/MatchDetailPage';
 import ComboTipsPage from './pages/ComboTipsPage';
+import BestTipsPage from './pages/BestTipsPage';
+import UnifiedPredictionsPage from './pages/UnifiedPredictionsPage';
+import BettingPlanPage from './pages/BettingPlanPage';
+import PaperBettingPage from './pages/PaperBettingPage';
+import WatchlistPage from './pages/WatchlistPage';
+import DailyBriefingPage from './pages/DailyBriefingPage';
+import DailyPicksPage from '@/pages/DailyPicksPage';
 import PredictionDetail from './pages/PredictionDetail';
 import AccuracyCenter from './pages/AccuracyCenter';
 import SubscriptionPage from './pages/SubscriptionPage';
@@ -41,7 +51,9 @@ import EliteShadowPreview from './pages/EliteShadowPreview';
 import SuperAdminPanel from './pages/SuperAdminPanel';
 import AdminRoute from './components/AdminRoute';
 import SuperAdminRoute from './components/SuperAdminRoute';
-import PredictionHistoryPage from './pages/PredictionHistoryPage';
+import ArchivePage from './pages/ArchivePage';
+import PredictionResultsPage from './pages/PredictionResultsPage';
+import PredictionHistoryDetailPage from './pages/PredictionHistoryDetailPage';
 import FavoritesPage from './pages/FavoritesPage';
 import AlertsPage from './pages/AlertsPage';
 import ApiSettingsPage from './pages/ApiSettingsPage';
@@ -68,7 +80,14 @@ import OwnerModelCenter from './pages/owner/OwnerModelCenter';
 import OwnerResearchLab from './pages/owner/OwnerResearchLab';
 import OwnerPromotionCenter from './pages/owner/OwnerPromotionCenter';
 import OwnerBettingIntelligence from './pages/owner/OwnerBettingIntelligence';
+import OwnerPrefetchCoveragePage from './pages/owner/OwnerPrefetchCoveragePage';
+import AdminPredOpsPage from './pages/admin/AdminPredOpsPage';
+import AdminLearningDashboard from './pages/AdminLearningDashboard';
 import OwnerHealthPage, { OwnerApiUsagePage, OwnerDatabasePage, OwnerLogsPage } from './pages/owner/OwnerHealthPage';
+import SharePickPage from './pages/share/SharePickPage';
+import ShareComboPage from './pages/share/ShareComboPage';
+import SharePaperReportPage from './pages/share/SharePaperReportPage';
+import PublicAccuracyPage from './pages/share/PublicAccuracyPage';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth } = useAuth();
@@ -86,6 +105,8 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/owner-login" element={<OwnerLogin />} />
@@ -98,9 +119,15 @@ const AuthenticatedApp = () => {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/imprint" element={<ImprintPage />} />
       <Route path="/research/highlights" element={<ResearchHighlights />} />
+      <Route path="/share/pick/:id" element={<SharePickPage />} />
+      <Route path="/share/combo/:id" element={<ShareComboPage />} />
+      <Route path="/share/paper-report/:id" element={<SharePaperReportPage />} />
+      <Route path="/public/accuracy" element={<PublicAccuracyPage />} />
       <Route path="/world-cup" element={<Navigate to="/matches?competition=world_cup_2026" replace />} />
+      <Route path="/billing/success" element={<Navigate to="/subscription/checkout/success" replace />} />
       <Route path="/account/settings" element={<Navigate to="/settings" replace />} />
       <Route path="/analytics/accuracy" element={<Navigate to="/accuracy" replace />} />
+      <Route path="/combo-builder" element={<Navigate to="/combo-tips" replace />} />
       <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
 
       <Route element={<OwnerRoute />}>
@@ -114,6 +141,7 @@ const AuthenticatedApp = () => {
           <Route path="/owner/research-lab" element={<OwnerResearchLab />} />
           <Route path="/owner/promotion-center" element={<OwnerPromotionCenter />} />
           <Route path="/owner/betting-intelligence" element={<OwnerBettingIntelligence />} />
+          <Route path="/owner/prefetch-coverage" element={<OwnerPrefetchCoveragePage />} />
           <Route path="/owner/health" element={<OwnerHealthPage />} />
           <Route path="/owner/api-usage" element={<OwnerApiUsagePage />} />
           <Route path="/owner/database" element={<OwnerDatabasePage />} />
@@ -128,28 +156,42 @@ const AuthenticatedApp = () => {
           </Route>
           <Route path="/matches" element={<MatchCenter />} />
           <Route path="/matches/:fixtureId" element={<MatchDetailPage />} />
+          <Route path="/best-tips" element={<BestTipsPage />} />
+          <Route path="/daily-picks" element={<DailyPicksPage />} />
+          <Route path="/unified-predictions" element={<SuperAdminRoute><UnifiedPredictionsPage /></SuperAdminRoute>} />
           <Route path="/combo-tips" element={<ComboTipsPage />} />
+          <Route path="/betting-plan" element={<BettingPlanPage />} />
+          <Route path="/paper-betting" element={<PaperBettingPage />} />
+          <Route path="/watchlist" element={<WatchlistPage />} />
+          <Route path="/daily-briefing" element={<DailyBriefingPage />} />
           <Route path="/prediction/:id" element={<PredictionDetail />} />
           <Route path="/goal-timing" element={<Navigate to="/goal-timing/dashboard" replace />} />
-          <Route path="/goal-timing/dashboard" element={<GoalTimingDashboardPage />} />
-          <Route path="/goal-timing/picks" element={<GoalTimingPicksPage />} />
-          <Route path="/goal-timing/history" element={<GoalTimingHistoryPage />} />
-          <Route path="/goal-timing/accuracy" element={<GoalTimingAccuracyPage />} />
-          <Route path="/goal-timing/performance" element={<GoalTimingPerformancePage />} />
-          <Route path="/goal-timing/backtest" element={<GoalTimingBacktestPage />} />
-          <Route path="/goal-timing/insights" element={<GoalTimingInsightsPage />} />
+          <Route path="/goal-timing/dashboard" element={<SuperAdminRoute><GoalTimingDashboardPage /></SuperAdminRoute>} />
+          <Route path="/goal-timing/picks" element={<SuperAdminRoute><GoalTimingPicksPage /></SuperAdminRoute>} />
+          <Route path="/goal-timing/history" element={<SuperAdminRoute><GoalTimingHistoryPage /></SuperAdminRoute>} />
+          <Route path="/goal-timing/accuracy" element={<SuperAdminRoute><GoalTimingAccuracyPage /></SuperAdminRoute>} />
+          <Route path="/goal-timing/performance" element={<SuperAdminRoute><GoalTimingPerformancePage /></SuperAdminRoute>} />
+          <Route path="/goal-timing/backtest" element={<SuperAdminRoute><GoalTimingBacktestPage /></SuperAdminRoute>} />
+          <Route path="/goal-timing/insights" element={<SuperAdminRoute><GoalTimingInsightsPage /></SuperAdminRoute>} />
+          <Route path="/subscription/checkout/success" element={<BillingCheckoutSuccess />} />
           <Route path="/accuracy" element={<AccuracyCenter />} />
+          <Route path="/results" element={<PredictionResultsPage />} />
+          <Route path="/archive" element={<ArchivePage />} />
+          <Route path="/archive/:predictionId" element={<PredictionHistoryDetailPage />} />
+          <Route path="/history" element={<Navigate to="/archive" replace />} />
+          <Route path="/history/:entryId" element={<PredictionHistoryDetailPage />} />
           <Route path="/subscription" element={<SubscriptionPage />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/history" element={<PredictionHistoryPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
           <Route path="/api-settings" element={<ApiSettingsPage />} />
           <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
           <Route path="/admin/elite-shadow" element={<SuperAdminRoute><EliteShadowPreview /></SuperAdminRoute>} />
+          <Route path="/admin/learning" element={<SuperAdminRoute><AdminLearningDashboard /></SuperAdminRoute>} />
           <Route path="/elite/world-cup" element={<SuperAdminRoute><EliteWorldCupPage /></SuperAdminRoute>} />
           <Route path="/admin/performance" element={<SuperAdminRoute><AdminPerformancePage /></SuperAdminRoute>} />
+          <Route path="/admin/predops" element={<SuperAdminRoute><AdminPredOpsPage /></SuperAdminRoute>} />
           <Route path="/super-admin" element={<SuperAdminRoute><SuperAdminPanel /></SuperAdminRoute>} />
         </Route>
       </Route>

@@ -1,0 +1,130 @@
+{
+  "generated_at": "2026-06-25T03:31:00.883975+00:00",
+  "phase": "58D",
+  "model_version": "root_cause_analyzer_v1.0.58d",
+  "source_stats": {
+    "live_paired": 0,
+    "historical_replay": 1004,
+    "pending_shadow": 108
+  },
+  "comparisons": 1004,
+  "incorrect": 476,
+  "knowledge_records": 476,
+  "failure_breakdown": {
+    "total_incorrect": 476,
+    "by_reason": {
+      "confidence_overestimation": 320,
+      "lineup_mismatch": 156
+    },
+    "top_reason": "confidence_overestimation"
+  },
+  "pattern_summary": {
+    "total_incorrect": 476,
+    "pattern_counts": {
+      "high_confidence_miss": 320,
+      "tier_a_failures": 294,
+      "component_conflict": 280,
+      "odds_disagreement_gt_15pct": 222,
+      "tier_b_failures": 61,
+      "low_lineup_confidence": 5
+    },
+    "top_patterns": [
+      {
+        "pattern": "high_confidence_miss",
+        "count": 320,
+        "rate": 0.6723
+      },
+      {
+        "pattern": "tier_a_failures",
+        "count": 294,
+        "rate": 0.6176
+      },
+      {
+        "pattern": "component_conflict",
+        "count": 280,
+        "rate": 0.5882
+      },
+      {
+        "pattern": "odds_disagreement_gt_15pct",
+        "count": 222,
+        "rate": 0.4664
+      },
+      {
+        "pattern": "tier_b_failures",
+        "count": 61,
+        "rate": 0.1282
+      },
+      {
+        "pattern": "low_lineup_confidence",
+        "count": 5,
+        "rate": 0.0105
+      }
+    ],
+    "has_clear_patterns": true
+  },
+  "top_hurt_components": [
+    {
+      "component_id": "first_goal_team_v2",
+      "helped": 0.5259,
+      "hurt": 0.4741,
+      "neutral": 0.0,
+      "uncertain": 0.0,
+      "n": 1004,
+      "hurt_rate": 0.4741,
+      "help_rate": 0.5259
+    },
+    {
+      "component_id": "egie_historical_baseline",
+      "helped": 0.5319,
+      "hurt": 0.4681,
+      "neutral": 0.0,
+      "uncertain": 0.0,
+      "n": 1004,
+      "hurt_rate": 0.4681,
+      "help_rate": 0.5319
+    },
+    {
+      "component_id": "goalscorer_intelligence",
+      "helped": 0.5259,
+      "hurt": 0.0,
+      "neutral": 0.0,
+      "uncertain": 0.4741,
+      "n": 1004,
+      "hurt_rate": 0.0,
+      "help_rate": 0.5259
+    },
+    {
+      "component_id": "odds_intelligence",
+      "helped": 0.2789,
+      "hurt": 0.0,
+      "neutral": 0.0,
+      "uncertain": 0.7211,
+      "n": 1004,
+      "hurt_rate": 0.0,
+      "help_rate": 0.2789
+    },
+    {
+      "component_id": "market_behavior_intelligence",
+      "helped": 0.2789,
+      "hurt": 0.0,
+      "neutral": 0.0,
+      "uncertain": 0.7211,
+      "n": 1004,
+      "hurt_rate": 0.0,
+      "help_rate": 0.2789
+    }
+  ],
+  "market_accuracy": {
+    "first_goal_team": 0.5259
+  },
+  "recommendation": "ROOT_CAUSE_READY",
+  "store_paths": {
+    "comparisons": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\root_cause_store\\comparisons_summary.json",
+    "blame_matrix": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\root_cause_store\\component_blame_matrix.json",
+    "patterns": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\root_cause_store\\failure_patterns.json",
+    "failure_breakdown": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\root_cause_store\\failure_breakdown.json",
+    "priority_actions": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\root_cause_store\\priority_actions.json"
+  },
+  "production_changes": false,
+  "api_calls_used": 0
+}

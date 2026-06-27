@@ -1,0 +1,156 @@
+{
+  "passed": 30,
+  "total": 30,
+  "checks": [
+    {
+      "name": "file_deploy_hardening.sh",
+      "ok": true,
+      "detail": "scripts/lib/deploy_hardening.sh"
+    },
+    {
+      "name": "file_deploy_run.sh",
+      "ok": true,
+      "detail": "scripts/deploy_run.sh"
+    },
+    {
+      "name": "file_deploy_phase_a21_quick.sh",
+      "ok": true,
+      "detail": "scripts/deploy_phase_a21_quick.sh"
+    },
+    {
+      "name": "file_deploy_phase_a19_production.sh",
+      "ok": true,
+      "detail": "scripts/deploy_phase_a19_production.sh"
+    },
+    {
+      "name": "file_deploy_phase_a20_quick.sh",
+      "ok": true,
+      "detail": "scripts/deploy_phase_a20_quick.sh"
+    },
+    {
+      "name": "file_deploy_status.py",
+      "ok": true,
+      "detail": "worldcup_predictor/ops/deploy_status.py"
+    },
+    {
+      "name": "cli_deploy_status_parser",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cli_deploy_status_handler",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hardening_deploy_acquire_lock",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hardening_deploy_run_step",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hardening_deploy_write_status",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hardening_DEPLOY_CHECKPOINT_FILE",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "hardening_flock",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "detached_systemd_or_nohup",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy_run_foreground_flag",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy_run_resume_flag",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy_phase_a21_quick.sh_uses_deploy_run",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy_phase_a21_quick.sh_sources_hardening",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy_phase_a19_production.sh_uses_deploy_run",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy_phase_a19_production.sh_sources_hardening",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy_phase_a20_quick.sh_uses_deploy_run",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "deploy_phase_a20_quick.sh_sources_hardening",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "status_read_session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "status_read_state",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "status_rollback_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "status_log_tail",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "status_lock_info",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "status_missing_session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "bash_integration",
+      "ok": true,
+      "detail": "skipped (no bash/flock)"
+    },
+    {
+      "name": "wde_unchanged",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

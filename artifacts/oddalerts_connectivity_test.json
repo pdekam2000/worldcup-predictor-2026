@@ -1,0 +1,215 @@
+{
+  "generated_at": "2026-06-23T12:01:56.921669+00:00",
+  "endpoints": {
+    "bookmakers": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "count": 8
+      },
+      "row_count": 8,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_bookmakers.json"
+    },
+    "competitions": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "page": 1,
+        "per_page": "5",
+        "total": 2415,
+        "total_pages": 483,
+        "count": 5,
+        "next_page_url": "https://data.oddalerts.com/api/competitions?api_token=NdJExcbSqWOBzGpHAdedot2iuZ9pScrhdA8G4WkQY2MEphpPq87ua0pui8nV&page=2&per_page=5"
+      },
+      "row_count": 5,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_competitions.json"
+    },
+    "fixtures_list": {
+      "ok": false,
+      "error": "non_json_response",
+      "sample_type": "dict",
+      "keys": [
+        "raw_text"
+      ],
+      "info": null,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_fixtures_list.json"
+    },
+    "fixture_details": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "page": 1,
+        "per_page": 250,
+        "total": null,
+        "total_pages": null,
+        "count": 1,
+        "next_page_url": false
+      },
+      "row_count": 1,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_fixture_details.json"
+    },
+    "fixtures_multiple": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "page": 1,
+        "per_page": 250,
+        "total": null,
+        "total_pages": null,
+        "count": 1,
+        "next_page_url": false
+      },
+      "row_count": 1,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_fixtures_multiple.json"
+    },
+    "odds_history": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "count": 296
+      },
+      "row_count": 296,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_odds_history.json"
+    },
+    "odds_latest": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "page": 1,
+        "per_page": 250,
+        "count": 250,
+        "next_page_url": "https://data.oddalerts.com/api/odds/latest?api_token=NdJExcbSqWOBzGpHAdedot2iuZ9pScrhdA8G4WkQY2MEphpPq87ua0pui8nV&page=2&per_page=250&since_minutes=60",
+        "window": {
+          "since_unix": 1782212519,
+          "since_minutes": 60,
+          "note": "Returns odds movements within the requested time window, most recent first. Use ?since_minutes=N (default 5, max 1440) to widen the window. Filter with ?bookmakers=, ?markets=, ?outcomes=, ?fixtures= (comma-separated). Paginate by following next_page_url; when there is no more data it will be false."
+        }
+      },
+      "row_count": 250,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_odds_latest.json"
+    },
+    "probability": {
+      "ok": false,
+      "error": "non_json_response",
+      "sample_type": "dict",
+      "keys": [
+        "raw_text"
+      ],
+      "info": null,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_probability.json"
+    },
+    "predictions": {
+      "ok": false,
+      "error": "non_json_response",
+      "sample_type": "dict",
+      "keys": [
+        "raw_text"
+      ],
+      "info": null,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_predictions.json"
+    },
+    "stats_fixture": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "page": 1,
+        "pages": 1,
+        "per_page": 100,
+        "total": 2,
+        "include_frozen": false,
+        "last_x": false,
+        "include_avg": false,
+        "include_friendlies": false,
+        "lookback_days": 730
+      },
+      "row_count": 2,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_stats_fixture.json"
+    },
+    "value_upcoming": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "market": false,
+        "page": "1",
+        "per_page": "5",
+        "results": 1564,
+        "pages": 313,
+        "has_more": true,
+        "next_page_url": "https://data.oddalerts.com/api/value/upcoming?api_token=NdJExcbSqWOBzGpHAdedot2iuZ9pScrhdA8G4WkQY2MEphpPq87ua0pui8nV&page=2&per_page=5",
+        "duration": false
+      },
+      "row_count": 5,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_value_upcoming.json"
+    },
+    "trends_homeWin": {
+      "ok": true,
+      "error": null,
+      "sample_type": "dict",
+      "keys": [
+        "info",
+        "data"
+      ],
+      "info": {
+        "trend": "Home Win",
+        "minStat": false,
+        "maxStat": false,
+        "minOdds": false,
+        "maxOdds": false,
+        "minPlayed": false,
+        "sort": "stat",
+        "duration": "1 Days",
+        "page": "1",
+        "per_page": "250",
+        "start": false,
+        "end": false,
+        "results": 179,
+        "pages": 1
+      },
+      "row_count": 179,
+      "raw_path": "artifacts/oddalerts_raw/connectivity_trends.json"
+    }
+  },
+  "configured": true,
+  "pass_count": 9,
+  "fail_count": 3
+}

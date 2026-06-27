@@ -49,6 +49,16 @@ def owner_model_center(_owner: WebAuthUser = Depends(require_owner_user)) -> dic
     return _service.model_center()
 
 
+@router.get("/performance-center")
+def owner_performance_center(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.performance_center()
+
+
+@router.get("/health-dashboard")
+def owner_health_dashboard(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
+    return _service.health_dashboard()
+
+
 @router.get("/research-lab")
 def owner_research_lab(
     refresh: bool = Query(default=False),
@@ -100,3 +110,24 @@ def owner_scheduler_disable(_owner: WebAuthUser = Depends(require_owner_user)) -
 @router.get("/notifications")
 def owner_notifications(_owner: WebAuthUser = Depends(require_owner_user)) -> dict[str, Any]:
     return _service.notifications()
+
+
+@router.get("/prefetch/coverage")
+def owner_prefetch_coverage(
+    window_days: int = Query(default=7, ge=1, le=14),
+    _owner: WebAuthUser = Depends(require_owner_user),
+) -> dict[str, Any]:
+    from worldcup_predictor.automation.prediction_prefetch.coverage import build_coverage_report
+
+    return build_coverage_report(window_days=window_days)
+
+
+@router.post("/prefetch/run-once")
+def owner_prefetch_run_once(
+    window_days: int = Query(default=7, ge=1, le=14),
+    max_per_cycle: int = Query(default=24, ge=1, le=100),
+    _owner: WebAuthUser = Depends(require_owner_user),
+) -> dict[str, Any]:
+    from worldcup_predictor.automation.prediction_prefetch.scheduler import run_prefetch_scheduler_once
+
+    return run_prefetch_scheduler_once(window_days=window_days, max_per_cycle=max_per_cycle)

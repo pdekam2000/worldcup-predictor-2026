@@ -24,6 +24,18 @@ import { fetchGoalTimingDashboard,
 } from "@/api/saasApi";
 import { classifyApiError } from "@/lib/apiError";
 
+function formatGoalTimingBucket(pick) {
+  if (pick?.no_prediction_flag || pick?.bucket_source === "unavailable") {
+    return "Prediction unavailable";
+  }
+  if (pick?.bucket_is_default && pick?.bucket_reason) {
+    return pick.first_goal_time_range
+      ? `${pick.first_goal_time_range} (low confidence)`
+      : "Waiting for EGIE data";
+  }
+  return pick?.first_goal_time_range_label || pick?.first_goal_time_range || "Pending calculation";
+}
+
 function pct(value) {
   if (value == null || Number.isNaN(value)) return "—";
   return `${Math.round(value)}%`;
@@ -295,7 +307,7 @@ export default function GoalTimingDashboardPage() {
                         {pick.home_team} vs {pick.away_team}
                       </span>
                       <span className="text-slate-500 shrink-0 text-xs flex items-center gap-1">
-                        {pick.first_goal_time_range}
+                        {formatGoalTimingBucket(pick)}
                         {pick.hybrid_confidence?.team?.tier ? (
                           <TierBadge tier={pick.hybrid_confidence.team.tier} label="Team" />
                         ) : (

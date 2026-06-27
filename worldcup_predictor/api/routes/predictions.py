@@ -279,6 +279,33 @@ def _resolve_competition(competition: str, season: int | None):
     return comp
 
 
+def _predops_snapshot_as_cached(fixture_id: int) -> dict[str, Any] | None:
+    """Read-only fallback: serve latest immutable PredOps payload when predict cache misses."""
+    try:
+        from worldcup_predictor.predops.store import PredOpsStore
+
+        snap = PredOpsStore().get_latest_snapshot(int(fixture_id))
+        if not snap:
+            return None
+        payload = snap.get("payload")
+        if not isinstance(payload, dict) or not payload:
+            return None
+        out = dict(payload)
+        out.setdefault("fixture_id", int(fixture_id))
+        if snap.get("competition_key"):
+            out.setdefault("competition_key", snap["competition_key"])
+        out["cache_source"] = "predops_snapshot"
+        out["snapshot_id"] = snap.get("snapshot_id")
+        markets_doc = snap.get("markets")
+        if isinstance(markets_doc, dict):
+            overlay = markets_doc.get("publication_overlay")
+            if isinstance(overlay, dict) and "publication_overlay" not in out:
+                out["publication_overlay"] = overlay
+        return out
+    except Exception:
+        return None
+
+
 def _cache_lookup(
     fixture_id: int,
     *,
@@ -302,6 +329,8 @@ def _cache_lookup(
             season=season,
             locale=locale,
         )
+    if cached is None:
+        cached = _predops_snapshot_as_cached(fixture_id)
     if cached is None:
         return None
     if "audit_trace" not in cached:

@@ -1,0 +1,45 @@
+{
+  "name": "Elite Prediction Engine",
+  "mode": "shadow_only",
+  "layers": [
+    "input_adapters",
+    "validated_component_runners",
+    "market_fusion_nodes",
+    "confidence_fusion",
+    "elite_shadow_prediction"
+  ],
+  "excluded": [
+    {
+      "component_id": "pressure_index",
+      "phase": "54H-7",
+      "recommendation": "PRESSURE_NO_VALUE",
+      "reason": "Pre-match pressure adds no value; in-play only signal."
+    },
+    {
+      "component_id": "team_context",
+      "phase": "54R",
+      "recommendation": "GOALSCORER_HIGH_VALUE but excluded",
+      "reason": "Team context hurts UEFA (\u22121.9pp). Only is_home positive."
+    },
+    {
+      "component_id": "availability_overlay",
+      "phase": "54S",
+      "recommendation": "GOALSCORER_HIGH_VALUE but excluded",
+      "reason": "Lineup-only (67.2%) beats lineup+availability (66.2%) on UEFA."
+    },
+    {
+      "component_id": "team_xg_general",
+      "phase": "54F / 54F-6 / 54F-7",
+      "recommendation": "NO_VALUE / market-specific only",
+      "reason": "General xG blend hurts FGT. Market-specific xG kept as reference only."
+    },
+    {
+      "component_id": "full_feature_blend",
+      "phase": "55C / 54S",
+      "recommendation": "rejected",
+      "reason": "Full blends plateau or degrade vs focused feature families."
+    }
+  ],
+  "wiring": "Parallel component execution \u2192 per-market fusion \u2192 unified confidence \u2192 JSONL shadow store",
+  "production_boundary": "No changes to PredictPipeline, WDE, or live API"
+}

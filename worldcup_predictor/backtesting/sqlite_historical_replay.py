@@ -32,7 +32,7 @@ from worldcup_predictor.prediction.scoring_engine import ScoringEngine
 
 logger = logging.getLogger(__name__)
 
-CONFIDENCE_THRESHOLDS: tuple[int, ...] = (50, 55, 60)
+CONFIDENCE_THRESHOLDS: tuple[int, ...] = (40, 45, 50)
 DQ_THRESHOLD_WDE = 50.0
 DQ_THRESHOLD_30C = 45.0
 
@@ -319,6 +319,8 @@ def replay_fixture_core(
     report = build_intelligence_report(row, home_form=home_form, away_form=away_form)
     repo = FootballIntelligenceRepository()
     _apply_enrichment(report, repo)
+    from worldcup_predictor.backtesting.dq_recalculator import recalculate_data_quality
+    recalculate_data_quality(report)
 
     context = AgentContext(
         settings=settings,

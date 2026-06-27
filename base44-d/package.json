@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --quiet",
+    "lint:critical": "eslint --config eslint.critical.config.js --quiet",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "validate:deploy-guard": "npm run build && node ../scripts/validate_frontend_static_imports.mjs && node ../scripts/validate_frontend_smoke_render.mjs"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^17.0.0",

@@ -1,0 +1,43 @@
+{
+  "provider": "api_football",
+  "resource_type": "injuries",
+  "fixture_id": 1489394,
+  "saved_at": "2026-06-26T14:45:20.486074+00:00",
+  "payload": [
+    {
+      "player": {
+        "id": 32862,
+        "name": "T. Kubo",
+        "photo": "https://media.api-sports.io/football/players/32862.png",
+        "type": "Missing Fixture",
+        "reason": "Injury"
+      },
+      "team": {
+        "id": 12,
+        "name": "Japan",
+        "logo": "https://media.api-sports.io/football/teams/12.png"
+      },
+      "fixture": {
+        "id": 1489394,
+        "timezone": "UTC",
+        "date": "2026-06-21T04:00:00+00:00",
+        "timestamp": 1782014400
+      },
+      "league": {
+        "id": 1,
+        "season": 2026,
+        "name": "World Cup",
+        "country": "World",
+        "logo": "https://media.api-sports.io/football/leagues/1.png",
+        "flag": null
+      }
+    }
+  ],
+  "meta": {
+    "request_endpoint": "/fixtures/injuries",
+    "source": "live",
+    "competition_key": "world_cup_2026",
+    "season": 2026,
+    "league_id": 1
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "backfill": {
+    "job_key": "phase54j_cache_import",
+    "fixtures_processed": 1689,
+    "fixtures_imported": 1605,
+    "fixtures_skipped": 0,
+    "fixtures_empty": 84,
+    "fixtures_error": 0,
+    "player_rows_written": 69503,
+    "rolling_rows_written": 69503,
+    "api_calls_live": 0,
+    "api_calls_cached": 1689,
+    "errors": []
+  },
+  "coverage_audit": {
+    "configured": true,
+    "tables_ready": true,
+    "match_stats": {
+      "player_rows": 69503,
+      "unique_players": 10262,
+      "fixture_count": 1605,
+      "league_count": 4,
+      "season_count": 18,
+      "starter_rows": 34991,
+      "xg_rows": 15901,
+      "minutes_rows": 48725
+    },
+    "rolling_features": {
+      "rolling_rows": 69503,
+      "rolling_fixtures": 1605,
+      "lineup_available_rows": 69223,
+      "formation_rows": 4646,
+      "rolling_signal_rows": 49529
+    },
+    "by_league": [
+      {
+        "league_id": 2,
+        "fixtures": 555,
+        "players": 3903,
+        "xg_rows": 6018
+      },
+      {
+        "league_id": 5,
+        "fixtures": 539,
+        "players": 3791,
+        "xg_rows": 6108
+      },
+      {
+        "league_id": 2286,
+        "fixtures": 464,
+        "players": 5119,
+        "xg_rows": 3150
+      },
+      {
+        "league_id": 732,
+        "fixtures": 47,
+        "players": 1244,
+        "xg_rows": 625
+      }
+    ],
+    "by_season": [
+      {
+        "season_id": 25581,
+        "fixtures": 409,
+        "players": 4130
+      },
+      {
+        "season_id": 25580,
+        "fixtures": 281,
+        "players": 2248
+      },
+      {
+        "season_id": 25582,
+        "fixtures": 271,
+        "players": 2153
+      },
+      {
+        "season_id": 23620,
+        "fixtures": 267,
+        "players": 2107
+      },
+      {
+        "season_id": 23619,
+        "fixtures": 235,
+        "players": 1908
+      },
+      {
+        "season_id": 26618,
+        "fixtures": 47,
+        "players": 1244
+      },
+      {
+        "season_id": 18283,
+        "fixtures": 40,
+        "players": 896
+      },
+      {
+        "season_id": 5308,
+        "fixtures": 18,
+        "players": 246
+      },
+      {
+        "season_id": 23616,
+        "fixtures": 15,
+        "players": 342
+      },
+      {
+        "season_id": 5310,
+        "fixtures": 4,
+        "players": 75
+      },
+      {
+        "season_id": 5315,
+        "fixtures": 4,
+        "players": 98
+      },
+      {
+        "season_id": 5322,
+        "fixtures": 3,
+        "players": 93
+      },
+      {
+        "season_id": 5311,
+        "fixtures": 3,
+        "players": 56
+      },
+      {
+        "season_id": 5321,
+        "fixtures": 2,
+        "players": 52
+      },
+      {
+        "season_id": 5313,
+        "fixtures": 2,
+        "players": 56
+      },
+      {
+        "season_id": 5318,
+        "fixtures": 2,
+        "players": 53
+      },
+      {
+        "season_id": 5309,
+        "fixtures": 1,
+        "players": 34
+      },
+      {
+        "season_id": 5334,
+        "fixtures": 1,
+        "players": 36
+      }
+    ],
+    "duplicate_groups_sample": []
+  },
+  "goalscorer_readiness": [
+    {
+      "feature": "goals_last_5",
+      "coverage": "71.3%",
+      "quality": "high",
+      "goalscorer_value": "high"
+    },
+    {
+      "feature": "goals_per_90",
+      "coverage": "71.3%",
+      "quality": "high",
+      "goalscorer_value": "high"
+    },
+    {
+      "feature": "xg_per_90",
+      "coverage": "22.9%",
+      "quality": "medium",
+      "goalscorer_value": "high"
+    },
+    {
+      "feature": "starter_probability",
+      "coverage": "50.3%",
+      "quality": "high",
+      "goalscorer_value": "high"
+    },
+    {
+      "feature": "lineup_status",
+      "coverage": "99.6%",
+      "quality": "high",
+      "goalscorer_value": "high"
+    },
+    {
+      "feature": "player_rating",
+      "coverage": "partial",
+      "quality": "medium",
+      "goalscorer_value": "medium"
+    },
+    {
+      "feature": "shots_on_target",
+      "coverage": "partial",
+      "quality": "medium",
+      "goalscorer_value": "medium"
+    },
+    {
+      "feature": "recent_form_score",
+      "coverage": "71.3%",
+      "quality": "medium",
+      "goalscorer_value": "high"
+    },
+    {
+      "feature": "formation",
+      "coverage": "6.7%",
+      "quality": "medium",
+      "goalscorer_value": "low"
+    },
+    {
+      "feature": "unique_players",
+      "coverage": "10262",
+      "quality": "high",
+      "goalscorer_value": "high"
+    },
+    {
+      "feature": "fixtures_imported",
+      "coverage": "1605",
+      "quality": "high",
+      "goalscorer_value": "high"
+    }
+  ],
+  "recommendation": "BUILD_GOALSCORER_SHADOW_ENGINE",
+  "postgres_configured": true
+}

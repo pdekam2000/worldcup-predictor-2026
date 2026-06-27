@@ -1,0 +1,52 @@
+{
+  "passed": 9,
+  "total": 9,
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "xg_backtest_module_imports",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature_store_readable",
+      "pass": true,
+      "detail": "records=442"
+    },
+    {
+      "name": "dataset_enriched",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "coverage_reported",
+      "pass": true,
+      "detail": "{'fixtures_total': 80, 'fixtures_with_xg': 6, 'xg_coverage_pct': 7.5, 'leagues': ['champions_league', 'conference_league', 'europa_league'], 'seasons': ['18283', '23616', '23619', '23620', '5308', '5310', '5311', '5321', '5322', '5326'], 'labels': {'first_goal_team_non_null': 74, 'goal_range_non_null': 69, 'over_25_labeled': 80}}"
+    },
+    {
+      "name": "ab_test_completed",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "leakage_audit_pass",
+      "pass": true,
+      "detail": "PASS"
+    },
+    {
+      "name": "feature_importance_generated",
+      "pass": true,
+      "detail": "top_features=20"
+    },
+    {
+      "name": "no_production_changes",
+      "pass": true,
+      "detail": "backtest-only package"
+    },
+    {
+      "name": "no_deploy",
+      "pass": true,
+      "detail": "no deploy artifacts"
+    }
+  ]
+}

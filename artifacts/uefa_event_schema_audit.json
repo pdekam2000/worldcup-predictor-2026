@@ -1,0 +1,233 @@
+{
+  "fixtures_audited": 105,
+  "fixtures_with_events": 71,
+  "total_events": 1021,
+  "event_type_ids": {
+    "14": {
+      "count": 157,
+      "names": [
+        "Goal"
+      ]
+    },
+    "15": {
+      "count": 2,
+      "names": [
+        "Own Goal"
+      ]
+    },
+    "16": {
+      "count": 10,
+      "names": [
+        "Penalty"
+      ]
+    },
+    "17": {
+      "count": 5,
+      "names": [
+        "Missed Penalty"
+      ]
+    },
+    "18": {
+      "count": 481,
+      "names": [
+        "Substitution"
+      ]
+    },
+    "19": {
+      "count": 329,
+      "names": [
+        "Yellowcard"
+      ]
+    },
+    "20": {
+      "count": 5,
+      "names": [
+        "Redcard"
+      ]
+    },
+    "21": {
+      "count": 4,
+      "names": [
+        "Yellow/Red card"
+      ]
+    },
+    "22": {
+      "count": 7,
+      "names": [
+        "Penalty Shootout Miss"
+      ]
+    },
+    "23": {
+      "count": 21,
+      "names": [
+        "Penalty Shootout Goal"
+      ]
+    }
+  },
+  "goal_event_types": {
+    "goal": {
+      "type_id": 14,
+      "name": "Goal"
+    },
+    "own_goal": {
+      "type_id": 15,
+      "name": "Own Goal"
+    },
+    "penalty": {
+      "type_id": 16,
+      "name": "Penalty"
+    },
+    "missed_penalty": {
+      "type_id": 17,
+      "name": "Missed Penalty"
+    },
+    "penalty_shootout_goal": {
+      "type_id": 23,
+      "name": "Penalty Shootout Goal"
+    },
+    "substitution_not_goal": {
+      "type_id": 18,
+      "name": "Substitution",
+      "note": "was incorrectly in GOAL_TYPE_IDS pre API-I"
+    }
+  },
+  "event_field_presence": {
+    "minute": 1021,
+    "participant_id": 1021,
+    "player_id": 1015,
+    "player_name": 1020,
+    "sort_order": 1021,
+    "result": 197,
+    "extra_minute": 79,
+    "rescinded": 338,
+    "addition": 140,
+    "info": 62
+  },
+  "participant_fields": {
+    "id": 210,
+    "sport_id": 210,
+    "country_id": 210,
+    "venue_id": 210,
+    "gender": 210,
+    "name": 210,
+    "short_code": 210,
+    "image_path": 210,
+    "founded": 210,
+    "type": 210,
+    "placeholder": 210,
+    "last_played_at": 210,
+    "meta": 210,
+    "meta.location": 210,
+    "meta.winner": 210,
+    "meta.position": 210
+  },
+  "team_identifier_fields": [
+    "participants[].id",
+    "participants[].meta.location",
+    "events[].participant_id"
+  ],
+  "minute_fields": [
+    "events[].minute",
+    "events[].extra_minute",
+    "events[].sort_order"
+  ],
+  "samples": {
+    "goal": {
+      "id": 31763632,
+      "fixture_id": 1058434,
+      "period_id": 2550850,
+      "participant_id": 14,
+      "type_id": 14,
+      "section": "event",
+      "player_id": 580,
+      "related_player_id": null,
+      "player_name": "Cristiano Ronaldo",
+      "related_player_name": null,
+      "result": "0-1",
+      "info": null,
+      "addition": null,
+      "minute": 26,
+      "extra_minute": null,
+      "injured": null,
+      "on_bench": false,
+      "coach_id": null,
+      "sub_type_id": null,
+      "detailed_period_id": null,
+      "rescinded": null,
+      "sort_order": 1,
+      "type": {
+        "id": 14,
+        "name": "Goal",
+        "code": "goal",
+        "developer_name": "GOAL",
+        "model_type": "event",
+        "stat_group": null
+      }
+    },
+    "penalty": {
+      "id": 31763717,
+      "fixture_id": 1058441,
+      "period_id": 356952,
+      "participant_id": 113,
+      "type_id": 16,
+      "section": "event",
+      "player_id": 127540,
+      "related_player_id": null,
+      "player_name": "Kak\u00e1",
+      "related_player_name": null,
+      "result": "2-1",
+      "info": null,
+      "addition": null,
+      "minute": 84,
+      "extra_minute": null,
+      "injured": null,
+      "on_bench": false,
+      "coach_id": null,
+      "sub_type_id": null,
+      "detailed_period_id": null,
+      "rescinded": null,
+      "sort_order": 3,
+      "type": {
+        "id": 16,
+        "name": "Penalty",
+        "code": "penalty",
+        "developer_name": "PENALTY",
+        "model_type": "event",
+        "stat_group": null
+      }
+    },
+    "own_goal": {
+      "id": 31763773,
+      "fixture_id": 1058460,
+      "period_id": 356962,
+      "participant_id": 19,
+      "type_id": 15,
+      "section": "event",
+      "player_id": 699,
+      "related_player_id": null,
+      "player_name": "Alex",
+      "related_player_name": null,
+      "result": "1-0",
+      "info": null,
+      "addition": null,
+      "minute": 58,
+      "extra_minute": null,
+      "injured": null,
+      "on_bench": false,
+      "coach_id": null,
+      "sub_type_id": null,
+      "detailed_period_id": null,
+      "rescinded": null,
+      "sort_order": 1,
+      "type": {
+        "id": 15,
+        "name": "Own Goal",
+        "code": "owngoal",
+        "developer_name": "OWNGOAL",
+        "model_type": "event",
+        "stat_group": null
+      }
+    }
+  },
+  "ordering": "events sorted by (minute, extra_minute, sort_order) for first-goal resolution"
+}

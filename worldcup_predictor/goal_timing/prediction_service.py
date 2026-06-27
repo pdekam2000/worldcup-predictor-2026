@@ -114,20 +114,25 @@ class GoalTimingPredictionService:
 
     def list_today_picks(self, *, limit: int = 20) -> dict[str, Any]:
         picks: list[dict[str, Any]] = []
+        errors: list[dict[str, Any]] = []
         for comp_key in GOAL_TIMING_PREDICTION_LEAGUE_KEYS:
             rows = self.stored.repo.list_upcoming_fixtures(comp_key, limit=limit)
             for row in rows:
                 fid = int(row["fixture_id"])
                 if not is_valid_fixture_id(fid):
                     continue
-                existing = self.repository.get_prediction_by_fixture(fid)
-                if existing and not existing.get("no_prediction_flag"):
-                    picks.append(self._serialize_prediction_row(existing))
+                try:
+                    existing = self.repository.get_prediction_by_fixture(fid)
+                    if existing and not existing.get("no_prediction_flag"):
+                        picks.append(self._serialize_prediction_row(existing))
+                        continue
+                    generated = self.predict_fixture(fid, persist=True, competition_key=comp_key)
+                    pred = generated.get("prediction")
+                    if pred and not pred.get("no_prediction_flag"):
+                        picks.append(self._serialize_pick_dict(pred))
+                except Exception as exc:
+                    errors.append({"fixture_id": fid, "error": str(exc)})
                     continue
-                generated = self.predict_fixture(fid, persist=True, competition_key=comp_key)
-                pred = generated.get("prediction")
-                if pred and not pred.get("no_prediction_flag"):
-                    picks.append(pred)
                 if len(picks) >= limit:
                     break
             if len(picks) >= limit:
@@ -137,8 +142,18 @@ class GoalTimingPredictionService:
             "competition_keys": list(GOAL_TIMING_PREDICTION_LEAGUE_KEYS),
             "picks": picks[:limit],
             "count": len(picks[:limit]),
+            "errors": errors,
             "generated_at": datetime.now(timezone.utc).isoformat(),
         }
+
+    @staticmethod
+    def _serialize_pick_dict(pred: dict[str, Any]) -> dict[str, Any]:
+        if pred.get("no_prediction_flag") or pred.get("bucket_source") == "unavailable":
+            out = dict(pred)
+            out["first_goal_time_range"] = None
+            out["first_goal_time_range_label"] = "Prediction unavailable"
+            return out
+        return pred
 
     def list_stored_picks(self, *, limit: int = 50, upcoming_only: bool = True) -> dict[str, Any]:
         """Read cached published picks from PostgreSQL only (fast, no generation)."""
@@ -156,10 +171,40 @@ class GoalTimingPredictionService:
         }
 
     def _serialize_prediction_row(self, row: dict[str, Any]) -> dict[str, Any]:
+        no_pick = bool(row.get("no_prediction_flag"))
         display_minute = row.get("display_estimated_first_goal_minute")
         if display_minute is None and row.get("estimated_first_goal_minute") is not None:
             display_minute = row.get("estimated_first_goal_minute")
         display_minute_f = float(display_minute) if display_minute is not None else None
+
+        breakdown = row.get("specialist_agent_breakdown") or {}
+        if isinstance(breakdown, str):
+            try:
+                import json
+
+                breakdown = json.loads(breakdown)
+            except (json.JSONDecodeError, TypeError):
+                breakdown = {}
+
+        audit = breakdown.get("audit_details") if isinstance(breakdown, dict) else {}
+        bucket_is_default = bool(audit.get("bucket_is_default")) if isinstance(audit, dict) else False
+        bucket_reason = audit.get("bucket_reason") if isinstance(audit, dict) else None
+        bucket_source = audit.get("bucket_source") if isinstance(audit, dict) else None
+
+        raw_range = row.get("first_goal_time_range")
+        if no_pick or not raw_range:
+            range_display = None
+            range_label = "Prediction unavailable"
+            bucket_is_default = True
+            bucket_reason = bucket_reason or "no_prediction_flag"
+            bucket_source = bucket_source or "unavailable"
+        elif bucket_is_default:
+            range_display = str(raw_range)
+            range_label = str(raw_range)
+        else:
+            range_display = str(raw_range)
+            range_label = str(raw_range)
+
         payload = {
             "fixture_id": row.get("fixture_id"),
             "competition_key": row.get("competition_key"),
@@ -167,16 +212,20 @@ class GoalTimingPredictionService:
             "away_team": row.get("away_team"),
             "match_date": row.get("match_date").isoformat() if row.get("match_date") else None,
             "first_goal_team": row.get("first_goal_team"),
-            "first_goal_time_range": row.get("first_goal_time_range"),
-            "display_estimated_first_goal_minute": display_minute_f,
-            "estimated_first_goal_minute": display_minute_f,
+            "first_goal_time_range": range_display,
+            "first_goal_time_range_label": range_label,
+            "bucket_source": bucket_source or ("model_output" if range_display else "unavailable"),
+            "bucket_is_default": bucket_is_default,
+            "bucket_reason": bucket_reason,
+            "display_estimated_first_goal_minute": display_minute_f if not no_pick else None,
+            "estimated_first_goal_minute": display_minute_f if not no_pick else None,
             "confidence_score": float(row.get("confidence_score") or 0),
             "model_confidence_score": float(row.get("model_confidence_score") or 0)
             if row.get("model_confidence_score") is not None
             else None,
             "data_quality_score": float(row.get("data_quality_score") or 0),
             "explanation": row.get("explanation"),
-            "no_prediction_flag": bool(row.get("no_prediction_flag")),
+            "no_prediction_flag": no_pick,
             "no_bet_flag": bool(row.get("no_bet_flag")),
             "model_version": row.get("model_version"),
         }

@@ -1,0 +1,29 @@
+{
+  "before": {
+    "mapping_fixtures": 120,
+    "backtest_eligible_a": 93,
+    "fg_team_pending_a": 57
+  },
+  "after_mapping": {
+    "mapping_fixtures": 220,
+    "added": 100,
+    "by_competition": {
+      "champions_league": 90,
+      "europa_league": 65,
+      "conference_league": 65
+    }
+  },
+  "after_rebuild": {
+    "provider_coverage_pct": {
+      "xg": 3.64,
+      "pressure": 21.82,
+      "odds": 47.73,
+      "predictions": 29.55,
+      "lineups": 65.91,
+      "events": 60.91,
+      "statistics": 52.73
+    },
+    "survival_dataset": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\egie\\uefa_club\\uefa_survival_dataset.parquet",
+    "sqlite_upserted": null
+  }
+}

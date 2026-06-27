@@ -1,0 +1,78 @@
+{
+  "phase": "46D",
+  "passed": 13,
+  "total": 13,
+  "checks": [
+    {
+      "name": "unified_events_parse",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "name": "unified_event_layer_goals",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "unified_event_layer_cards",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "odds_movement_intelligence_fields",
+      "ok": true,
+      "detail": "0.0"
+    },
+    {
+      "name": "apply_provider_utilization",
+      "ok": true,
+      "detail": [
+        "provider_utilization_v1",
+        "unified_events",
+        "odds_movement_intelligence",
+        "advanced_match_intelligence",
+        "player_intelligence"
+      ]
+    },
+    {
+      "name": "migration_unified_events_table",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "name": "wde_input_layer_extends_limitations",
+      "ok": true,
+      "detail": "before=0 after=1"
+    },
+    {
+      "name": "wde_factor_weights_unchanged",
+      "ok": true,
+      "detail": "0.1"
+    },
+    {
+      "name": "core_1x2_eval_unchanged",
+      "ok": true,
+      "detail": "correct"
+    },
+    {
+      "name": "goal_minute_eval_unchanged",
+      "ok": true,
+      "detail": "correct"
+    },
+    {
+      "name": "no_scoring_engine_in_utilization",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "inventory_doc_exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "fusion_policy_doc_exists",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

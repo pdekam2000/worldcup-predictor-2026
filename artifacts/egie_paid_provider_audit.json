@@ -1,0 +1,39 @@
+{
+  "competition_key": "premier_league",
+  "fixtures_audited": 380,
+  "provider_feature_store": {
+    "fixtures": 380,
+    "coverage_pct": {
+      "xg": 0.0,
+      "pressure": 0.0,
+      "odds": 0.0,
+      "advanced_stats": 3.16,
+      "lineups": 3.16,
+      "injuries": 0.0,
+      "events": 94.47
+    },
+    "coverage_count": {
+      "xg": 0,
+      "pressure": 0,
+      "odds": 0,
+      "advanced_stats": 12,
+      "lineups": 12,
+      "injuries": 0,
+      "events": 359
+    }
+  },
+  "egie_feature_builder_sample_n": 50,
+  "egie_feature_builder_flags_pct": {
+    "has_reliable_goal_odds": 0.0,
+    "sportmonks_xg_in_sample": 0.0,
+    "stored_goal_events": 100.0,
+    "provider_features_attached": 100.0
+  },
+  "pipeline_gaps": [
+    "Sportmonks xG stored but not reaching EGIE features for most fixtures",
+    "Pressure Index not available in stored raw data",
+    "Lineups barely ingested into EGIE raw store",
+    "Injuries barely ingested into EGIE raw store",
+    "API-Football fixture statistics rarely in EGIE raw store"
+  ]
+}

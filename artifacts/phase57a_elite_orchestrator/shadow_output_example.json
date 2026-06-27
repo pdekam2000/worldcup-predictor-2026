@@ -1,0 +1,235 @@
+{
+  "fixture_id": 0,
+  "sportmonks_fixture_id": null,
+  "competition_key": "design_example",
+  "generated_at": "2026-06-25T03:08:33.467524+00:00",
+  "markets": {
+    "first_goal_team": {
+      "market_id": "first_goal_team",
+      "prediction": "home",
+      "confidence": 0.64,
+      "tier": "B",
+      "evidence": {
+        "fgt_v2_prob_home": 0.58,
+        "egie_baseline": "home",
+        "top_home_goals_per_90": 0.62,
+        "fts_implied_home": 0.54
+      },
+      "reasoning": [
+        "Goalscorer intel favors home top scorer (goals_per_90 lead +0.18)",
+        "EGIE baseline agrees on home first goal",
+        "MBI bucket prior neutral at current FTS odds"
+      ],
+      "component_contributions": [
+        {
+          "component_id": "first_goal_team_v2",
+          "weight": 0.45,
+          "prediction": "home",
+          "confidence": 0.58,
+          "evidence": {
+            "group": "baseline_goalscorer"
+          }
+        },
+        {
+          "component_id": "egie_historical_baseline",
+          "weight": 0.3,
+          "prediction": "home",
+          "confidence": 0.52,
+          "evidence": {}
+        },
+        {
+          "component_id": "goalscorer_intelligence",
+          "weight": 0.15,
+          "prediction": "home",
+          "confidence": 0.61,
+          "evidence": {
+            "intel_gap": 0.18
+          }
+        },
+        {
+          "component_id": "odds_intelligence",
+          "weight": 0.1,
+          "prediction": "home",
+          "confidence": 0.54,
+          "evidence": {
+            "fts_implied": 0.54
+          }
+        }
+      ]
+    },
+    "team_to_score_first": {
+      "market_id": "team_to_score_first",
+      "prediction": "home",
+      "confidence": 0.64,
+      "tier": "B",
+      "evidence": {
+        "alias_of": "first_goal_team",
+        "same_fusion_path": true
+      },
+      "reasoning": [
+        "Mirrors first_goal_team fusion \u2014 same underlying signal"
+      ],
+      "component_contributions": []
+    },
+    "anytime_goalscorer": {
+      "market_id": "anytime_goalscorer",
+      "prediction": [
+        "Player A",
+        "Player B",
+        "Player C"
+      ],
+      "confidence": 0.59,
+      "tier": "B",
+      "evidence": {
+        "top3_composite_hit_rate_ref": 0.571,
+        "lineup_confirmed": true
+      },
+      "reasoning": [
+        "Combined score ranks top-3 from player form + lineup eligibility",
+        "No goalscorer odds \u2014 odds confidence capped"
+      ],
+      "component_contributions": [
+        {
+          "component_id": "goalscorer_intelligence",
+          "weight": 0.7,
+          "prediction": [
+            "Player A",
+            "Player B",
+            "Player C"
+          ],
+          "confidence": 0.59,
+          "evidence": {}
+        },
+        {
+          "component_id": "player_form_store",
+          "weight": 0.2,
+          "prediction": null,
+          "confidence": 0.55,
+          "evidence": {
+            "form_score": 0.72
+          }
+        },
+        {
+          "component_id": "lineup_intelligence",
+          "weight": 0.1,
+          "prediction": null,
+          "confidence": 0.8,
+          "evidence": {
+            "starters": 11
+          }
+        }
+      ]
+    },
+    "1x2": {
+      "market_id": "1x2",
+      "prediction": {
+        "home": 0.42,
+        "draw": 0.28,
+        "away": 0.3
+      },
+      "confidence": 0.48,
+      "tier": "C",
+      "evidence": {
+        "mbi_prior_shift": 0.02,
+        "odds_books": 8
+      },
+      "reasoning": [
+        "Odds-led with 10% MBI bucket prior on home short-price bucket"
+      ],
+      "component_contributions": [
+        {
+          "component_id": "odds_intelligence",
+          "weight": 0.6,
+          "prediction": {
+            "home": 0.4
+          },
+          "confidence": 0.5,
+          "evidence": {}
+        },
+        {
+          "component_id": "market_behavior_intelligence",
+          "weight": 0.1,
+          "prediction": null,
+          "confidence": 0.45,
+          "evidence": {
+            "bucket": "2.40-2.50"
+          }
+        }
+      ]
+    },
+    "first_goalscorer": {
+      "market_id": "first_goalscorer",
+      "prediction": [
+        "Player A",
+        "Player B",
+        "Player C"
+      ],
+      "confidence": 0.38,
+      "tier": "C",
+      "evidence": {
+        "top3_first_goal_ref": 0.31
+      },
+      "reasoning": [
+        "Research tier \u2014 first goalscorer accuracy below anytime"
+      ],
+      "component_contributions": [
+        {
+          "component_id": "goalscorer_intelligence",
+          "weight": 0.85,
+          "prediction": [
+            "Player A"
+          ],
+          "confidence": 0.38,
+          "evidence": {}
+        }
+      ]
+    },
+    "goal_timing": {
+      "market_id": "goal_timing",
+      "prediction": {
+        "range": "16-30",
+        "minute_estimate": 24
+      },
+      "confidence": 0.35,
+      "tier": "C",
+      "evidence": {
+        "inherits": "hybrid_confidence_engine",
+        "conf_range": 0.41
+      },
+      "reasoning": [
+        "EGIE survival range \u2014 minute experimental per 52D"
+      ],
+      "component_contributions": [
+        {
+          "component_id": "egie_historical_baseline",
+          "weight": 0.9,
+          "prediction": {
+            "range": "16-30"
+          },
+          "confidence": 0.35,
+          "evidence": {}
+        },
+        {
+          "component_id": "hybrid_confidence_engine",
+          "weight": 0.1,
+          "prediction": null,
+          "confidence": 0.41,
+          "evidence": {}
+        }
+      ]
+    }
+  },
+  "fusion": {
+    "model_agreement": 0.82,
+    "market_agreement": 0.71,
+    "mbi_prior_applied": true,
+    "mbi_blend_weight": 0.1,
+    "odds_confidence": 0.68,
+    "data_quality": 0.85,
+    "overall_tier": "B"
+  },
+  "meta": {
+    "mode": "design_example",
+    "production": false
+  }
+}

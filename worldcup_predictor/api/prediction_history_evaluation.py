@@ -324,4 +324,6 @@ def filter_by_result_status(items: list[dict[str, Any]], status_filter: str) -> 
         return items
     if normalized == "incorrect":
         normalized = "wrong"
+    if normalized == "evaluated":
+        return [item for item in items if item.get("result_status") in ("correct", "wrong", "partial")]
     return [item for item in items if item.get("result_status") == normalized]

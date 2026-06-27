@@ -27,8 +27,8 @@ PROD_LOW = 0.45
 COMPONENT_STRONG = 0.75
 COMPONENT_WEAK = 0.45
 
-_HOME_ALIASES = frozenset({"home", "home_win", "1", "h"})
-_AWAY_ALIASES = frozenset({"away", "away_win", "2", "a"})
+_HOME_ALIASES = frozenset({"home", "home_win", "home_team", "1", "h"})
+_AWAY_ALIASES = frozenset({"away", "away_win", "away_team", "2", "a"})
 _DRAW_ALIASES = frozenset({"draw", "x", "d"})
 
 

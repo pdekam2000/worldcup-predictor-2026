@@ -275,9 +275,12 @@ def _promotion_state_for_elite(
 
 
 def build_promotion_status(*, settings: Settings | None = None) -> dict[str, Any]:
+    from worldcup_predictor.owner.dashboard_metrics import promotion_progress_block
+
     settings = settings or get_settings()
     store = AutonomousStore(settings)
     markets_out: list[dict[str, Any]] = []
+    total_elite_evals = 0
 
     for market_id in MARKETS:
         prod = _engine_metrics(store, engine="production", market_id=market_id)
@@ -300,12 +303,15 @@ def build_promotion_status(*, settings: Settings | None = None) -> dict[str, Any
                 evaluations_remaining=remaining,
             ).to_dict()
         )
+        total_elite_evals = max(total_elite_evals, int(elite.get("evaluated") or 0))
 
+    progress = promotion_progress_block(total_elite_evals)
     return {
         "status": "ok",
         "disclaimer": "Recommendations only — does not change public engine routing.",
         "generated_at": datetime.now(timezone.utc).isoformat() + "Z",
         "gates": GATES,
+        "promotion_progress": progress,
         "markets": markets_out,
         "summary": {
             "paper_ready_count": sum(1 for m in markets_out if m["promotion_state"] == "PAPER_READY"),

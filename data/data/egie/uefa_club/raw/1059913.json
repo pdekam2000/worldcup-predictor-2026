@@ -1,0 +1,178 @@
+{
+  "sportmonks_fixture_id": 1059913,
+  "fetched_at": "2026-06-23T08:47:12.260323+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059913,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25129,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": null,
+      "name": "Levski Sofia vs Auxerre",
+      "starting_at": "2005-09-28 22:00:00",
+      "result_info": "Levski Sofia won after full-time.",
+      "leg": "2/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1127944800,
+      "participants": [
+        {
+          "id": 3223,
+          "sport_id": 1,
+          "country_id": 224,
+          "venue_id": 110725,
+          "gender": "male",
+          "name": "Levski Sofia",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/23/3223.png",
+          "founded": 1914,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-06-19 14:00:00",
+          "meta": {
+            "location": "home",
+            "winner": true,
+            "position": null
+          }
+        },
+        {
+          "id": 3682,
+          "sport_id": 1,
+          "country_id": 17,
+          "venue_id": 2155,
+          "gender": "male",
+          "name": "Auxerre",
+          "short_code": "AUX",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/2/3682.png",
+          "founded": 1905,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-17 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5661792,
+          "fixture_id": 1059913,
+          "type_id": 1,
+          "participant_id": 3223,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661793,
+          "fixture_id": 1059913,
+          "type_id": 1,
+          "participant_id": 3682,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661795,
+          "fixture_id": 1059913,
+          "type_id": 2,
+          "participant_id": 3682,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661796,
+          "fixture_id": 1059913,
+          "type_id": 1525,
+          "participant_id": 3223,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661797,
+          "fixture_id": 1059913,
+          "type_id": 1525,
+          "participant_id": 3682,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661794,
+          "fixture_id": 1059913,
+          "type_id": 2,
+          "participant_id": 3223,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782204432,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 1380,
+      "remaining": 2419,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  },
+  "reingest": "phase_api_j_targeted"
+}

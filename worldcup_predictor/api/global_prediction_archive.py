@@ -11,6 +11,12 @@ from worldcup_predictor.api.archive_evaluation_join import (
     enrich_row_with_evaluation,
     merge_history_row_pair,
 )
+from worldcup_predictor.api.market_level_evaluation import (
+    compute_archive_winrate_stats,
+    limited_historical_payload,
+    market_rows_from_evaluation,
+    resolve_best_bet_market_keys,
+)
 from worldcup_predictor.api.prediction_history_evaluation import (
     FixtureOutcomeResolver,
     evaluate_history_record,
@@ -195,6 +201,16 @@ def build_global_archive_row(
             row_status = _normalize_status(evaluation.get("overall_status"))
 
     main_pred = _main_prediction(payload)
+    market_breakdown = []
+    has_best_bet = False
+    limited_payload = False
+    if evaluation and payload:
+        market_breakdown = market_rows_from_evaluation(evaluation, payload, outcome)
+        has_best_bet = bool(resolve_best_bet_market_keys(payload))
+        limited_payload = limited_historical_payload(payload)
+        from worldcup_predictor.api.market_level_evaluation import count_evaluation_rows
+
+        market_counts = count_evaluation_rows(market_breakdown)
     return {
         "entry_id": global_entry_id(fixture_id),
         "id": global_entry_id(fixture_id),
@@ -226,6 +242,10 @@ def build_global_archive_row(
         "wrong_markets_count": market_counts.get("wrong_markets_count", 0),
         "pending_markets_count": market_counts.get("pending_markets_count", 0),
         "market_statuses": market_statuses,
+        "market_breakdown": market_breakdown,
+        "has_best_bet": has_best_bet,
+        "limited_historical_payload": limited_payload,
+        "unavailable_markets_count": market_counts.get("unavailable_markets_count", 0),
         "actual_result": evaluation.get("actual_result") if evaluation else (outcome.actual_result if outcome.is_finished else None),
         "final_score": evaluation.get("final_score") if evaluation else (outcome.final_score if outcome.is_finished else None),
         "markets_count": _markets_count(payload),
@@ -248,13 +268,40 @@ def list_global_archive_rows(
     repo = FootballIntelligenceRepository(settings.sqlite_path or None)
     resolver = FixtureOutcomeResolver(settings=settings)
 
-    stored_rows = repo.list_worldcup_stored_predictions(
-        competition_key=competition_key,
-        limit=max(limit + offset, limit),
-        offset=0,
-        include_quarantined=False,
-    )
-    eval_rows = repo.list_worldcup_prediction_evaluations(competition_key=competition_key)
+    all_competitions = str(competition_key or "").lower() in {"all", "*"}
+    if all_competitions:
+        stored_rows = []
+        for comp_key in repo.list_worldcup_stored_prediction_competition_keys():
+            stored_rows.extend(
+                repo.list_worldcup_stored_predictions(
+                    competition_key=comp_key,
+                    limit=max(limit + offset, limit),
+                    offset=0,
+                    include_quarantined=False,
+                )
+            )
+        eval_rows = repo.list_all_worldcup_prediction_evaluations()
+    else:
+        stored_rows = repo.list_worldcup_stored_predictions(
+            competition_key=competition_key,
+            limit=max(limit + offset, limit),
+            offset=0,
+            include_quarantined=False,
+        )
+        eval_rows = repo.list_worldcup_prediction_evaluations(competition_key=competition_key)
+
+    stored_rows.sort(key=lambda r: str(r.get("predicted_at") or ""), reverse=True)
+    seen_fixture_ids: set[int] = set()
+    deduped_stored: list[dict[str, Any]] = []
+    for row in stored_rows:
+        fid = int(row.get("fixture_id") or 0)
+        if fid and fid in seen_fixture_ids:
+            continue
+        if fid:
+            seen_fixture_ids.add(fid)
+        deduped_stored.append(row)
+    stored_rows = deduped_stored
+
     evaluations = {int(r["fixture_id"]): r for r in eval_rows}
 
     items: list[dict[str, Any]] = []
@@ -334,6 +381,14 @@ def count_global_archive_rows(
 ) -> int:
     settings = settings or get_settings()
     repo = FootballIntelligenceRepository(settings.sqlite_path or None)
+    if str(competition_key or "").lower() in {"all", "*"}:
+        total = 0
+        for comp_key in repo.list_worldcup_stored_prediction_competition_keys():
+            total += repo.count_worldcup_stored_predictions(
+                competition_key=comp_key,
+                include_quarantined=False,
+            )
+        return total
     return repo.count_worldcup_stored_predictions(
         competition_key=competition_key,
         include_quarantined=False,
@@ -361,22 +416,9 @@ def merge_history_rows(
 
 
 def compute_history_stats(items: list[dict[str, Any]]) -> dict[str, Any]:
-    settled = [item for item in items if item.get("result_status") in ("correct", "wrong")]
-    partial = sum(1 for item in items if item.get("result_status") == "partial")
-    correct = sum(1 for item in settled if item.get("result_status") == "correct")
-    wrong = sum(1 for item in settled if item.get("result_status") == "wrong")
-    pending = sum(1 for item in items if item.get("result_status") == "pending")
-    unknown = sum(1 for item in items if item.get("result_status") == "unknown")
-    accuracy = round((correct / len(settled)) * 100, 1) if settled else 0.0
-    return {
-        "total": len(items),
-        "correct": correct,
-        "wrong": wrong,
-        "partial": partial,
-        "pending": pending,
-        "unknown": unknown,
-        "accuracy": accuracy,
-    }
+    stats = compute_archive_winrate_stats(items)
+    stats["unknown"] = sum(1 for item in items if item.get("result_status") == "unknown")
+    return stats
 
 
 def fetch_merged_history(

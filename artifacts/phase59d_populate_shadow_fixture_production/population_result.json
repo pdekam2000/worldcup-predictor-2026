@@ -1,0 +1,371 @@
+{
+  "shadow_fixtures": 18,
+  "shadow_market_rows": 108,
+  "existing_count": 1,
+  "missing_count": 17,
+  "generated_count": 17,
+  "failed_count": 0,
+  "skipped_duplicates": 0,
+  "api_calls_estimate": 17,
+  "dry_run": false,
+  "comparison_before": {
+    "total_rows": 108,
+    "total_comparable": 4,
+    "same_pick_count": 1,
+    "disagreement_count": 3,
+    "agreement_rate": 0.25,
+    "average_production_confidence": 0.62,
+    "average_shadow_confidence": 0.7312,
+    "markets_with_most_disagreement": [
+      {
+        "market_id": "1x2",
+        "disagreement_count": 1
+      },
+      {
+        "market_id": "first_goal_team",
+        "disagreement_count": 1
+      },
+      {
+        "market_id": "team_to_score_first",
+        "disagreement_count": 1
+      }
+    ],
+    "strong_disagreements": [
+      {
+        "fixture_id": 1489409,
+        "market_id": "first_goal_team",
+        "match": "Cura\u00e7ao vs Ivory Coast",
+        "shadow_pick": "away",
+        "production_pick": "ivory coast",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489409,
+        "market_id": "team_to_score_first",
+        "match": "Cura\u00e7ao vs Ivory Coast",
+        "shadow_pick": "away",
+        "production_pick": "ivory coast",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489409,
+        "market_id": "1x2",
+        "match": "Cura\u00e7ao vs Ivory Coast",
+        "shadow_pick": "away",
+        "production_pick": "away_win",
+        "shadow_confidence": 0.8355,
+        "shadow_tier": "A",
+        "production_confidence": 0.62
+      }
+    ],
+    "missing_production_count": 68,
+    "missing_shadow_count": 2
+  },
+  "comparison_after": {
+    "total_rows": 108,
+    "total_comparable": 72,
+    "same_pick_count": 16,
+    "disagreement_count": 56,
+    "agreement_rate": 0.2222,
+    "average_production_confidence": 0.5843,
+    "average_shadow_confidence": 0.653,
+    "markets_with_most_disagreement": [
+      {
+        "market_id": "1x2",
+        "disagreement_count": 18
+      },
+      {
+        "market_id": "first_goal_team",
+        "disagreement_count": 18
+      },
+      {
+        "market_id": "team_to_score_first",
+        "disagreement_count": 18
+      },
+      {
+        "market_id": "goal_timing",
+        "disagreement_count": 2
+      }
+    ],
+    "strong_disagreements": [
+      {
+        "fixture_id": 1489409,
+        "market_id": "first_goal_team",
+        "match": "Cura\u00e7ao vs Ivory Coast",
+        "shadow_pick": "away",
+        "production_pick": "ivory coast",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489409,
+        "market_id": "team_to_score_first",
+        "match": "Cura\u00e7ao vs Ivory Coast",
+        "shadow_pick": "away",
+        "production_pick": "ivory coast",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489412,
+        "market_id": "first_goal_team",
+        "match": "Tunisia vs Netherlands",
+        "shadow_pick": "away",
+        "production_pick": "netherlands",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489412,
+        "market_id": "team_to_score_first",
+        "match": "Tunisia vs Netherlands",
+        "shadow_pick": "away",
+        "production_pick": "netherlands",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489415,
+        "market_id": "first_goal_team",
+        "match": "New Zealand vs Belgium",
+        "shadow_pick": "away",
+        "production_pick": "belgium",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489415,
+        "market_id": "team_to_score_first",
+        "match": "New Zealand vs Belgium",
+        "shadow_pick": "away",
+        "production_pick": "belgium",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489417,
+        "market_id": "first_goal_team",
+        "match": "Uruguay vs Spain",
+        "shadow_pick": "away",
+        "production_pick": "spain",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489417,
+        "market_id": "team_to_score_first",
+        "match": "Uruguay vs Spain",
+        "shadow_pick": "away",
+        "production_pick": "spain",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489420,
+        "market_id": "first_goal_team",
+        "match": "Croatia vs Ghana",
+        "shadow_pick": "home",
+        "production_pick": "ghana",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489420,
+        "market_id": "team_to_score_first",
+        "match": "Croatia vs Ghana",
+        "shadow_pick": "home",
+        "production_pick": "ghana",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489421,
+        "market_id": "first_goal_team",
+        "match": "Jordan vs Argentina",
+        "shadow_pick": "away",
+        "production_pick": "argentina",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489421,
+        "market_id": "team_to_score_first",
+        "match": "Jordan vs Argentina",
+        "shadow_pick": "away",
+        "production_pick": "argentina",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489422,
+        "market_id": "first_goal_team",
+        "match": "Panama vs England",
+        "shadow_pick": "away",
+        "production_pick": "england",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489422,
+        "market_id": "team_to_score_first",
+        "match": "Panama vs England",
+        "shadow_pick": "away",
+        "production_pick": "england",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1539074,
+        "market_id": "first_goal_team",
+        "match": "Senegal vs Iraq",
+        "shadow_pick": "home",
+        "production_pick": "senegal",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      }
+    ],
+    "missing_production_count": 0,
+    "missing_shadow_count": 36
+  },
+  "generated": [
+    {
+      "fixture_id": 1489410,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 32.4,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489411,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 34.0,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489412,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 22.2,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489413,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 47.7,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489414,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 35.2,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489415,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 54.3,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489416,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 37.8,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489417,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 52.5,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489418,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 43.1,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489419,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 30.4,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489420,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 32.8,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489421,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 45.3,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1489422,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 42.3,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1539011,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 46.0,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1539012,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 46.1,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1539013,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 34.3,
+      "has_detailed_markets": true
+    },
+    {
+      "fixture_id": 1539074,
+      "generated_by": "phase59d_shadow_comparison_population",
+      "cache_source": "admin_shadow_comparison_population",
+      "confidence": 62.1,
+      "has_detailed_markets": true
+    }
+  ],
+  "failed": []
+}

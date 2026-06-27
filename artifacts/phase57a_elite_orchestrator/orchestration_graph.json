@@ -1,0 +1,479 @@
+{
+  "version": "elite_orchestrator_v1_shadow",
+  "inputs": [
+    "lineups",
+    "player_store",
+    "goalscorer_intelligence",
+    "market_behavior_intelligence",
+    "odds",
+    "historical_models"
+  ],
+  "outputs": [
+    "1x2",
+    "first_goal_team",
+    "team_to_score_first",
+    "anytime_goalscorer",
+    "first_goalscorer",
+    "goal_timing"
+  ],
+  "nodes": [
+    {
+      "node_id": "input_lineups",
+      "node_type": "input",
+      "inputs": [],
+      "outputs": [
+        "lineups"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "input_player_store",
+      "node_type": "input",
+      "inputs": [],
+      "outputs": [
+        "player_store"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "input_goalscorer_intelligence",
+      "node_type": "input",
+      "inputs": [],
+      "outputs": [
+        "goalscorer_intelligence"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "input_market_behavior_intelligence",
+      "node_type": "input",
+      "inputs": [],
+      "outputs": [
+        "market_behavior_intelligence"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "input_odds",
+      "node_type": "input",
+      "inputs": [],
+      "outputs": [
+        "odds"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "input_historical_models",
+      "node_type": "input",
+      "inputs": [],
+      "outputs": [
+        "historical_models"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "node_lineup_intel",
+      "node_type": "component",
+      "inputs": [
+        "lineups",
+        "player_store"
+      ],
+      "outputs": [
+        "lineup_features",
+        "starter_probs"
+      ],
+      "component_id": "lineup_intelligence"
+    },
+    {
+      "node_id": "node_player_form",
+      "node_type": "component",
+      "inputs": [
+        "player_store"
+      ],
+      "outputs": [
+        "player_form_features"
+      ],
+      "component_id": "player_form_store"
+    },
+    {
+      "node_id": "node_goalscorer_intel",
+      "node_type": "component",
+      "inputs": [
+        "lineup_features",
+        "starter_probs",
+        "player_form_features"
+      ],
+      "outputs": [
+        "goalscorer_rankings",
+        "team_attack_proxy"
+      ],
+      "component_id": "goalscorer_intelligence"
+    },
+    {
+      "node_id": "node_odds_intel",
+      "node_type": "component",
+      "inputs": [
+        "odds"
+      ],
+      "outputs": [
+        "implied_probs",
+        "odds_movement",
+        "odds_confidence"
+      ],
+      "component_id": "odds_intelligence"
+    },
+    {
+      "node_id": "node_mbi_prior",
+      "node_type": "component",
+      "inputs": [
+        "odds",
+        "market_behavior_intelligence"
+      ],
+      "outputs": [
+        "mbi_bucket_prior",
+        "mbi_calibration_gap"
+      ],
+      "component_id": "market_behavior_intelligence"
+    },
+    {
+      "node_id": "node_egie_baseline",
+      "node_type": "component",
+      "inputs": [
+        "historical_models",
+        "lineup_features"
+      ],
+      "outputs": [
+        "egie_fgt",
+        "egie_timing",
+        "egie_range"
+      ],
+      "component_id": "egie_historical_baseline"
+    },
+    {
+      "node_id": "node_fgt_v2",
+      "node_type": "component",
+      "inputs": [
+        "team_attack_proxy",
+        "implied_probs",
+        "egie_fgt"
+      ],
+      "outputs": [
+        "fgt_v2_prediction",
+        "fgt_v2_probs"
+      ],
+      "component_id": "first_goal_team_v2"
+    },
+    {
+      "node_id": "fuse_1x2",
+      "node_type": "fusion",
+      "inputs": [
+        "implied_probs",
+        "mbi_bucket_prior",
+        "odds_confidence"
+      ],
+      "outputs": [
+        "1x2"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "fuse_first_goal_team",
+      "node_type": "fusion",
+      "inputs": [
+        "fgt_v2_prediction",
+        "egie_fgt",
+        "mbi_bucket_prior",
+        "implied_probs",
+        "team_attack_proxy"
+      ],
+      "outputs": [
+        "first_goal_team"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "fuse_team_to_score_first",
+      "node_type": "fusion",
+      "inputs": [
+        "fgt_v2_prediction",
+        "egie_fgt",
+        "implied_probs"
+      ],
+      "outputs": [
+        "team_to_score_first"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "fuse_anytime_goalscorer",
+      "node_type": "fusion",
+      "inputs": [
+        "goalscorer_rankings",
+        "implied_probs",
+        "starter_probs"
+      ],
+      "outputs": [
+        "anytime_goalscorer"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "fuse_first_goalscorer",
+      "node_type": "fusion",
+      "inputs": [
+        "goalscorer_rankings",
+        "implied_probs"
+      ],
+      "outputs": [
+        "first_goalscorer"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "fuse_goal_timing",
+      "node_type": "fusion",
+      "inputs": [
+        "egie_timing",
+        "egie_range",
+        "implied_probs"
+      ],
+      "outputs": [
+        "goal_timing"
+      ],
+      "component_id": null
+    },
+    {
+      "node_id": "node_confidence_fusion",
+      "node_type": "confidence",
+      "inputs": [
+        "1x2",
+        "first_goal_team",
+        "team_to_score_first",
+        "anytime_goalscorer",
+        "first_goalscorer",
+        "goal_timing"
+      ],
+      "outputs": [
+        "tier_a_d",
+        "fusion_scores"
+      ],
+      "component_id": "hybrid_confidence_engine"
+    },
+    {
+      "node_id": "output_elite_shadow",
+      "node_type": "output",
+      "inputs": [
+        "1x2",
+        "first_goal_team",
+        "team_to_score_first",
+        "anytime_goalscorer",
+        "first_goalscorer",
+        "goal_timing",
+        "tier_a_d",
+        "fusion_scores"
+      ],
+      "outputs": [
+        "elite_shadow_prediction"
+      ],
+      "component_id": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "lineups",
+      "to": "node_lineup_intel"
+    },
+    {
+      "from": "player_store",
+      "to": "node_lineup_intel"
+    },
+    {
+      "from": "player_store",
+      "to": "node_player_form"
+    },
+    {
+      "from": "lineup_features",
+      "to": "node_goalscorer_intel"
+    },
+    {
+      "from": "starter_probs",
+      "to": "node_goalscorer_intel"
+    },
+    {
+      "from": "player_form_features",
+      "to": "node_goalscorer_intel"
+    },
+    {
+      "from": "odds",
+      "to": "node_odds_intel"
+    },
+    {
+      "from": "odds",
+      "to": "node_mbi_prior"
+    },
+    {
+      "from": "market_behavior_intelligence",
+      "to": "node_mbi_prior"
+    },
+    {
+      "from": "historical_models",
+      "to": "node_egie_baseline"
+    },
+    {
+      "from": "lineup_features",
+      "to": "node_egie_baseline"
+    },
+    {
+      "from": "team_attack_proxy",
+      "to": "node_fgt_v2"
+    },
+    {
+      "from": "implied_probs",
+      "to": "node_fgt_v2"
+    },
+    {
+      "from": "egie_fgt",
+      "to": "node_fgt_v2"
+    },
+    {
+      "from": "implied_probs",
+      "to": "fuse_1x2"
+    },
+    {
+      "from": "mbi_bucket_prior",
+      "to": "fuse_1x2"
+    },
+    {
+      "from": "odds_confidence",
+      "to": "fuse_1x2"
+    },
+    {
+      "from": "fgt_v2_prediction",
+      "to": "fuse_first_goal_team"
+    },
+    {
+      "from": "egie_fgt",
+      "to": "fuse_first_goal_team"
+    },
+    {
+      "from": "mbi_bucket_prior",
+      "to": "fuse_first_goal_team"
+    },
+    {
+      "from": "implied_probs",
+      "to": "fuse_first_goal_team"
+    },
+    {
+      "from": "team_attack_proxy",
+      "to": "fuse_first_goal_team"
+    },
+    {
+      "from": "fgt_v2_prediction",
+      "to": "fuse_team_to_score_first"
+    },
+    {
+      "from": "egie_fgt",
+      "to": "fuse_team_to_score_first"
+    },
+    {
+      "from": "implied_probs",
+      "to": "fuse_team_to_score_first"
+    },
+    {
+      "from": "goalscorer_rankings",
+      "to": "fuse_anytime_goalscorer"
+    },
+    {
+      "from": "implied_probs",
+      "to": "fuse_anytime_goalscorer"
+    },
+    {
+      "from": "starter_probs",
+      "to": "fuse_anytime_goalscorer"
+    },
+    {
+      "from": "goalscorer_rankings",
+      "to": "fuse_first_goalscorer"
+    },
+    {
+      "from": "implied_probs",
+      "to": "fuse_first_goalscorer"
+    },
+    {
+      "from": "egie_timing",
+      "to": "fuse_goal_timing"
+    },
+    {
+      "from": "egie_range",
+      "to": "fuse_goal_timing"
+    },
+    {
+      "from": "implied_probs",
+      "to": "fuse_goal_timing"
+    },
+    {
+      "from": "1x2",
+      "to": "node_confidence_fusion"
+    },
+    {
+      "from": "first_goal_team",
+      "to": "node_confidence_fusion"
+    },
+    {
+      "from": "team_to_score_first",
+      "to": "node_confidence_fusion"
+    },
+    {
+      "from": "anytime_goalscorer",
+      "to": "node_confidence_fusion"
+    },
+    {
+      "from": "first_goalscorer",
+      "to": "node_confidence_fusion"
+    },
+    {
+      "from": "goal_timing",
+      "to": "node_confidence_fusion"
+    },
+    {
+      "from": "1x2",
+      "to": "output_elite_shadow"
+    },
+    {
+      "from": "first_goal_team",
+      "to": "output_elite_shadow"
+    },
+    {
+      "from": "team_to_score_first",
+      "to": "output_elite_shadow"
+    },
+    {
+      "from": "anytime_goalscorer",
+      "to": "output_elite_shadow"
+    },
+    {
+      "from": "first_goalscorer",
+      "to": "output_elite_shadow"
+    },
+    {
+      "from": "goal_timing",
+      "to": "output_elite_shadow"
+    },
+    {
+      "from": "tier_a_d",
+      "to": "output_elite_shadow"
+    },
+    {
+      "from": "fusion_scores",
+      "to": "output_elite_shadow"
+    }
+  ],
+  "execution_order": [
+    "input_layer",
+    "parallel_components",
+    "market_fusion",
+    "confidence_fusion",
+    "shadow_output"
+  ],
+  "mermaid": "flowchart TB\n    subgraph inputs [Input Layer]\n        L[lineups]\n        PS[player_store]\n        GS[goalscorer_intelligence]\n        MBI[market_behavior_intelligence]\n        OD[odds]\n        HM[historical_models]\n    end\n\n    subgraph components [Validated Components]\n        LI[lineup_intelligence]\n        PF[player_form_store]\n        GI[goalscorer_intelligence]\n        OI[odds_intelligence]\n        MP[mbi_prior]\n        EB[egie_baseline]\n        FV[first_goal_team_v2]\n    end\n\n    subgraph fusion [Market Fusion]\n        F1[1X2]\n        F2[first_goal_team]\n        F3[team_to_score_first]\n        F4[anytime_goalscorer]\n        F5[first_goalscorer]\n        F6[goal_timing]\n    end\n\n    CF[confidence_fusion A-D]\n    OUT[elite_shadow_prediction]\n\n    L --> LI\n    PS --> LI\n    PS --> PF\n    LI --> GI\n    PF --> GI\n    OD --> OI\n    OD --> MP\n    MBI --> MP\n    HM --> EB\n    LI --> EB\n    GI --> FV\n    OI --> FV\n    EB --> FV\n    OI --> F1\n    MP --> F1\n    FV --> F2\n    EB --> F2\n    MP --> F2\n    FV --> F3\n    EB --> F3\n    GI --> F4\n    OI --> F4\n    GI --> F5\n    EB --> F6\n    F1 & F2 & F3 & F4 & F5 & F6 --> CF\n    CF --> OUT"
+}

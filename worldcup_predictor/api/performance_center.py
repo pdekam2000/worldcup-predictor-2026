@@ -41,28 +41,52 @@ def _market_block_from_eval_rows(
     market_name: str,
     status_col: str,
     rows: list[dict[str, Any]],
+    *,
+    stored_by_fixture: dict[int, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     relevant: list[str] = []
+    confidences: list[float] = []
     for row in rows:
+        if int(row.get("is_quarantined") or 0):
+            continue
         status = str(row.get(status_col) or "pending").lower()
         if status in {"correct", "wrong"}:
             relevant.append(status)
+            if stored_by_fixture:
+                fid = int(row.get("fixture_id") or 0)
+                payload = stored_by_fixture.get(fid) or {}
+                raw = payload.get("confidence")
+                if raw is not None:
+                    try:
+                        c = float(raw)
+                        if 0 <= c <= 1:
+                            c *= 100
+                        confidences.append(c)
+                    except (TypeError, ValueError):
+                        pass
     total = len(relevant)
     correct = sum(1 for s in relevant if s == "correct")
     wrong = total - correct
     pending = sum(
         1
         for row in rows
-        if str(row.get(status_col) or "pending").lower() not in {"correct", "wrong"}
+        if not int(row.get("is_quarantined") or 0)
+        and str(row.get(status_col) or "pending").lower() not in {"correct", "wrong"}
     )
+    predictions = total + pending
     accuracy = round(correct / total, 4) if total else None
+    avg_conf = round(sum(confidences) / len(confidences), 1) if confidences else None
     return {
         "market_name": market_name,
+        "predictions": predictions,
         "total": total,
+        "evaluated": total,
         "correct": correct,
         "wrong": wrong,
         "pending": pending,
         "accuracy": accuracy,
+        "winrate": accuracy,
+        "average_confidence": avg_conf,
         "sample_size": total,
         "reliability_level": reliability_level(total),
     }
@@ -99,6 +123,11 @@ def build_performance_summary(
         summary = rebuild_accuracy_summary(settings=settings, competition_key=competition_key)
 
     eval_rows = repo.list_worldcup_prediction_evaluations(competition_key=competition_key)
+    eval_rows = [r for r in eval_rows if not int(r.get("is_quarantined") or 0)]
+    stored_rows = repo.list_worldcup_stored_predictions(
+        competition_key=competition_key, limit=2000, offset=0, include_quarantined=False
+    )
+    stored_by_fixture = {int(r["fixture_id"]): _parse_payload(r) for r in stored_rows if r.get("fixture_id")}
     dates = [str(r.get("evaluated_at") or "") for r in eval_rows if r.get("evaluated_at")]
     dates.sort()
 
@@ -125,7 +154,7 @@ def build_performance_summary(
     for market_name, _, status_col in _MARKET_DEFS:
         if any(m["market_name"] == market_name for m in markets):
             continue
-        block = _market_block_from_eval_rows(market_name, status_col, eval_rows)
+        block = _market_block_from_eval_rows(market_name, status_col, eval_rows, stored_by_fixture=stored_by_fixture)
         if block["total"] > 0:
             markets.append(block)
 

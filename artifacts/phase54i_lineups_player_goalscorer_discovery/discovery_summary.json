@@ -1,0 +1,356 @@
+{
+  "generated_at": "2026-06-24T08:10:24.415052+00:00",
+  "phase": "54I",
+  "backtest_only": true,
+  "production_changes": false,
+  "lineups_discovery": {
+    "generated_at": "2026-06-24T08:10:21.370906+00:00",
+    "source": "cache_scan",
+    "cache_roots": [
+      "data/egie/uefa_club/raw",
+      "data/data/egie/uefa_club/raw",
+      "data/feature_store/sportmonks_pressure/raw",
+      "data/feature_store/sportmonks_xg/raw"
+    ],
+    "totals": {
+      "fixtures_scanned": 1690,
+      "with_starting_xi": 1559,
+      "with_bench": 1562,
+      "with_formations": 123,
+      "with_player_minutes": 1539,
+      "with_goalscorer_odds": 105,
+      "with_player_xg": 1067,
+      "prematch_usable": 120,
+      "historical_usable": 1559
+    },
+    "by_league": {
+      "2": {
+        "fixtures": 600,
+        "starting_xi": 556,
+        "goalscorer_odds": 25
+      },
+      "5": {
+        "fixtures": 578,
+        "starting_xi": 539,
+        "goalscorer_odds": 25
+      },
+      "2286": {
+        "fixtures": 464,
+        "starting_xi": 464,
+        "goalscorer_odds": 55
+      },
+      "732": {
+        "fixtures": 48,
+        "starting_xi": 0,
+        "goalscorer_odds": 0
+      }
+    },
+    "by_season": {
+      "5308": {
+        "fixtures": 19,
+        "starting_xi": 18,
+        "goalscorer_odds": 0
+      },
+      "5321": {
+        "fixtures": 2,
+        "starting_xi": 2,
+        "goalscorer_odds": 0
+      },
+      "5311": {
+        "fixtures": 3,
+        "starting_xi": 2,
+        "goalscorer_odds": 0
+      },
+      "5322": {
+        "fixtures": 3,
+        "starting_xi": 3,
+        "goalscorer_odds": 0
+      },
+      "5310": {
+        "fixtures": 4,
+        "starting_xi": 2,
+        "goalscorer_odds": 0
+      },
+      "5326": {
+        "fixtures": 39,
+        "starting_xi": 0,
+        "goalscorer_odds": 0
+      },
+      "18283": {
+        "fixtures": 40,
+        "starting_xi": 40,
+        "goalscorer_odds": 40
+      },
+      "23616": {
+        "fixtures": 15,
+        "starting_xi": 15,
+        "goalscorer_odds": 15
+      },
+      "23619": {
+        "fixtures": 279,
+        "starting_xi": 239,
+        "goalscorer_odds": 25
+      },
+      "23620": {
+        "fixtures": 267,
+        "starting_xi": 267,
+        "goalscorer_odds": 25
+      },
+      "5309": {
+        "fixtures": 1,
+        "starting_xi": 1,
+        "goalscorer_odds": 0
+      },
+      "5313": {
+        "fixtures": 2,
+        "starting_xi": 2,
+        "goalscorer_odds": 0
+      },
+      "5315": {
+        "fixtures": 4,
+        "starting_xi": 4,
+        "goalscorer_odds": 0
+      },
+      "5318": {
+        "fixtures": 2,
+        "starting_xi": 2,
+        "goalscorer_odds": 0
+      },
+      "5334": {
+        "fixtures": 1,
+        "starting_xi": 1,
+        "goalscorer_odds": 0
+      },
+      "26618": {
+        "fixtures": 48,
+        "starting_xi": 0,
+        "goalscorer_odds": 0
+      },
+      "25580": {
+        "fixtures": 281,
+        "starting_xi": 281,
+        "goalscorer_odds": 0
+      },
+      "25581": {
+        "fixtures": 409,
+        "starting_xi": 409,
+        "goalscorer_odds": 0
+      },
+      "25582": {
+        "fixtures": 271,
+        "starting_xi": 271,
+        "goalscorer_odds": 0
+      }
+    },
+    "fixture_sample_count": 1690
+  },
+  "player_stats_discovery": {
+    "totals": {
+      "fixtures_scanned": 1690,
+      "with_starting_xi": 1559,
+      "with_bench": 1562,
+      "with_formations": 123,
+      "with_player_minutes": 1539,
+      "with_goalscorer_odds": 105,
+      "with_player_xg": 1067,
+      "prematch_usable": 120,
+      "historical_usable": 1559
+    },
+    "by_league": {
+      "2": {
+        "fixtures": 600,
+        "starting_xi": 556,
+        "goalscorer_odds": 25
+      },
+      "5": {
+        "fixtures": 578,
+        "starting_xi": 539,
+        "goalscorer_odds": 25
+      },
+      "2286": {
+        "fixtures": 464,
+        "starting_xi": 464,
+        "goalscorer_odds": 55
+      },
+      "732": {
+        "fixtures": 48,
+        "starting_xi": 0,
+        "goalscorer_odds": 0
+      }
+    }
+  },
+  "goalscorer_odds_discovery": {
+    "fixtures_with_goalscorer_odds": 105,
+    "fixtures_scanned": 1690
+  },
+  "api_probe": {
+    "generated_at": "2026-06-24T08:10:24.414942+00:00",
+    "source": "api_probe",
+    "api_calls_used": 12,
+    "max_calls": 35,
+    "configured": true,
+    "league_seasons": {
+      "732": {
+        "season_id": 26618,
+        "error": null,
+        "topscorer_rows": 25
+      },
+      "2": {
+        "season_id": 28155,
+        "error": null,
+        "topscorer_rows": 0
+      },
+      "5": {
+        "season_id": 27913,
+        "error": null,
+        "topscorer_rows": 0
+      },
+      "2286": {
+        "season_id": 27911,
+        "error": null,
+        "topscorer_rows": 0
+      }
+    },
+    "probes": [
+      {
+        "group": "topscorers",
+        "path": "/topscorers/seasons/26618",
+        "status": 200,
+        "ok": true,
+        "rows": 25,
+        "error": null
+      },
+      {
+        "group": "topscorers",
+        "path": "/topscorers/seasons/28155",
+        "status": 200,
+        "ok": true,
+        "rows": 0,
+        "error": null
+      },
+      {
+        "group": "topscorers",
+        "path": "/topscorers/seasons/27913",
+        "status": 200,
+        "ok": true,
+        "rows": 0,
+        "error": null
+      },
+      {
+        "group": "topscorers",
+        "path": "/topscorers/seasons/27911",
+        "status": 200,
+        "ok": true,
+        "rows": 0,
+        "error": null
+      }
+    ]
+  },
+  "feature_potential_matrix": [
+    {
+      "feature": "Starting XI",
+      "coverage": "92.2%",
+      "quality": "high",
+      "egie_value": "medium",
+      "goalscorer_value": "high",
+      "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+    },
+    {
+      "feature": "Bench",
+      "coverage": "92.4%",
+      "quality": "high",
+      "egie_value": "low",
+      "goalscorer_value": "medium",
+      "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+    },
+    {
+      "feature": "Formation",
+      "coverage": "7.3%",
+      "quality": "high",
+      "egie_value": "medium",
+      "goalscorer_value": "low",
+      "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+    },
+    {
+      "feature": "Player minutes",
+      "coverage": "91.1%",
+      "quality": "high",
+      "egie_value": "low",
+      "goalscorer_value": "high",
+      "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+    },
+    {
+      "feature": "Player goals/assists",
+      "coverage": "91.1%",
+      "quality": "medium",
+      "egie_value": "low",
+      "goalscorer_value": "high",
+      "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+    },
+    {
+      "feature": "Player shots",
+      "coverage": "partial",
+      "quality": "medium",
+      "egie_value": "low",
+      "goalscorer_value": "medium",
+      "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+    },
+    {
+      "feature": "Player xG",
+      "coverage": "63.1%",
+      "quality": "medium",
+      "egie_value": "low",
+      "goalscorer_value": "high",
+      "recommendation": "BUILD_GOALSCORER_FEATURE_STORE"
+    },
+    {
+      "feature": "Player rating",
+      "coverage": "partial",
+      "quality": "medium",
+      "egie_value": "low",
+      "goalscorer_value": "medium",
+      "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+    },
+    {
+      "feature": "Topscorers API",
+      "coverage": "API",
+      "quality": "high",
+      "egie_value": "medium",
+      "goalscorer_value": "high",
+      "recommendation": "BUILD_GOALSCORER_FEATURE_STORE"
+    },
+    {
+      "feature": "First goalscorer odds",
+      "coverage": "6.2%",
+      "quality": "medium",
+      "egie_value": "low",
+      "goalscorer_value": "high",
+      "recommendation": "GOALSCORER_ODDS_RESEARCH_ONLY"
+    },
+    {
+      "feature": "Anytime goalscorer odds",
+      "coverage": "6.2%",
+      "quality": "medium",
+      "egie_value": "low",
+      "goalscorer_value": "high",
+      "recommendation": "GOALSCORER_ODDS_RESEARCH_ONLY"
+    },
+    {
+      "feature": "Team to score first odds",
+      "coverage": "high",
+      "quality": "high",
+      "egie_value": "high",
+      "goalscorer_value": "medium",
+      "recommendation": "existing_odds_parser"
+    },
+    {
+      "feature": "Sidelined/injuries",
+      "coverage": "low",
+      "quality": "low",
+      "egie_value": "medium",
+      "goalscorer_value": "medium",
+      "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+    }
+  ],
+  "recommendation": "BUILD_LINEUP_PLAYER_FEATURE_STORE"
+}

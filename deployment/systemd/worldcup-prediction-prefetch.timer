@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly prediction prefetch timer (Phase A14)
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=1h
+Persistent=true
+Unit=worldcup-prediction-prefetch.service
+
+[Install]
+WantedBy=timers.target

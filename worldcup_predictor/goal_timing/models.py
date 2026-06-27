@@ -31,7 +31,7 @@ class GoalTimingPredictionResult:
     away_team: str
     match_date: datetime | None
     first_goal_team: GoalTimingTeamPick
-    first_goal_time_range: str
+    first_goal_time_range: str | None
     display_estimated_first_goal_minute: float | None
     bucket_representative_minute: float | None
     weighted_average_minute: float | None

@@ -1,0 +1,147 @@
+{
+  "pre_deploy_check": "PASS",
+  "passed": 28,
+  "total": 28,
+  "checks": [
+    {
+      "name": "router_once_history_router",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "router_once_performance_router",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "route_history",
+      "ok": true,
+      "detail": "prod=404 local_router_ready=True"
+    },
+    {
+      "name": "route_history_global",
+      "ok": true,
+      "detail": "http=404 body={\"detail\":\"Not Found\"}"
+    },
+    {
+      "name": "route_performance_summary",
+      "ok": true,
+      "detail": "prod=404 local_router_ready=True"
+    },
+    {
+      "name": "route_performance_details",
+      "ok": true,
+      "detail": "http=404 body={\"detail\":\"Not Found\"}"
+    },
+    {
+      "name": "db_exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "table_worldcup_stored_predictions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "table_worldcup_prediction_evaluations",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "table_worldcup_accuracy_summary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "count_stored_predictions",
+      "ok": true,
+      "detail": "count=56 min=1"
+    },
+    {
+      "name": "count_evaluations",
+      "ok": true,
+      "detail": "count=6 min=0"
+    },
+    {
+      "name": "migrations_quarantine_col",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no_empty_stored_dataset",
+      "ok": true,
+      "detail": "stored predictions must exist"
+    },
+    {
+      "name": "local_route_api_history",
+      "ok": true,
+      "detail": "registered=True"
+    },
+    {
+      "name": "local_route_api_performance_summary",
+      "ok": true,
+      "detail": "registered=True"
+    },
+    {
+      "name": "local_route_api_performance_details",
+      "ok": true,
+      "detail": "registered=True"
+    },
+    {
+      "name": "local_route_history_global",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "localhost_smoke__api_health",
+      "ok": true,
+      "detail": "http=200"
+    },
+    {
+      "name": "localhost_smoke__api_performance_summary",
+      "ok": true,
+      "detail": "http=404 pre_deploy_expected"
+    },
+    {
+      "name": "localhost_smoke__api_history",
+      "ok": true,
+      "detail": "http=404 pre_deploy_expected"
+    },
+    {
+      "name": "migration_defs_stored",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "migration_defs_evaluations",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "local_frontend_build",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "frontend_build_assets",
+      "ok": true,
+      "detail": "assets=2"
+    },
+    {
+      "name": "commit_trace",
+      "ok": true,
+      "detail": "local=d8fd1ab7 server=ee762edc"
+    },
+    {
+      "name": "rollback_backup_exists",
+      "ok": true,
+      "detail": "/opt/worldcup-predictor/backups/deploy-phase60a-full-gui-shadow-20260625-052400"
+    },
+    {
+      "name": "deploy_script",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

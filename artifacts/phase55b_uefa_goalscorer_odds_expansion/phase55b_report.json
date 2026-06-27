@@ -1,0 +1,525 @@
+{
+  "generated_at": "2026-06-24T16:57:06.889469+00:00",
+  "phase": "55B",
+  "source_audit": {
+    "consolidated_inventory": {
+      "generated_at": "2026-06-24T16:55:06.117264+00:00",
+      "sources": [
+        {
+          "source": "sportmonks_cache_strict",
+          "fixtures_audited": 1689,
+          "fixtures_with_goalscorer_odds": 3,
+          "selection_count": 703,
+          "market_count": 2,
+          "bookmaker_count": 1,
+          "notes": "Sportmonks cached payloads \u2014 player/team goalscorer markets (54M strict patterns)",
+          "markets": {
+            "Goalscorers": 417,
+            "Team Goalscorer": 286
+          },
+          "bookmakers": {
+            "bet365": 703
+          }
+        },
+        {
+          "source": "sportmonks_cache_broad",
+          "fixtures_audited": 1689,
+          "fixtures_with_goalscorer_odds": 105,
+          "selection_count": 75497,
+          "market_count": 6,
+          "bookmaker_count": 28,
+          "notes": "Sportmonks cache \u2014 broad 54I patterns (includes FTS, correct score, etc.)",
+          "markets": {
+            "Correct Score": 48216,
+            "Correct Score 1st Half": 19753,
+            "Correct Score 2nd Half": 5684,
+            "Half Time Correct Score": 1141,
+            "Goalscorers": 417,
+            "Team Goalscorer": 286
+          },
+          "bookmakers": {}
+        },
+        {
+          "source": "api_football_odds_snapshots",
+          "fixtures_audited": 85,
+          "fixtures_with_goalscorer_odds": 72,
+          "selection_count": 27813,
+          "market_count": 9,
+          "bookmaker_count": 2,
+          "notes": "SQLite odds_snapshots table (API-Football / The Odds API payloads)",
+          "markets": {
+            "First Goal Scorer": 3472,
+            "Last Goal Scorer": 3472,
+            "Anytime Goal Scorer": 3400,
+            "Home Anytime Goal Scorer": 2932,
+            "Home First Goal Scorer": 2932,
+            "Home Last Goal Scorer": 2932,
+            "Away Anytime Goal Scorer": 2891,
+            "Away First Goal Scorer": 2891,
+            "Away Last Goal Scorer": 2891
+          },
+          "bookmakers": {
+            "Bet365": 20544,
+            "Betano": 7269
+          }
+        },
+        {
+          "source": "api_football_disk_cache",
+          "fixtures_audited": 88,
+          "fixtures_with_goalscorer_odds": 72,
+          "selection_count": 27816,
+          "market_count": 9,
+          "bookmaker_count": 2,
+          "notes": "Disk cache at .cache/api_football",
+          "markets": {
+            "First Goal Scorer": 3472,
+            "Last Goal Scorer": 3472,
+            "Anytime Goal Scorer": 3400,
+            "Home Anytime Goal Scorer": 2933,
+            "Home First Goal Scorer": 2933,
+            "Home Last Goal Scorer": 2933,
+            "Away Anytime Goal Scorer": 2891,
+            "Away First Goal Scorer": 2891,
+            "Away Last Goal Scorer": 2891
+          },
+          "bookmakers": {
+            "Bet365": 20544,
+            "Betano": 7272
+          }
+        },
+        {
+          "source": "api_football_raw_cache_walk",
+          "fixtures_audited": 9705,
+          "fixtures_with_goalscorer_odds": 21,
+          "selection_count": 8988,
+          "market_count": 9,
+          "bookmaker_count": 0,
+          "notes": "Full .cache/api_football walk \u2014 text prefilter then strict market parse",
+          "markets": {
+            "Home Anytime Goal Scorer": 1015,
+            "Home First Goal Scorer": 1015,
+            "Home Last Goal Scorer": 1015,
+            "First Goal Scorer": 1013,
+            "Last Goal Scorer": 1013,
+            "Anytime Goal Scorer": 992,
+            "Away Anytime Goal Scorer": 975,
+            "Away First Goal Scorer": 975,
+            "Away Last Goal Scorer": 975
+          },
+          "bookmakers": {}
+        },
+        {
+          "source": "shadow_odds_replays",
+          "fixtures_audited": 408,
+          "fixtures_with_goalscorer_odds": 0,
+          "selection_count": 0,
+          "market_count": 0,
+          "bookmaker_count": 0,
+          "notes": "Shadow replay JSONL \u2014 keyword presence only (no structured GS parse)",
+          "markets": {},
+          "bookmakers": {}
+        }
+      ],
+      "totals": {
+        "fixture_count_union_estimate": 75,
+        "selection_count_union_estimate": 28516,
+        "market_count_union_estimate": 9,
+        "bookmaker_count_union_estimate": 2,
+        "sportmonks_strict_fixtures": 3,
+        "api_football_fixtures": 72
+      },
+      "summary": {
+        "fixture_count": 75,
+        "selection_count": 28516,
+        "market_count": 9,
+        "bookmaker_count": 2
+      }
+    },
+    "sportmonks_strict_summary": {
+      "fixtures_audited": 1689,
+      "fixtures_with_goalscorer_odds": 3,
+      "bookmaker_count": 1,
+      "market_count": 2,
+      "selection_count": 703,
+      "mapped_count": 0,
+      "unmapped_count": 0,
+      "mapping_rate": 0.0,
+      "confidence_high": 0,
+      "confidence_medium": 0,
+      "confidence_low": 0,
+      "historical_fixtures": 3,
+      "upcoming_fixtures": 0
+    },
+    "sportmonks_strict_selections": 703,
+    "market_type_counts_strict": {
+      "anytime_goalscorer": 417,
+      "team_goalscorer": 286
+    },
+    "api_football_gs_by_competition": {
+      "world_cup_2026": 72
+    },
+    "sources_audited": [
+      "sportmonks_cache_strict",
+      "sportmonks_cache_broad",
+      "api_football_odds_snapshots",
+      "api_football_disk_cache",
+      "api_football_raw_cache_walk",
+      "shadow_odds_replays"
+    ]
+  },
+  "uefa_inventory": {
+    "by_league": {
+      "champions_league": {
+        "league_id": 2,
+        "fixtures_in_cache": 600,
+        "fixtures_strict_player_gs": 0,
+        "fixtures_broad_gs": 25,
+        "selection_count": 0,
+        "fixture_ids_strict": [],
+        "coverage_pct_strict": 0.0
+      },
+      "europa_league": {
+        "league_id": 5,
+        "fixtures_in_cache": 578,
+        "fixtures_strict_player_gs": 3,
+        "fixtures_broad_gs": 25,
+        "selection_count": 703,
+        "fixture_ids_strict": [
+          19135818,
+          19135819,
+          19135820
+        ],
+        "coverage_pct_strict": 0.0052
+      },
+      "conference_league": {
+        "league_id": 2286,
+        "fixtures_in_cache": 464,
+        "fixtures_strict_player_gs": 0,
+        "fixtures_broad_gs": 55,
+        "selection_count": 0,
+        "fixture_ids_strict": [],
+        "coverage_pct_strict": 0.0
+      }
+    },
+    "by_season": {
+      "23620": 3
+    },
+    "by_bookmaker": {
+      "bet365": 703
+    },
+    "by_market_type": {
+      "anytime_goalscorer": 417,
+      "team_goalscorer": 286
+    },
+    "by_market_name": {
+      "Goalscorers": 417,
+      "Team Goalscorer": 286
+    },
+    "fixture_records": [
+      {
+        "sportmonks_fixture_id": 19135818,
+        "league": "europa_league",
+        "season_id": 23620,
+        "selection_count": 261,
+        "bookmakers": [
+          "bet365"
+        ],
+        "markets": [
+          "Goalscorers",
+          "Team Goalscorer"
+        ]
+      },
+      {
+        "sportmonks_fixture_id": 19135819,
+        "league": "europa_league",
+        "season_id": 23620,
+        "selection_count": 221,
+        "bookmakers": [
+          "bet365"
+        ],
+        "markets": [
+          "Goalscorers",
+          "Team Goalscorer"
+        ]
+      },
+      {
+        "sportmonks_fixture_id": 19135820,
+        "league": "europa_league",
+        "season_id": 23620,
+        "selection_count": 221,
+        "bookmakers": [
+          "bet365"
+        ],
+        "markets": [
+          "Team Goalscorer",
+          "Goalscorers"
+        ]
+      }
+    ],
+    "totals": {
+      "uefa_fixtures_cached": 1642,
+      "uefa_fixtures_strict_player_gs": 3,
+      "uefa_coverage_pct_strict": 0.0018,
+      "selection_count": 703
+    }
+  },
+  "bridge_meta": {
+    "wc_bridges": 72,
+    "wc_bridges_mapped": 47,
+    "uefa_bridges": 3,
+    "merged_bridges": 50,
+    "wc_odds_selections": 19941,
+    "uefa_odds_selections": 703,
+    "total_odds_selections": 20644,
+    "uefa_fixture_ids": [
+      19135818,
+      19135819,
+      19135820
+    ]
+  },
+  "mapping_meta": {
+    "summary": {
+      "fixtures_audited": 0,
+      "fixtures_with_goalscorer_odds": 0,
+      "bookmaker_count": 0,
+      "market_count": 0,
+      "selection_count": 20644,
+      "mapped_count": 19193,
+      "unmapped_count": 1451,
+      "mapping_rate": 0.9297,
+      "confidence_high": 18384,
+      "confidence_medium": 809,
+      "confidence_low": 0,
+      "historical_fixtures": 0,
+      "upcoming_fixtures": 0
+    },
+    "diagnostics": {
+      "confidence_distribution": {
+        "HIGH": 18384,
+        "UNMAPPED": 1451,
+        "MEDIUM": 809
+      },
+      "unmapped_reasons": {
+        "no_match": 1451
+      }
+    }
+  },
+  "before_meta": {
+    "source": "artifacts\\phase54q_goalscorer_generalization\\goalscorer_dataset_v3.parquet",
+    "fixtures": 1541,
+    "fixtures_with_odds": 47
+  },
+  "after_meta": {
+    "status": "ok",
+    "rows": 47029,
+    "fixtures": 1541,
+    "fixtures_with_odds": 50,
+    "coverage_pct": 0.0324,
+    "wc_fixtures_with_odds": 47,
+    "uefa_fixtures_with_odds": 3,
+    "rows_with_anytime_odds": 1400,
+    "bridged_fixture_ids": 50
+  },
+  "revalidation": {
+    "before": {
+      "label": "before_expansion",
+      "fixtures_total": 1541,
+      "fixtures_with_odds": 47,
+      "odds_coverage_pct": 0.0305,
+      "overall": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 1327,
+        "top1_hit": 0.2984,
+        "top3_hit": 0.5712,
+        "top5_hit": 0.7001,
+        "mrr": 0.4769
+      },
+      "uefa": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.2926,
+        "top3_hit": 0.5658,
+        "top5_hit": 0.695,
+        "mrr": 0.4716
+      },
+      "with_odds_only": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.5143,
+        "top3_hit": 0.7714,
+        "top5_hit": 0.8857,
+        "mrr": 0.6719
+      },
+      "ml_odds_blend": {
+        "market": "target_anytime",
+        "signal": "ml_odds_blend",
+        "fixtures_evaluated": 1327,
+        "top1_hit": 0.309,
+        "top3_hit": 0.5893,
+        "top5_hit": 0.7204,
+        "mrr": 0.49
+      },
+      "calibration": {
+        "n": 47029,
+        "brier": 0.1372,
+        "ece": 0.2515
+      },
+      "league_split": {
+        "champions_league": {
+          "league": "champions_league",
+          "league_id": 2,
+          "fixtures": 525,
+          "fixtures_evaluated": 451,
+          "top1_hit": 0.3126,
+          "top3_hit": 0.6142,
+          "top5_hit": 0.7273
+        },
+        "europa_league": {
+          "league": "europa_league",
+          "league_id": 5,
+          "fixtures": 535,
+          "fixtures_evaluated": 472,
+          "top1_hit": 0.2712,
+          "top3_hit": 0.5254,
+          "top5_hit": 0.678
+        },
+        "world_cup": {
+          "league": "world_cup",
+          "league_id": 732,
+          "fixtures": 47,
+          "fixtures_evaluated": 35,
+          "top1_hit": 0.5143,
+          "top3_hit": 0.7714,
+          "top5_hit": 0.8857
+        },
+        "conference_league": {
+          "league": "conference_league",
+          "league_id": 2286,
+          "fixtures": 434,
+          "fixtures_evaluated": 369,
+          "top1_hit": 0.2954,
+          "top3_hit": 0.5583,
+          "top5_hit": 0.6775
+        }
+      }
+    },
+    "after": {
+      "label": "after_expansion",
+      "fixtures_total": 1541,
+      "fixtures_with_odds": 50,
+      "odds_coverage_pct": 0.0324,
+      "overall": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 1327,
+        "top1_hit": 0.2984,
+        "top3_hit": 0.5712,
+        "top5_hit": 0.7008,
+        "mrr": 0.4769
+      },
+      "uefa": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.2926,
+        "top3_hit": 0.5658,
+        "top5_hit": 0.6958,
+        "mrr": 0.4717
+      },
+      "with_odds_only": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 38,
+        "top1_hit": 0.5,
+        "top3_hit": 0.7368,
+        "top5_hit": 0.8947,
+        "mrr": 0.657
+      },
+      "ml_odds_blend": {
+        "market": "target_anytime",
+        "signal": "ml_odds_blend",
+        "fixtures_evaluated": 1327,
+        "top1_hit": 0.309,
+        "top3_hit": 0.5893,
+        "top5_hit": 0.7212,
+        "mrr": 0.4901
+      },
+      "calibration": {
+        "n": 47029,
+        "brier": 0.1373,
+        "ece": 0.2517
+      },
+      "league_split": {
+        "champions_league": {
+          "league": "champions_league",
+          "league_id": 2,
+          "fixtures": 525,
+          "fixtures_evaluated": 451,
+          "top1_hit": 0.3126,
+          "top3_hit": 0.6142,
+          "top5_hit": 0.7273
+        },
+        "europa_league": {
+          "league": "europa_league",
+          "league_id": 5,
+          "fixtures": 535,
+          "fixtures_evaluated": 472,
+          "top1_hit": 0.2712,
+          "top3_hit": 0.5254,
+          "top5_hit": 0.6801
+        },
+        "world_cup": {
+          "league": "world_cup",
+          "league_id": 732,
+          "fixtures": 47,
+          "fixtures_evaluated": 35,
+          "top1_hit": 0.5143,
+          "top3_hit": 0.7714,
+          "top5_hit": 0.8857
+        },
+        "conference_league": {
+          "league": "conference_league",
+          "league_id": 2286,
+          "fixtures": 434,
+          "fixtures_evaluated": 369,
+          "top1_hit": 0.2954,
+          "top3_hit": 0.5583,
+          "top5_hit": 0.6775
+        }
+      }
+    },
+    "delta": {
+      "overall_top3_pp": 0.0,
+      "uefa_top3_pp": 0.0,
+      "odds_coverage_pp": 0.0019,
+      "fixtures_with_odds_delta": 3,
+      "brier_delta": 0.0001,
+      "ece_delta": 0.0002
+    },
+    "impact": {
+      "uefa_weakness_baseline_top3": 0.5658,
+      "uefa_after_expansion_top3": 0.5658,
+      "wc_reference_top3": 0.7714,
+      "gap_to_wc_before": 0.2056,
+      "gap_closed_pp": 0.0,
+      "pct_of_gap_solved": 0.0,
+      "coverage_before_pct": 0.0305,
+      "coverage_after_pct": 0.0324,
+      "coverage_gain_pp": 0.0019,
+      "odds_insufficient_for_elite": true,
+      "uefa_still_below_65": true
+    }
+  },
+  "decision": {
+    "recommendation": "ODDS_NOT_ENOUGH",
+    "uefa_top3_after": 0.5658,
+    "coverage_after": 0.0324,
+    "pct_gap_solved": 0.0
+  },
+  "recommendation": "ODDS_NOT_ENOUGH",
+  "production_changes": false,
+  "api_calls_used": 0
+}

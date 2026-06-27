@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { TrendingUp, AlertTriangle } from "lucide-react";
 import { fetchOwnerPromotionStatus } from "@/api/saasApi";
 import { classifyApiError } from "@/lib/apiError";
+import { formatPercent } from "@/lib/formatPercent";
 import { IntelligenceCard, LoadingSkeleton, ErrorState } from "@/components/intelligence";
 
 const STATE_COLORS = {
@@ -24,8 +25,23 @@ function EngineMini({ label, metrics }) {
   return (
     <div className="text-xs text-[#94A3B8] space-y-1">
       <p className="font-medium text-white/80">{label}</p>
-      <p>Eval: {metrics.evaluated ?? 0} · Win: {metrics.winrate != null ? `${(metrics.winrate * 100).toFixed(1)}%` : "—"}</p>
-      <p>ROI: {metrics.roi != null ? `${(metrics.roi * 100).toFixed(1)}%` : "n/a"} · Cert: {metrics.certification}</p>
+      <p>Eval: {metrics.evaluated ?? 0} · Win: {formatPercent(metrics.winrate)}</p>
+      <p>ROI: {metrics.roi != null ? formatPercent(metrics.roi) : "n/a"} · Cert: {metrics.certification}</p>
+    </div>
+  );
+}
+
+function ProgressBar({ label, current, required }) {
+  const pct = required > 0 ? Math.min(100, Math.round((current / required) * 100)) : 0;
+  return (
+    <div>
+      <div className="flex justify-between text-xs text-[#94A3B8] mb-1">
+        <span>{label}</span>
+        <span className="font-mono text-[#F8FAFC]">{current} / {required}</span>
+      </div>
+      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+        <div className="h-full bg-[#00E676]/70 rounded-full transition-all" style={{ width: `${pct}%` }} />
+      </div>
     </div>
   );
 }
@@ -56,6 +72,7 @@ export default function OwnerPromotionCenter() {
 
   const markets = data?.markets || [];
   const summary = data?.summary || {};
+  const progress = data?.promotion_progress || {};
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -70,6 +87,15 @@ export default function OwnerPromotionCenter() {
         <p className="text-sm text-[#FFD166] flex items-center gap-2">
           <AlertTriangle className="w-4 h-4" /> Recommendations only — public routing unchanged.
         </p>
+      </IntelligenceCard>
+
+      <IntelligenceCard>
+        <h2 className="font-semibold text-[#F8FAFC] mb-4">Elite promotion gates</h2>
+        <div className="space-y-4">
+          <ProgressBar label="Paper" current={progress.paper?.current ?? 0} required={progress.paper?.required ?? 100} />
+          <ProgressBar label="Micro test" current={progress.micro?.current ?? 0} required={progress.micro?.required ?? 300} />
+          <ProgressBar label="Production" current={progress.prod?.current ?? 0} required={progress.prod?.required ?? 1000} />
+        </div>
       </IntelligenceCard>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">

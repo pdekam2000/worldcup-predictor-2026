@@ -1,5 +1,6 @@
-import React from "react";
-import { resolveTeamVisual } from "@/lib/teamFlags";
+import React, { useState } from "react";
+import { resolveTeamVisual } from "@/lib/imageResolver";
+import SafeImage from "@/components/ui/SafeImage";
 import { cn } from "@/lib/utils";
 
 const SIZE_MAP = {
@@ -15,13 +16,14 @@ const SIZE_MAP = {
 export default function TeamBadge({
   teamName,
   logoUrl = null,
+  teamId = null,
   countryHint = null,
   size = "md",
   className = "",
   showRing = true,
 }) {
   const dims = SIZE_MAP[size] || SIZE_MAP.md;
-  const visual = resolveTeamVisual(teamName, { logoUrl, countryHint, flagWidth: dims.flagW });
+  const visual = resolveTeamVisual(teamName, { logoUrl, teamId, countryHint, flagWidth: dims.flagW });
   const imgSrc = visual.logoUrl || visual.flagUrl;
 
   return (
@@ -36,26 +38,17 @@ export default function TeamBadge({
       title={teamName}
     >
       {imgSrc ? (
-        <img
+        <SafeImage
           src={imgSrc}
-          alt={teamName}
-          className={cn("w-full h-full object-contain", dims.pad)}
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-            const fallback = e.currentTarget.nextElementSibling;
-            if (fallback) fallback.style.display = "flex";
-          }}
+          alt={teamName || "Team"}
+          fallbackText={teamName}
+          className="w-full h-full"
+          imgClassName={dims.pad}
+          fallbackClassName={cn("text-xs", dims.text)}
         />
-      ) : null}
-      <span
-        className={cn(
-          "items-center justify-center w-full h-full bg-[#00E676]/10",
-          imgSrc ? "hidden" : "flex"
-        )}
-      >
-        {visual.initials}
-      </span>
+      ) : (
+        <span className="flex items-center justify-center w-full h-full bg-[#00E676]/10">{visual.initials}</span>
+      )}
     </div>
   );
 }

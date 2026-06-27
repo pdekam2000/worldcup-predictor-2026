@@ -1,0 +1,6218 @@
+{
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 18232692,
+      "sport_id": 1,
+      "league_id": 2286,
+      "season_id": 18283,
+      "stage_id": 77453390,
+      "group_id": null,
+      "aggregate_id": 26971,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": 4521,
+      "name": "Breidablik vs Austria Wien",
+      "starting_at": "2021-07-29 17:30:00",
+      "result_info": "Breidablik won after full-time.",
+      "leg": "2/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": true,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1627579800,
+      "participants": [
+        {
+          "id": 6913,
+          "sport_id": 1,
+          "country_id": 1796,
+          "venue_id": 4521,
+          "gender": "male",
+          "name": "Breidablik",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/1/6913.png",
+          "founded": 1950,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-06-21 18:00:00",
+          "meta": {
+            "location": "home",
+            "winner": true,
+            "position": null
+          }
+        },
+        {
+          "id": 3630,
+          "sport_id": 1,
+          "country_id": 143,
+          "venue_id": 2125,
+          "gender": "male",
+          "name": "Austria Wien",
+          "short_code": "FAK",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/14/3630.png",
+          "founded": 1911,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-17 12:30:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 2286,
+        "sport_id": 1,
+        "country_id": 41,
+        "name": "Europa Conference League",
+        "active": true,
+        "short_code": "UEFA ECL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/14/2286.png",
+        "type": "league",
+        "sub_type": "cup_international",
+        "last_played_at": "2026-05-27 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      },
+      "venue": {
+        "id": 4521,
+        "country_id": 1796,
+        "city_id": 45677,
+        "name": "K\u00f3pavogsv\u00f6llur",
+        "address": "Dalsm\u00e1ra 5",
+        "zipcode": null,
+        "latitude": "64.103889",
+        "longitude": "-21.896667",
+        "capacity": 5501,
+        "image_path": "https://cdn.sportmonks.com/images/soccer/venues/9/4521.png",
+        "city_name": "K\u00f3pavogur",
+        "surface": "grass",
+        "national_team": false
+      },
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "scores": [
+        {
+          "id": 10287408,
+          "fixture_id": 18232692,
+          "type_id": 2,
+          "participant_id": 6913,
+          "score": {
+            "goals": 2,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 10287409,
+          "fixture_id": 18232692,
+          "type_id": 2,
+          "participant_id": 3630,
+          "score": {
+            "goals": 1,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 10287410,
+          "fixture_id": 18232692,
+          "type_id": 1,
+          "participant_id": 6913,
+          "score": {
+            "goals": 2,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 10287411,
+          "fixture_id": 18232692,
+          "type_id": 1,
+          "participant_id": 3630,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 10287412,
+          "fixture_id": 18232692,
+          "type_id": 1525,
+          "participant_id": 6913,
+          "score": {
+            "goals": 2,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 10287413,
+          "fixture_id": 18232692,
+          "type_id": 1525,
+          "participant_id": 3630,
+          "score": {
+            "goals": 1,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        }
+      ],
+      "events": [
+        {
+          "id": 35520458,
+          "fixture_id": 18232692,
+          "period_id": 3993436,
+          "participant_id": 6913,
+          "type_id": 14,
+          "section": "event",
+          "player_id": 117249,
+          "related_player_id": 118315,
+          "player_name": "Kristinn Steind\u00f3rsson",
+          "related_player_name": "H\u00f6skuldur Gunnlaugsson",
+          "result": "1-0",
+          "info": null,
+          "addition": "1st Goal",
+          "minute": 6,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 1,
+          "type": {
+            "id": 14,
+            "name": "Goal",
+            "code": "goal",
+            "developer_name": "GOAL",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993436,
+            "fixture_id": 18232692,
+            "type_id": 1,
+            "started": 1627579800,
+            "ended": 1627582500,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 117249,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 150,
+            "type_id": 26,
+            "common_name": "K. Steindorsson",
+            "firstname": "Kristinn",
+            "lastname": "Steindorsson",
+            "name": "Kristinn Steindorsson",
+            "display_name": "Kristinn Steind\u00f3rsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/1/117249.png",
+            "height": 178,
+            "weight": 70,
+            "date_of_birth": "1990-04-29",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520459,
+          "fixture_id": 18232692,
+          "period_id": 3993436,
+          "participant_id": 6913,
+          "type_id": 14,
+          "section": "event",
+          "player_id": 118174,
+          "related_player_id": 117249,
+          "player_name": "\u00c1rni Vilhj\u00e1lmsson",
+          "related_player_name": "Kristinn Steind\u00f3rsson",
+          "result": "2-0",
+          "info": null,
+          "addition": "2nd Goal",
+          "minute": 24,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 2,
+          "type": {
+            "id": 14,
+            "name": "Goal",
+            "code": "goal",
+            "developer_name": "GOAL",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993436,
+            "fixture_id": 18232692,
+            "type_id": 1,
+            "started": 1627579800,
+            "ended": 1627582500,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 118174,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": 74063,
+            "position_id": 27,
+            "detailed_position_id": 151,
+            "type_id": 27,
+            "common_name": "\u00c1. Vilhj\u00e1lmsson",
+            "firstname": "\u00c1rni",
+            "lastname": "Vilhj\u00e1lmsson",
+            "name": "\u00c1rni Vilhj\u00e1lmsson",
+            "display_name": "\u00c1rni Vilhj\u00e1lmsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/30/118174.png",
+            "height": 181,
+            "weight": 76,
+            "date_of_birth": "1994-05-09",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520460,
+          "fixture_id": 18232692,
+          "period_id": 3993437,
+          "participant_id": 3630,
+          "type_id": 14,
+          "section": "event",
+          "player_id": 1491379,
+          "related_player_id": null,
+          "player_name": "Dominik Fitz",
+          "related_player_name": null,
+          "result": "2-1",
+          "info": null,
+          "addition": "3rd Goal",
+          "minute": 68,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 3,
+          "type": {
+            "id": 14,
+            "name": "Goal",
+            "code": "goal",
+            "developer_name": "GOAL",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993437,
+            "fixture_id": 18232692,
+            "type_id": 2,
+            "started": 1627583400,
+            "ended": 1627586100,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 1491379,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 150,
+            "type_id": 27,
+            "common_name": "D. Fitz",
+            "firstname": "Dominik",
+            "lastname": "Fitz",
+            "name": "Dominik Fitz",
+            "display_name": "Dominik Fitz",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 175,
+            "weight": 67,
+            "date_of_birth": "1999-06-16",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520461,
+          "fixture_id": 18232692,
+          "period_id": 3993437,
+          "participant_id": 3630,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 51667,
+          "related_player_id": 2510394,
+          "player_name": "Alexander Gr\u00fcnwald",
+          "related_player_name": "Aleksandar Jukic",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 59,
+          "extra_minute": null,
+          "injured": false,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 1,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993437,
+            "fixture_id": 18232692,
+            "type_id": 2,
+            "started": 1627583400,
+            "ended": 1627586100,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 51667,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": null,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "A. Gr\u00fcnwald",
+            "firstname": "Alexander",
+            "lastname": "Gr\u00fcnwald",
+            "name": "Alexander Gr\u00fcnwald",
+            "display_name": "Alexander Gr\u00fcnwald",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/19/51667.png",
+            "height": 188,
+            "weight": 84,
+            "date_of_birth": "1989-05-01",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520462,
+          "fixture_id": 18232692,
+          "period_id": 3993437,
+          "participant_id": 6913,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 117766,
+          "related_player_id": 118608,
+          "player_name": "Andri Rafn Yeoman",
+          "related_player_name": "A. Sigur\u00f0arson",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 66,
+          "extra_minute": null,
+          "injured": false,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 2,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993437,
+            "fixture_id": 18232692,
+            "type_id": 2,
+            "started": 1627583400,
+            "ended": 1627586100,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 117766,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "A. Yeoman",
+            "firstname": "Andri Rafn",
+            "lastname": "Yeoman",
+            "name": "Andri Rafn Yeoman",
+            "display_name": "Andri Rafn Yeoman",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/6/117766.png",
+            "height": 175,
+            "weight": null,
+            "date_of_birth": "1992-04-18",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520464,
+          "fixture_id": 18232692,
+          "period_id": 3993437,
+          "participant_id": 6913,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 118421,
+          "related_player_id": 84399,
+          "player_name": "D. Atlason",
+          "related_player_name": "Oliver Sigurj\u00f3nsson",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 78,
+          "extra_minute": null,
+          "injured": false,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 3,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993437,
+            "fixture_id": 18232692,
+            "type_id": 2,
+            "started": 1627583400,
+            "ended": 1627586100,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 118421,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 154,
+            "type_id": 26,
+            "common_name": "D. Atlason",
+            "firstname": "Dav\u00edd \u00d6rn",
+            "lastname": "Atlason",
+            "name": "Dav\u00edd \u00d6rn Atlason",
+            "display_name": "Dav\u00edd \u00d6rn Atlason",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/21/118421.png",
+            "height": 0,
+            "weight": null,
+            "date_of_birth": "1994-08-18",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520466,
+          "fixture_id": 18232692,
+          "period_id": 3993437,
+          "participant_id": 6913,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 84321,
+          "related_player_id": 118174,
+          "player_name": "T. Mikkelsen",
+          "related_player_name": "\u00c1rni Vilhj\u00e1lmsson",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 88,
+          "extra_minute": null,
+          "injured": false,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 4,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993437,
+            "fixture_id": 18232692,
+            "type_id": 2,
+            "started": 1627583400,
+            "ended": 1627586100,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 84321,
+            "sport_id": 1,
+            "country_id": 320,
+            "nationality_id": 320,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": null,
+            "type_id": 27,
+            "common_name": "T. Mikkelsen",
+            "firstname": "Thomas",
+            "lastname": "Mikkelsen",
+            "name": "Thomas Mikkelsen",
+            "display_name": "Thomas Mikkelsen",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/1/84321.png",
+            "height": 188,
+            "weight": 83,
+            "date_of_birth": "1990-01-19",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520468,
+          "fixture_id": 18232692,
+          "period_id": 3993437,
+          "participant_id": 3630,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 20691974,
+          "related_player_id": 348324,
+          "player_name": "Can Keles",
+          "related_player_name": "Benedikt Pichler",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 90,
+          "extra_minute": 1,
+          "injured": false,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 5,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993437,
+            "fixture_id": 18232692,
+            "type_id": 2,
+            "started": 1627583400,
+            "ended": 1627586100,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 20691974,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": 156,
+            "type_id": 26,
+            "common_name": "C. Keles",
+            "firstname": "Can",
+            "lastname": "Keles",
+            "name": "Can Keles",
+            "display_name": "Can Kele\u015f",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/6/20691974.png",
+            "height": 180,
+            "weight": 77,
+            "date_of_birth": "2001-09-02",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520471,
+          "fixture_id": 18232692,
+          "period_id": 3993436,
+          "participant_id": 3630,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 37262105,
+          "related_player_id": null,
+          "player_name": "E. Martel",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 13,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 1,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993436,
+            "fixture_id": 18232692,
+            "type_id": 1,
+            "started": 1627579800,
+            "ended": 1627582500,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 37262105,
+            "sport_id": 1,
+            "country_id": 11,
+            "nationality_id": 11,
+            "city_id": 86854,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "E. Martel",
+            "firstname": "Eric",
+            "lastname": "Martel",
+            "name": "Eric Martel",
+            "display_name": "Eric Martel",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/25/37262105.png",
+            "height": 188,
+            "weight": 81,
+            "date_of_birth": "2002-04-29",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520474,
+          "fixture_id": 18232692,
+          "period_id": 3993436,
+          "participant_id": 6913,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 118608,
+          "related_player_id": null,
+          "player_name": "A. Sigur\u00f0arson",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 14,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 2,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993436,
+            "fixture_id": 18232692,
+            "type_id": 1,
+            "started": 1627579800,
+            "ended": 1627582500,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 118608,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 149,
+            "type_id": 27,
+            "common_name": "A. Sigurdarson",
+            "firstname": "Alexander Helgi",
+            "lastname": "Sigurdarson",
+            "name": "Alexander Helgi Sigurdarson",
+            "display_name": "Alexander Helgi Sigurdarson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 177,
+            "weight": null,
+            "date_of_birth": "1996-04-08",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520477,
+          "fixture_id": 18232692,
+          "period_id": 3993436,
+          "participant_id": 3630,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 52737,
+          "related_player_id": null,
+          "player_name": "Christian Schoissengeyr",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 35,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 3,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993436,
+            "fixture_id": 18232692,
+            "type_id": 1,
+            "started": 1627579800,
+            "ended": 1627582500,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 52737,
+            "sport_id": 1,
+            "country_id": 79146,
+            "nationality_id": 79146,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 148,
+            "type_id": 25,
+            "common_name": "C. Schoissengeyr",
+            "firstname": "Christian",
+            "lastname": "Schoissengeyr",
+            "name": "Christian Schoissengeyr",
+            "display_name": "Christian Schoissengeyr",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 195,
+            "weight": 92,
+            "date_of_birth": "1994-10-18",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520480,
+          "fixture_id": 18232692,
+          "period_id": 3993436,
+          "participant_id": 6913,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 29181,
+          "related_player_id": null,
+          "player_name": "Viktor Karl Einarsson",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 42,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 4,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993436,
+            "fixture_id": 18232692,
+            "type_id": 1,
+            "started": 1627579800,
+            "ended": 1627582500,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 29181,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "V. Einarsson",
+            "firstname": "Viktor Karl",
+            "lastname": "Einarsson",
+            "name": "Viktor Karl Einarsson",
+            "display_name": "Viktor Karl Einarsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/29/29181.png",
+            "height": 176,
+            "weight": null,
+            "date_of_birth": "1997-01-30",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520483,
+          "fixture_id": 18232692,
+          "period_id": 3993436,
+          "participant_id": 3630,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 6309,
+          "related_player_id": null,
+          "player_name": "Marco Djuricin",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 45,
+          "extra_minute": 2,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 5,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993436,
+            "fixture_id": 18232692,
+            "type_id": 1,
+            "started": 1627579800,
+            "ended": 1627582500,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 6309,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": 151,
+            "type_id": 27,
+            "common_name": "M. Djuricin",
+            "firstname": "Marco",
+            "lastname": "Djuricin",
+            "name": "Marco Djuricin",
+            "display_name": "Marco Djuricin",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/5/6309.png",
+            "height": 183,
+            "weight": 78,
+            "date_of_birth": "1992-12-12",
+            "gender": "male"
+          }
+        },
+        {
+          "id": 35520486,
+          "fixture_id": 18232692,
+          "period_id": 3993437,
+          "participant_id": 3630,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 1491379,
+          "related_player_id": null,
+          "player_name": "Dominik Fitz",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 63,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 6,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 3993437,
+            "fixture_id": 18232692,
+            "type_id": 2,
+            "started": 1627583400,
+            "ended": 1627586100,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          },
+          "player": {
+            "id": 1491379,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 150,
+            "type_id": 27,
+            "common_name": "D. Fitz",
+            "firstname": "Dominik",
+            "lastname": "Fitz",
+            "name": "Dominik Fitz",
+            "display_name": "Dominik Fitz",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 175,
+            "weight": 67,
+            "date_of_birth": "1999-06-16",
+            "gender": "male"
+          }
+        }
+      ],
+      "xgfixture": [
+        {
+          "id": 13833823,
+          "fixture_id": 18232692,
+          "type_id": 34,
+          "participant_id": 3630,
+          "data": {
+            "value": 7
+          },
+          "location": "away",
+          "type": {
+            "id": 34,
+            "name": "Corners",
+            "code": "corners",
+            "developer_name": "CORNERS",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833300,
+          "fixture_id": 18232692,
+          "type_id": 34,
+          "participant_id": 6913,
+          "data": {
+            "value": 3
+          },
+          "location": "home",
+          "type": {
+            "id": 34,
+            "name": "Corners",
+            "code": "corners",
+            "developer_name": "CORNERS",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833658,
+          "fixture_id": 18232692,
+          "type_id": 41,
+          "participant_id": 3630,
+          "data": {
+            "value": 9
+          },
+          "location": "away",
+          "type": {
+            "id": 41,
+            "name": "Shots Off Target",
+            "code": "shots-off-target",
+            "developer_name": "SHOTS_OFF_TARGET",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833254,
+          "fixture_id": 18232692,
+          "type_id": 41,
+          "participant_id": 6913,
+          "data": {
+            "value": 4
+          },
+          "location": "home",
+          "type": {
+            "id": 41,
+            "name": "Shots Off Target",
+            "code": "shots-off-target",
+            "developer_name": "SHOTS_OFF_TARGET",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833445,
+          "fixture_id": 18232692,
+          "type_id": 43,
+          "participant_id": 3630,
+          "data": {
+            "value": 155
+          },
+          "location": "away",
+          "type": {
+            "id": 43,
+            "name": "Attacks",
+            "code": "attacks",
+            "developer_name": "ATTACKS",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13832861,
+          "fixture_id": 18232692,
+          "type_id": 43,
+          "participant_id": 6913,
+          "data": {
+            "value": 140
+          },
+          "location": "home",
+          "type": {
+            "id": 43,
+            "name": "Attacks",
+            "code": "attacks",
+            "developer_name": "ATTACKS",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833471,
+          "fixture_id": 18232692,
+          "type_id": 44,
+          "participant_id": 3630,
+          "data": {
+            "value": 113
+          },
+          "location": "away",
+          "type": {
+            "id": 44,
+            "name": "Dangerous Attacks",
+            "code": "dangerous-attacks",
+            "developer_name": "DANGEROUS_ATTACKS",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833163,
+          "fixture_id": 18232692,
+          "type_id": 44,
+          "participant_id": 6913,
+          "data": {
+            "value": 58
+          },
+          "location": "home",
+          "type": {
+            "id": 44,
+            "name": "Dangerous Attacks",
+            "code": "dangerous-attacks",
+            "developer_name": "DANGEROUS_ATTACKS",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833879,
+          "fixture_id": 18232692,
+          "type_id": 45,
+          "participant_id": 3630,
+          "data": {
+            "value": 53
+          },
+          "location": "away",
+          "type": {
+            "id": 45,
+            "name": "Ball Possession %",
+            "code": "ball-possession",
+            "developer_name": "BALL_POSSESSION",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833084,
+          "fixture_id": 18232692,
+          "type_id": 45,
+          "participant_id": 6913,
+          "data": {
+            "value": 47
+          },
+          "location": "home",
+          "type": {
+            "id": 45,
+            "name": "Ball Possession %",
+            "code": "ball-possession",
+            "developer_name": "BALL_POSSESSION",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833514,
+          "fixture_id": 18232692,
+          "type_id": 46,
+          "participant_id": 3630,
+          "data": {
+            "value": 154
+          },
+          "location": "away",
+          "type": {
+            "id": 46,
+            "name": "Ball Safe",
+            "code": "ball-safe",
+            "developer_name": "BALL_SAFE",
+            "model_type": "statistic",
+            "stat_group": "defensive"
+          }
+        },
+        {
+          "id": 13832992,
+          "fixture_id": 18232692,
+          "type_id": 46,
+          "participant_id": 6913,
+          "data": {
+            "value": 143
+          },
+          "location": "home",
+          "type": {
+            "id": 46,
+            "name": "Ball Safe",
+            "code": "ball-safe",
+            "developer_name": "BALL_SAFE",
+            "model_type": "statistic",
+            "stat_group": "defensive"
+          }
+        },
+        {
+          "id": 13833584,
+          "fixture_id": 18232692,
+          "type_id": 47,
+          "participant_id": 3630,
+          "data": {
+            "value": 0
+          },
+          "location": "away",
+          "type": {
+            "id": 47,
+            "name": "Penalties",
+            "code": "penalties",
+            "developer_name": "PENALTIES",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833209,
+          "fixture_id": 18232692,
+          "type_id": 47,
+          "participant_id": 6913,
+          "data": {
+            "value": 0
+          },
+          "location": "home",
+          "type": {
+            "id": 47,
+            "name": "Penalties",
+            "code": "penalties",
+            "developer_name": "PENALTIES",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833738,
+          "fixture_id": 18232692,
+          "type_id": 52,
+          "participant_id": 3630,
+          "data": {
+            "value": 1
+          },
+          "location": "away",
+          "type": {
+            "id": 52,
+            "name": "Goals",
+            "code": "goals",
+            "developer_name": "GOALS",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13832894,
+          "fixture_id": 18232692,
+          "type_id": 52,
+          "participant_id": 6913,
+          "data": {
+            "value": 2
+          },
+          "location": "home",
+          "type": {
+            "id": 52,
+            "name": "Goals",
+            "code": "goals",
+            "developer_name": "GOALS",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833910,
+          "fixture_id": 18232692,
+          "type_id": 59,
+          "participant_id": 3630,
+          "data": {
+            "value": 2
+          },
+          "location": "away",
+          "type": {
+            "id": 59,
+            "name": "Substitutions",
+            "code": "substitutions",
+            "developer_name": "SUBSTITUTIONS",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833347,
+          "fixture_id": 18232692,
+          "type_id": 59,
+          "participant_id": 6913,
+          "data": {
+            "value": 3
+          },
+          "location": "home",
+          "type": {
+            "id": 59,
+            "name": "Substitutions",
+            "code": "substitutions",
+            "developer_name": "SUBSTITUTIONS",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833944,
+          "fixture_id": 18232692,
+          "type_id": 83,
+          "participant_id": 3630,
+          "data": {
+            "value": 0
+          },
+          "location": "away",
+          "type": {
+            "id": 83,
+            "name": "Redcards",
+            "code": "redcards",
+            "developer_name": "REDCARDS",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13832921,
+          "fixture_id": 18232692,
+          "type_id": 83,
+          "participant_id": 6913,
+          "data": {
+            "value": 0
+          },
+          "location": "home",
+          "type": {
+            "id": 83,
+            "name": "Redcards",
+            "code": "redcards",
+            "developer_name": "REDCARDS",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833994,
+          "fixture_id": 18232692,
+          "type_id": 84,
+          "participant_id": 3630,
+          "data": {
+            "value": 4
+          },
+          "location": "away",
+          "type": {
+            "id": 84,
+            "name": "Yellowcards",
+            "code": "yellowcards",
+            "developer_name": "YELLOWCARDS",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833388,
+          "fixture_id": 18232692,
+          "type_id": 84,
+          "participant_id": 6913,
+          "data": {
+            "value": 2
+          },
+          "location": "home",
+          "type": {
+            "id": 84,
+            "name": "Yellowcards",
+            "code": "yellowcards",
+            "developer_name": "YELLOWCARDS",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13834051,
+          "fixture_id": 18232692,
+          "type_id": 85,
+          "participant_id": 3630,
+          "data": {
+            "value": 0
+          },
+          "location": "away",
+          "type": {
+            "id": 85,
+            "name": "Yellowred Cards",
+            "code": "yellowred-cards",
+            "developer_name": "YELLOWRED_CARDS",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833128,
+          "fixture_id": 18232692,
+          "type_id": 85,
+          "participant_id": 6913,
+          "data": {
+            "value": 0
+          },
+          "location": "home",
+          "type": {
+            "id": 85,
+            "name": "Yellowred Cards",
+            "code": "yellowred-cards",
+            "developer_name": "YELLOWRED_CARDS",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833627,
+          "fixture_id": 18232692,
+          "type_id": 86,
+          "participant_id": 3630,
+          "data": {
+            "value": 4
+          },
+          "location": "away",
+          "type": {
+            "id": 86,
+            "name": "Shots On Target",
+            "code": "shots-on-target",
+            "developer_name": "SHOTS_ON_TARGET",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13833044,
+          "fixture_id": 18232692,
+          "type_id": 86,
+          "participant_id": 6913,
+          "data": {
+            "value": 4
+          },
+          "location": "home",
+          "type": {
+            "id": 86,
+            "name": "Shots On Target",
+            "code": "shots-on-target",
+            "developer_name": "SHOTS_ON_TARGET",
+            "model_type": "statistic",
+            "stat_group": "offensive"
+          }
+        },
+        {
+          "id": 13834091,
+          "fixture_id": 18232692,
+          "type_id": 87,
+          "participant_id": 3630,
+          "data": {
+            "value": 0
+          },
+          "location": "away",
+          "type": {
+            "id": 87,
+            "name": "Injuries",
+            "code": "injuries",
+            "developer_name": "INJURIES",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        },
+        {
+          "id": 13833417,
+          "fixture_id": 18232692,
+          "type_id": 87,
+          "participant_id": 6913,
+          "data": {
+            "value": 4
+          },
+          "location": "home",
+          "type": {
+            "id": 87,
+            "name": "Injuries",
+            "code": "injuries",
+            "developer_name": "INJURIES",
+            "model_type": "statistic",
+            "stat_group": "overall"
+          }
+        }
+      ],
+      "lineups": [
+        {
+          "id": 10028582,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 52873,
+          "team_id": 3630,
+          "position_id": 24,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 1,
+          "player_name": "Patrick Pentz",
+          "jersey_number": 1,
+          "player": {
+            "id": 52873,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": 78497,
+            "position_id": 24,
+            "detailed_position_id": 24,
+            "type_id": 24,
+            "common_name": "P. Pentz",
+            "firstname": "Patrick",
+            "lastname": "Pentz",
+            "name": "Patrick Pentz",
+            "display_name": "Patrick Pentz",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/9/52873.png",
+            "height": 183,
+            "weight": 80,
+            "date_of_birth": "1997-01-02",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 337015434,
+              "fixture_id": 18232692,
+              "player_id": 52873,
+              "team_id": 3630,
+              "lineup_id": 10028582,
+              "type_id": 1535,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 1535,
+                "name": "Goalkeeper Goals Conceded",
+                "code": "goalkeeper-goals-conceded",
+                "developer_name": "GOALKEEPER_GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476395,
+              "fixture_id": 18232692,
+              "player_id": 52873,
+              "team_id": 3630,
+              "lineup_id": 10028582,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476427,
+              "fixture_id": 18232692,
+              "player_id": 52873,
+              "team_id": 3630,
+              "lineup_id": 10028582,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 337015434,
+              "fixture_id": 18232692,
+              "player_id": 52873,
+              "team_id": 3630,
+              "lineup_id": 10028582,
+              "type_id": 1535,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 1535,
+                "name": "Goalkeeper Goals Conceded",
+                "code": "goalkeeper-goals-conceded",
+                "developer_name": "GOALKEEPER_GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476395,
+              "fixture_id": 18232692,
+              "player_id": 52873,
+              "team_id": 3630,
+              "lineup_id": 10028582,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476427,
+              "fixture_id": 18232692,
+              "player_id": 52873,
+              "team_id": 3630,
+              "lineup_id": 10028582,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028587,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 37262105,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 6,
+          "player_name": "E. Martel",
+          "jersey_number": 5,
+          "player": {
+            "id": 37262105,
+            "sport_id": 1,
+            "country_id": 11,
+            "nationality_id": 11,
+            "city_id": 86854,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "E. Martel",
+            "firstname": "Eric",
+            "lastname": "Martel",
+            "name": "Eric Martel",
+            "display_name": "Eric Martel",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/25/37262105.png",
+            "height": 188,
+            "weight": 81,
+            "date_of_birth": "2002-04-29",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476432,
+              "fixture_id": 18232692,
+              "player_id": 37262105,
+              "team_id": 3630,
+              "lineup_id": 10028587,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476396,
+              "fixture_id": 18232692,
+              "player_id": 37262105,
+              "team_id": 3630,
+              "lineup_id": 10028587,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            },
+            {
+              "id": 231476502,
+              "fixture_id": 18232692,
+              "player_id": 37262105,
+              "team_id": 3630,
+              "lineup_id": 10028587,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476432,
+              "fixture_id": 18232692,
+              "player_id": 37262105,
+              "team_id": 3630,
+              "lineup_id": 10028587,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476396,
+              "fixture_id": 18232692,
+              "player_id": 37262105,
+              "team_id": 3630,
+              "lineup_id": 10028587,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            },
+            {
+              "id": 231476502,
+              "fixture_id": 18232692,
+              "player_id": 37262105,
+              "team_id": 3630,
+              "lineup_id": 10028587,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028791,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 538437,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Vesel Demaku",
+          "jersey_number": 8,
+          "player": {
+            "id": 538437,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": 5481,
+            "position_id": 26,
+            "detailed_position_id": 149,
+            "type_id": 26,
+            "common_name": "V. Demaku",
+            "firstname": "Vesel",
+            "lastname": "Demaku",
+            "name": "Vesel Demaku",
+            "display_name": "Vesel Demaku",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 180,
+            "weight": 68,
+            "date_of_birth": "2000-02-05",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476300,
+              "fixture_id": 18232692,
+              "player_id": 538437,
+              "team_id": 3630,
+              "lineup_id": 10028791,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476300,
+              "fixture_id": 18232692,
+              "player_id": 538437,
+              "team_id": 3630,
+              "lineup_id": 10028791,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028798,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 51667,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Alexander Gr\u00fcnwald",
+          "jersey_number": 10,
+          "player": {
+            "id": 51667,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": null,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "A. Gr\u00fcnwald",
+            "firstname": "Alexander",
+            "lastname": "Gr\u00fcnwald",
+            "name": "Alexander Gr\u00fcnwald",
+            "display_name": "Alexander Gr\u00fcnwald",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/19/51667.png",
+            "height": 188,
+            "weight": 84,
+            "date_of_birth": "1989-05-01",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476047,
+              "fixture_id": 18232692,
+              "player_id": 51667,
+              "team_id": 3630,
+              "lineup_id": 10028798,
+              "type_id": 119,
+              "data": {
+                "value": 31
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476047,
+              "fixture_id": 18232692,
+              "player_id": 51667,
+              "team_id": 3630,
+              "lineup_id": 10028798,
+              "type_id": 119,
+              "data": {
+                "value": 31
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028594,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 348324,
+          "team_id": 3630,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 8,
+          "player_name": "Benedikt Pichler",
+          "jersey_number": 11,
+          "player": {
+            "id": 348324,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "B. Pichler",
+            "firstname": "Benedikt",
+            "lastname": "Pichler",
+            "name": "Benedikt Pichler",
+            "display_name": "Benedikt Pichler",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/4/348324.png",
+            "height": 188,
+            "weight": 88,
+            "date_of_birth": "1997-07-20",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476442,
+              "fixture_id": 18232692,
+              "player_id": 348324,
+              "team_id": 3630,
+              "lineup_id": 10028594,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476519,
+              "fixture_id": 18232692,
+              "player_id": 348324,
+              "team_id": 3630,
+              "lineup_id": 10028594,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476442,
+              "fixture_id": 18232692,
+              "player_id": 348324,
+              "team_id": 3630,
+              "lineup_id": 10028594,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476519,
+              "fixture_id": 18232692,
+              "player_id": 348324,
+              "team_id": 3630,
+              "lineup_id": 10028594,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028805,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 37336093,
+          "team_id": 3630,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "L. Ivki\u0107",
+          "jersey_number": 15,
+          "player": {
+            "id": 37336093,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 154,
+            "type_id": 25,
+            "common_name": "L. Ivkic",
+            "firstname": "Leonardo",
+            "lastname": "Ivkic",
+            "name": "Leonardo Ivkic",
+            "display_name": "Leonardo Ivki\u0107",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 176,
+            "weight": 74,
+            "date_of_birth": "2003-01-30",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476004,
+              "fixture_id": 18232692,
+              "player_id": 37336093,
+              "team_id": 3630,
+              "lineup_id": 10028805,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476004,
+              "fixture_id": 18232692,
+              "player_id": 37336093,
+              "team_id": 3630,
+              "lineup_id": 10028805,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028813,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 20691974,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Can Keles",
+          "jersey_number": 16,
+          "player": {
+            "id": 20691974,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": 156,
+            "type_id": 26,
+            "common_name": "C. Keles",
+            "firstname": "Can",
+            "lastname": "Keles",
+            "name": "Can Keles",
+            "display_name": "Can Kele\u015f",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/6/20691974.png",
+            "height": 180,
+            "weight": 77,
+            "date_of_birth": "2001-09-02",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476445,
+              "fixture_id": 18232692,
+              "player_id": 20691974,
+              "team_id": 3630,
+              "lineup_id": 10028813,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476445,
+              "fixture_id": 18232692,
+              "player_id": 20691974,
+              "team_id": 3630,
+              "lineup_id": 10028813,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028597,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 35162,
+          "team_id": 3630,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 3,
+          "player_name": "Lukas M\u00fchl",
+          "jersey_number": 20,
+          "player": {
+            "id": 35162,
+            "sport_id": 1,
+            "country_id": 11,
+            "nationality_id": 11,
+            "city_id": 102402,
+            "position_id": 25,
+            "detailed_position_id": 148,
+            "type_id": 25,
+            "common_name": "L. M\u00fchl",
+            "firstname": "Lukas",
+            "lastname": "M\u00fchl",
+            "name": "Lukas M\u00fchl",
+            "display_name": "Lukas M\u00fchl",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 190,
+            "weight": 84,
+            "date_of_birth": "1997-01-27",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476451,
+              "fixture_id": 18232692,
+              "player_id": 35162,
+              "team_id": 3630,
+              "lineup_id": 10028597,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476535,
+              "fixture_id": 18232692,
+              "player_id": 35162,
+              "team_id": 3630,
+              "lineup_id": 10028597,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476451,
+              "fixture_id": 18232692,
+              "player_id": 35162,
+              "team_id": 3630,
+              "lineup_id": 10028597,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476535,
+              "fixture_id": 18232692,
+              "player_id": 35162,
+              "team_id": 3630,
+              "lineup_id": 10028597,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028819,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 1468000,
+          "team_id": 3630,
+          "position_id": 24,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "A. Helac",
+          "jersey_number": 21,
+          "player": {
+            "id": 1468000,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": 50754,
+            "position_id": 24,
+            "detailed_position_id": 24,
+            "type_id": 24,
+            "common_name": "A. Helac",
+            "firstname": "Ammar",
+            "lastname": "Helac",
+            "name": "Ammar Helac",
+            "display_name": "Ammar Helac",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 190,
+            "weight": 87,
+            "date_of_birth": "1998-06-13",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476011,
+              "fixture_id": 18232692,
+              "player_id": 1468000,
+              "team_id": 3630,
+              "lineup_id": 10028819,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476011,
+              "fixture_id": 18232692,
+              "player_id": 1468000,
+              "team_id": 3630,
+              "lineup_id": 10028819,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028852,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 24818005,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "M. Braun\u00f6der",
+          "jersey_number": 23,
+          "player": {
+            "id": 24818005,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": 26097,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "M. Braun\u00f6der",
+            "firstname": "Matthias",
+            "lastname": "Braun\u00f6der",
+            "name": "Matthias Braun\u00f6der",
+            "display_name": "Matthias Braun\u00f6der",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/21/24818005.png",
+            "height": 174,
+            "weight": 67,
+            "date_of_birth": "2002-03-27",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476455,
+              "fixture_id": 18232692,
+              "player_id": 24818005,
+              "team_id": 3630,
+              "lineup_id": 10028852,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476455,
+              "fixture_id": 18232692,
+              "player_id": 24818005,
+              "team_id": 3630,
+              "lineup_id": 10028852,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028602,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 52737,
+          "team_id": 3630,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 4,
+          "player_name": "Christian Schoissengeyr",
+          "jersey_number": 24,
+          "player": {
+            "id": 52737,
+            "sport_id": 1,
+            "country_id": 79146,
+            "nationality_id": 79146,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 148,
+            "type_id": 25,
+            "common_name": "C. Schoissengeyr",
+            "firstname": "Christian",
+            "lastname": "Schoissengeyr",
+            "name": "Christian Schoissengeyr",
+            "display_name": "Christian Schoissengeyr",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 195,
+            "weight": 92,
+            "date_of_birth": "1994-10-18",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476406,
+              "fixture_id": 18232692,
+              "player_id": 52737,
+              "team_id": 3630,
+              "lineup_id": 10028602,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476457,
+              "fixture_id": 18232692,
+              "player_id": 52737,
+              "team_id": 3630,
+              "lineup_id": 10028602,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476554,
+              "fixture_id": 18232692,
+              "player_id": 52737,
+              "team_id": 3630,
+              "lineup_id": 10028602,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476406,
+              "fixture_id": 18232692,
+              "player_id": 52737,
+              "team_id": 3630,
+              "lineup_id": 10028602,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476457,
+              "fixture_id": 18232692,
+              "player_id": 52737,
+              "team_id": 3630,
+              "lineup_id": 10028602,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476554,
+              "fixture_id": 18232692,
+              "player_id": 52737,
+              "team_id": 3630,
+              "lineup_id": 10028602,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028607,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 32472,
+          "team_id": 3630,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 5,
+          "player_name": "Markus Suttner",
+          "jersey_number": 29,
+          "player": {
+            "id": 32472,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": 38157,
+            "position_id": null,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "M. Suttner",
+            "firstname": "Markus",
+            "lastname": "Suttner",
+            "name": "Markus Suttner",
+            "display_name": "Markus Suttner",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/24/32472.png",
+            "height": 179,
+            "weight": 73,
+            "date_of_birth": "1987-04-16",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476386,
+              "fixture_id": 18232692,
+              "player_id": 32472,
+              "team_id": 3630,
+              "lineup_id": 10028607,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476557,
+              "fixture_id": 18232692,
+              "player_id": 32472,
+              "team_id": 3630,
+              "lineup_id": 10028607,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476386,
+              "fixture_id": 18232692,
+              "player_id": 32472,
+              "team_id": 3630,
+              "lineup_id": 10028607,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476557,
+              "fixture_id": 18232692,
+              "player_id": 32472,
+              "team_id": 3630,
+              "lineup_id": 10028607,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028611,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 54086,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 9,
+          "player_name": "Manfred Fischer",
+          "jersey_number": 30,
+          "player": {
+            "id": 54086,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 150,
+            "type_id": 26,
+            "common_name": "M. Fischer",
+            "firstname": "Manfred",
+            "lastname": "Fischer",
+            "name": "Manfred Fischer",
+            "display_name": "Manfred Fischer",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 179,
+            "weight": 72,
+            "date_of_birth": "1995-08-06",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476463,
+              "fixture_id": 18232692,
+              "player_id": 54086,
+              "team_id": 3630,
+              "lineup_id": 10028611,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476410,
+              "fixture_id": 18232692,
+              "player_id": 54086,
+              "team_id": 3630,
+              "lineup_id": 10028611,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476463,
+              "fixture_id": 18232692,
+              "player_id": 54086,
+              "team_id": 3630,
+              "lineup_id": 10028611,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476410,
+              "fixture_id": 18232692,
+              "player_id": 54086,
+              "team_id": 3630,
+              "lineup_id": 10028611,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028616,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 1491379,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 7,
+          "player_name": "Dominik Fitz",
+          "jersey_number": 36,
+          "player": {
+            "id": 1491379,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 150,
+            "type_id": 27,
+            "common_name": "D. Fitz",
+            "firstname": "Dominik",
+            "lastname": "Fitz",
+            "name": "Dominik Fitz",
+            "display_name": "Dominik Fitz",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 175,
+            "weight": 67,
+            "date_of_birth": "1999-06-16",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476468,
+              "fixture_id": 18232692,
+              "player_id": 1491379,
+              "team_id": 3630,
+              "lineup_id": 10028616,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 267212520,
+              "fixture_id": 18232692,
+              "player_id": 1491379,
+              "team_id": 3630,
+              "lineup_id": 10028616,
+              "type_id": 52,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 52,
+                "name": "Goals",
+                "code": "goals",
+                "developer_name": "GOALS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 231476412,
+              "fixture_id": 18232692,
+              "player_id": 1491379,
+              "team_id": 3630,
+              "lineup_id": 10028616,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            },
+            {
+              "id": 231476568,
+              "fixture_id": 18232692,
+              "player_id": 1491379,
+              "team_id": 3630,
+              "lineup_id": 10028616,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476468,
+              "fixture_id": 18232692,
+              "player_id": 1491379,
+              "team_id": 3630,
+              "lineup_id": 10028616,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 267212520,
+              "fixture_id": 18232692,
+              "player_id": 1491379,
+              "team_id": 3630,
+              "lineup_id": 10028616,
+              "type_id": 52,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 52,
+                "name": "Goals",
+                "code": "goals",
+                "developer_name": "GOALS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 231476412,
+              "fixture_id": 18232692,
+              "player_id": 1491379,
+              "team_id": 3630,
+              "lineup_id": 10028616,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            },
+            {
+              "id": 231476568,
+              "fixture_id": 18232692,
+              "player_id": 1491379,
+              "team_id": 3630,
+              "lineup_id": 10028616,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028621,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 32734,
+          "team_id": 3630,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 2,
+          "player_name": "Georg Teigl",
+          "jersey_number": 39,
+          "player": {
+            "id": 32734,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "G. Teigl",
+            "firstname": "Georg",
+            "lastname": "Teigl",
+            "name": "Georg Teigl",
+            "display_name": "Georg Teigl",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/30/32734.png",
+            "height": 183,
+            "weight": 77,
+            "date_of_birth": "1991-02-09",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476388,
+              "fixture_id": 18232692,
+              "player_id": 32734,
+              "team_id": 3630,
+              "lineup_id": 10028621,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476470,
+              "fixture_id": 18232692,
+              "player_id": 32734,
+              "team_id": 3630,
+              "lineup_id": 10028621,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476388,
+              "fixture_id": 18232692,
+              "player_id": 32734,
+              "team_id": 3630,
+              "lineup_id": 10028621,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476470,
+              "fixture_id": 18232692,
+              "player_id": 32734,
+              "team_id": 3630,
+              "lineup_id": 10028621,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028885,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 1444100,
+          "team_id": 3630,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Johannes Handl",
+          "jersey_number": 46,
+          "player": {
+            "id": 1444100,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": 33589,
+            "position_id": 25,
+            "detailed_position_id": 148,
+            "type_id": 25,
+            "common_name": "J. Handl",
+            "firstname": "Johannes",
+            "lastname": "Handl",
+            "name": "Johannes Handl",
+            "display_name": "Johannes Handl",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 196,
+            "weight": 86,
+            "date_of_birth": "1998-05-07",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476578,
+              "fixture_id": 18232692,
+              "player_id": 1444100,
+              "team_id": 3630,
+              "lineup_id": 10028885,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476578,
+              "fixture_id": 18232692,
+              "player_id": 1444100,
+              "team_id": 3630,
+              "lineup_id": 10028885,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028896,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 2206810,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "E. Bejic",
+          "jersey_number": 70,
+          "player": {
+            "id": 2206810,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "E. Bejic",
+            "firstname": "Esad",
+            "lastname": "Bejic",
+            "name": "Esad Bejic",
+            "display_name": "Esad Bejic",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 180,
+            "weight": 68,
+            "date_of_birth": "2001-03-03",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476583,
+              "fixture_id": 18232692,
+              "player_id": 2206810,
+              "team_id": 3630,
+              "lineup_id": 10028896,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476583,
+              "fixture_id": 18232692,
+              "player_id": 2206810,
+              "team_id": 3630,
+              "lineup_id": 10028896,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028627,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 2510394,
+          "team_id": 3630,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 10,
+          "player_name": "Aleksandar Jukic",
+          "jersey_number": 77,
+          "player": {
+            "id": 2510394,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "A. Jukic",
+            "firstname": "Aleksandar",
+            "lastname": "Jukic",
+            "name": "Aleksandar Jukic",
+            "display_name": "Aleksandar Jukic",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 183,
+            "weight": 73,
+            "date_of_birth": "2000-07-26",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476270,
+              "fixture_id": 18232692,
+              "player_id": 2510394,
+              "team_id": 3630,
+              "lineup_id": 10028627,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476588,
+              "fixture_id": 18232692,
+              "player_id": 2510394,
+              "team_id": 3630,
+              "lineup_id": 10028627,
+              "type_id": 119,
+              "data": {
+                "value": 59
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476270,
+              "fixture_id": 18232692,
+              "player_id": 2510394,
+              "team_id": 3630,
+              "lineup_id": 10028627,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476588,
+              "fixture_id": 18232692,
+              "player_id": 2510394,
+              "team_id": 3630,
+              "lineup_id": 10028627,
+              "type_id": 119,
+              "data": {
+                "value": 59
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028632,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 6309,
+          "team_id": 3630,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 11,
+          "player_name": "Marco Djuricin",
+          "jersey_number": 92,
+          "player": {
+            "id": 6309,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": 151,
+            "type_id": 27,
+            "common_name": "M. Djuricin",
+            "firstname": "Marco",
+            "lastname": "Djuricin",
+            "name": "Marco Djuricin",
+            "display_name": "Marco Djuricin",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/5/6309.png",
+            "height": 183,
+            "weight": 78,
+            "date_of_birth": "1992-12-12",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476481,
+              "fixture_id": 18232692,
+              "player_id": 6309,
+              "team_id": 3630,
+              "lineup_id": 10028632,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476419,
+              "fixture_id": 18232692,
+              "player_id": 6309,
+              "team_id": 3630,
+              "lineup_id": 10028632,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476596,
+              "fixture_id": 18232692,
+              "player_id": 6309,
+              "team_id": 3630,
+              "lineup_id": 10028632,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476481,
+              "fixture_id": 18232692,
+              "player_id": 6309,
+              "team_id": 3630,
+              "lineup_id": 10028632,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476419,
+              "fixture_id": 18232692,
+              "player_id": 6309,
+              "team_id": 3630,
+              "lineup_id": 10028632,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476596,
+              "fixture_id": 18232692,
+              "player_id": 6309,
+              "team_id": 3630,
+              "lineup_id": 10028632,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028910,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 1452456,
+          "team_id": 3630,
+          "position_id": 24,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Mirko Kos",
+          "jersey_number": 99,
+          "player": {
+            "id": 1452456,
+            "sport_id": 1,
+            "country_id": 143,
+            "nationality_id": 143,
+            "city_id": null,
+            "position_id": 24,
+            "detailed_position_id": 24,
+            "type_id": 24,
+            "common_name": "M. Kos",
+            "firstname": "Mirko",
+            "lastname": "Kos",
+            "name": "Mirko Kos",
+            "display_name": "Mirko Kos",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 183,
+            "weight": 80,
+            "date_of_birth": "1997-04-12",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476598,
+              "fixture_id": 18232692,
+              "player_id": 1452456,
+              "team_id": 3630,
+              "lineup_id": 10028910,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476598,
+              "fixture_id": 18232692,
+              "player_id": 1452456,
+              "team_id": 3630,
+              "lineup_id": 10028910,
+              "type_id": 88,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028513,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 118789,
+          "team_id": 6913,
+          "position_id": 24,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 1,
+          "player_name": "Anton Ari Einarsson",
+          "jersey_number": 1,
+          "player": {
+            "id": 118789,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 24,
+            "detailed_position_id": 24,
+            "type_id": 24,
+            "common_name": "A. Einarsson",
+            "firstname": "Anton Ari",
+            "lastname": "Einarsson",
+            "name": "Anton Ari Einarsson",
+            "display_name": "Anton Ari Einarsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/5/118789.png",
+            "height": 0,
+            "weight": null,
+            "date_of_birth": "1994-08-25",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 337015435,
+              "fixture_id": 18232692,
+              "player_id": 118789,
+              "team_id": 6913,
+              "lineup_id": 10028513,
+              "type_id": 1535,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 1535,
+                "name": "Goalkeeper Goals Conceded",
+                "code": "goalkeeper-goals-conceded",
+                "developer_name": "GOALKEEPER_GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476152,
+              "fixture_id": 18232692,
+              "player_id": 118789,
+              "team_id": 6913,
+              "lineup_id": 10028513,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476232,
+              "fixture_id": 18232692,
+              "player_id": 118789,
+              "team_id": 6913,
+              "lineup_id": 10028513,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 337015435,
+              "fixture_id": 18232692,
+              "player_id": 118789,
+              "team_id": 6913,
+              "lineup_id": 10028513,
+              "type_id": 1535,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 1535,
+                "name": "Goalkeeper Goals Conceded",
+                "code": "goalkeeper-goals-conceded",
+                "developer_name": "GOALKEEPER_GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476152,
+              "fixture_id": 18232692,
+              "player_id": 118789,
+              "team_id": 6913,
+              "lineup_id": 10028513,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476232,
+              "fixture_id": 18232692,
+              "player_id": 118789,
+              "team_id": 6913,
+              "lineup_id": 10028513,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028516,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 84399,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 7,
+          "player_name": "Oliver Sigurj\u00f3nsson",
+          "jersey_number": 3,
+          "player": {
+            "id": 84399,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 149,
+            "type_id": 26,
+            "common_name": "\u00d3. Sigurj\u00f3nsson",
+            "firstname": "\u00d3l\u00edver",
+            "lastname": "Sigurj\u00f3nsson",
+            "name": "\u00d3l\u00edver Sigurj\u00f3nsson",
+            "display_name": "O. Sigurj\u00f3nsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/15/84399.png",
+            "height": 174,
+            "weight": null,
+            "date_of_birth": "1995-03-03",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476267,
+              "fixture_id": 18232692,
+              "player_id": 84399,
+              "team_id": 6913,
+              "lineup_id": 10028516,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476296,
+              "fixture_id": 18232692,
+              "player_id": 84399,
+              "team_id": 6913,
+              "lineup_id": 10028516,
+              "type_id": 119,
+              "data": {
+                "value": 78
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476267,
+              "fixture_id": 18232692,
+              "player_id": 84399,
+              "team_id": 6913,
+              "lineup_id": 10028516,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476296,
+              "fixture_id": 18232692,
+              "player_id": 84399,
+              "team_id": 6913,
+              "lineup_id": 10028516,
+              "type_id": 119,
+              "data": {
+                "value": 78
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028520,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 118453,
+          "team_id": 6913,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 3,
+          "player_name": "Damir Muminovic",
+          "jersey_number": 4,
+          "player": {
+            "id": 118453,
+            "sport_id": 1,
+            "country_id": 296,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 148,
+            "type_id": 25,
+            "common_name": "D. Muminovic",
+            "firstname": "Damir",
+            "lastname": "Muminovic",
+            "name": "Damir Muminovic",
+            "display_name": "Damir Muminovic",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/21/118453.png",
+            "height": 186,
+            "weight": null,
+            "date_of_birth": "1990-05-13",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476387,
+              "fixture_id": 18232692,
+              "player_id": 118453,
+              "team_id": 6913,
+              "lineup_id": 10028520,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476391,
+              "fixture_id": 18232692,
+              "player_id": 118453,
+              "team_id": 6913,
+              "lineup_id": 10028520,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476387,
+              "fixture_id": 18232692,
+              "player_id": 118453,
+              "team_id": 6913,
+              "lineup_id": 10028520,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476391,
+              "fixture_id": 18232692,
+              "player_id": 118453,
+              "team_id": 6913,
+              "lineup_id": 10028520,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028679,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 84345,
+          "team_id": 6913,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Elfar Freyr Helgason",
+          "jersey_number": 5,
+          "player": {
+            "id": 84345,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 148,
+            "type_id": 25,
+            "common_name": "E. Helgason",
+            "firstname": "Elfar Freyr",
+            "lastname": "Helgason",
+            "name": "Elfar Freyr Helgason",
+            "display_name": "Elfar Freyr Helgason",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/25/84345.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "1989-07-27",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476398,
+              "fixture_id": 18232692,
+              "player_id": 84345,
+              "team_id": 6913,
+              "lineup_id": 10028679,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476398,
+              "fixture_id": 18232692,
+              "player_id": 84345,
+              "team_id": 6913,
+              "lineup_id": 10028679,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028526,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 118608,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 8,
+          "player_name": "A. Sigur\u00f0arson",
+          "jersey_number": 6,
+          "player": {
+            "id": 118608,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 149,
+            "type_id": 27,
+            "common_name": "A. Sigurdarson",
+            "firstname": "Alexander Helgi",
+            "lastname": "Sigurdarson",
+            "name": "Alexander Helgi Sigurdarson",
+            "display_name": "Alexander Helgi Sigurdarson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 177,
+            "weight": null,
+            "date_of_birth": "1996-04-08",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476411,
+              "fixture_id": 18232692,
+              "player_id": 118608,
+              "team_id": 6913,
+              "lineup_id": 10028526,
+              "type_id": 119,
+              "data": {
+                "value": 66
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476413,
+              "fixture_id": 18232692,
+              "player_id": 118608,
+              "team_id": 6913,
+              "lineup_id": 10028526,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476411,
+              "fixture_id": 18232692,
+              "player_id": 118608,
+              "team_id": 6913,
+              "lineup_id": 10028526,
+              "type_id": 119,
+              "data": {
+                "value": 66
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476413,
+              "fixture_id": 18232692,
+              "player_id": 118608,
+              "team_id": 6913,
+              "lineup_id": 10028526,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028532,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 118315,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 2,
+          "player_name": "H\u00f6skuldur Gunnlaugsson",
+          "jersey_number": 7,
+          "player": {
+            "id": 118315,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "H. Gunnlaugsson",
+            "firstname": "H\u00f6skuldur",
+            "lastname": "Gunnlaugsson",
+            "name": "H\u00f6skuldur Gunnlaugsson",
+            "display_name": "H\u00f6skuldur Gunnlaugsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 173,
+            "weight": null,
+            "date_of_birth": "1994-09-26",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476420,
+              "fixture_id": 18232692,
+              "player_id": 118315,
+              "team_id": 6913,
+              "lineup_id": 10028532,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476418,
+              "fixture_id": 18232692,
+              "player_id": 118315,
+              "team_id": 6913,
+              "lineup_id": 10028532,
+              "type_id": 79,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 79,
+                "name": "Assists",
+                "code": "assists",
+                "developer_name": "ASSISTS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 231476424,
+              "fixture_id": 18232692,
+              "player_id": 118315,
+              "team_id": 6913,
+              "lineup_id": 10028532,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476420,
+              "fixture_id": 18232692,
+              "player_id": 118315,
+              "team_id": 6913,
+              "lineup_id": 10028532,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476418,
+              "fixture_id": 18232692,
+              "player_id": 118315,
+              "team_id": 6913,
+              "lineup_id": 10028532,
+              "type_id": 79,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 79,
+                "name": "Assists",
+                "code": "assists",
+                "developer_name": "ASSISTS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 231476424,
+              "fixture_id": 18232692,
+              "player_id": 118315,
+              "team_id": 6913,
+              "lineup_id": 10028532,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028537,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 29181,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 6,
+          "player_name": "Viktor Karl Einarsson",
+          "jersey_number": 8,
+          "player": {
+            "id": 29181,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "V. Einarsson",
+            "firstname": "Viktor Karl",
+            "lastname": "Einarsson",
+            "name": "Viktor Karl Einarsson",
+            "display_name": "Viktor Karl Einarsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/29/29181.png",
+            "height": 176,
+            "weight": null,
+            "date_of_birth": "1997-01-30",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476433,
+              "fixture_id": 18232692,
+              "player_id": 29181,
+              "team_id": 6913,
+              "lineup_id": 10028537,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476437,
+              "fixture_id": 18232692,
+              "player_id": 29181,
+              "team_id": 6913,
+              "lineup_id": 10028537,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476439,
+              "fixture_id": 18232692,
+              "player_id": 29181,
+              "team_id": 6913,
+              "lineup_id": 10028537,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476433,
+              "fixture_id": 18232692,
+              "player_id": 29181,
+              "team_id": 6913,
+              "lineup_id": 10028537,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476437,
+              "fixture_id": 18232692,
+              "player_id": 29181,
+              "team_id": 6913,
+              "lineup_id": 10028537,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476439,
+              "fixture_id": 18232692,
+              "player_id": 29181,
+              "team_id": 6913,
+              "lineup_id": 10028537,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028690,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 84321,
+          "team_id": 6913,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "T. Mikkelsen",
+          "jersey_number": 9,
+          "player": {
+            "id": 84321,
+            "sport_id": 1,
+            "country_id": 320,
+            "nationality_id": 320,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": null,
+            "type_id": 27,
+            "common_name": "T. Mikkelsen",
+            "firstname": "Thomas",
+            "lastname": "Mikkelsen",
+            "name": "Thomas Mikkelsen",
+            "display_name": "Thomas Mikkelsen",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/1/84321.png",
+            "height": 188,
+            "weight": 83,
+            "date_of_birth": "1990-01-19",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476450,
+              "fixture_id": 18232692,
+              "player_id": 84321,
+              "team_id": 6913,
+              "lineup_id": 10028690,
+              "type_id": 119,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476450,
+              "fixture_id": 18232692,
+              "player_id": 84321,
+              "team_id": 6913,
+              "lineup_id": 10028690,
+              "type_id": 119,
+              "data": {
+                "value": 2
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028541,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 118174,
+          "team_id": 6913,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 11,
+          "player_name": "\u00c1rni Vilhj\u00e1lmsson",
+          "jersey_number": 10,
+          "player": {
+            "id": 118174,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": 74063,
+            "position_id": 27,
+            "detailed_position_id": 151,
+            "type_id": 27,
+            "common_name": "\u00c1. Vilhj\u00e1lmsson",
+            "firstname": "\u00c1rni",
+            "lastname": "Vilhj\u00e1lmsson",
+            "name": "\u00c1rni Vilhj\u00e1lmsson",
+            "display_name": "\u00c1rni Vilhj\u00e1lmsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/30/118174.png",
+            "height": 181,
+            "weight": 76,
+            "date_of_birth": "1994-05-09",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476462,
+              "fixture_id": 18232692,
+              "player_id": 118174,
+              "team_id": 6913,
+              "lineup_id": 10028541,
+              "type_id": 119,
+              "data": {
+                "value": 88
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476458,
+              "fixture_id": 18232692,
+              "player_id": 118174,
+              "team_id": 6913,
+              "lineup_id": 10028541,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 267212495,
+              "fixture_id": 18232692,
+              "player_id": 118174,
+              "team_id": 6913,
+              "lineup_id": 10028541,
+              "type_id": 52,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 52,
+                "name": "Goals",
+                "code": "goals",
+                "developer_name": "GOALS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476462,
+              "fixture_id": 18232692,
+              "player_id": 118174,
+              "team_id": 6913,
+              "lineup_id": 10028541,
+              "type_id": 119,
+              "data": {
+                "value": 88
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 231476458,
+              "fixture_id": 18232692,
+              "player_id": 118174,
+              "team_id": 6913,
+              "lineup_id": 10028541,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 267212495,
+              "fixture_id": 18232692,
+              "player_id": 118174,
+              "team_id": 6913,
+              "lineup_id": 10028541,
+              "type_id": 52,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 52,
+                "name": "Goals",
+                "code": "goals",
+                "developer_name": "GOALS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028545,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 118998,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 9,
+          "player_name": "G\u00edsli Eyj\u00f3lfsson",
+          "jersey_number": 11,
+          "player": {
+            "id": 118998,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "G. Eyj\u00f3lfsson",
+            "firstname": "G\u00edsli",
+            "lastname": "Eyj\u00f3lfsson",
+            "name": "G\u00edsli Eyj\u00f3lfsson",
+            "display_name": "G\u00edsli Eyj\u00f3lfsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 180,
+            "weight": 77,
+            "date_of_birth": "1994-05-31",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476471,
+              "fixture_id": 18232692,
+              "player_id": 118998,
+              "team_id": 6913,
+              "lineup_id": 10028545,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476475,
+              "fixture_id": 18232692,
+              "player_id": 118998,
+              "team_id": 6913,
+              "lineup_id": 10028545,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476471,
+              "fixture_id": 18232692,
+              "player_id": 118998,
+              "team_id": 6913,
+              "lineup_id": 10028545,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476475,
+              "fixture_id": 18232692,
+              "player_id": 118998,
+              "team_id": 6913,
+              "lineup_id": 10028545,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028703,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 16144607,
+          "team_id": 6913,
+          "position_id": 24,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Brynjar Atli Bragason",
+          "jersey_number": 12,
+          "player": {
+            "id": 16144607,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 24,
+            "detailed_position_id": 24,
+            "type_id": 24,
+            "common_name": "B. Bragason",
+            "firstname": "Brynjar Atli",
+            "lastname": "Bragason",
+            "name": "Brynjar Atli Bragason",
+            "display_name": "Brynjar Atli Bragason",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/31/16144607.png",
+            "height": 187,
+            "weight": null,
+            "date_of_birth": "2000-04-01",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476484,
+              "fixture_id": 18232692,
+              "player_id": 16144607,
+              "team_id": 6913,
+              "lineup_id": 10028703,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476484,
+              "fixture_id": 18232692,
+              "player_id": 16144607,
+              "team_id": 6913,
+              "lineup_id": 10028703,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028710,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 16144605,
+          "team_id": 6913,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Jason Dadi Svanth\u00f3rsson",
+          "jersey_number": 14,
+          "player": {
+            "id": 16144605,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": 156,
+            "type_id": 27,
+            "common_name": "J. Svanth\u00f3rsson",
+            "firstname": "Jason",
+            "lastname": "Svanth\u00f3rsson",
+            "name": "Jason Svanth\u00f3rsson",
+            "display_name": "Jason Da\u00f0i Svan\u00fe\u00f3rsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/29/16144605.png",
+            "height": 178,
+            "weight": null,
+            "date_of_birth": "1999-12-31",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476494,
+              "fixture_id": 18232692,
+              "player_id": 16144605,
+              "team_id": 6913,
+              "lineup_id": 10028710,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476494,
+              "fixture_id": 18232692,
+              "player_id": 16144605,
+              "team_id": 6913,
+              "lineup_id": 10028710,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028716,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 117518,
+          "team_id": 6913,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "F. Margeirsson",
+          "jersey_number": 18,
+          "player": {
+            "id": 117518,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": 74063,
+            "position_id": 26,
+            "detailed_position_id": 149,
+            "type_id": 26,
+            "common_name": "F. Margeirsson",
+            "firstname": "Finnur Orri",
+            "lastname": "Margeirsson",
+            "name": "Finnur Orri Margeirsson",
+            "display_name": "Finnur Orri Margeirsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/14/117518.png",
+            "height": 180,
+            "weight": 75,
+            "date_of_birth": "1991-03-08",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476503,
+              "fixture_id": 18232692,
+              "player_id": 117518,
+              "team_id": 6913,
+              "lineup_id": 10028716,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476503,
+              "fixture_id": 18232692,
+              "player_id": 117518,
+              "team_id": 6913,
+              "lineup_id": 10028716,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028724,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 2483679,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "S\u00f6lvi Snaer Gudbjargarson",
+          "jersey_number": 19,
+          "player": {
+            "id": 2483679,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 158,
+            "type_id": 26,
+            "common_name": "S. Gudbjargarson",
+            "firstname": "S\u00f6lvi Snaer",
+            "lastname": "Gudbjargarson",
+            "name": "S\u00f6lvi Snaer Gudbjargarson",
+            "display_name": "S\u00f6lvi Sn\u00e6r Gu\u00f0bjargarson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 0,
+            "weight": null,
+            "date_of_birth": "2001-07-25",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476514,
+              "fixture_id": 18232692,
+              "player_id": 2483679,
+              "team_id": 6913,
+              "lineup_id": 10028724,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476514,
+              "fixture_id": 18232692,
+              "player_id": 2483679,
+              "team_id": 6913,
+              "lineup_id": 10028724,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028552,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 117249,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 10,
+          "player_name": "Kristinn Steind\u00f3rsson",
+          "jersey_number": 20,
+          "player": {
+            "id": 117249,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 150,
+            "type_id": 26,
+            "common_name": "K. Steindorsson",
+            "firstname": "Kristinn",
+            "lastname": "Steindorsson",
+            "name": "Kristinn Steindorsson",
+            "display_name": "Kristinn Steind\u00f3rsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/1/117249.png",
+            "height": 178,
+            "weight": 70,
+            "date_of_birth": "1990-04-29",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476523,
+              "fixture_id": 18232692,
+              "player_id": 117249,
+              "team_id": 6913,
+              "lineup_id": 10028552,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 267212511,
+              "fixture_id": 18232692,
+              "player_id": 117249,
+              "team_id": 6913,
+              "lineup_id": 10028552,
+              "type_id": 52,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 52,
+                "name": "Goals",
+                "code": "goals",
+                "developer_name": "GOALS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 231476521,
+              "fixture_id": 18232692,
+              "player_id": 117249,
+              "team_id": 6913,
+              "lineup_id": 10028552,
+              "type_id": 79,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 79,
+                "name": "Assists",
+                "code": "assists",
+                "developer_name": "ASSISTS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 231476527,
+              "fixture_id": 18232692,
+              "player_id": 117249,
+              "team_id": 6913,
+              "lineup_id": 10028552,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476523,
+              "fixture_id": 18232692,
+              "player_id": 117249,
+              "team_id": 6913,
+              "lineup_id": 10028552,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 267212511,
+              "fixture_id": 18232692,
+              "player_id": 117249,
+              "team_id": 6913,
+              "lineup_id": 10028552,
+              "type_id": 52,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 52,
+                "name": "Goals",
+                "code": "goals",
+                "developer_name": "GOALS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 231476521,
+              "fixture_id": 18232692,
+              "player_id": 117249,
+              "team_id": 6913,
+              "lineup_id": 10028552,
+              "type_id": 79,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 79,
+                "name": "Assists",
+                "code": "assists",
+                "developer_name": "ASSISTS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 231476527,
+              "fixture_id": 18232692,
+              "player_id": 117249,
+              "team_id": 6913,
+              "lineup_id": 10028552,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028556,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 118816,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 4,
+          "player_name": "Viktor \u00d6rn Margeirsson",
+          "jersey_number": 21,
+          "player": {
+            "id": 118816,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 148,
+            "type_id": 26,
+            "common_name": "V. Margeirsson",
+            "firstname": "Viktor \u00d6rn",
+            "lastname": "Margeirsson",
+            "name": "Viktor \u00d6rn Margeirsson",
+            "display_name": "Viktor \u00d6rn Margeirsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 188,
+            "weight": null,
+            "date_of_birth": "1994-07-22",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476534,
+              "fixture_id": 18232692,
+              "player_id": 118816,
+              "team_id": 6913,
+              "lineup_id": 10028556,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476538,
+              "fixture_id": 18232692,
+              "player_id": 118816,
+              "team_id": 6913,
+              "lineup_id": 10028556,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476534,
+              "fixture_id": 18232692,
+              "player_id": 118816,
+              "team_id": 6913,
+              "lineup_id": 10028556,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476538,
+              "fixture_id": 18232692,
+              "player_id": 118816,
+              "team_id": 6913,
+              "lineup_id": 10028556,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028730,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 118421,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "D. Atlason",
+          "jersey_number": 24,
+          "player": {
+            "id": 118421,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 154,
+            "type_id": 26,
+            "common_name": "D. Atlason",
+            "firstname": "Dav\u00edd \u00d6rn",
+            "lastname": "Atlason",
+            "name": "Dav\u00edd \u00d6rn Atlason",
+            "display_name": "Dav\u00edd \u00d6rn Atlason",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/21/118421.png",
+            "height": 0,
+            "weight": null,
+            "date_of_birth": "1994-08-18",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476551,
+              "fixture_id": 18232692,
+              "player_id": 118421,
+              "team_id": 6913,
+              "lineup_id": 10028730,
+              "type_id": 119,
+              "data": {
+                "value": 12
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476551,
+              "fixture_id": 18232692,
+              "player_id": 118421,
+              "team_id": 6913,
+              "lineup_id": 10028730,
+              "type_id": 119,
+              "data": {
+                "value": 12
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028563,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 539448,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": 5,
+          "player_name": "D. Ingvarsson",
+          "jersey_number": 25,
+          "player": {
+            "id": 539448,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": 155,
+            "type_id": 26,
+            "common_name": "D. Ingvarsson",
+            "firstname": "David",
+            "lastname": "Ingvarsson",
+            "name": "David Ingvarsson",
+            "display_name": "Dav\u00edd Ingvarsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 176,
+            "weight": null,
+            "date_of_birth": "1999-04-25",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476558,
+              "fixture_id": 18232692,
+              "player_id": 539448,
+              "team_id": 6913,
+              "lineup_id": 10028563,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476562,
+              "fixture_id": 18232692,
+              "player_id": 539448,
+              "team_id": 6913,
+              "lineup_id": 10028563,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476558,
+              "fixture_id": 18232692,
+              "player_id": 539448,
+              "team_id": 6913,
+              "lineup_id": 10028563,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476562,
+              "fixture_id": 18232692,
+              "player_id": 539448,
+              "team_id": 6913,
+              "lineup_id": 10028563,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028735,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 117766,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Andri Rafn Yeoman",
+          "jersey_number": 30,
+          "player": {
+            "id": 117766,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "A. Yeoman",
+            "firstname": "Andri Rafn",
+            "lastname": "Yeoman",
+            "name": "Andri Rafn Yeoman",
+            "display_name": "Andri Rafn Yeoman",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/6/117766.png",
+            "height": 175,
+            "weight": null,
+            "date_of_birth": "1992-04-18",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476569,
+              "fixture_id": 18232692,
+              "player_id": 117766,
+              "team_id": 6913,
+              "lineup_id": 10028735,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476573,
+              "fixture_id": 18232692,
+              "player_id": 117766,
+              "team_id": 6913,
+              "lineup_id": 10028735,
+              "type_id": 119,
+              "data": {
+                "value": 24
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476569,
+              "fixture_id": 18232692,
+              "player_id": 117766,
+              "team_id": 6913,
+              "lineup_id": 10028735,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 231476573,
+              "fixture_id": 18232692,
+              "player_id": 117766,
+              "team_id": 6913,
+              "lineup_id": 10028735,
+              "type_id": 119,
+              "data": {
+                "value": 24
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028740,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 34573352,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "\u00de. \u00dalfarsson",
+          "jersey_number": 33,
+          "player": {
+            "id": 34573352,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": 151,
+            "type_id": 26,
+            "common_name": "\u00de. \u00dalfarsson",
+            "firstname": "\u00deorleifur",
+            "lastname": "\u00dalfarsson",
+            "name": "\u00deorleifur \u00dalfarsson",
+            "display_name": "Thor \u00dalfarsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 185,
+            "weight": null,
+            "date_of_birth": "2000-12-27",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476581,
+              "fixture_id": 18232692,
+              "player_id": 34573352,
+              "team_id": 6913,
+              "lineup_id": 10028740,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476581,
+              "fixture_id": 18232692,
+              "player_id": 34573352,
+              "team_id": 6913,
+              "lineup_id": 10028740,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028748,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 37570968,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Tomas Orri Robertsson",
+          "jersey_number": 38,
+          "player": {
+            "id": 37570968,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "T. Orri Robertsson",
+            "firstname": "Tomas",
+            "lastname": "Orri Robertsson",
+            "name": "Tomas Orri Robertsson",
+            "display_name": "T. R\u00f3bertsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/24/37570968.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "2004-04-21",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476589,
+              "fixture_id": 18232692,
+              "player_id": 37570968,
+              "team_id": 6913,
+              "lineup_id": 10028748,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476589,
+              "fixture_id": 18232692,
+              "player_id": 37570968,
+              "team_id": 6913,
+              "lineup_id": 10028748,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028756,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 37540679,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "T\u00f3mas Bjarki J\u00f3nsson",
+          "jersey_number": 55,
+          "player": {
+            "id": 37540679,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "T. J\u00f3nsson",
+            "firstname": "T\u00f3mas Bjarki",
+            "lastname": "J\u00f3nsson",
+            "name": "T\u00f3mas Bjarki J\u00f3nsson",
+            "display_name": "T\u00f3mas Bjarki J\u00f3nsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/7/37540679.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "2003-09-01",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476423,
+              "fixture_id": 18232692,
+              "player_id": 37540679,
+              "team_id": 6913,
+              "lineup_id": 10028756,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476423,
+              "fixture_id": 18232692,
+              "player_id": 37540679,
+              "team_id": 6913,
+              "lineup_id": 10028756,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 10028770,
+          "sport_id": 1,
+          "fixture_id": 18232692,
+          "player_id": 37576368,
+          "team_id": 6913,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "\u00c1g\u00fast \u00deorsteinsson",
+          "jersey_number": 93,
+          "player": {
+            "id": 37576368,
+            "sport_id": 1,
+            "country_id": 1796,
+            "nationality_id": 1796,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": 152,
+            "type_id": 26,
+            "common_name": "?. \u00deorsteinsson",
+            "firstname": "\u00c1g\u00fast",
+            "lastname": "\u00deorsteinsson",
+            "name": "\u00c1g\u00fast \u00deorsteinsson",
+            "display_name": "\u00c1g\u00fast Orri Thorsteinsson",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/16/37576368.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "2005-01-14",
+            "gender": "male"
+          },
+          "xglineup": [
+            {
+              "id": 231476292,
+              "fixture_id": 18232692,
+              "player_id": 37576368,
+              "team_id": 6913,
+              "lineup_id": 10028770,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ],
+          "details": [
+            {
+              "id": 231476292,
+              "fixture_id": 18232692,
+              "player_id": 37576368,
+              "team_id": 6913,
+              "lineup_id": 10028770,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782248369,
+          "next_billing_cycle": "2026-07-23T19:06:09 UTC"
+        },
+        "plans": [
+          {
+            "plan": "World Cup 2026",
+            "sport": "Football",
+            "category": "All-in"
+          },
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 3535,
+      "remaining": 2305,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  },
+  "error": null
+}

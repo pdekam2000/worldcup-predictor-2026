@@ -1,0 +1,171 @@
+{
+  "generated_at": "2026-06-24T07:41:01.714533+00:00",
+  "phase": "54H-7",
+  "market": "inplay_goal_minute_bucket",
+  "models": {
+    "minute_only": {
+      "status": "ok",
+      "train_n": 298,
+      "test_n": 146,
+      "accuracy": 0.9932,
+      "log_loss": 0.1006,
+      "brier_score": null,
+      "precision": 0.9935,
+      "recall": 0.9932,
+      "calibration_ece": null,
+      "feature_importance": {
+        "current_minute": 0.32317262362873095,
+        "elapsed_minute": 0.44914269217287495,
+        "minute_normalized": 0.22768468419839324,
+        "goals_before_home": 5.307407205820596e-16,
+        "goals_before_away": 0.0,
+        "score_diff": 2.530276930597527e-16,
+        "goal_index": 2.1079611451169938e-17
+      },
+      "bootstrap_accuracy": {
+        "mean": 0.9933,
+        "ci_low": 0.9726,
+        "ci_high": 1.0
+      }
+    },
+    "pressure_only_no_minute": {
+      "status": "ok",
+      "train_n": 298,
+      "test_n": 146,
+      "accuracy": 0.9384,
+      "log_loss": 0.1927,
+      "brier_score": null,
+      "precision": 0.9414,
+      "recall": 0.9384,
+      "calibration_ece": null,
+      "feature_importance": {
+        "home_avg_pressure": 0.005850838885692168,
+        "away_avg_pressure": 0.028165802682202392,
+        "pressure_difference": 0.009721383192386085,
+        "pressure_spike_count_home": 0.7701644718045445,
+        "pressure_spike_count_away": 0.13403520557750614,
+        "pressure_dominance": 0.007747554623871847,
+        "pressure_momentum": 0.02844788219688411,
+        "pressure_swing": 0.015866861036912594
+      },
+      "bootstrap_accuracy": {
+        "mean": 0.9362,
+        "ci_low": 0.8904,
+        "ci_high": 0.9726
+      }
+    },
+    "pressure_full": {
+      "status": "ok",
+      "train_n": 298,
+      "test_n": 146,
+      "accuracy": 0.9589,
+      "log_loss": 0.1727,
+      "brier_score": null,
+      "precision": 0.9635,
+      "recall": 0.9589,
+      "calibration_ece": null,
+      "feature_importance": {
+        "home_avg_pressure": 0.002022770020418835,
+        "away_avg_pressure": 0.001098468457326475,
+        "pressure_difference": 0.0049159162833404164,
+        "pressure_first_15_home": 0.0018126439843716281,
+        "pressure_first_15_away": 0.008846006666411612,
+        "pressure_first_30_home": 0.0013646513332078835,
+        "pressure_first_30_away": 0.007246326317477486,
+        "pressure_spike_count_home": 0.7699895209107492,
+        "pressure_spike_count_away": 0.13064393290167714,
+        "pressure_dominance": 0.005150943965705215,
+        "pressure_momentum": 0.01988201706300774,
+        "pressure_swing": 0.012965704390387937,
+        "pressure_before_first_goal_home": 0.0008562692812553608,
+        "pressure_before_first_goal_away": 0.0047893088591520906,
+        "pressure_last_5_home": 0.009997215133193653,
+        "pressure_last_5_away": 0.006843689785578177,
+        "pressure_last_10_home": 0.0020542459813647977,
+        "pressure_last_10_away": 0.009520368665374288
+      },
+      "bootstrap_accuracy": {
+        "mean": 0.9583,
+        "ci_low": 0.9178,
+        "ci_high": 0.9863
+      }
+    },
+    "pressure_plus_minute": {
+      "status": "ok",
+      "train_n": 298,
+      "test_n": 146,
+      "accuracy": 0.9932,
+      "log_loss": 0.1006,
+      "brier_score": null,
+      "precision": 0.9935,
+      "recall": 0.9932,
+      "calibration_ece": null,
+      "feature_importance": {
+        "current_minute": 0.37858543181680193,
+        "elapsed_minute": 0.25955301624100496,
+        "minute_normalized": 0.3618615519421918,
+        "goals_before_home": 0.0,
+        "goals_before_away": 0.0,
+        "score_diff": 5.13242713593703e-17,
+        "goal_index": 0.0,
+        "home_avg_pressure": 2.501575857797879e-16,
+        "away_avg_pressure": 5.2096064913646535e-18,
+        "pressure_difference": 2.6819826011099516e-17,
+        "pressure_first_15_home": 9.898252333592844e-17,
+        "pressure_first_15_away": 9.902020856807083e-17,
+        "pressure_first_30_home": 2.36807969145666e-16,
+        "pressure_first_30_away": 3.3765967999585718e-18,
+        "pressure_spike_count_home": 2.971405183963544e-17,
+        "pressure_spike_count_away": 0.0,
+        "pressure_dominance": 0.0,
+        "pressure_momentum": 6.444476178206646e-17,
+        "pressure_swing": 9.068574262745879e-18,
+        "pressure_before_first_goal_home": 0.0,
+        "pressure_before_first_goal_away": 0.0,
+        "pressure_last_5_home": 2.3636177599710005e-17,
+        "pressure_last_5_away": 2.2382013074011107e-17,
+        "pressure_last_10_home": 4.647644309657264e-16,
+        "pressure_last_10_away": 0.0
+      },
+      "bootstrap_accuracy": {
+        "mean": 0.9933,
+        "ci_low": 0.9726,
+        "ci_high": 1.0
+      }
+    },
+    "baseline_egie": {
+      "status": "ok",
+      "train_n": 300,
+      "test_n": 146,
+      "accuracy": 0.7329,
+      "log_loss": 0.7679,
+      "brier_score": null,
+      "precision": 0.5371,
+      "recall": 0.7329,
+      "calibration_ece": null,
+      "feature_importance": {
+        "home_goal_rate_proxy": 0.0,
+        "away_goal_rate_proxy": 0.0,
+        "data_quality_score": 0.0,
+        "home_history_samples": 0.0,
+        "away_history_samples": 0.0
+      },
+      "bootstrap_accuracy": {
+        "mean": 0.7306,
+        "ci_low": 0.6644,
+        "ci_high": 0.7945
+      }
+    }
+  },
+  "comparison": {
+    "minute_only_accuracy": 0.9932,
+    "pressure_only_no_minute_accuracy": 0.9384,
+    "pressure_full_accuracy": 0.9589,
+    "pressure_plus_minute_accuracy": 0.9932,
+    "true_pressure_lift_after_controlling_minute": -0.0548,
+    "incremental_lift_pressure_plus_over_minute_only": 0.0,
+    "minute_explains_most_of_pressure_full_lift": true
+  },
+  "proxy_risk_verdict": "MINUTE_PROXY_RISK_HIGH",
+  "leakage_note": "pressure features use minute < goal_minute only; audit validates no post-goal rows"
+}

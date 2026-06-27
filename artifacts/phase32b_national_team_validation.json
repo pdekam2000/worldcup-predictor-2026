@@ -1,0 +1,294 @@
+{
+  "passed": 12,
+  "total": 12,
+  "checks": [
+    [
+      "form_score_generated",
+      true,
+      "score=74.9"
+    ],
+    [
+      "h2h_score_generated",
+      true,
+      "score=74.8"
+    ],
+    [
+      "squad_score_generated",
+      true,
+      "score=75.3"
+    ],
+    [
+      "injury_score_generated",
+      true,
+      "score=65.0"
+    ],
+    [
+      "consensus_score_generated",
+      true,
+      "score=55.0"
+    ],
+    [
+      "wde_confidence_min_60",
+      true,
+      ""
+    ],
+    [
+      "wde_dq_min_50",
+      true,
+      ""
+    ],
+    [
+      "default_thresholds_unchanged",
+      true,
+      ""
+    ],
+    [
+      "wc_fixtures_loaded",
+      true,
+      "count=5"
+    ],
+    [
+      "confidence_comparison_generated",
+      true,
+      ""
+    ],
+    [
+      "any_confidence_exceeds_60",
+      true,
+      "5/5 fixtures >= 60"
+    ],
+    [
+      "wde_integration_active",
+      true,
+      ""
+    ]
+  ],
+  "comparison": {
+    "fixtures": 5,
+    "before": {
+      "avg_confidence": 73.52,
+      "max_confidence": 88.1,
+      "no_bet_rate": 0.4,
+      "recommendation_rate": 0.6
+    },
+    "after": {
+      "avg_confidence": 76.2,
+      "max_confidence": 83.6,
+      "no_bet_rate": 0.2,
+      "recommendation_rate": 0.8
+    },
+    "per_fixture": [
+      {
+        "fixture_id": 1539007,
+        "match": "Netherlands vs Sweden",
+        "before": {
+          "confidence": 88.1,
+          "breakdown": {
+            "form": 98.0,
+            "h2h": 58,
+            "injuries": 65,
+            "lineups": 80.0,
+            "odds": 75.0,
+            "dq": 90.0,
+            "total": 79.0
+          },
+          "no_bet": false
+        },
+        "after": {
+          "confidence": 83.6,
+          "breakdown": {
+            "form": 68.0,
+            "h2h": 62.2,
+            "injuries": 72.0,
+            "lineups": 82.8,
+            "odds": 68.7,
+            "dq": 90.0,
+            "total": 73.5
+          },
+          "national": {
+            "national_form_score": 68.0,
+            "national_h2h_score": 62.2,
+            "squad_strength_score": 82.8,
+            "injury_impact_score": 72,
+            "consensus_strength_score": 68.7,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 2
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489393,
+        "match": "Germany vs Ivory Coast",
+        "before": {
+          "confidence": 79.7,
+          "breakdown": {
+            "form": 70.0,
+            "h2h": 45.0,
+            "injuries": 65,
+            "lineups": 80.0,
+            "odds": 75.0,
+            "dq": 90.0,
+            "total": 70.5
+          },
+          "no_bet": false
+        },
+        "after": {
+          "confidence": 82.4,
+          "breakdown": {
+            "form": 75.2,
+            "h2h": 50.0,
+            "injuries": 72.0,
+            "lineups": 75.3,
+            "odds": 69.1,
+            "dq": 90.0,
+            "total": 72.2
+          },
+          "national": {
+            "national_form_score": 75.2,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 75.3,
+            "injury_impact_score": 72,
+            "consensus_strength_score": 69.1,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489392,
+        "match": "Ecuador vs Cura\u00e7ao",
+        "before": {
+          "confidence": 68.8,
+          "breakdown": {
+            "form": 66.0,
+            "h2h": 45.0,
+            "injuries": 50.0,
+            "lineups": 80.0,
+            "odds": 75.0,
+            "dq": 80.0,
+            "total": 65.4
+          },
+          "no_bet": true
+        },
+        "after": {
+          "confidence": 68.1,
+          "breakdown": {
+            "form": 55.2,
+            "h2h": 50.0,
+            "injuries": 55.0,
+            "lineups": 75.3,
+            "odds": 71.6,
+            "dq": 80.0,
+            "total": 63.7
+          },
+          "national": {
+            "national_form_score": 55.2,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 75.3,
+            "injury_impact_score": 55.0,
+            "consensus_strength_score": 71.6,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": true
+        }
+      },
+      {
+        "fixture_id": 1489394,
+        "match": "Tunisia vs Japan",
+        "before": {
+          "confidence": 57.2,
+          "breakdown": {
+            "form": 10.0,
+            "h2h": 50,
+            "injuries": 50.0,
+            "lineups": 80.0,
+            "odds": 75.0,
+            "dq": 80.0,
+            "total": 54.0
+          },
+          "no_bet": true
+        },
+        "after": {
+          "confidence": 71.1,
+          "breakdown": {
+            "form": 65.7,
+            "h2h": 54.0,
+            "injuries": 55.0,
+            "lineups": 82.8,
+            "odds": 68.2,
+            "dq": 80.0,
+            "total": 66.9
+          },
+          "national": {
+            "national_form_score": 65.7,
+            "national_h2h_score": 54.0,
+            "squad_strength_score": 82.8,
+            "injury_impact_score": 55.0,
+            "consensus_strength_score": 68.2,
+            "data_coverage": {
+              "home_recent_matches": 10,
+              "away_recent_matches": 10,
+              "h2h_meetings": 2
+            }
+          },
+          "no_bet": false
+        }
+      },
+      {
+        "fixture_id": 1489397,
+        "match": "Spain vs Saudi Arabia",
+        "before": {
+          "confidence": 73.8,
+          "breakdown": {
+            "form": 82.0,
+            "h2h": 45.0,
+            "injuries": 65,
+            "lineups": 35.0,
+            "odds": 75.0,
+            "dq": 85.0,
+            "total": 67.6
+          },
+          "no_bet": false
+        },
+        "after": {
+          "confidence": 75.8,
+          "breakdown": {
+            "form": 66.7,
+            "h2h": 50.0,
+            "injuries": 72.0,
+            "lineups": 62.8,
+            "odds": 72.2,
+            "dq": 85.0,
+            "total": 68.6
+          },
+          "national": {
+            "national_form_score": 66.7,
+            "national_h2h_score": 50.0,
+            "squad_strength_score": 62.8,
+            "injury_impact_score": 72,
+            "consensus_strength_score": 72.2,
+            "data_coverage": {
+              "home_recent_matches": 9,
+              "away_recent_matches": 10,
+              "h2h_meetings": 0
+            }
+          },
+          "no_bet": false
+        }
+      }
+    ],
+    "warm_cache": null
+  }
+}

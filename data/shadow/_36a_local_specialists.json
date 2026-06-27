@@ -1,0 +1,319 @@
+﻿{
+  "mode": "with_env",
+  "is_placeholder": false,
+  "confidence": 71.4,
+  "intel_placeholder": false,
+  "intel_source": "cache",
+  "missing_data": [
+    "fixture_events",
+    "fixture_statistics",
+    "head_to_head",
+    "injuries"
+  ],
+  "wde": {
+    "baseline": 61.7,
+    "final": 62.7,
+    "reductions": [],
+    "no_bet": [],
+    "caps": [
+      "national_intelligence_boost_plus_1.0",
+      "missing_official_lineups_first_goal_player_cap_30"
+    ]
+  },
+  "adaptive": {
+    "base": 62.7,
+    "final": 73.1,
+    "bonus": 10.4
+  },
+  "fusion": {
+    "band": "Moderate",
+    "consensus": "31.7"
+  },
+  "wde_factors": {
+    "supported": [
+      {
+        "factor_name": "team_form",
+        "weight_pct": 15.0,
+        "score": 76.6,
+        "contribution": 99.36,
+        "direction": "support"
+      },
+      {
+        "factor_name": "lineup_strength",
+        "weight_pct": 12.0,
+        "score": 68.0,
+        "contribution": 24.48,
+        "direction": "support"
+      },
+      {
+        "factor_name": "tactics_matchup",
+        "weight_pct": 12.0,
+        "score": 51.1,
+        "contribution": 33.85,
+        "direction": "support"
+      },
+      {
+        "factor_name": "player_quality",
+        "weight_pct": 10.0,
+        "score": 73.0,
+        "contribution": 7.3,
+        "direction": "support"
+      },
+      {
+        "factor_name": "odds_market_signal",
+        "weight_pct": 10.0,
+        "score": 95.1,
+        "contribution": 443.63,
+        "direction": "support"
+      },
+      {
+        "factor_name": "motivation_psychology",
+        "weight_pct": 8.0,
+        "score": 51.7,
+        "contribution": 4.14,
+        "direction": "support"
+      }
+    ],
+    "opposed": [],
+    "conflicts": [],
+    "limitations": [
+      {
+        "field": "fixture_events",
+        "impact": "reduced factor reliability"
+      },
+      {
+        "field": "fixture_statistics",
+        "impact": "reduced factor reliability"
+      },
+      {
+        "field": "head_to_head",
+        "impact": "reduced factor reliability"
+      },
+      {
+        "field": "injuries",
+        "impact": "reduced factor reliability"
+      },
+      {
+        "field": "referee_agent:referee",
+        "impact": "specialist partial coverage"
+      },
+      {
+        "field": "injury_suspension_agent:injuries",
+        "impact": "specialist partial coverage"
+      },
+      {
+        "field": "injury_suspension_intelligence_agent:injuries",
+        "impact": "specialist partial coverage"
+      },
+      {
+        "field": "xg_chance_quality_intelligence_agent:xg",
+        "impact": "specialist partial coverage"
+      }
+    ]
+  },
+  "specialists": {
+    "elo_team_strength_intelligence_agent": {
+      "status": "available",
+      "status_reason": null,
+      "impact_score": 37.7,
+      "missing": [],
+      "warnings": []
+    },
+    "expected_lineup_agent": {
+      "status": "available",
+      "status_reason": null,
+      "impact_score": 68.0,
+      "missing": [],
+      "warnings": [
+        "Expected lineup intelligence is trace-only \u2014 WDE weights and confidence unchanged.",
+        "Expected lineup served from cache (kickoff-aware TTL)."
+      ]
+    },
+    "injury_suspension_agent": {
+      "status": "unavailable",
+      "status_reason": "data_not_published_yet",
+      "impact_score": 30.0,
+      "missing": [
+        "injuries"
+      ],
+      "warnings": [
+        "Absence data may be incomplete \u2014 not all suspensions reported."
+      ]
+    },
+    "injury_suspension_intelligence_agent": {
+      "status": "unavailable",
+      "status_reason": "data_not_published_yet",
+      "impact_score": 100.0,
+      "missing": [
+        "injuries"
+      ],
+      "warnings": [
+        "Injury/suspension data unavailable \u2014 adjustments remain minimal."
+      ]
+    },
+    "lineup_agent": {
+      "status": "available",
+      "status_reason": "live_data_available",
+      "impact_score": 55.0,
+      "missing": [],
+      "warnings": [
+        "Official lineups not confirmed \u2014 wait for published lineups."
+      ]
+    },
+    "lineup_intelligence_agent": {
+      "status": "available",
+      "status_reason": null,
+      "impact_score": 68.0,
+      "missing": [],
+      "warnings": [
+        "Heavy rotation detected \u2014 reduce lineup confidence."
+      ]
+    },
+    "market_consensus_agent": {
+      "status": "available",
+      "status_reason": null,
+      "impact_score": 97.9,
+      "missing": [],
+      "warnings": []
+    },
+    "motivation_psychology_agent": {
+      "status": "partial",
+      "status_reason": null,
+      "impact_score": 64.0,
+      "missing": [],
+      "warnings": []
+    },
+    "odds_control_agent": {
+      "status": "partial",
+      "status_reason": null,
+      "impact_score": 62.9,
+      "missing": [],
+      "warnings": []
+    },
+    "odds_market_agent": {
+      "status": "partial",
+      "status_reason": null,
+      "impact_score": 63.2,
+      "missing": [],
+      "warnings": [
+        "Market odds are context signals only \u2014 not a betting recommendation."
+      ]
+    },
+    "odds_movement_agent": {
+      "status": "available",
+      "status_reason": null,
+      "impact_score": 76.5,
+      "missing": [],
+      "warnings": []
+    },
+    "player_quality_agent": {
+      "status": "partial",
+      "status_reason": null,
+      "impact_score": 73.0,
+      "missing": [],
+      "warnings": []
+    },
+    "referee_agent": {
+      "status": "unavailable",
+      "status_reason": "data_not_published_yet",
+      "impact_score": null,
+      "missing": [
+        "referee"
+      ],
+      "warnings": [
+        "Referee not assigned or not available in fixture data."
+      ]
+    },
+    "sharp_money_intelligence_agent": {
+      "status": "available",
+      "status_reason": null,
+      "impact_score": 88.6,
+      "missing": [],
+      "warnings": []
+    },
+    "sportmonks_prediction_agent": {
+      "status": "unavailable",
+      "status_reason": null,
+      "impact_score": 50.0,
+      "missing": [
+        "sportmonks_odds",
+        "sportmonks_predictions"
+      ],
+      "warnings": [
+        "Sportmonks odds/prediction not in fixture payload \u2014 enable includes or wait for cache refresh.",
+        "Sportmonks signals are benchmark-only \u2014 internal model and Master Decision Engine remain authoritative."
+      ]
+    },
+    "tactics_agent": {
+      "status": "partial",
+      "status_reason": null,
+      "impact_score": 60.4,
+      "missing": [],
+      "warnings": []
+    },
+    "team_form_agent": {
+      "status": "partial",
+      "status_reason": null,
+      "impact_score": 99.9,
+      "missing": [],
+      "warnings": []
+    },
+    "tournament_context_agent": {
+      "status": "available",
+      "status_reason": null,
+      "impact_score": 100.0,
+      "missing": [],
+      "warnings": [
+        "Tournament context is supplemental \u2014 internal motivation/WDE unchanged (trace only)."
+      ]
+    },
+    "tournament_intelligence_agent": {
+      "status": "available",
+      "status_reason": null,
+      "impact_score": 39.4,
+      "missing": [],
+      "warnings": []
+    },
+    "weather_agent": {
+      "status": "available",
+      "status_reason": "live_data_available",
+      "impact_score": 63.5,
+      "missing": [],
+      "warnings": []
+    },
+    "xg_chance_quality_intelligence_agent": {
+      "status": "partial",
+      "status_reason": null,
+      "impact_score": 17.9,
+      "missing": [
+        "xg"
+      ],
+      "warnings": [
+        "Real xG unavailable \u2014 using shot-based chance quality fallback only.",
+        "Low xG data confidence \u2014 minimal xG weight applied."
+      ]
+    },
+    "xg_intelligence_agent": {
+      "status": "unavailable",
+      "status_reason": null,
+      "impact_score": 0.0,
+      "missing": [
+        "sportmonks_xg"
+      ],
+      "warnings": [
+        "Sportmonks xG not in fixture payload \u2014 verify xG add-on or wait for post-match/live window.",
+        "Sportmonks xG is supplemental benchmark only \u2014 internal model and WDE weights unchanged."
+      ]
+    }
+  },
+  "fusion_detail": {
+    "decision_quality_band": "Moderate",
+    "consensus_strength": 31.7,
+    "confidence_adjustment": -1.71,
+    "risk_flags": [
+      "low_fusion_confidence",
+      "injury_uncertainty"
+    ],
+    "fusion_diversity_score": 74.3
+  }
+}

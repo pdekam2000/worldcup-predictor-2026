@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-06-24T08:10:24.414942+00:00",
+  "source": "api_probe",
+  "api_calls_used": 12,
+  "max_calls": 35,
+  "configured": true,
+  "league_seasons": {
+    "732": {
+      "season_id": 26618,
+      "error": null,
+      "topscorer_rows": 25
+    },
+    "2": {
+      "season_id": 28155,
+      "error": null,
+      "topscorer_rows": 0
+    },
+    "5": {
+      "season_id": 27913,
+      "error": null,
+      "topscorer_rows": 0
+    },
+    "2286": {
+      "season_id": 27911,
+      "error": null,
+      "topscorer_rows": 0
+    }
+  },
+  "probes": [
+    {
+      "group": "topscorers",
+      "path": "/topscorers/seasons/26618",
+      "status": 200,
+      "ok": true,
+      "rows": 25,
+      "error": null
+    },
+    {
+      "group": "topscorers",
+      "path": "/topscorers/seasons/28155",
+      "status": 200,
+      "ok": true,
+      "rows": 0,
+      "error": null
+    },
+    {
+      "group": "topscorers",
+      "path": "/topscorers/seasons/27913",
+      "status": 200,
+      "ok": true,
+      "rows": 0,
+      "error": null
+    },
+    {
+      "group": "topscorers",
+      "path": "/topscorers/seasons/27911",
+      "status": 200,
+      "ok": true,
+      "rows": 0,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "generated_at": "2026-06-25T03:12:40.040467+00:00",
+  "first_goal_team_v2": {
+    "status": "stable",
+    "markets": [
+      {
+        "component_id": "first_goal_team_v2",
+        "market_id": "first_goal_team",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.517,
+        "help_rate": 0.517,
+        "hurt_rate": 0.483,
+        "mean_confidence": 0.7219,
+        "brier": null
+      },
+      {
+        "component_id": "first_goal_team_v2",
+        "market_id": "team_to_score_first",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.517,
+        "help_rate": 0.517,
+        "hurt_rate": 0.483,
+        "mean_confidence": 0.7219,
+        "brier": null
+      }
+    ],
+    "avg_help_rate": 0.517,
+    "avg_hurt_rate": 0.483
+  },
+  "egie_historical_baseline": {
+    "status": "healthy",
+    "markets": [
+      {
+        "component_id": "egie_historical_baseline",
+        "market_id": "first_goal_team",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.5697,
+        "help_rate": 0.5697,
+        "hurt_rate": 0.4303,
+        "mean_confidence": 0.5,
+        "brier": null
+      },
+      {
+        "component_id": "egie_historical_baseline",
+        "market_id": "team_to_score_first",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.5697,
+        "help_rate": 0.5697,
+        "hurt_rate": 0.4303,
+        "mean_confidence": 0.5,
+        "brier": null
+      }
+    ],
+    "avg_help_rate": 0.5697,
+    "avg_hurt_rate": 0.4303
+  },
+  "goalscorer_intelligence": {
+    "status": "stable",
+    "markets": [
+      {
+        "component_id": "goalscorer_intelligence",
+        "market_id": "first_goal_team",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.517,
+        "help_rate": 0.517,
+        "hurt_rate": 0.483,
+        "mean_confidence": 0.7146,
+        "brier": null
+      },
+      {
+        "component_id": "goalscorer_intelligence",
+        "market_id": "team_to_score_first",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.517,
+        "help_rate": 0.517,
+        "hurt_rate": 0.483,
+        "mean_confidence": 0.7146,
+        "brier": null
+      }
+    ],
+    "avg_help_rate": 0.517,
+    "avg_hurt_rate": 0.483
+  },
+  "odds_intelligence": {
+    "status": "healthy",
+    "markets": [
+      {
+        "component_id": "odds_intelligence",
+        "market_id": "first_goal_team",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.5697,
+        "help_rate": 0.5697,
+        "hurt_rate": 0.4303,
+        "mean_confidence": 0.48,
+        "brier": null
+      },
+      {
+        "component_id": "odds_intelligence",
+        "market_id": "team_to_score_first",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.5697,
+        "help_rate": 0.5697,
+        "hurt_rate": 0.4303,
+        "mean_confidence": 0.48,
+        "brier": null
+      }
+    ],
+    "avg_help_rate": 0.5697,
+    "avg_hurt_rate": 0.4303
+  },
+  "market_behavior_intelligence": {
+    "status": "healthy",
+    "markets": [
+      {
+        "component_id": "market_behavior_intelligence",
+        "market_id": "first_goal_team",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.5697,
+        "help_rate": 0.5697,
+        "hurt_rate": 0.4303,
+        "mean_confidence": 0.45,
+        "brier": null
+      },
+      {
+        "component_id": "market_behavior_intelligence",
+        "market_id": "team_to_score_first",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.5697,
+        "help_rate": 0.5697,
+        "hurt_rate": 0.4303,
+        "mean_confidence": 0.45,
+        "brier": null
+      }
+    ],
+    "avg_help_rate": 0.5697,
+    "avg_hurt_rate": 0.4303
+  },
+  "lineup_intelligence": {
+    "status": "stable",
+    "markets": [
+      {
+        "component_id": "lineup_intelligence",
+        "market_id": "first_goal_team",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.517,
+        "help_rate": 0.517,
+        "hurt_rate": 0.483,
+        "mean_confidence": 0.52,
+        "brier": null
+      },
+      {
+        "component_id": "lineup_intelligence",
+        "market_id": "team_to_score_first",
+        "league_id": null,
+        "window": 100,
+        "n": 323,
+        "hit_rate": 0.517,
+        "help_rate": 0.517,
+        "hurt_rate": 0.483,
+        "mean_confidence": 0.52,
+        "brier": null
+      }
+    ],
+    "avg_help_rate": 0.517,
+    "avg_hurt_rate": 0.483
+  }
+}

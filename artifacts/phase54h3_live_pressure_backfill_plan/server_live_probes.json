@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-06-24",
+  "phase": "54H-3",
+  "host": "91.107.188.229",
+  "calls": 5,
+  "probes": [
+    {"label": "champions_league", "fixture_id": 1058477, "http": 200, "pressure_rows": 0, "cache_saved": false},
+    {"label": "europa_league", "fixture_id": 1059951, "http": 200, "pressure_rows": 0, "cache_saved": false},
+    {"label": "conference_league", "fixture_id": 18151405, "http": 200, "pressure_rows": 0, "cache_saved": false},
+    {"label": "world_cup", "fixture_id": 19609127, "http": 200, "pressure_rows": 202, "cache_saved": false},
+    {"label": "control_invalid", "fixture_id": 99999999, "http": 200, "pressure_rows": 0, "cache_saved": false}
+  ],
+  "token_probe_fixture": 19135063,
+  "token_probe_http": 200,
+  "token_probe_rows": 196,
+  "note": "Older UEFA fixture IDs may return HTTP 200 with zero pressure rows; prioritize recent season fixtures from target list."
+}

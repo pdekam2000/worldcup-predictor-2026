@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-06-23T08:10:17.631732+00:00",
+  "plan_note": "Euro Club Tournaments \u2014 live probe",
+  "api_calls_made": 14,
+  "leagues": [
+    {
+      "competition_key": "champions_league",
+      "league_name": "Champions League",
+      "league_id": 2,
+      "priority": 1,
+      "league_endpoint_accessible": true,
+      "league_meta_status": 200,
+      "league_meta_error": null,
+      "seasons_listed": [],
+      "season_ids_observed_in_fixtures": [
+        5308,
+        5309,
+        5310,
+        5311,
+        5313,
+        5315,
+        5318,
+        5321,
+        5322
+      ],
+      "fixtures_sampled": 150,
+      "finished_fixtures_sampled": 150,
+      "api_message": null
+    },
+    {
+      "competition_key": "europa_league",
+      "league_name": "Europa League",
+      "league_id": 5,
+      "priority": 2,
+      "league_endpoint_accessible": true,
+      "league_meta_status": 200,
+      "league_meta_error": null,
+      "seasons_listed": [],
+      "season_ids_observed_in_fixtures": [
+        5326,
+        5334
+      ],
+      "fixtures_sampled": 150,
+      "finished_fixtures_sampled": 150,
+      "api_message": null
+    },
+    {
+      "competition_key": "conference_league",
+      "league_name": "Europa Conference League",
+      "league_id": 2286,
+      "priority": 3,
+      "league_endpoint_accessible": true,
+      "league_meta_status": 200,
+      "league_meta_error": null,
+      "seasons_listed": [],
+      "season_ids_observed_in_fixtures": [
+        18283
+      ],
+      "fixtures_sampled": 150,
+      "finished_fixtures_sampled": 150,
+      "api_message": null
+    },
+    {
+      "competition_key": "uefa_super_cup",
+      "league_name": "UEFA Super Cup",
+      "league_id": 1326,
+      "priority": 4,
+      "league_endpoint_accessible": false,
+      "league_meta_status": 200,
+      "league_meta_error": null,
+      "seasons_listed": [],
+      "season_ids_observed_in_fixtures": [],
+      "fixtures_sampled": 0,
+      "finished_fixtures_sampled": 0,
+      "api_message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription."
+    }
+  ],
+  "total_fixtures_sampled": 450
+}

@@ -642,6 +642,39 @@ def build_parser() -> argparse.ArgumentParser:
     )
     auto_eval.add_argument("--limit", type=int, default=None, help="Max stored predictions to scan")
 
+    assistant_alert_scan = subparsers.add_parser(
+        "assistant-alert-scan",
+        help="Phase A19B: AI Assistant watchlist alert scan (systemd entry point)",
+    )
+    assistant_alert_scan.add_argument(
+        "--user-id",
+        type=str,
+        default=None,
+        help="Scan a single user (default: all watchlist users)",
+    )
+
+    deploy_status = subparsers.add_parser(
+        "deploy-status",
+        help="Phase A21B: show latest production deploy session status and logs",
+    )
+    deploy_status.add_argument(
+        "--session",
+        type=str,
+        default=None,
+        help="Deploy session id (default: latest)",
+    )
+    deploy_status.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit JSON instead of human-readable text",
+    )
+    deploy_status.add_argument(
+        "--log-lines",
+        type=int,
+        default=25,
+        help="Number of log lines to include in output",
+    )
+
     egie_eval = subparsers.add_parser(
         "egie-goal-timing-evaluation",
         help="Phase 51F: EGIE goal timing auto evaluation (systemd entry point)",
@@ -669,6 +702,23 @@ def build_parser() -> argparse.ArgumentParser:
     auto_cycle.add_argument("--window-days", type=int, default=None)
     auto_cycle.add_argument("--report-path", type=str, default=None)
 
+    prefetch_predict = subparsers.add_parser(
+        "prefetch-predictions",
+        help="Phase A14: multi-competition background prediction prefetch",
+    )
+    prefetch_predict.add_argument("--window-days", type=int, default=None, help="Days ahead (default: 7)")
+    prefetch_predict.add_argument("--max-per-cycle", type=int, default=None, help="Max predictions per run")
+    prefetch_predict.add_argument("--force-refresh", action="store_true")
+
+    predops_run = subparsers.add_parser(
+        "predops-run",
+        help="Phase A15: PredOps queue + snapshot cycle",
+    )
+    predops_run.add_argument("--window-days", type=int, default=None)
+    predops_run.add_argument("--max-jobs", type=int, default=None)
+    predops_run.add_argument("--dry-run", action="store_true")
+    predops_run.add_argument("--backfill", action="store_true", help="Backfill snapshots from stored predictions")
+
     autonomous_once = subparsers.add_parser(
         "autonomous_once",
         help="Phase 61: one autonomous discovery/predict/evaluate/certify cycle",
@@ -682,6 +732,35 @@ def build_parser() -> argparse.ArgumentParser:
     )
     autonomous_scheduler.add_argument("--interval-seconds", type=int, default=3600)
     autonomous_scheduler.add_argument("--max-iterations", type=int, default=None)
+
+    elite_shadow_once = subparsers.add_parser(
+        "elite_shadow_once",
+        help="Phase A22: one Elite Shadow cycle (predict → evaluate → root cause)",
+    )
+    elite_shadow_once.add_argument("--dry-run", action="store_true")
+    elite_shadow_once.add_argument("--force", action="store_true")
+    elite_shadow_once.add_argument("--days-ahead", type=int, default=None)
+    elite_shadow_once.add_argument("--limit", type=int, default=None)
+    elite_shadow_once.add_argument("--skip-root-cause", action="store_true")
+
+    elite_shadow_scheduler = subparsers.add_parser(
+        "elite_shadow_scheduler",
+        help="Phase A22: hourly Elite Shadow loop (shadow-only)",
+    )
+    elite_shadow_scheduler.add_argument("--interval-seconds", type=int, default=None)
+    elite_shadow_scheduler.add_argument("--max-iterations", type=int, default=None)
+
+    elite_shadow_admin = subparsers.add_parser(
+        "elite_shadow_admin",
+        help="Phase A22: Elite Shadow admin maintenance action",
+    )
+    elite_shadow_admin.add_argument(
+        "--action",
+        required=True,
+        choices=["run_now", "rebuild_jsonl", "recalculate_root_cause", "re_evaluate", "vacuum", "export"],
+    )
+    elite_shadow_admin.add_argument("--force", action="store_true")
+    elite_shadow_admin.add_argument("--dry-run", action="store_true")
 
     tournament_intel = subparsers.add_parser(
         "tournament-intelligence",
@@ -860,6 +939,8 @@ def main(argv: list[str] | None = None) -> int:
         run_recalibration_report_command,
         run_replay_recent_predictions_command,
         run_daily_worldcup_predict_command,
+        run_prediction_prefetch_command,
+        run_predops_command,
         run_evaluate_worldcup_results_command,
         run_auto_evaluation_command,
         run_worldcup_refresh_results_command,
@@ -867,6 +948,9 @@ def main(argv: list[str] | None = None) -> int:
         run_worldcup_auto_cycle_command,
         run_autonomous_once_command,
         run_autonomous_scheduler_command,
+        run_elite_shadow_once_command,
+        run_elite_shadow_scheduler_command,
+        run_elite_shadow_admin_command,
         run_tournament_intelligence_command,
         run_elo_intelligence_command,
         run_xg_intelligence_command,
@@ -1075,11 +1159,40 @@ def main(argv: list[str] | None = None) -> int:
             limit=getattr(args, "limit", None),
         )
 
+    if args.command == "prefetch-predictions":
+        return run_prediction_prefetch_command(
+            window_days=getattr(args, "window_days", None),
+            max_per_cycle=getattr(args, "max_per_cycle", None),
+            force_refresh=getattr(args, "force_refresh", False),
+        )
+
+    if args.command == "predops-run":
+        return run_predops_command(
+            window_days=getattr(args, "window_days", None),
+            max_jobs=getattr(args, "max_jobs", None),
+            dry_run=getattr(args, "dry_run", False),
+            backfill=getattr(args, "backfill", False),
+        )
+
     if args.command == "evaluate-worldcup-results":
         return run_evaluate_worldcup_results_command(limit=getattr(args, "limit", None))
 
     if args.command == "worldcup-auto-evaluation":
         return run_auto_evaluation_command(limit=getattr(args, "limit", None))
+
+    if args.command == "assistant-alert-scan":
+        from worldcup_predictor.ai_assistant.scan_job import run_assistant_alert_scan_command
+
+        return run_assistant_alert_scan_command(user_id=getattr(args, "user_id", None))
+
+    if args.command == "deploy-status":
+        from worldcup_predictor.ops.deploy_status import run_deploy_status_command
+
+        return run_deploy_status_command(
+            session_id=getattr(args, "session", None),
+            json_output=getattr(args, "json", False),
+            log_lines=getattr(args, "log_lines", 25),
+        )
 
     if args.command == "egie-goal-timing-evaluation":
         from worldcup_predictor.cli.commands import run_egie_goal_timing_auto_evaluation_command
@@ -1114,6 +1227,28 @@ def main(argv: list[str] | None = None) -> int:
         return run_autonomous_scheduler_command(
             interval_seconds=getattr(args, "interval_seconds", 3600),
             max_iterations=getattr(args, "max_iterations", None),
+        )
+
+    if args.command == "elite_shadow_once":
+        return run_elite_shadow_once_command(
+            dry_run=getattr(args, "dry_run", False),
+            force=getattr(args, "force", False),
+            days_ahead=getattr(args, "days_ahead", None),
+            limit=getattr(args, "limit", None),
+            skip_root_cause=getattr(args, "skip_root_cause", False),
+        )
+
+    if args.command == "elite_shadow_scheduler":
+        return run_elite_shadow_scheduler_command(
+            interval_seconds=getattr(args, "interval_seconds", None),
+            max_iterations=getattr(args, "max_iterations", None),
+        )
+
+    if args.command == "elite_shadow_admin":
+        return run_elite_shadow_admin_command(
+            action=getattr(args, "action"),
+            force=getattr(args, "force", False),
+            dry_run=getattr(args, "dry_run", False),
         )
 
     if args.command == "tournament-intelligence":

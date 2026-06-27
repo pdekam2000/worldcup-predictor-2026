@@ -112,6 +112,12 @@ def run_and_store_prediction(
     payload = stamp_provider_readiness(payload, settings=settings)
     payload["is_placeholder"] = bool(getattr(result.prediction, "is_placeholder", False))
     payload["cache_source"] = payload.get("cache_source") or gen_by
+    try:
+        from worldcup_predictor.automation.prediction_prefetch.smart_refresh import build_prefetch_signals
+
+        payload["_prefetch_signals"] = build_prefetch_signals(payload)
+    except Exception:
+        pass
     kickoff = kickoff_from_payload(payload)
     if kickoff is None:
         try:
@@ -148,4 +154,19 @@ def run_and_store_prediction(
         source=source,
         prediction_is_placeholder=bool(getattr(result.prediction, "is_placeholder", False)),
     )
+    if getattr(settings, "predops_enabled", True):
+        try:
+            from worldcup_predictor.predops.snapshots import create_snapshot_from_payload
+            from worldcup_predictor.predops.store import PredOpsStore
+
+            create_snapshot_from_payload(
+                PredOpsStore(settings),
+                fixture_id=fixture_id,
+                competition_key=comp.key,
+                kickoff_utc=payload.get("kickoff_utc"),
+                payload=payload,
+                trigger_reason=source or "pipeline",
+            )
+        except Exception:
+            pass
     return payload

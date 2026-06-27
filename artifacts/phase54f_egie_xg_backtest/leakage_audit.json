@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-06-24T03:29:52.534554Z",
+  "status": "FAIL",
+  "all_pass": false,
+  "fixtures_audited": 908,
+  "checks": [
+    {
+      "name": "no_post_match_xg_in_features",
+      "pass": true,
+      "detail": "forbidden_keys_found=[]"
+    },
+    {
+      "name": "first_match_no_rolling_without_history",
+      "pass": true,
+      "detail": "violations=0"
+    },
+    {
+      "name": "temporal_ordering",
+      "pass": true,
+      "detail": "features_use_strictly_prior_matches"
+    },
+    {
+      "name": "no_future_events_in_feature_builder",
+      "pass": true,
+      "detail": "events/pressure not joined in xG backtest arm"
+    },
+    {
+      "name": "rolling_not_equal_current_match_xg",
+      "pass": false,
+      "detail": "suspect_rows=1"
+    }
+  ]
+}

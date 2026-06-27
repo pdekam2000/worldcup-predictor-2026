@@ -38,7 +38,7 @@ export default function StatsSection() {
               : null,
           suffix:
             stats.evaluation?.finished_evaluated > 0 && stats.evaluation?.overall_accuracy != null ? "%" : "",
-          label: "Platform Accuracy",
+          label: "Best Bet Winrate",
         },
       ]
     : [];
@@ -57,7 +57,7 @@ export default function StatsSection() {
           ) : (
             <>
               <p className="text-center text-xs text-muted-foreground mb-8">
-                Real counts from the prediction archive — finished-match accuracy only when evaluations exist.
+                Real counts from the prediction archive. Winrate calculated only from public Best Bets when evaluations exist — not every model probability.
               </p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                 {items.map((s, i) => (

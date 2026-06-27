@@ -1,0 +1,13 @@
+[Unit]
+Description=Hourly WorldCup Elite Shadow cycle (Phase A22)
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+Unit=worldcup-elite-shadow.service
+
+[Install]
+WantedBy=timers.target
+
+# Enable after validation:
+#   sudo systemctl enable --now worldcup-elite-shadow.timer

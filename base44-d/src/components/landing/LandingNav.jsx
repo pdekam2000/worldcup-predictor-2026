@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Zap, Menu, X } from "lucide-react";
+import { Trophy, Menu, X } from "lucide-react";
 
 export default function LandingNav() {
   const [open, setOpen] = useState(false);
@@ -10,15 +10,17 @@ export default function LandingNav() {
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Zap className="w-4 h-4 text-primary-foreground" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center">
+            <Trophy className="w-4 h-4 text-[#14181f]" />
           </div>
-          <span className="font-display font-bold text-lg hidden sm:block">WorldCup Predictor Pro</span>
+          <span className="font-display font-bold text-lg hidden sm:block">WorldCup Predictor</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
+          <a href="#how-it-works" className="hover:text-foreground transition-colors">How it works</a>
           <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-          <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
+          <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
+          <Link to="/public/accuracy" className="hover:text-foreground transition-colors">Accuracy</Link>
           <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
         </div>
 
@@ -38,8 +40,10 @@ export default function LandingNav() {
 
       {open && (
         <div className="md:hidden glass border-t border-white/10 p-4 space-y-3">
+          <a href="#how-it-works" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>How it works</a>
           <a href="#features" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Features</a>
-          <a href="#pricing" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Pricing</a>
+          <Link to="/pricing" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Pricing</Link>
+          <Link to="/public/accuracy" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Accuracy</Link>
           <a href="#faq" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>FAQ</a>
           <div className="flex gap-3 pt-2">
             <Link to="/login" className="flex-1"><Button variant="outline" size="sm" className="w-full">Sign In</Button></Link>

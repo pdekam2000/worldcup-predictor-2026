@@ -1,0 +1,177 @@
+{
+  "sportmonks_fixture_id": 1059940,
+  "fetched_at": "2026-06-23T07:01:28.901485+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059940,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25142,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": null,
+      "name": "Rapid Bucuresti vs Feyenoord",
+      "starting_at": "2005-09-28 22:00:00",
+      "result_info": "Rapid Bucuresti won after full-time.",
+      "leg": "2/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1127944800,
+      "participants": [
+        {
+          "id": 7773,
+          "sport_id": 1,
+          "country_id": 155,
+          "venue_id": 5038,
+          "gender": "male",
+          "name": "Rapid Bucuresti",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/29/7773.png",
+          "founded": 1923,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-25 17:30:00",
+          "meta": {
+            "location": "home",
+            "winner": true,
+            "position": null
+          }
+        },
+        {
+          "id": 73,
+          "sport_id": 1,
+          "country_id": 38,
+          "venue_id": 1795,
+          "gender": "male",
+          "name": "Feyenoord",
+          "short_code": "FEY",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/9/73.png",
+          "founded": 1908,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-17 12:30:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5661956,
+          "fixture_id": 1059940,
+          "type_id": 2,
+          "participant_id": 7773,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661955,
+          "fixture_id": 1059940,
+          "type_id": 1,
+          "participant_id": 73,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661957,
+          "fixture_id": 1059940,
+          "type_id": 2,
+          "participant_id": 73,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661958,
+          "fixture_id": 1059940,
+          "type_id": 1525,
+          "participant_id": 7773,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661954,
+          "fixture_id": 1059940,
+          "type_id": 1,
+          "participant_id": 7773,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661959,
+          "fixture_id": 1059940,
+          "type_id": 1525,
+          "participant_id": 73,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782198089,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 3591,
+      "remaining": 2482,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  }
+}

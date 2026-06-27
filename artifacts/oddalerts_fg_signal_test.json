@@ -1,0 +1,58 @@
+{
+  "generated_at": "2026-06-23T12:10:56.272377+00:00",
+  "fixtures_scanned": 120,
+  "evaluable_finished_fixtures": 0,
+  "strategies": {
+    "A_consensus_match_winner": {
+      "correct": 0,
+      "wrong": 0,
+      "pending": 120,
+      "coverage": 120,
+      "fg_accuracy": null,
+      "pending_rate": 1.0,
+      "signal_coverage_rate": 1.0
+    },
+    "B_closing_match_winner": {
+      "correct": 0,
+      "wrong": 0,
+      "pending": 120,
+      "coverage": 120,
+      "fg_accuracy": null,
+      "pending_rate": 1.0,
+      "signal_coverage_rate": 1.0
+    },
+    "C_sharp_match_winner": {
+      "correct": 0,
+      "wrong": 0,
+      "pending": 120,
+      "coverage": 34,
+      "fg_accuracy": null,
+      "pending_rate": 1.0,
+      "signal_coverage_rate": 0.2833
+    },
+    "D_first_team_to_score_proxy": {
+      "correct": 0,
+      "wrong": 0,
+      "pending": 120,
+      "coverage": 52,
+      "fg_accuracy": null,
+      "pending_rate": 1.0,
+      "signal_coverage_rate": 0.4333
+    },
+    "E_combined_odds_signal": {
+      "correct": 0,
+      "wrong": 0,
+      "pending": 120,
+      "coverage": 120,
+      "fg_accuracy": null,
+      "pending_rate": 1.0,
+      "signal_coverage_rate": 1.0
+    }
+  },
+  "limitation": "No finished fixtures with FG labels in OA pool; FG accuracy null unless evaluable_finished_fixtures>0",
+  "k2_sportmonks_reference": {
+    "sharp_mw_fg_accuracy": 0.7872,
+    "consensus_mw_fg_accuracy": 0.7766,
+    "evaluable_fixtures": 104
+  }
+}

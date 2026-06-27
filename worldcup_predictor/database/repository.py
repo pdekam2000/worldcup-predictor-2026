@@ -1289,12 +1289,26 @@ class FootballIntelligenceRepository:
         ).fetchone()
         return dict(row) if row else None
 
-    def count_worldcup_stored_predictions(self, *, competition_key: str = "world_cup_2026") -> int:
-        row = self._conn.execute(
-            "SELECT COUNT(*) AS c FROM worldcup_stored_predictions WHERE competition_key = ?",
-            (competition_key,),
-        ).fetchone()
+    def count_worldcup_stored_predictions(
+        self, *, competition_key: str = "world_cup_2026", include_quarantined: bool = True
+    ) -> int:
+        query = "SELECT COUNT(*) AS c FROM worldcup_stored_predictions WHERE competition_key = ?"
+        params: list[Any] = [competition_key]
+        if not include_quarantined:
+            query += " AND (is_quarantined IS NULL OR is_quarantined = 0)"
+        row = self._conn.execute(query, params).fetchone()
         return int(row["c"]) if row else 0
+
+    def list_worldcup_stored_prediction_competition_keys(self) -> list[str]:
+        rows = self._conn.execute(
+            """
+            SELECT DISTINCT competition_key FROM worldcup_stored_predictions
+            WHERE competition_key IS NOT NULL AND competition_key != ''
+              AND (is_active IS NULL OR is_active = 1)
+            ORDER BY competition_key
+            """
+        ).fetchall()
+        return [str(r["competition_key"]) for r in rows if r["competition_key"]]
 
     def list_worldcup_stored_predictions(
         self,
@@ -1302,15 +1316,288 @@ class FootballIntelligenceRepository:
         competition_key: str = "world_cup_2026",
         limit: int = 100,
         offset: int = 0,
+        include_quarantined: bool = True,
     ) -> list[dict[str, Any]]:
-        rows = self._conn.execute(
-            """
+        query = """
             SELECT * FROM worldcup_stored_predictions
             WHERE competition_key = ?
               AND (is_active IS NULL OR is_active = 1)
-            ORDER BY predicted_at DESC
-            LIMIT ? OFFSET ?
+        """
+        params: list[Any] = [competition_key]
+        if not include_quarantined:
+            query += " AND (is_quarantined IS NULL OR is_quarantined = 0)"
+        query += " ORDER BY predicted_at DESC LIMIT ? OFFSET ?"
+        params.extend([int(limit), int(offset)])
+        rows = self._conn.execute(query, params).fetchall()
+        return [dict(r) for r in rows]
+
+    def list_worldcup_stored_prediction_rows(
+        self,
+        *,
+        competition_key: str = "world_cup_2026",
+        limit: int = 100,
+        offset: int = 0,
+        include_quarantined: bool = True,
+        include_inactive: bool = False,
+    ) -> list[dict[str, Any]]:
+        """Backward-compatible alias used by evaluation scheduler and smoke scripts."""
+        _ = include_inactive  # inactive rows excluded by list_worldcup_stored_predictions
+        return self.list_worldcup_stored_predictions(
+            competition_key=competition_key,
+            limit=limit,
+            offset=offset,
+            include_quarantined=include_quarantined,
+        )
+
+    def get_worldcup_prediction_evaluation(self, fixture_id: int) -> dict[str, Any] | None:
+        row = self._conn.execute(
+            "SELECT * FROM worldcup_prediction_evaluations WHERE fixture_id = ?",
+            (int(fixture_id),),
+        ).fetchone()
+        if not row:
+            return None
+        d = dict(row)
+        d["no_bet"] = bool(d.get("no_bet"))
+        return d
+
+    def upsert_worldcup_prediction_evaluation(
+        self,
+        *,
+        fixture_id: int,
+        evaluation: dict[str, Any],
+        outcome: dict[str, Any],
+        competition_key: str = "world_cup_2026",
+    ) -> None:
+        markets = evaluation.get("markets") or {}
+        advanced = evaluation.get("advanced_markets") or {}
+        goal_minute = advanced.get("goal_minute") if isinstance(advanced.get("goal_minute"), dict) else {}
+
+        def _adv_status(key: str) -> str | None:
+            block = advanced.get(key)
+            if isinstance(block, dict) and block.get("status"):
+                return str(block["status"])
+            return None
+
+        now = _utc_now()
+        self._conn.execute(
+            """
+            INSERT INTO worldcup_prediction_evaluations (
+                fixture_id, competition_key, overall_status, no_bet,
+                actual_result, final_score,
+                safe_pick_status, value_pick_status, aggressive_pick_status,
+                market_1x2_status, market_ou_status, market_btts_status, market_dc_status,
+                market_ht_status, market_cs_status, market_fg_team_status,
+                market_goalscorer_status, market_goal_minute_status,
+                market_goal_minute_actual, market_goal_minute_predicted,
+                detail_json, evaluated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(fixture_id) DO UPDATE SET
+                overall_status = excluded.overall_status,
+                no_bet = excluded.no_bet,
+                actual_result = excluded.actual_result,
+                final_score = excluded.final_score,
+                safe_pick_status = excluded.safe_pick_status,
+                value_pick_status = excluded.value_pick_status,
+                aggressive_pick_status = excluded.aggressive_pick_status,
+                market_1x2_status = excluded.market_1x2_status,
+                market_ou_status = excluded.market_ou_status,
+                market_btts_status = excluded.market_btts_status,
+                market_dc_status = excluded.market_dc_status,
+                market_ht_status = excluded.market_ht_status,
+                market_cs_status = excluded.market_cs_status,
+                market_fg_team_status = excluded.market_fg_team_status,
+                market_goalscorer_status = excluded.market_goalscorer_status,
+                market_goal_minute_status = excluded.market_goal_minute_status,
+                market_goal_minute_actual = excluded.market_goal_minute_actual,
+                market_goal_minute_predicted = excluded.market_goal_minute_predicted,
+                detail_json = excluded.detail_json,
+                evaluated_at = excluded.evaluated_at
             """,
-            (competition_key, int(limit), int(offset)),
+            (
+                int(fixture_id),
+                competition_key,
+                str(evaluation.get("status") or "pending"),
+                1 if evaluation.get("no_bet") else 0,
+                outcome.get("actual_result"),
+                outcome.get("final_score"),
+                markets.get("safe_pick"),
+                markets.get("value_pick"),
+                markets.get("aggressive_pick"),
+                markets.get("1x2"),
+                markets.get("over_under_2_5"),
+                markets.get("btts"),
+                markets.get("double_chance"),
+                _adv_status("ht_result"),
+                _adv_status("correct_score"),
+                _adv_status("first_goal_team"),
+                _adv_status("goalscorer"),
+                _adv_status("goal_minute") or markets.get("goal_minute"),
+                goal_minute.get("actual"),
+                goal_minute.get("predicted"),
+                json.dumps(evaluation, ensure_ascii=False, default=str),
+                now,
+            ),
+        )
+        self._conn.commit()
+
+    def list_worldcup_prediction_evaluations(
+        self,
+        *,
+        competition_key: str = "world_cup_2026",
+        include_quarantined: bool = False,
+    ) -> list[dict[str, Any]]:
+        query = "SELECT * FROM worldcup_prediction_evaluations WHERE competition_key = ?"
+        params: list[Any] = [competition_key]
+        if not include_quarantined:
+            query += " AND (is_quarantined IS NULL OR is_quarantined = 0)"
+        rows = self._conn.execute(query, params).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            d = dict(row)
+            d["no_bet"] = bool(d.get("no_bet"))
+            out.append(d)
+        return out
+
+    def list_all_worldcup_prediction_evaluations(
+        self,
+        *,
+        include_quarantined: bool = False,
+    ) -> list[dict[str, Any]]:
+        """All competitions — used by Results page and finished-tab supplement."""
+        query = "SELECT * FROM worldcup_prediction_evaluations WHERE 1=1"
+        if not include_quarantined:
+            query += " AND (is_quarantined IS NULL OR is_quarantined = 0)"
+        query += " ORDER BY evaluated_at DESC"
+        rows = self._conn.execute(query).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            d = dict(row)
+            d["no_bet"] = bool(d.get("no_bet"))
+            out.append(d)
+        return out
+
+    def count_worldcup_prediction_evaluations(
+        self,
+        *,
+        competition_key: str = "world_cup_2026",
+        include_quarantined: bool = False,
+    ) -> int:
+        query = "SELECT COUNT(*) AS c FROM worldcup_prediction_evaluations WHERE competition_key = ?"
+        params: list[Any] = [competition_key]
+        if not include_quarantined:
+            query += " AND (is_quarantined IS NULL OR is_quarantined = 0)"
+        row = self._conn.execute(query, params).fetchone()
+        return int(row["c"]) if row else 0
+
+    def upsert_worldcup_accuracy_summary(
+        self,
+        *,
+        competition_key: str,
+        summary: dict[str, Any],
+    ) -> None:
+        now = _utc_now()
+        self._conn.execute(
+            """
+            INSERT INTO worldcup_accuracy_summary (competition_key, summary_json, updated_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(competition_key) DO UPDATE SET
+                summary_json = excluded.summary_json,
+                updated_at = excluded.updated_at
+            """,
+            (competition_key, json.dumps(summary, ensure_ascii=False, default=str), now),
+        )
+        self._conn.commit()
+
+    def get_worldcup_accuracy_summary(self, *, competition_key: str = "world_cup_2026") -> dict[str, Any] | None:
+        row = self._conn.execute(
+            "SELECT summary_json FROM worldcup_accuracy_summary WHERE competition_key = ?",
+            (competition_key,),
+        ).fetchone()
+        if not row:
+            return None
+        try:
+            return json.loads(row["summary_json"])
+        except (json.JSONDecodeError, TypeError):
+            return None
+
+    def insert_performance_snapshot(
+        self,
+        *,
+        competition_key: str,
+        snapshot_at: str,
+        evaluated_count: int,
+        correct_count: int,
+        wrong_count: int,
+        pending_count: int,
+        overall_winrate: float | None,
+        markets_json: str,
+        rule_a_json: str | None = None,
+        agent_contribution_json: str | None = None,
+    ) -> int:
+        cur = self._conn.execute(
+            """
+            INSERT INTO performance_snapshots (
+                competition_key, snapshot_at, evaluated_count, correct_count,
+                wrong_count, pending_count, overall_winrate,
+                markets_json, rule_a_json, agent_contribution_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                competition_key,
+                snapshot_at,
+                int(evaluated_count),
+                int(correct_count),
+                int(wrong_count),
+                int(pending_count),
+                overall_winrate,
+                markets_json,
+                rule_a_json,
+                agent_contribution_json,
+            ),
+        )
+        self._conn.commit()
+        return int(cur.lastrowid)
+
+    def list_performance_snapshots(
+        self,
+        *,
+        competition_key: str = "world_cup_2026",
+        limit: int = 100,
+    ) -> list[dict[str, Any]]:
+        rows = self._conn.execute(
+            """
+            SELECT * FROM performance_snapshots
+            WHERE competition_key = ?
+            ORDER BY snapshot_at ASC
+            LIMIT ?
+            """,
+            (competition_key, int(limit)),
         ).fetchall()
         return [dict(r) for r in rows]
+
+    def list_fixtures_in_kickoff_window(
+        self,
+        competition_key: str,
+        *,
+        window_days: int = 3,
+        season: int | None = None,
+    ) -> list[dict[str, Any]]:
+        from datetime import datetime, timedelta, timezone
+
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
+        end = now + timedelta(days=int(window_days))
+        query = """
+            SELECT *
+            FROM fixtures
+            WHERE competition_key = ?
+              AND is_placeholder = 0
+              AND status IN ('NS', 'TBD', 'SCHEDULED', 'TIMED')
+              AND kickoff_utc >= ?
+              AND kickoff_utc <= ?
+        """
+        params: list[Any] = [competition_key, now.isoformat(), end.isoformat()]
+        if season is not None:
+            query += " AND (season = ? OR season IS NULL)"
+            params.append(season)
+        query += " ORDER BY kickoff_utc ASC"
+        return [dict(r) for r in self._conn.execute(query, params).fetchall()]

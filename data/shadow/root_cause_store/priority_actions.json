@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-06-25T03:31:00.883626+00:00",
+  "actions": [
+    {
+      "failure_reason": "confidence_overestimation",
+      "count": 320,
+      "recommended_action": "Recalibrate hybrid_confidence_engine; cap Tier A at 0.75 until live validation",
+      "share": 0.6723
+    },
+    {
+      "failure_reason": "lineup_mismatch",
+      "count": 156,
+      "recommended_action": "Increase lineup_intelligence weight gate; defer picks until T-60 lineup confidence rises",
+      "share": 0.3277
+    },
+    {
+      "component_id": "first_goal_team_v2",
+      "hurt_rate": 0.4741,
+      "recommended_action": "Shadow-reduce first_goal_team_v2 weight when hurt_rate > 35% (no auto-apply)"
+    },
+    {
+      "component_id": "egie_historical_baseline",
+      "hurt_rate": 0.4681,
+      "recommended_action": "Shadow-reduce egie_historical_baseline weight when hurt_rate > 35% (no auto-apply)"
+    }
+  ]
+}

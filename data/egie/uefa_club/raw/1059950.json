@@ -1,0 +1,177 @@
+{
+  "sportmonks_fixture_id": 1059950,
+  "fetched_at": "2026-06-23T08:47:28.971592+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059950,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25147,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": 278,
+      "name": "Dom\u017eale vs VfB Stuttgart",
+      "starting_at": "2005-09-28 22:00:00",
+      "result_info": "Dom\u017eale won after full-time.",
+      "leg": "2/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1127944800,
+      "participants": [
+        {
+          "id": 820,
+          "sport_id": 1,
+          "country_id": 1638,
+          "venue_id": 278,
+          "gender": "male",
+          "name": "Dom\u017eale",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/20/820.png",
+          "founded": 1921,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-12-05 16:30:00",
+          "meta": {
+            "location": "home",
+            "winner": true,
+            "position": null
+          }
+        },
+        {
+          "id": 3319,
+          "sport_id": 1,
+          "country_id": 11,
+          "venue_id": 1945,
+          "gender": "male",
+          "name": "VfB Stuttgart",
+          "short_code": "VFB",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/23/3319.png",
+          "founded": 1893,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-23 18:00:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5662017,
+          "fixture_id": 1059950,
+          "type_id": 2,
+          "participant_id": 3319,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5662018,
+          "fixture_id": 1059950,
+          "type_id": 1525,
+          "participant_id": 820,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5662016,
+          "fixture_id": 1059950,
+          "type_id": 2,
+          "participant_id": 820,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5662015,
+          "fixture_id": 1059950,
+          "type_id": 1,
+          "participant_id": 3319,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5662019,
+          "fixture_id": 1059950,
+          "type_id": 1525,
+          "participant_id": 3319,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5662014,
+          "fixture_id": 1059950,
+          "type_id": 1,
+          "participant_id": 820,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782204449,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 1363,
+      "remaining": 2387,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "consolidated_inventory": {
+    "generated_at": "2026-06-24T16:55:06.117264+00:00",
+    "sources": [
+      {
+        "source": "sportmonks_cache_strict",
+        "fixtures_audited": 1689,
+        "fixtures_with_goalscorer_odds": 3,
+        "selection_count": 703,
+        "market_count": 2,
+        "bookmaker_count": 1,
+        "notes": "Sportmonks cached payloads \u2014 player/team goalscorer markets (54M strict patterns)",
+        "markets": {
+          "Goalscorers": 417,
+          "Team Goalscorer": 286
+        },
+        "bookmakers": {
+          "bet365": 703
+        }
+      },
+      {
+        "source": "sportmonks_cache_broad",
+        "fixtures_audited": 1689,
+        "fixtures_with_goalscorer_odds": 105,
+        "selection_count": 75497,
+        "market_count": 6,
+        "bookmaker_count": 28,
+        "notes": "Sportmonks cache \u2014 broad 54I patterns (includes FTS, correct score, etc.)",
+        "markets": {
+          "Correct Score": 48216,
+          "Correct Score 1st Half": 19753,
+          "Correct Score 2nd Half": 5684,
+          "Half Time Correct Score": 1141,
+          "Goalscorers": 417,
+          "Team Goalscorer": 286
+        },
+        "bookmakers": {}
+      },
+      {
+        "source": "api_football_odds_snapshots",
+        "fixtures_audited": 85,
+        "fixtures_with_goalscorer_odds": 72,
+        "selection_count": 27813,
+        "market_count": 9,
+        "bookmaker_count": 2,
+        "notes": "SQLite odds_snapshots table (API-Football / The Odds API payloads)",
+        "markets": {
+          "First Goal Scorer": 3472,
+          "Last Goal Scorer": 3472,
+          "Anytime Goal Scorer": 3400,
+          "Home Anytime Goal Scorer": 2932,
+          "Home First Goal Scorer": 2932,
+          "Home Last Goal Scorer": 2932,
+          "Away Anytime Goal Scorer": 2891,
+          "Away First Goal Scorer": 2891,
+          "Away Last Goal Scorer": 2891
+        },
+        "bookmakers": {
+          "Bet365": 20544,
+          "Betano": 7269
+        }
+      },
+      {
+        "source": "api_football_disk_cache",
+        "fixtures_audited": 88,
+        "fixtures_with_goalscorer_odds": 72,
+        "selection_count": 27816,
+        "market_count": 9,
+        "bookmaker_count": 2,
+        "notes": "Disk cache at .cache/api_football",
+        "markets": {
+          "First Goal Scorer": 3472,
+          "Last Goal Scorer": 3472,
+          "Anytime Goal Scorer": 3400,
+          "Home Anytime Goal Scorer": 2933,
+          "Home First Goal Scorer": 2933,
+          "Home Last Goal Scorer": 2933,
+          "Away Anytime Goal Scorer": 2891,
+          "Away First Goal Scorer": 2891,
+          "Away Last Goal Scorer": 2891
+        },
+        "bookmakers": {
+          "Bet365": 20544,
+          "Betano": 7272
+        }
+      },
+      {
+        "source": "api_football_raw_cache_walk",
+        "fixtures_audited": 9705,
+        "fixtures_with_goalscorer_odds": 21,
+        "selection_count": 8988,
+        "market_count": 9,
+        "bookmaker_count": 0,
+        "notes": "Full .cache/api_football walk \u2014 text prefilter then strict market parse",
+        "markets": {
+          "Home Anytime Goal Scorer": 1015,
+          "Home First Goal Scorer": 1015,
+          "Home Last Goal Scorer": 1015,
+          "First Goal Scorer": 1013,
+          "Last Goal Scorer": 1013,
+          "Anytime Goal Scorer": 992,
+          "Away Anytime Goal Scorer": 975,
+          "Away First Goal Scorer": 975,
+          "Away Last Goal Scorer": 975
+        },
+        "bookmakers": {}
+      },
+      {
+        "source": "shadow_odds_replays",
+        "fixtures_audited": 408,
+        "fixtures_with_goalscorer_odds": 0,
+        "selection_count": 0,
+        "market_count": 0,
+        "bookmaker_count": 0,
+        "notes": "Shadow replay JSONL \u2014 keyword presence only (no structured GS parse)",
+        "markets": {},
+        "bookmakers": {}
+      }
+    ],
+    "totals": {
+      "fixture_count_union_estimate": 75,
+      "selection_count_union_estimate": 28516,
+      "market_count_union_estimate": 9,
+      "bookmaker_count_union_estimate": 2,
+      "sportmonks_strict_fixtures": 3,
+      "api_football_fixtures": 72
+    },
+    "summary": {
+      "fixture_count": 75,
+      "selection_count": 28516,
+      "market_count": 9,
+      "bookmaker_count": 2
+    }
+  },
+  "sportmonks_strict_summary": {
+    "fixtures_audited": 1689,
+    "fixtures_with_goalscorer_odds": 3,
+    "bookmaker_count": 1,
+    "market_count": 2,
+    "selection_count": 703,
+    "mapped_count": 0,
+    "unmapped_count": 0,
+    "mapping_rate": 0.0,
+    "confidence_high": 0,
+    "confidence_medium": 0,
+    "confidence_low": 0,
+    "historical_fixtures": 3,
+    "upcoming_fixtures": 0
+  },
+  "sportmonks_strict_selections": 703,
+  "market_type_counts_strict": {
+    "anytime_goalscorer": 417,
+    "team_goalscorer": 286
+  },
+  "api_football_gs_by_competition": {
+    "world_cup_2026": 72
+  },
+  "sources_audited": [
+    "sportmonks_cache_strict",
+    "sportmonks_cache_broad",
+    "api_football_odds_snapshots",
+    "api_football_disk_cache",
+    "api_football_raw_cache_walk",
+    "shadow_odds_replays"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "passed": 18,
+  "total": 18,
+  "checks": [
+    {
+      "name": "xg_match_includes_has_xgfixture_type",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "xg_match_includes_has_lineups_xglineup",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "premium_includes_xgfixture",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "world_cup_includes_xgfixture",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline_parse_available",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline_home_xg",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline_away_xg",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline_home_xgot",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline_home_xpts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline_xg_penalties",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline_xg_free_kicks",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "offline_player_xg",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "api_block_shape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "wc_mapping_found",
+      "ok": true,
+      "detail": "api=1489386 sm=19609165"
+    },
+    {
+      "name": "wc_cache_first_no_live_by_default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "wc_raw_available",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "wc_api_block_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "store_raw_and_parsed",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "live": {
+    "attempted": false
+  },
+  "api_block_offline_sample": {
+    "available": true,
+    "home_xg": 1.65,
+    "away_xg": 0.92,
+    "home_xgot": 1.1,
+    "away_xgot": 0.7,
+    "home_xpts": 1.8,
+    "away_xpts": 0.9,
+    "home_xg_penalties": 0.12,
+    "away_xg_penalties": null,
+    "home_xg_free_kicks": null,
+    "away_xg_free_kicks": 0.05,
+    "player_xg_summary": {
+      "player_count": 1,
+      "players_with_xg": 1,
+      "top_scorers_by_xg": [
+        {
+          "player_id": 101,
+          "player_name": "Demo Striker",
+          "team_side": "home",
+          "metrics": {
+            "xg": 0.88,
+            "xgot": 0.55
+          },
+          "xg": 0.88,
+          "xgot": 0.55
+        }
+      ]
+    },
+    "source": "sportmonks",
+    "data_source": "xGFixture",
+    "raw_xg_fixture_present": true,
+    "expected_row_count": 8
+  }
+}

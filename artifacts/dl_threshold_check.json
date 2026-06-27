@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-06-23T10:18:50.562173+00:00",
+  "thresholds": {
+    "ft_transformer_rows": 10000,
+    "ft_transformer_features": 20,
+    "temporal_transformer_events_per_match": 5,
+    "temporal_transformer_fixtures": 5000,
+    "deep_survival_timing_labels": 3000,
+    "player_embedding_players": 500,
+    "player_embedding_matches_per_player": 10,
+    "lightgbm_minimum": 1000,
+    "neural_minimum": 5000
+  },
+  "checks": {
+    "ft_transformer": {
+      "required_rows": 10000,
+      "actual_rows": 380,
+      "required_features": 20,
+      "actual_features": 36,
+      "passes": false
+    },
+    "temporal_transformer": {
+      "required_fixtures": 5000,
+      "actual_fixtures": 1621,
+      "required_events_per_match": 5,
+      "passes": false
+    },
+    "deep_survival_network": {
+      "required_timing_labels": 3000,
+      "actual_timing_labels": 0,
+      "passes": false
+    },
+    "player_embedding_engine": {
+      "required_players": 500,
+      "actual_player_snapshots": 0,
+      "passes": false
+    },
+    "lightgbm_tabular": {
+      "required_rows": 1000,
+      "actual_rows": 1617,
+      "passes": true
+    },
+    "neural_tabular": {
+      "required_rows": 5000,
+      "actual_rows": 380,
+      "passes": false
+    }
+  }
+}

@@ -369,9 +369,17 @@ def _default_team_stats(form: list[str]) -> dict[str, Any]:
 
 def _competition_key(competition: str) -> str:
     lowered = competition.lower()
-    if "world cup" in lowered:
+    if "world cup" in lowered or "world_cup" in lowered:
         return "world_cup_2026"
-    return "international"
+    if "bundesliga" in lowered:
+        return "bundesliga"
+    if "premier" in lowered or "premier_league" in lowered:
+        return "premier_league"
+    if "champions" in lowered or "champions_league" in lowered:
+        return "champions_league"
+    if "europa" in lowered or "europa_league" in lowered:
+        return "europa_league"
+    return lowered.replace(" ", "_")
 
 
 def _result_for_team(home_goals: int, away_goals: int, *, side: str) -> str:

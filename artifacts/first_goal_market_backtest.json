@@ -1,0 +1,83 @@
+{
+  "strategies": {
+    "A": {
+      "label": "consensus_match_winner",
+      "coverage_fixtures": 104,
+      "evaluable_with_goal": 97,
+      "direct_fg_accuracy": 0.7766,
+      "egie_fg_hit_rate": 0.7766,
+      "egie_pending": 3,
+      "egie_pending_rate": 0.0309,
+      "direct_correct": 73,
+      "direct_wrong": 21,
+      "egie_correct": 73,
+      "egie_wrong": 21
+    },
+    "B": {
+      "label": "closing_match_winner",
+      "coverage_fixtures": 104,
+      "evaluable_with_goal": 97,
+      "direct_fg_accuracy": 0.7826,
+      "egie_fg_hit_rate": 0.7826,
+      "egie_pending": 5,
+      "egie_pending_rate": 0.0515,
+      "direct_correct": 72,
+      "direct_wrong": 20,
+      "egie_correct": 72,
+      "egie_wrong": 20
+    },
+    "C": {
+      "label": "sharp_match_winner",
+      "coverage_fixtures": 104,
+      "evaluable_with_goal": 97,
+      "direct_fg_accuracy": 0.7872,
+      "egie_fg_hit_rate": 0.7872,
+      "egie_pending": 3,
+      "egie_pending_rate": 0.0309,
+      "direct_correct": 74,
+      "direct_wrong": 20,
+      "egie_correct": 74,
+      "egie_wrong": 20
+    },
+    "D": {
+      "label": "direct_first_team_to_score",
+      "coverage_fixtures": 104,
+      "evaluable_with_goal": 97,
+      "direct_fg_accuracy": 0.7742,
+      "egie_fg_hit_rate": 0.7742,
+      "egie_pending": 4,
+      "egie_pending_rate": 0.0412,
+      "direct_correct": 72,
+      "direct_wrong": 21,
+      "egie_correct": 72,
+      "egie_wrong": 21
+    },
+    "E": {
+      "label": "sharp_first_team_to_score",
+      "coverage_fixtures": 0,
+      "evaluable_with_goal": 0,
+      "direct_fg_accuracy": null,
+      "egie_fg_hit_rate": null,
+      "egie_pending": 0,
+      "egie_pending_rate": null,
+      "direct_correct": 0,
+      "direct_wrong": 0,
+      "egie_correct": 0,
+      "egie_wrong": 0
+    },
+    "F": {
+      "label": "combined_fg_consensus",
+      "coverage_fixtures": 104,
+      "evaluable_with_goal": 97,
+      "direct_fg_accuracy": 0.7849,
+      "egie_fg_hit_rate": 0.7849,
+      "egie_pending": 4,
+      "egie_pending_rate": 0.0412,
+      "direct_correct": 73,
+      "direct_wrong": 20,
+      "egie_correct": 73,
+      "egie_wrong": 20
+    }
+  },
+  "fixtures_in_mapping": 220
+}

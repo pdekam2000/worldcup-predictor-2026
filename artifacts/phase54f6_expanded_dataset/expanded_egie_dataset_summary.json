@@ -1,0 +1,80 @@
+{
+  "phase": "54F-6",
+  "candidate_fixtures": 1154,
+  "usable_fixtures": 1004,
+  "unusable_fixtures": 150,
+  "rolling_xg_coverage_pct": 87.0,
+  "by_league": {
+    "champions_league": {
+      "usable": 399,
+      "rolling_xg": 399
+    },
+    "conference_league": {
+      "usable": 192,
+      "rolling_xg": 192
+    },
+    "europa_league": {
+      "usable": 390,
+      "rolling_xg": 390
+    },
+    "world_cup": {
+      "usable": 23,
+      "rolling_xg": 23
+    }
+  },
+  "by_season": {
+    "23619": {
+      "usable": 185,
+      "rolling_xg": 185
+    },
+    "23620": {
+      "usable": 183,
+      "rolling_xg": 183
+    },
+    "25580": {
+      "usable": 214,
+      "rolling_xg": 214
+    },
+    "25581": {
+      "usable": 192,
+      "rolling_xg": 192
+    },
+    "25582": {
+      "usable": 207,
+      "rolling_xg": 207
+    },
+    "26618": {
+      "usable": 23,
+      "rolling_xg": 23
+    }
+  },
+  "first_goal_team_labeled": 950,
+  "goal_range_labeled": 950,
+  "team_goals_labeled": 1004,
+  "leakage_safe_count": 1004,
+  "threshold_30_met": true,
+  "threshold_50_preferred": true,
+  "fixtures_scanned": 1154,
+  "rolling_xg_3_coverage": 1004,
+  "rolling_xg_5_coverage": 1004,
+  "rolling_xg_10_coverage": 1004,
+  "rolling_xg_3_pct": 87.0,
+  "rolling_xg_5_pct": 87.0,
+  "rolling_xg_10_pct": 87.0,
+  "threshold_300_met": true,
+  "threshold_500_preferred": true,
+  "eligible_seasons": [
+    23619,
+    23620,
+    25580,
+    25581,
+    25582,
+    26618
+  ],
+  "paths": {
+    "parquet": "artifacts\\phase54f6_expanded_dataset\\expanded_egie_dataset.parquet",
+    "csv": "artifacts\\phase54f6_expanded_dataset\\expanded_egie_dataset.csv",
+    "summary": "artifacts\\phase54f6_expanded_dataset\\expanded_egie_dataset_summary.json",
+    "unusable": "artifacts\\phase54f6_expanded_dataset\\expanded_egie_unusable_fixtures.csv"
+  }
+}

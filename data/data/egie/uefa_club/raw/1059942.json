@@ -1,0 +1,177 @@
+{
+  "sportmonks_fixture_id": 1059942,
+  "fetched_at": "2026-06-23T07:01:29.997777+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059942,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25143,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": 8573,
+      "name": "Dnipro Dnipropetrovsk vs Hibernian",
+      "starting_at": "2005-09-28 22:00:00",
+      "result_info": "Dnipro Dnipropetrovsk won after full-time.",
+      "leg": "2/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1127944800,
+      "participants": [
+        {
+          "id": 12582,
+          "sport_id": 1,
+          "country_id": 86,
+          "venue_id": 8573,
+          "gender": "male",
+          "name": "Dnipro Dnipropetrovsk",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/6/12582.png",
+          "founded": 1918,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2011-02-05 15:00:00",
+          "meta": {
+            "location": "home",
+            "winner": true,
+            "position": null
+          }
+        },
+        {
+          "id": 66,
+          "sport_id": 1,
+          "country_id": 1161,
+          "venue_id": 8946,
+          "gender": "male",
+          "name": "Hibernian",
+          "short_code": "HIB",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/2/66.png",
+          "founded": 1875,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-16 11:30:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5661970,
+          "fixture_id": 1059942,
+          "type_id": 1525,
+          "participant_id": 12582,
+          "score": {
+            "goals": 5,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661971,
+          "fixture_id": 1059942,
+          "type_id": 1525,
+          "participant_id": 66,
+          "score": {
+            "goals": 1,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661967,
+          "fixture_id": 1059942,
+          "type_id": 1,
+          "participant_id": 66,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661966,
+          "fixture_id": 1059942,
+          "type_id": 1,
+          "participant_id": 12582,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661969,
+          "fixture_id": 1059942,
+          "type_id": 2,
+          "participant_id": 66,
+          "score": {
+            "goals": 1,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661968,
+          "fixture_id": 1059942,
+          "type_id": 2,
+          "participant_id": 12582,
+          "score": {
+            "goals": 5,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782198090,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 3590,
+      "remaining": 2480,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "backfill": {
+    "job_key": "phase54h4_cl_batch1",
+    "fixtures_processed": 0,
+    "fixtures_imported": 0,
+    "fixtures_skipped": 56,
+    "fixtures_empty": 0,
+    "fixtures_error": 0,
+    "records_written": 0,
+    "api_calls_live": 0,
+    "api_calls_cached": 0,
+    "errors": []
+  },
+  "audit": {
+    "configured": true,
+    "tables_ready": true,
+    "records": {
+      "record_count": 6134,
+      "fixture_count": 30,
+      "league_count": 1,
+      "season_count": 1,
+      "team_count": 48,
+      "avg_minute": "51.7554613628953375",
+      "max_minute": 110
+    },
+    "summaries": {
+      "summary_count": 30,
+      "avg_rows_per_fixture": "204.4666666666666667",
+      "avg_minutes_per_fixture": "102.2333333333333333"
+    },
+    "duplicate_groups_sample": []
+  },
+  "postgres_configured": true,
+  "league_id": 2,
+  "season_id": null,
+  "cache_only": false,
+  "dry_run": false,
+  "options": {
+    "cache_first": true,
+    "skip_existing": true,
+    "save_raw": true,
+    "include": "participants;pressure;events.type",
+    "job_key": "phase54h4_cl_batch1",
+    "resume": false
+  }
+}

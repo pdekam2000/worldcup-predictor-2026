@@ -1,0 +1,626 @@
+{
+  "generated_at": "2026-06-24T09:51:43.051950+00:00",
+  "dataset": {
+    "total_rows": 47029,
+    "train_rows": 32920,
+    "val_rows": 7054,
+    "test_rows": 7055,
+    "fixtures_test": 209,
+    "catboost_available": false
+  },
+  "ranking": [
+    {
+      "market": "anytime",
+      "model": "logistic_regression",
+      "fixtures_evaluated": 209,
+      "top1_hit": 0.3062,
+      "top3_hit": 0.6077,
+      "top5_hit": 0.7129,
+      "mrr": null,
+      "recall_at_3": 0.6077,
+      "recall_at_5": 0.7129,
+      "precision_at_1": 0.3062,
+      "precision_at_3": 0.26,
+      "precision_at_5": 0.2211
+    },
+    {
+      "market": "anytime",
+      "model": "lightgbm",
+      "fixtures_evaluated": 209,
+      "top1_hit": 0.2727,
+      "top3_hit": 0.5598,
+      "top5_hit": 0.7033,
+      "mrr": null,
+      "recall_at_3": 0.5598,
+      "recall_at_5": 0.7033,
+      "precision_at_1": 0.2727,
+      "precision_at_3": 0.2392,
+      "precision_at_5": 0.2086
+    },
+    {
+      "market": "anytime",
+      "model": "ensemble",
+      "fixtures_evaluated": 209,
+      "top1_hit": 0.3014,
+      "top3_hit": 0.5933,
+      "top5_hit": 0.7081,
+      "mrr": null,
+      "recall_at_3": 0.5933,
+      "recall_at_5": 0.7081,
+      "precision_at_1": 0.3014,
+      "precision_at_3": 0.2584,
+      "precision_at_5": 0.2211
+    },
+    {
+      "market": "anytime",
+      "model": "combined_baseline",
+      "fixtures_evaluated": 209,
+      "top1_hit": 0.2584,
+      "top3_hit": 0.5646,
+      "top5_hit": 0.6603,
+      "mrr": null,
+      "recall_at_3": 0.5646,
+      "recall_at_5": 0.6603,
+      "precision_at_1": 0.2584,
+      "precision_at_3": 0.2329,
+      "precision_at_5": 0.1923
+    },
+    {
+      "market": "first_goal",
+      "model": "logistic_regression",
+      "fixtures_evaluated": 178,
+      "top1_hit": 0.1629,
+      "top3_hit": 0.3652,
+      "top5_hit": 0.5056,
+      "mrr": 0.3317,
+      "recall_at_3": 0.3652,
+      "recall_at_5": 0.5056,
+      "precision_at_1": 0.1629,
+      "precision_at_3": 0.1217,
+      "precision_at_5": 0.1011
+    },
+    {
+      "market": "first_goal",
+      "model": "lightgbm",
+      "fixtures_evaluated": 178,
+      "top1_hit": 0.1124,
+      "top3_hit": 0.264,
+      "top5_hit": 0.3539,
+      "mrr": 0.2548,
+      "recall_at_3": 0.264,
+      "recall_at_5": 0.3539,
+      "precision_at_1": 0.1124,
+      "precision_at_3": 0.088,
+      "precision_at_5": 0.0708
+    },
+    {
+      "market": "first_goal",
+      "model": "ensemble",
+      "fixtures_evaluated": 178,
+      "top1_hit": 0.1348,
+      "top3_hit": 0.3371,
+      "top5_hit": 0.4551,
+      "mrr": 0.3001,
+      "recall_at_3": 0.3371,
+      "recall_at_5": 0.4551,
+      "precision_at_1": 0.1348,
+      "precision_at_3": 0.1124,
+      "precision_at_5": 0.091
+    },
+    {
+      "market": "first_goal",
+      "model": "combined_baseline",
+      "fixtures_evaluated": 178,
+      "top1_hit": 0.1236,
+      "top3_hit": 0.3371,
+      "top5_hit": 0.4382,
+      "mrr": 0.2794,
+      "recall_at_3": 0.3371,
+      "recall_at_5": 0.4382,
+      "precision_at_1": 0.1236,
+      "precision_at_3": 0.1124,
+      "precision_at_5": 0.0876
+    },
+    {
+      "market": "most_likely",
+      "model": "logistic_regression",
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.1217,
+      "top3_hit": 0.3175,
+      "top5_hit": 0.4709,
+      "mrr": 0.2929,
+      "recall_at_3": 0.3175,
+      "recall_at_5": 0.4709,
+      "precision_at_1": 0.1217,
+      "precision_at_3": 0.1058,
+      "precision_at_5": 0.0942
+    },
+    {
+      "market": "most_likely",
+      "model": "lightgbm",
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.0741,
+      "top3_hit": 0.2222,
+      "top5_hit": 0.3122,
+      "mrr": 0.2045,
+      "recall_at_3": 0.2222,
+      "recall_at_5": 0.3122,
+      "precision_at_1": 0.0741,
+      "precision_at_3": 0.0741,
+      "precision_at_5": 0.0624
+    },
+    {
+      "market": "most_likely",
+      "model": "ensemble",
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.1217,
+      "top3_hit": 0.2698,
+      "top5_hit": 0.3915,
+      "mrr": 0.2609,
+      "recall_at_3": 0.2698,
+      "recall_at_5": 0.3915,
+      "precision_at_1": 0.1217,
+      "precision_at_3": 0.0899,
+      "precision_at_5": 0.0783
+    },
+    {
+      "market": "most_likely",
+      "model": "combined_baseline",
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.0899,
+      "top3_hit": 0.3175,
+      "top5_hit": 0.4339,
+      "mrr": 0.2616,
+      "recall_at_3": 0.3175,
+      "recall_at_5": 0.4339,
+      "precision_at_1": 0.0899,
+      "precision_at_3": 0.1058,
+      "precision_at_5": 0.0868
+    }
+  ],
+  "calibration": [
+    {
+      "market": "anytime",
+      "model": "ensemble",
+      "method": "raw",
+      "ece": 0.3621,
+      "brier": 0.2076,
+      "n_samples": 7055
+    },
+    {
+      "market": "anytime",
+      "model": "ensemble",
+      "method": "platt",
+      "ece": 0.0094,
+      "brier": 0.0619,
+      "n_samples": 7055
+    },
+    {
+      "market": "anytime",
+      "model": "ensemble",
+      "method": "isotonic",
+      "ece": 0.0074,
+      "brier": 0.0622,
+      "n_samples": 7055
+    },
+    {
+      "market": "first_goal",
+      "model": "ensemble",
+      "method": "raw",
+      "ece": 0.3077,
+      "brier": 0.1591,
+      "n_samples": 7055
+    },
+    {
+      "market": "first_goal",
+      "model": "ensemble",
+      "method": "platt",
+      "ece": 0.0029,
+      "brier": 0.0238,
+      "n_samples": 7055
+    },
+    {
+      "market": "first_goal",
+      "model": "ensemble",
+      "method": "isotonic",
+      "ece": 0.0025,
+      "brier": 0.0237,
+      "n_samples": 7055
+    },
+    {
+      "market": "most_likely",
+      "model": "ensemble",
+      "method": "raw",
+      "ece": 0.3876,
+      "brier": 0.1871,
+      "n_samples": 7055
+    },
+    {
+      "market": "most_likely",
+      "model": "ensemble",
+      "method": "platt",
+      "ece": 0.0011,
+      "brier": 0.0256,
+      "n_samples": 7055
+    },
+    {
+      "market": "most_likely",
+      "model": "ensemble",
+      "method": "isotonic",
+      "ece": 0.002,
+      "brier": 0.0257,
+      "n_samples": 7055
+    }
+  ],
+  "feature_importance": {
+    "by_market": {
+      "anytime": {
+        "logistic_regression": {
+          "lineup_status_starter": 0.2747647188963126,
+          "lineup_status_bench": 0.27476471889630905,
+          "goals_last_10": 0.20328435826646593,
+          "goals_last_5": 0.19003792730637828,
+          "recent_form_score": 0.17905578220797033,
+          "goals_last_3": 0.1459328303512863,
+          "shots_on_target_last_5": 0.12303560283945925,
+          "xg_per_90": 0.06353704555435669,
+          "xg_last_10": 0.037366740817477546,
+          "starter_probability": 0.026511723478502402,
+          "expected_minutes": 0.02648662096158561,
+          "xg_last_5": 0.02151093131076324,
+          "assists_last_5": 0.015775090978089,
+          "captain": 0.0006011483273785305,
+          "shots_last_5": 0.0
+        },
+        "lightgbm": {
+          "recent_form_score": 1318,
+          "xg_per_90": 1122,
+          "xg_last_10": 1083,
+          "xg_last_5": 929,
+          "shots_on_target_last_5": 409,
+          "starter_probability": 404,
+          "goals_last_10": 179,
+          "goals_last_3": 136,
+          "assists_last_5": 114,
+          "lineup_status_starter": 112,
+          "goals_last_5": 88,
+          "captain": 83,
+          "lineup_status_bench": 23,
+          "shots_last_5": 0,
+          "expected_minutes": 0
+        },
+        "catboost": {},
+        "combined_rank": [
+          {
+            "feature": "recent_form_score",
+            "importance": 0.5895
+          },
+          {
+            "feature": "xg_per_90",
+            "importance": 0.4574
+          },
+          {
+            "feature": "xg_last_10",
+            "importance": 0.4295
+          },
+          {
+            "feature": "xg_last_5",
+            "importance": 0.3632
+          },
+          {
+            "feature": "shots_on_target_last_5",
+            "importance": 0.2167
+          },
+          {
+            "feature": "lineup_status_starter",
+            "importance": 0.1799
+          },
+          {
+            "feature": "goals_last_10",
+            "importance": 0.1695
+          },
+          {
+            "feature": "starter_probability",
+            "importance": 0.1665
+          },
+          {
+            "feature": "lineup_status_bench",
+            "importance": 0.1461
+          },
+          {
+            "feature": "goals_last_5",
+            "importance": 0.1284
+          },
+          {
+            "feature": "goals_last_3",
+            "importance": 0.1246
+          },
+          {
+            "feature": "assists_last_5",
+            "importance": 0.0511
+          },
+          {
+            "feature": "captain",
+            "importance": 0.0318
+          },
+          {
+            "feature": "expected_minutes",
+            "importance": 0.0265
+          },
+          {
+            "feature": "shots_last_5",
+            "importance": 0.0
+          }
+        ]
+      },
+      "first_goal": {
+        "logistic_regression": {
+          "lineup_status_bench": 0.5440608561712758,
+          "lineup_status_starter": 0.544060856171273,
+          "goals_last_5": 0.3002963803466619,
+          "goals_last_3": 0.2327884744539581,
+          "goals_last_10": 0.1754463788292773,
+          "recent_form_score": 0.1706493804550243,
+          "shots_on_target_last_5": 0.13905591719253277,
+          "assists_last_5": 0.046511614215477996,
+          "xg_per_90": 0.044425067402086516,
+          "xg_last_10": 0.03490371044958289,
+          "starter_probability": 0.0316286432847744,
+          "expected_minutes": 0.031592238261041294,
+          "xg_last_5": 0.005582954320896639,
+          "captain": 0.0015340889138423465,
+          "shots_last_5": 0.0
+        },
+        "lightgbm": {
+          "recent_form_score": 1278,
+          "xg_per_90": 1077,
+          "xg_last_10": 947,
+          "xg_last_5": 821,
+          "starter_probability": 498,
+          "shots_on_target_last_5": 434,
+          "goals_last_10": 248,
+          "assists_last_5": 202,
+          "goals_last_3": 167,
+          "captain": 140,
+          "lineup_status_starter": 95,
+          "goals_last_5": 92,
+          "lineup_status_bench": 1,
+          "shots_last_5": 0,
+          "expected_minutes": 0
+        },
+        "catboost": {},
+        "combined_rank": [
+          {
+            "feature": "recent_form_score",
+            "importance": 0.5853
+          },
+          {
+            "feature": "xg_per_90",
+            "importance": 0.4436
+          },
+          {
+            "feature": "xg_last_10",
+            "importance": 0.388
+          },
+          {
+            "feature": "xg_last_5",
+            "importance": 0.324
+          },
+          {
+            "feature": "lineup_status_starter",
+            "importance": 0.3092
+          },
+          {
+            "feature": "lineup_status_bench",
+            "importance": 0.2724
+          },
+          {
+            "feature": "shots_on_target_last_5",
+            "importance": 0.2393
+          },
+          {
+            "feature": "starter_probability",
+            "importance": 0.2107
+          },
+          {
+            "feature": "goals_last_5",
+            "importance": 0.1861
+          },
+          {
+            "feature": "goals_last_10",
+            "importance": 0.1847
+          },
+          {
+            "feature": "goals_last_3",
+            "importance": 0.1817
+          },
+          {
+            "feature": "assists_last_5",
+            "importance": 0.1023
+          },
+          {
+            "feature": "captain",
+            "importance": 0.0555
+          },
+          {
+            "feature": "expected_minutes",
+            "importance": 0.0316
+          },
+          {
+            "feature": "shots_last_5",
+            "importance": 0.0
+          }
+        ]
+      },
+      "most_likely": {
+        "logistic_regression": {
+          "goals_last_10": 0.20419200718651856,
+          "goals_last_5": 0.17604973236963883,
+          "goals_last_3": 0.16907983689494183,
+          "recent_form_score": 0.16772150592007626,
+          "shots_on_target_last_5": 0.15699546901800537,
+          "xg_per_90": 0.14679531448563427,
+          "xg_last_5": 0.09128834053955179,
+          "lineup_status_starter": 0.08831578687568292,
+          "lineup_status_bench": 0.08831578687567213,
+          "starter_probability": 0.033194549679607714,
+          "expected_minutes": 0.033147321351219394,
+          "xg_last_10": 0.022203951771427966,
+          "assists_last_5": 0.012861050719703865,
+          "captain": 0.0018617721729228577,
+          "shots_last_5": 0.0
+        },
+        "lightgbm": {
+          "recent_form_score": 1281,
+          "xg_per_90": 1089,
+          "xg_last_10": 1023,
+          "xg_last_5": 935,
+          "starter_probability": 401,
+          "shots_on_target_last_5": 391,
+          "goals_last_10": 194,
+          "assists_last_5": 192,
+          "goals_last_3": 165,
+          "captain": 124,
+          "lineup_status_starter": 109,
+          "goals_last_5": 88,
+          "lineup_status_bench": 8,
+          "shots_last_5": 0,
+          "expected_minutes": 0
+        },
+        "catboost": {},
+        "combined_rank": [
+          {
+            "feature": "recent_form_score",
+            "importance": 0.5839
+          },
+          {
+            "feature": "xg_per_90",
+            "importance": 0.4985
+          },
+          {
+            "feature": "xg_last_5",
+            "importance": 0.4106
+          },
+          {
+            "feature": "xg_last_10",
+            "importance": 0.4104
+          },
+          {
+            "feature": "shots_on_target_last_5",
+            "importance": 0.2311
+          },
+          {
+            "feature": "goals_last_10",
+            "importance": 0.1778
+          },
+          {
+            "feature": "starter_probability",
+            "importance": 0.1731
+          },
+          {
+            "feature": "goals_last_3",
+            "importance": 0.1489
+          },
+          {
+            "feature": "goals_last_5",
+            "importance": 0.1224
+          },
+          {
+            "feature": "lineup_status_starter",
+            "importance": 0.0867
+          },
+          {
+            "feature": "assists_last_5",
+            "importance": 0.0814
+          },
+          {
+            "feature": "captain",
+            "importance": 0.0493
+          },
+          {
+            "feature": "lineup_status_bench",
+            "importance": 0.0473
+          },
+          {
+            "feature": "expected_minutes",
+            "importance": 0.0331
+          },
+          {
+            "feature": "shots_last_5",
+            "importance": 0.0
+          }
+        ]
+      }
+    },
+    "aggregate_anytime": {
+      "recent_form_score": 0.5895,
+      "xg_per_90": 0.4574,
+      "xg_last_10": 0.4295,
+      "xg_last_5": 0.3632,
+      "shots_on_target_last_5": 0.2167,
+      "lineup_status_starter": 0.1799,
+      "goals_last_10": 0.1695,
+      "starter_probability": 0.1665,
+      "lineup_status_bench": 0.1461,
+      "goals_last_5": 0.1284,
+      "goals_last_3": 0.1246,
+      "assists_last_5": 0.0511,
+      "captain": 0.0318,
+      "expected_minutes": 0.0265,
+      "shots_last_5": 0.0
+    },
+    "group_analysis": {
+      "group_importance": {
+        "form": 1.0631,
+        "shots": 0.2167,
+        "xg": 1.2501,
+        "lineup": 0.5508
+      },
+      "most_valuable": [
+        "recent_form_score",
+        "xg_per_90",
+        "xg_last_10",
+        "xg_last_5",
+        "shots_on_target_last_5"
+      ],
+      "least_valuable": [
+        "shots_last_5"
+      ],
+      "xg_helps": true,
+      "lineup_helps": true
+    },
+    "redundant_features": [
+      "shots_last_5"
+    ]
+  },
+  "odds_overlay": {
+    "status": "sparse_odds",
+    "fixtures_with_odds": 0,
+    "anytime_top1_overlap_rate": null,
+    "first_top1_overlap_rate": null,
+    "player_mapping_success_rate": 0.0,
+    "mapping_blocker": false,
+    "disagreement_samples": [],
+    "agreement_pct": null,
+    "disagreement_pct": null,
+    "potential_edge_fixtures": 0,
+    "worth_integrating_later": false
+  },
+  "baseline_comparison": {
+    "anytime_top3": 0.5646,
+    "first_goal_top3": 0.3371,
+    "most_likely_top3": 0.3175,
+    "ml_ensemble": {
+      "anytime_top3": 0.5933,
+      "first_goal_top3": 0.3371,
+      "most_likely_top3": 0.2698
+    },
+    "lifts_top3": {
+      "anytime": 0.0287,
+      "first_goal": 0.0,
+      "most_likely": -0.0477
+    }
+  },
+  "recommendation": "GOALSCORER_MEDIUM_VALUE",
+  "limitations": []
+}

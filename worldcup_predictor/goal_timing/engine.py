@@ -119,6 +119,9 @@ class EliteGoalTimingEngine:
             "weighted_average_minute": raw.get("weighted_average_minute"),
             "model_confidence_score": model_confidence,
             "bucket_representative_minute": raw.get("bucket_representative_minute"),
+            "bucket_is_default": raw.get("bucket_is_default"),
+            "bucket_reason": raw.get("bucket_reason"),
+            "bucket_source": raw.get("bucket_source"),
         }
 
         return GoalTimingPredictionResult(
@@ -128,8 +131,14 @@ class EliteGoalTimingEngine:
             away_team=away_team,
             match_date=match_date,
             first_goal_team=calibrated.get("first_goal_team", "none"),
-            first_goal_time_range=calibrated.get("first_goal_time_range", GOAL_TIMING_MINUTE_RANGES[0]),
-            display_estimated_first_goal_minute=calibrated.get("display_estimated_first_goal_minute"),
+            first_goal_time_range=(
+                None
+                if no_prediction
+                else calibrated.get("first_goal_time_range")
+            ),
+            display_estimated_first_goal_minute=(
+                None if no_prediction else calibrated.get("display_estimated_first_goal_minute")
+            ),
             bucket_representative_minute=calibrated.get("bucket_representative_minute"),
             weighted_average_minute=calibrated.get("weighted_average_minute"),
             model_confidence_score=model_confidence,

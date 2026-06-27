@@ -1,0 +1,17 @@
+[Unit]
+Description=WorldCup Elite Shadow autonomous cycle (Phase A22 — shadow-only)
+After=network.target worldcup-api.service
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+Environment=PYTHONPATH=/opt/worldcup-predictor
+Environment=APP_ENV=production
+EnvironmentFile=-/opt/worldcup-predictor/.env.production
+ExecStart=/opt/worldcup-predictor/.venv/bin/python main.py elite_shadow_once
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

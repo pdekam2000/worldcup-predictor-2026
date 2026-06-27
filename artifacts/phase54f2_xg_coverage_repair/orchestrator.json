@@ -1,0 +1,40 @@
+{
+  "steps": [
+    {
+      "label": "UEFA cache re-import league 2",
+      "returncode": 0,
+      "stdout_tail": "{\n  \"backfill\": {\n    \"job_key\": \"phase54f2_uefa_l2\",\n    \"fixtures_processed\": 30,\n    \"fixtures_imported\": 0,\n    \"fixtures_skipped\": 0,\n    \"fixtures_empty\": 30,\n    \"fixtures_error\": 0,\n    \"records_written\": 0,\n    \"api_calls_live\": 0,\n    \"api_calls_cached\": 0,\n    \"errors\": []\n  },\n  \"audit\": {\n    \"configured\": true,\n    \"tables_ready\": true,\n    \"records\": {\n      \"record_count\": 390,\n      \"fixture_count\": 45,\n      \"league_count\": 2,\n      \"season_count\": 3,\n      \"team_count\": 45,\n      \"player_record_count\": 0\n    },\n    \"summaries\": {\n      \"summary_count\": 45,\n      \"with_rolling_xg\": 5\n    },\n    \"duplicate_groups_sample\": []\n  },\n  \"postgres_configured\": true,\n  \"metric_key_filter\": null,\n  \"require_team_xg\": true\n}\n"
+    },
+    {
+      "label": "UEFA cache re-import league 5",
+      "returncode": 0,
+      "stdout_tail": "{\n  \"backfill\": {\n    \"job_key\": \"phase54f2_uefa_l5\",\n    \"fixtures_processed\": 30,\n    \"fixtures_imported\": 8,\n    \"fixtures_skipped\": 0,\n    \"fixtures_empty\": 22,\n    \"fixtures_error\": 0,\n    \"records_written\": 316,\n    \"api_calls_live\": 0,\n    \"api_calls_cached\": 8,\n    \"errors\": []\n  },\n  \"audit\": {\n    \"configured\": true,\n    \"tables_ready\": true,\n    \"records\": {\n      \"record_count\": 356,\n      \"fixture_count\": 28,\n      \"league_count\": 2,\n      \"season_count\": 3,\n      \"team_count\": 31,\n      \"player_record_count\": 0\n    },\n    \"summaries\": {\n      \"summary_count\": 28,\n      \"with_rolling_xg\": 4\n    },\n    \"duplicate_groups_sample\": []\n  },\n  \"postgres_configured\": true,\n  \"metric_key_filter\": null,\n  \"require_team_xg\": true\n}\n"
+    },
+    {
+      "label": "UEFA cache re-import league 2286",
+      "returncode": 0,
+      "stdout_tail": "{\n  \"backfill\": {\n    \"job_key\": \"phase54f2_uefa_l2286\",\n    \"fixtures_processed\": 20,\n    \"fixtures_imported\": 0,\n    \"fixtures_skipped\": 0,\n    \"fixtures_empty\": 20,\n    \"fixtures_error\": 0,\n    \"records_written\": 0,\n    \"api_calls_live\": 0,\n    \"api_calls_cached\": 0,\n    \"errors\": []\n  },\n  \"audit\": {\n    \"configured\": true,\n    \"tables_ready\": true,\n    \"records\": {\n      \"record_count\": 316,\n      \"fixture_count\": 8,\n      \"league_count\": 1,\n      \"season_count\": 1,\n      \"team_count\": 9,\n      \"player_record_count\": 0\n    },\n    \"summaries\": {\n      \"summary_count\": 8,\n      \"with_rolling_xg\": 4\n    },\n    \"duplicate_groups_sample\": []\n  },\n  \"postgres_configured\": true,\n  \"metric_key_filter\": null,\n  \"require_team_xg\": true\n}\n"
+    },
+    {
+      "label": "WC 732 live backfill",
+      "returncode": 0,
+      "stdout_tail": "{\n  \"backfill\": {\n    \"job_key\": \"phase54f2_wc732\",\n    \"fixtures_processed\": 0,\n    \"fixtures_imported\": 0,\n    \"fixtures_skipped\": 0,\n    \"fixtures_empty\": 0,\n    \"fixtures_error\": 0,\n    \"records_written\": 0,\n    \"api_calls_live\": 0,\n    \"api_calls_cached\": 0,\n    \"errors\": []\n  },\n  \"audit\": {\n    \"configured\": true,\n    \"tables_ready\": true,\n    \"records\": {\n      \"record_count\": 316,\n      \"fixture_count\": 8,\n      \"league_count\": 1,\n      \"season_count\": 1,\n      \"team_count\": 9,\n      \"player_record_count\": 0\n    },\n    \"summaries\": {\n      \"summary_count\": 8,\n      \"with_rolling_xg\": 4\n    },\n    \"duplicate_groups_sample\": []\n  },\n  \"postgres_configured\": true,\n  \"metric_key_filter\": null,\n  \"require_team_xg\": true\n}\n"
+    },
+    {
+      "label": "Coverage audit",
+      "returncode": 1,
+      "stdout_tail": "   \"fixtures_with_any_xg_rows\": 8\n    },\n    \"by_league_id\": {\n      \"2\": {\n        \"scanned\": 30,\n        \"team_xg\": 0,\n        \"xgot_only\": 0,\n        \"no_xg\": 30\n      },\n      \"5\": {\n        \"scanned\": 30,\n        \"team_xg\": 8,\n        \"xgot_only\": 0,\n        \"no_xg\": 22\n      },\n      \"2286\": {\n        \"scanned\": 20,\n        \"team_xg\": 0,\n        \"xgot_only\": 0,\n        \"no_xg\": 20\n      }\n    }\n  },\n  \"db_coverage\": {\n    \"uefa_cache_fixtures\": 80,\n    \"summaries_with_team_xg\": 8,\n    \"fixtures_with_player_xg\": 0,\n    \"fixtures_xgot_only_no_team_xg\": 0,\n    \"rolling_xg_available\": 4,\n    \"rolling_xg_3_fixtures\": 4,\n    \"rolling_xg_5_fixtures\": 4,\n    \"rolling_xg_10_fixtures\": 4,\n    \"usable_rolling_xg_coverage_pct\": 5.0,\n    \"coverage_pass_30pct\": false,\n    \"coverage_pass_40pct\": false,\n    \"by_league\": {\n      \"europa_league\": {\n        \"league_id\": 5,\n        \"summaries\": 8,\n        \"with_team_xg\": 8,\n        \"metrics\": {\n          \"team_metric:xg_corners\": 16,\n          \"team_metric:xg_open_play\": 16,\n          \"team_xg:xg_free_kicks\": 6,\n          \"team_metric:npxg\": 16,\n          \"team_metric:xg_free_kicks\": 6,\n          \"team_xg:xg_corners\": 16,\n          \"team_metric:xpts\": 16,\n          \"team_metric:xg_prevented\": 4,\n          \"team_xg:xg_set_play\": 16,\n          \"team_metric:xg_set_play\": 16,\n          \"team_metric:xga\": 16,\n          \"team_metric:xgot\": 16,\n          \"team_metric:xg\": 16,\n          \"team_xg:xg_prevented\": 4,\n          \"team_xg:xgot\": 16,\n          \"team_xg:xg\": 16,\n          \"team_xg:xg_penalties\": 4,\n          \"team_xg:npxg\": 16,\n          \"team_xg:xpts\": 16,\n          \"team_xg:xga\": 16,\n          \"team_metric:shooting_performance\": 16,\n          \"team_metric:xg_penalties\": 4,\n          \"team_xg:xg_open_play\": 16,\n          \"team_xg:shooting_performance\": 16\n        }\n      }\n    },\n    \"skipped_by_manifest\": {\n      \"empty:no_true_xg_metrics\": 72\n    }\n  },\n  \"threshold_met\": false,\n  \"recommendation\": \"NEED_MORE_HISTORICAL_XG\"\n}\n"
+    },
+    {
+      "label": "54F A/B backtest rerun",
+      "returncode": 0,
+      "stdout_tail": "skipped:coverage_below_30pct"
+    },
+    {
+      "label": "Validation",
+      "returncode": 0,
+      "stdout_tail": "VALIDATION: 15/15 PASS (threshold_met=False)\n  [PASS] shots_on_target_not_xgot: \n  [PASS] type_5304_is_xg: \n  [PASS] type_5305_is_xgot: \n  [PASS] egie_features_exclude_xgot: \n  [PASS] metric_key_cli_supported: \n  [PASS] force_reimport_cli_supported: \n  [PASS] coverage_audit_produced: \n  [PASS] cache_audit_present: \n  [PASS] no_xgot_in_team_xg_summaries: db_xgot_only_fixtures=0\n  [PASS] coverage_threshold_status: usable_rolling=5.0% pass_30=False\n  [PASS] ab_backtest_skipped_insufficient_coverage: coverage < 30%\n  [PASS] backfill_artifacts_present: C:\\Users\\kaman\\Desktop\\Footbal\\artifacts\\phase54e_sportmonks_xg_feature_store\n  [PASS] no_wde_changes_in_phase: manual scope: backtest + feature store only\n  [PASS] no_token_leaked: \n  [PASS] no_deploy: no deploy artifacts\n"
+    }
+  ],
+  "threshold_met": false
+}

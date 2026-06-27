@@ -486,6 +486,7 @@ def build_monitoring_bundle(
         latest_rule_a = compute_rule_a_impact(settings=settings, competition_key=competition_key)
         latest_agents = compute_agent_contribution(settings=settings, competition_key=competition_key)
 
+        markets: list[dict[str, Any]] = []
         if snapshots:
             try:
                 markets = json.loads(snapshots[-1].get("markets_json") or "[]")

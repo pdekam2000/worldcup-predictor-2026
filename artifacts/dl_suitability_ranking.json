@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-06-23T10:18:50.533556+00:00",
+  "ranked": [
+    {
+      "market": "fg_team",
+      "tier": "C",
+      "rationale": "Odds intelligence 78.7% vs baseline 51%; DL adds complexity without beating sharp MW"
+    },
+    {
+      "market": "goal_range",
+      "tier": "B",
+      "rationale": "Kaplan-Meier survival +3.2pp; classical survival may suffice before deep survival"
+    },
+    {
+      "market": "goal_minute",
+      "tier": "C",
+      "rationale": "Labels missing in parquet; 3.4% exact accuracy; data fix required first"
+    },
+    {
+      "market": "btts",
+      "tier": "A",
+      "rationale": "1600+ labels, balanced; tabular ML likely optimal"
+    },
+    {
+      "market": "over_under",
+      "tier": "A",
+      "rationale": "1600+ labels; Poisson/LightGBM standard approach"
+    },
+    {
+      "market": "correct_score",
+      "tier": "B",
+      "rationale": "High cardinality; neural Poisson possible but needs more seasons"
+    },
+    {
+      "market": "goalscorer",
+      "tier": "C",
+      "rationale": "No player-level history store"
+    }
+  ]
+}

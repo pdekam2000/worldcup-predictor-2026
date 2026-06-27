@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from typing import TextIO
 
@@ -3389,6 +3390,63 @@ def run_daily_worldcup_predict_command(
     return 0 if result.errors == 0 else 1
 
 
+def run_prediction_prefetch_command(
+    *,
+    window_days: int | None = None,
+    max_per_cycle: int | None = None,
+    force_refresh: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.automation.prediction_prefetch.scheduler import run_prefetch_scheduler_once
+
+    report = run_prefetch_scheduler_once(window_days=window_days, max_per_cycle=max_per_cycle)
+    cycle = report.get("cycle") or {}
+    out.write("Phase A14 — Prediction prefetch cycle\n")
+    out.write(f"  Scanned: {cycle.get('scanned', 0)}\n")
+    out.write(f"  Predicted: {cycle.get('predicted', 0)}\n")
+    out.write(f"  Skipped (fresh): {cycle.get('skipped_fresh', 0)}\n")
+    out.write(f"  Skipped (cap): {cycle.get('skipped_cap', 0)}\n")
+    out.write(f"  Errors: {cycle.get('errors', 0)}\n")
+    cov = (report.get("coverage") or {}).get("totals") or {}
+    out.write(f"  Coverage: {cov.get('coverage_pct', 0)}% bettable: {cov.get('bettable_pct', 0)}%\n")
+    return 0 if int(cycle.get("errors") or 0) == 0 else 1
+
+
+def run_predops_command(
+    *,
+    window_days: int | None = None,
+    max_jobs: int | None = None,
+    dry_run: bool = False,
+    backfill: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    if backfill:
+        from worldcup_predictor.predops.engine import backfill_snapshots_from_stored
+
+        n = backfill_snapshots_from_stored()
+        out.write(f"Phase A15 — Backfill snapshots: {n} created\n")
+        return 0
+
+    from worldcup_predictor.predops.scheduler import run_predops_scheduler_once
+
+    report = run_predops_scheduler_once(window_days=window_days, max_jobs=max_jobs, dry_run=dry_run)
+    cycle = report.get("cycle") or {}
+    out.write("Phase A15 — PredOps cycle\n")
+    out.write(f"  Enqueued: {cycle.get('enqueued', 0)}\n")
+    out.write(f"  Processed: {cycle.get('processed', 0)}\n")
+    out.write(f"  Snapshots: {cycle.get('snapshots_created', 0)}\n")
+    out.write(f"  Errors: {cycle.get('errors', 0)}\n")
+    if dry_run:
+        out.write("  (dry run — no predictions generated)\n")
+    cov = (report.get("coverage") or {}).get("totals") or {}
+    out.write(f"  Coverage: {cov.get('coverage_pct', 0)}%\n")
+    combo = report.get("combo_readiness") or {}
+    out.write(f"  Combo eligible legs: {combo.get('eligible_legs', 0)}\n")
+    return 0 if int(cycle.get("errors") or 0) == 0 else 1
+
+
 def run_evaluate_worldcup_results_command(*, limit: int | None = None, stream: TextIO | None = None) -> int:
     out = stream or sys.stdout
     from worldcup_predictor.automation.worldcup_background.runner import run_evaluate_worldcup_results_cli
@@ -3564,3 +3622,64 @@ def run_autonomous_scheduler_command(
     out.write(f"Phase 61 — autonomous_scheduler (interval={interval_seconds}s)\n")
     run_autonomous_scheduler_loop(interval_seconds=interval_seconds, max_iterations=max_iterations)
     return 0
+
+
+def run_elite_shadow_once_command(
+    *,
+    dry_run: bool = False,
+    force: bool = False,
+    days_ahead: int | None = None,
+    limit: int | None = None,
+    skip_root_cause: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.elite_orchestrator.shadow_scheduler import run_elite_shadow_scheduler_once
+
+    report = run_elite_shadow_scheduler_once(dry_run=dry_run, force=force)
+    out.write("Phase A22 — elite_shadow_once complete\n")
+    out.write(f"  Status: {report.get('status')}\n")
+    if report.get("status") == "ok":
+        out.write(f"  Fixtures: {report.get('fixtures_selected', 0)}\n")
+        out.write(f"  Predictions generated: {report.get('predictions_generated', 0)}\n")
+        wr = report.get("write_result") or {}
+        out.write(f"  Predictions written: {wr.get('written', 0)}\n")
+        pr = report.get("pair_result") or {}
+        out.write(f"  Evaluations written: {pr.get('evaluations_written', 0)}\n")
+        rc = report.get("root_cause") or {}
+        out.write(f"  Root cause records added: {rc.get('records_added', 0)}\n")
+    elif report.get("error"):
+        out.write(f"  Error: {report.get('error')}\n")
+    return 0 if report.get("status") == "ok" else 1
+
+
+def run_elite_shadow_scheduler_command(
+    *,
+    interval_seconds: int | None = None,
+    max_iterations: int | None = None,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.config.settings import get_settings
+    from worldcup_predictor.elite_orchestrator.autonomous_shadow_cycle import run_shadow_scheduler_loop
+
+    settings = get_settings()
+    interval = interval_seconds or int(settings.elite_shadow_interval_hours * 3600)
+    out.write(f"Phase A22 — elite_shadow_scheduler (interval={interval}s)\n")
+    run_shadow_scheduler_loop(settings=settings, interval_seconds=interval, max_iterations=max_iterations)
+    return 0
+
+
+def run_elite_shadow_admin_command(
+    *,
+    action: str,
+    force: bool = False,
+    dry_run: bool = False,
+    stream: TextIO | None = None,
+) -> int:
+    out = stream or sys.stdout
+    from worldcup_predictor.elite_orchestrator.shadow_admin import handle_admin_action
+
+    result = handle_admin_action(action, force=force, dry_run=dry_run)
+    out.write(json.dumps(result, indent=2, default=str) + "\n")
+    return 0 if result.get("status") == "ok" else 1

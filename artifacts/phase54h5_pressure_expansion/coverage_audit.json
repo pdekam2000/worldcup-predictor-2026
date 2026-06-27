@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-06-24T07:15:33.484361+00:00",
+  "phase": "54H-5",
+  "fixtures_before": 30,
+  "fixtures_after": 113,
+  "new_fixtures": 83,
+  "records_before": 6134,
+  "records_after": 22466,
+  "new_records": 16332,
+  "avg_rows_per_fixture": 198.81,
+  "target_minimum": 150,
+  "target_met": false,
+  "recommendation": "NEED_MORE_PRESSURE_BACKFILL",
+  "blocker": "Coverage 113/150 \u2014 need more WC batches or UEFA prior-season backfill (WC=48, UEFA=65)",
+  "by_league": {
+    "2": 25,
+    "2286": 15,
+    "5": 25,
+    "732": 48
+  },
+  "by_season": {
+    "23619": 25,
+    "23616": 15,
+    "23620": 25,
+    "26618": 48
+  },
+  "wc_coverage": 48,
+  "uefa_cache_seed_coverage": 65,
+  "fixtures_with_zero_pressure_rows": 0,
+  "duplicate_groups_sample": [],
+  "api_calls_live_total": 18,
+  "api_calls_cached_total": 0,
+  "fixtures_imported_wc_batches": 18,
+  "fixtures_imported_cache_seed": 65,
+  "cache_files": 48,
+  "manifest_stats": [
+    {
+      "job_key": "phase54h5_cache_seed",
+      "status": "empty",
+      "n": 120
+    },
+    {
+      "job_key": "phase54h5_cache_seed",
+      "status": "imported",
+      "n": 65
+    },
+    {
+      "job_key": "phase54h5_wc_batch2",
+      "status": "imported",
+      "n": 18
+    },
+    {
+      "job_key": "phase54h5_wc_batch2",
+      "status": "skipped_upcoming",
+      "n": 56
+    },
+    {
+      "job_key": "phase54h5_wc_batch3",
+      "status": "skipped_upcoming",
+      "n": 56
+    },
+    {
+      "job_key": "phase54h5_wc_batch4",
+      "status": "skipped_upcoming",
+      "n": 56
+    }
+  ],
+  "batch_results": [
+    {
+      "file": "backfill_phase54h5_wc_batch2.json",
+      "job_key": "phase54h5_wc_batch2",
+      "fixtures_imported": 18,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "fixtures_skipped": 86,
+      "api_calls_live": 18,
+      "api_calls_cached": 0,
+      "records_written": 3656
+    },
+    {
+      "file": "backfill_phase54h5_wc_batch3.json",
+      "job_key": "phase54h5_wc_batch3",
+      "fixtures_imported": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "fixtures_skipped": 104,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "records_written": 0
+    },
+    {
+      "file": "backfill_phase54h5_wc_batch4.json",
+      "job_key": "phase54h5_wc_batch4",
+      "fixtures_imported": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "fixtures_skipped": 104,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "records_written": 0
+    },
+    {
+      "file": "backfill_result.json",
+      "job_key": "phase54h5_wc_batch4",
+      "fixtures_imported": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "fixtures_skipped": 104,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "records_written": 0
+    }
+  ]
+}

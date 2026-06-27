@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from worldcup_predictor.elite_orchestrator.shadow_config import MODEL_VERSION, PREDICTIONS_PATH
+from worldcup_predictor.elite_orchestrator.shadow_jsonl_io import append_jsonl_rows, load_jsonl
 
 
 def _utc_now() -> str:
@@ -30,19 +31,7 @@ def duplicate_key(row: dict[str, Any]) -> tuple[int, str, str, str]:
 
 def load_existing_keys(path: Path | None = None) -> set[tuple[int, str, str, str]]:
     p = path or PREDICTIONS_PATH
-    keys: set[tuple[int, str, str, str]] = set()
-    if not p.is_file():
-        return keys
-    for line in p.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        try:
-            row = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        keys.add(duplicate_key(row))
-    return keys
+    return {duplicate_key(row) for row in load_jsonl(p)}
 
 
 def flatten_prediction_record(
@@ -91,23 +80,7 @@ def append_predictions(
     force: bool = False,
 ) -> dict[str, Any]:
     p = path or PREDICTIONS_PATH
-    p.parent.mkdir(parents=True, exist_ok=True)
-
-    existing_keys = set() if force else load_existing_keys(p)
-    written = 0
-    skipped = 0
-
-    with p.open("a", encoding="utf-8") as fh:
-        for row in rows:
-            key = duplicate_key(row)
-            if key in existing_keys:
-                skipped += 1
-                continue
-            fh.write(json.dumps(row, default=str) + "\n")
-            existing_keys.add(key)
-            written += 1
-
-    return {"written": written, "skipped_duplicates": skipped, "path": str(p)}
+    return append_jsonl_rows(p, rows, dedupe_key=duplicate_key, force=force)
 
 
 def validate_row(row: dict[str, Any]) -> list[str]:

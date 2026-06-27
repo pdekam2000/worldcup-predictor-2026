@@ -9,6 +9,15 @@ from typing import Any
 
 from worldcup_predictor.root_cause.config import STORE_DIR
 from worldcup_predictor.root_cause.models import KnowledgeRecord
+from worldcup_predictor.elite_orchestrator.shadow_jsonl_io import append_jsonl_rows
+
+
+def _knowledge_dedupe_key(row: dict[str, Any]) -> tuple[int, str, str]:
+    return (
+        int(row.get("fixture_id") or 0),
+        str(row.get("market") or row.get("market_id") or ""),
+        str(row.get("failure_reason") or ""),
+    )
 
 
 def _utc_now() -> str:
@@ -28,11 +37,15 @@ class RootCauseStore:
     def records_path(self) -> Path:
         return self.base_dir / "knowledge_records.jsonl"
 
-    def append_record(self, record: KnowledgeRecord) -> None:
+    def append_record(self, record: KnowledgeRecord) -> dict[str, Any]:
         self.ensure_dirs()
         payload = {"generated_at": _utc_now(), **record.to_dict()}
-        with self.records_path.open("a", encoding="utf-8") as fh:
-            fh.write(json.dumps(payload, default=str) + "\n")
+        return append_jsonl_rows(
+            self.records_path,
+            [payload],
+            dedupe_key=_knowledge_dedupe_key,
+            force=False,
+        )
 
     def write_snapshot(self, name: str, payload: dict[str, Any]) -> Path:
         self.ensure_dirs()

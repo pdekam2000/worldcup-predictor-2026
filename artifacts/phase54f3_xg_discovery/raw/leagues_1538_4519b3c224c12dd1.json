@@ -1,0 +1,36 @@
+{
+  "status_code": 200,
+  "payload": {
+    "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782248371,
+          "next_billing_cycle": "2026-07-23T19:06:09 UTC"
+        },
+        "plans": [
+          {
+            "plan": "World Cup 2026",
+            "sport": "Football",
+            "category": "All-in"
+          },
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 3533,
+      "remaining": 2493,
+      "requested_entity": "League"
+    },
+    "timezone": "UTC"
+  },
+  "error": null
+}

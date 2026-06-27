@@ -1,0 +1,81 @@
+{
+  "version": "elite_confidence_fusion_v1",
+  "tier_thresholds": {
+    "A": 0.72,
+    "B": 0.58,
+    "C": 0.42,
+    "D": 0.0
+  },
+  "signals": {
+    "model_agreement": {
+      "description": "Agreement between EGIE baseline, FGT V2, and goalscorer team proxy",
+      "weight": 0.3,
+      "formula": "1 - normalized_disagreement(component_predictions)",
+      "markets": [
+        "first_goal_team",
+        "team_to_score_first",
+        "anytime_goalscorer"
+      ]
+    },
+    "market_agreement": {
+      "description": "Model pick aligns with implied odds favorite / goalscorer odds rank",
+      "weight": 0.2,
+      "formula": "binary(model_pick == odds_favorite) * odds_margin",
+      "markets": [
+        "1x2",
+        "anytime_goalscorer",
+        "first_goal_team"
+      ]
+    },
+    "mbi_prior": {
+      "description": "MBI bucket prior supports model direction (10% blend feasible)",
+      "weight": 0.1,
+      "formula": "clamp(1 - abs(model_prob - bucket_hit_rate), 0, 1)",
+      "markets": [
+        "1x2",
+        "first_goal_team"
+      ],
+      "max_blend_weight": 0.1
+    },
+    "odds_confidence": {
+      "description": "Sharp consensus, movement stability, market depth",
+      "weight": 0.25,
+      "formula": "0.5*consensus_strength + 0.3*movement_stability + 0.2*book_count_norm",
+      "markets": [
+        "1x2",
+        "first_goal_team",
+        "team_to_score_first"
+      ]
+    },
+    "data_quality": {
+      "description": "Lineup confirmed, player history depth, odds coverage",
+      "weight": 0.15,
+      "formula": "0.4*lineup_dq + 0.35*player_history + 0.25*odds_coverage",
+      "markets": "all"
+    }
+  },
+  "market_overrides": {
+    "anytime_goalscorer": {
+      "primary_signal": "model_agreement",
+      "secondary_signal": "data_quality",
+      "odds_weight_cap": 0.15,
+      "notes": "UEFA odds sparse \u2014 cap odds influence"
+    },
+    "first_goalscorer": {
+      "primary_signal": "data_quality",
+      "tier_cap": "B",
+      "notes": "31% top-3 \u2014 never Tier A without odds alignment"
+    },
+    "goal_timing": {
+      "inherit": "hybrid_confidence_engine",
+      "notes": "Reuse 52D conf_range / conf_minute; minute stays experimental"
+    }
+  },
+  "tier_rules": [
+    "Tier A requires MODEL_AGREEMENT >= 0.75 AND DATA_QUALITY >= 0.70",
+    "Tier A for goalscorer requires WC odds OR top-1 margin >= 2x over rank-2",
+    "Tier D if any critical input missing (no lineup AND no odds for team markets)",
+    "MBI prior alone cannot elevate tier \u2014 only modulates probability"
+  ],
+  "fusion_formula": "conf = clamp(sum(signal_weight * signal_score) * tier_multiplier)"
+}

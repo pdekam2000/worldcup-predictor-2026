@@ -1,0 +1,80 @@
+{
+  "passed": 12,
+  "total": 12,
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "wc_rows_scanned",
+      "pass": true,
+      "detail": "rows=1049"
+    },
+    {
+      "name": "legacy_parser_mostly_broken",
+      "pass": true,
+      "detail": "before=0 after=1049"
+    },
+    {
+      "name": "new_parser_1x2_coverage",
+      "pass": true,
+      "detail": "parseable_1x2_rows=1049/1049"
+    },
+    {
+      "name": "new_parser_ou25_coverage",
+      "pass": true,
+      "detail": "parseable_ou25_rows=1049/1049"
+    },
+    {
+      "name": "new_parser_btts_coverage",
+      "pass": true,
+      "detail": "parseable_btts_rows=905/1049"
+    },
+    {
+      "name": "egie_odds_on_wc_fixtures",
+      "pass": true,
+      "detail": "fixtures_with_odds=85/85"
+    },
+    {
+      "name": "goal_timing_odds_readiness",
+      "pass": true,
+      "detail": "egie_store_odds=85/85; Goal Timing builder is premier_league-scoped (WC returns empty features)"
+    },
+    {
+      "name": "has_reliable_goal_odds_status",
+      "pass": true,
+      "detail": "reliable_via_egie_store=85"
+    },
+    {
+      "name": "no_pl_fake_rows",
+      "pass": true,
+      "detail": "pl_odds_fixtures=0"
+    },
+    {
+      "name": "wc_rows_unchanged",
+      "pass": true,
+      "detail": "before=1055 after=1055"
+    },
+    {
+      "name": "wc_orphan_rows_preserved",
+      "pass": true,
+      "detail": "orphan_rows=527"
+    },
+    {
+      "name": "extractors_integration",
+      "pass": true,
+      "detail": "integration_sample=10/10"
+    }
+  ],
+  "metrics": {
+    "wc_snapshot_rows_scanned": 1049,
+    "wc_distinct_fixtures": 85,
+    "legacy_parseable_rows": 0,
+    "new_parseable_1x2_rows": 1049,
+    "new_parseable_ou25_rows": 1049,
+    "new_parseable_btts_rows": 905,
+    "egie_wc_fixtures_with_odds": 85,
+    "goal_timing_odds_readiness_via_egie_store": 85,
+    "pl_odds_fixtures": 0,
+    "wc_rows_before": 1055,
+    "wc_rows_after": 1055
+  }
+}

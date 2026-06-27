@@ -1,0 +1,775 @@
+{
+  "generated_at": "2026-06-25T03:36:35.142452+00:00",
+  "phase": "59A",
+  "summary": {
+    "status": "ok",
+    "fixtures_with_predictions": 18,
+    "prediction_rows": 108,
+    "evaluation_rows": 108,
+    "evaluations_pending": 108,
+    "evaluations_resolved": 0,
+    "root_cause_records": 476,
+    "sources": {
+      "predictions": {
+        "path": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\elite_orchestrator_predictions.jsonl",
+        "exists": true,
+        "lines_read": 108,
+        "rows_parsed": 108,
+        "invalid_lines": 0
+      },
+      "evaluations": {
+        "path": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\elite_orchestrator_evaluations.jsonl",
+        "exists": true,
+        "lines_read": 108,
+        "rows_parsed": 108,
+        "invalid_lines": 0
+      },
+      "root_cause": {
+        "path": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\root_cause_store\\knowledge_records.jsonl",
+        "exists": true,
+        "lines_read": 476,
+        "rows_parsed": 476,
+        "invalid_lines": 0
+      }
+    },
+    "shadow_only": true,
+    "is_user_visible": false
+  },
+  "sample_predictions": [
+    {
+      "fixture_id": 1489409,
+      "fixture": {
+        "home_team": "Cura\u00e7ao",
+        "away_team": "Ivory Coast",
+        "kickoff_utc": "2026-06-25T20:00:00",
+        "competition_key": "world_cup_2026",
+        "league_id": 732,
+        "match_status": "NS"
+      },
+      "generated_at": "2026-06-25T03:25:27.195644+00:00",
+      "prediction_day": "2026-06-25",
+      "fixture_status": "pending",
+      "markets": [
+        {
+          "market_id": "1x2",
+          "prediction": {
+            "home": 0.049,
+            "draw": 0.1155,
+            "away": 0.8355
+          },
+          "confidence": 0.8355,
+          "tier": "A",
+          "component_contributions": [
+            {
+              "component_id": "odds_intelligence",
+              "weight": 0.6,
+              "prediction": "away",
+              "confidence": 0.8355,
+              "evidence": {}
+            },
+            {
+              "component_id": "market_behavior_intelligence",
+              "weight": 0.1,
+              "prediction": null,
+              "confidence": 0.45,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "A",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.537099+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "first_goal_team",
+          "prediction": "away",
+          "confidence": 0.8696,
+          "tier": "A",
+          "component_contributions": [
+            {
+              "component_id": "first_goal_team_v2",
+              "weight": 0.45,
+              "prediction": "away",
+              "confidence": 0.85,
+              "evidence": {}
+            },
+            {
+              "component_id": "egie_historical_baseline",
+              "weight": 0.3,
+              "prediction": "away",
+              "confidence": 0.5,
+              "evidence": {}
+            },
+            {
+              "component_id": "goalscorer_intelligence",
+              "weight": 0.15,
+              "prediction": "away",
+              "confidence": 0.75,
+              "evidence": {}
+            },
+            {
+              "component_id": "odds_intelligence",
+              "weight": 0.1,
+              "prediction": "away",
+              "confidence": 0.48,
+              "evidence": {}
+            },
+            {
+              "component_id": "market_behavior_intelligence",
+              "weight": 0.05,
+              "prediction": "away",
+              "confidence": 0.45,
+              "evidence": {}
+            },
+            {
+              "component_id": "lineup_intelligence",
+              "weight": 0.05,
+              "prediction": "away",
+              "confidence": 0.52,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "A",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.537850+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "team_to_score_first",
+          "prediction": "away",
+          "confidence": 0.8696,
+          "tier": "A",
+          "component_contributions": [],
+          "confidence_tiers": {
+            "market_tier": "A",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.538664+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "anytime_goalscorer",
+          "prediction": [],
+          "confidence": 0.45,
+          "tier": "C",
+          "component_contributions": [
+            {
+              "component_id": "goalscorer_intelligence",
+              "weight": 0.55,
+              "prediction": [],
+              "confidence": 0.45,
+              "evidence": {}
+            },
+            {
+              "component_id": "lineup_intelligence",
+              "weight": 0.15,
+              "prediction": null,
+              "confidence": 0.5,
+              "evidence": {}
+            },
+            {
+              "component_id": "player_form_store",
+              "weight": 0.2,
+              "prediction": null,
+              "confidence": 0.5,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "C",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.539317+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "first_goalscorer",
+          "prediction": [],
+          "confidence": 0.315,
+          "tier": "C",
+          "component_contributions": [
+            {
+              "component_id": "goalscorer_intelligence",
+              "weight": 0.85,
+              "prediction": null,
+              "confidence": 0.315,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "C",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.540029+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "goal_timing",
+          "prediction": {
+            "range": "16-30",
+            "minute_estimate": 25
+          },
+          "confidence": 0.35,
+          "tier": "C",
+          "component_contributions": [
+            {
+              "component_id": "egie_historical_baseline",
+              "weight": 0.9,
+              "prediction": {
+                "range": "16-30"
+              },
+              "confidence": 0.35,
+              "evidence": {}
+            },
+            {
+              "component_id": "hybrid_confidence_engine",
+              "weight": 0.1,
+              "prediction": null,
+              "confidence": 0.35,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "C",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.540697+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        }
+      ],
+      "is_shadow": true,
+      "is_user_visible": false
+    },
+    {
+      "fixture_id": 1489410,
+      "fixture": {
+        "home_team": "Ecuador",
+        "away_team": "Germany",
+        "kickoff_utc": "2026-06-25T20:00:00",
+        "competition_key": "world_cup_2026",
+        "league_id": 732,
+        "match_status": "NS"
+      },
+      "generated_at": "2026-06-25T03:25:27.407529+00:00",
+      "prediction_day": "2026-06-25",
+      "fixture_status": "pending",
+      "markets": [
+        {
+          "market_id": "1x2",
+          "prediction": {
+            "home": 0.1909,
+            "draw": 0.2502,
+            "away": 0.5588
+          },
+          "confidence": 0.5588,
+          "tier": "C",
+          "component_contributions": [
+            {
+              "component_id": "odds_intelligence",
+              "weight": 0.6,
+              "prediction": "away",
+              "confidence": 0.5588,
+              "evidence": {}
+            },
+            {
+              "component_id": "market_behavior_intelligence",
+              "weight": 0.1,
+              "prediction": null,
+              "confidence": 0.45,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "C",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.541336+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "first_goal_team",
+          "prediction": "away",
+          "confidence": 0.8644,
+          "tier": "A",
+          "component_contributions": [
+            {
+              "component_id": "first_goal_team_v2",
+              "weight": 0.45,
+              "prediction": "away",
+              "confidence": 0.8179,
+              "evidence": {}
+            },
+            {
+              "component_id": "egie_historical_baseline",
+              "weight": 0.3,
+              "prediction": "away",
+              "confidence": 0.5,
+              "evidence": {}
+            },
+            {
+              "component_id": "goalscorer_intelligence",
+              "weight": 0.15,
+              "prediction": "away",
+              "confidence": 0.75,
+              "evidence": {}
+            },
+            {
+              "component_id": "odds_intelligence",
+              "weight": 0.1,
+              "prediction": "away",
+              "confidence": 0.48,
+              "evidence": {}
+            },
+            {
+              "component_id": "market_behavior_intelligence",
+              "weight": 0.05,
+              "prediction": "away",
+              "confidence": 0.45,
+              "evidence": {}
+            },
+            {
+              "component_id": "lineup_intelligence",
+              "weight": 0.05,
+              "prediction": "away",
+              "confidence": 0.52,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "A",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.541985+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "team_to_score_first",
+          "prediction": "away",
+          "confidence": 0.8644,
+          "tier": "A",
+          "component_contributions": [],
+          "confidence_tiers": {
+            "market_tier": "A",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.542635+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "anytime_goalscorer",
+          "prediction": [],
+          "confidence": 0.45,
+          "tier": "C",
+          "component_contributions": [
+            {
+              "component_id": "goalscorer_intelligence",
+              "weight": 0.55,
+              "prediction": [],
+              "confidence": 0.45,
+              "evidence": {}
+            },
+            {
+              "component_id": "lineup_intelligence",
+              "weight": 0.15,
+              "prediction": null,
+              "confidence": 0.5,
+              "evidence": {}
+            },
+            {
+              "component_id": "player_form_store",
+              "weight": 0.2,
+              "prediction": null,
+              "confidence": 0.5,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "C",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.543265+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "first_goalscorer",
+          "prediction": [],
+          "confidence": 0.315,
+          "tier": "C",
+          "component_contributions": [
+            {
+              "component_id": "goalscorer_intelligence",
+              "weight": 0.85,
+              "prediction": null,
+              "confidence": 0.315,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "C",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.543944+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        },
+        {
+          "market_id": "goal_timing",
+          "prediction": {
+            "range": "16-30",
+            "minute_estimate": 25
+          },
+          "confidence": 0.35,
+          "tier": "C",
+          "component_contributions": [
+            {
+              "component_id": "egie_historical_baseline",
+              "weight": 0.9,
+              "prediction": {
+                "range": "16-30"
+              },
+              "confidence": 0.35,
+              "evidence": {}
+            },
+            {
+              "component_id": "hybrid_confidence_engine",
+              "weight": 0.1,
+              "prediction": null,
+              "confidence": 0.35,
+              "evidence": {}
+            }
+          ],
+          "confidence_tiers": {
+            "market_tier": "C",
+            "overall_tier": "A"
+          },
+          "model_versions": {
+            "elite_orchestrator": "elite_orchestrator_shadow_v1.0.58c",
+            "fgt_v2_group": "baseline_goalscorer",
+            "goalscorer_intel": "54Q_v3",
+            "hybrid_confidence": "52D_shadow"
+          },
+          "status": "pending",
+          "evaluation": {
+            "outcome": "pending",
+            "reality": null,
+            "paired_at": "2026-06-25T03:25:30.544600+00:00"
+          },
+          "root_cause": null,
+          "is_shadow": true,
+          "is_user_visible": false
+        }
+      ],
+      "is_shadow": true,
+      "is_user_visible": false
+    }
+  ],
+  "sample_evaluations": [
+    {
+      "fixture_id": 1489409,
+      "market_id": "1x2",
+      "prediction_day": "2026-06-25",
+      "generated_at": "2026-06-25T03:25:27.195644+00:00",
+      "paired_at": "2026-06-25T03:25:30.537099+00:00",
+      "prediction": {
+        "home": 0.049,
+        "draw": 0.1155,
+        "away": 0.8355
+      },
+      "confidence": 0.8355,
+      "tier": "A",
+      "reality": null,
+      "outcome": "pending",
+      "component_contributions": [
+        {
+          "component_id": "odds_intelligence",
+          "weight": 0.6,
+          "prediction": "away",
+          "confidence": 0.8355,
+          "evidence": {}
+        },
+        {
+          "component_id": "market_behavior_intelligence",
+          "weight": 0.1,
+          "prediction": null,
+          "confidence": 0.45,
+          "evidence": {}
+        }
+      ],
+      "model_version": "elite_orchestrator_shadow_v1.0.58c",
+      "is_shadow": true,
+      "meta": {
+        "result_status": "NS"
+      }
+    },
+    {
+      "fixture_id": 1489409,
+      "market_id": "first_goal_team",
+      "prediction_day": "2026-06-25",
+      "generated_at": "2026-06-25T03:25:27.195644+00:00",
+      "paired_at": "2026-06-25T03:25:30.537850+00:00",
+      "prediction": "away",
+      "confidence": 0.8696,
+      "tier": "A",
+      "reality": null,
+      "outcome": "pending",
+      "component_contributions": [
+        {
+          "component_id": "first_goal_team_v2",
+          "weight": 0.45,
+          "prediction": "away",
+          "confidence": 0.85,
+          "evidence": {}
+        },
+        {
+          "component_id": "egie_historical_baseline",
+          "weight": 0.3,
+          "prediction": "away",
+          "confidence": 0.5,
+          "evidence": {}
+        },
+        {
+          "component_id": "goalscorer_intelligence",
+          "weight": 0.15,
+          "prediction": "away",
+          "confidence": 0.75,
+          "evidence": {}
+        },
+        {
+          "component_id": "odds_intelligence",
+          "weight": 0.1,
+          "prediction": "away",
+          "confidence": 0.48,
+          "evidence": {}
+        },
+        {
+          "component_id": "market_behavior_intelligence",
+          "weight": 0.05,
+          "prediction": "away",
+          "confidence": 0.45,
+          "evidence": {}
+        },
+        {
+          "component_id": "lineup_intelligence",
+          "weight": 0.05,
+          "prediction": "away",
+          "confidence": 0.52,
+          "evidence": {}
+        }
+      ],
+      "model_version": "elite_orchestrator_shadow_v1.0.58c",
+      "is_shadow": true,
+      "meta": {
+        "result_status": "NS"
+      }
+    }
+  ],
+  "sample_root_cause": [
+    {
+      "generated_at": "2026-06-25T03:31:00.718922+00:00",
+      "fixture_id": 19135812,
+      "market": "first_goal_team",
+      "failure_reason": "confidence_overestimation",
+      "component_scores": {
+        "first_goal_team_v2": "hurt",
+        "egie_historical_baseline": "helped",
+        "goalscorer_intelligence": "uncertain",
+        "odds_intelligence": "uncertain",
+        "market_behavior_intelligence": "uncertain",
+        "lineup_intelligence": "uncertain"
+      },
+      "recommended_action": "Recalibrate hybrid_confidence_engine; cap Tier A at 0.75 until live validation",
+      "confidence": 0.8,
+      "league_id": 5,
+      "season_id": 23620,
+      "patterns": [
+        "component_conflict",
+        "high_confidence_miss",
+        "tier_a_failures"
+      ],
+      "meta": {
+        "source": "historical_replay",
+        "secondary_reasons": [
+          "lineup_mismatch",
+          "goalscorer_disagreement"
+        ]
+      }
+    },
+    {
+      "generated_at": "2026-06-25T03:31:00.719594+00:00",
+      "fixture_id": 19194494,
+      "market": "first_goal_team",
+      "failure_reason": "lineup_mismatch",
+      "component_scores": {
+        "first_goal_team_v2": "hurt",
+        "egie_historical_baseline": "hurt",
+        "goalscorer_intelligence": "uncertain",
+        "odds_intelligence": "uncertain",
+        "market_behavior_intelligence": "uncertain",
+        "lineup_intelligence": "uncertain"
+      },
+      "recommended_action": "Increase lineup_intelligence weight gate; defer picks until T-60 lineup confidence rises",
+      "confidence": 0.72,
+      "league_id": 2,
+      "season_id": 23619,
+      "patterns": [
+        "odds_disagreement_gt_15pct"
+      ],
+      "meta": {
+        "source": "historical_replay",
+        "secondary_reasons": [
+          "historical_prior_conflict"
+        ]
+      }
+    }
+  ],
+  "ui_page_exists": true,
+  "recommendation": "ADMIN_PREVIEW_READY",
+  "production_changes": false,
+  "deployed": false
+}

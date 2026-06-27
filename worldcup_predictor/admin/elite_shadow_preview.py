@@ -322,5 +322,9 @@ class EliteShadowPreviewService:
                 "sources": sources,
                 "shadow_only": True,
                 "is_user_visible": False,
+                "data_available": bool(sources.get("predictions", {}).get("exists")),
+                "empty_reason": None
+                if sources.get("predictions", {}).get("exists")
+                else "shadow_jsonl_missing",
             }
         )

@@ -1,0 +1,112 @@
+{
+  "phase": "46C-1",
+  "passed": 21,
+  "total": 21,
+  "checks": [
+    {
+      "name": "migration_goal_events_table",
+      "ok": true,
+      "detail": "table exists"
+    },
+    {
+      "name": "parses_two_goals_skips_missed_penalty",
+      "ok": true,
+      "detail": "n=2"
+    },
+    {
+      "name": "first_goal_minute",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "penalty_flag",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "needs_backfill_before_persist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "ht_result_computed",
+      "ok": true,
+      "detail": "1-0"
+    },
+    {
+      "name": "first_goal_outcome",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "match_outcome_type_ft",
+      "ok": true,
+      "detail": "FT"
+    },
+    {
+      "name": "stored_ht_scores",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "stored_ht_result",
+      "ok": true,
+      "detail": "home_win"
+    },
+    {
+      "name": "stored_first_goal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "stored_goal_events",
+      "ok": true,
+      "detail": "n=2"
+    },
+    {
+      "name": "outcome_persisted_at_set",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "needs_backfill_after_persist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "resolver_ht_result",
+      "ok": true,
+      "detail": "home_win"
+    },
+    {
+      "name": "resolver_ht_score",
+      "ok": true,
+      "detail": "1-0"
+    },
+    {
+      "name": "resolver_first_goal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "resolver_goal_events",
+      "ok": true,
+      "detail": "n=2"
+    },
+    {
+      "name": "idempotent_event_count",
+      "ok": true,
+      "detail": "n=2"
+    },
+    {
+      "name": "match_outcome_aet",
+      "ok": true,
+      "detail": "AET"
+    },
+    {
+      "name": "existing_1x2_eval_unchanged",
+      "ok": true,
+      "detail": "correct"
+    }
+  ]
+}

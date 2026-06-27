@@ -1,0 +1,98 @@
+{
+  "passed": 17,
+  "total": 18,
+  "all_pass": false,
+  "recommendation": "DEPLOY_BLOCKED_WITH_REASON",
+  "checks": [
+    {
+      "name": "imports_ok",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "super_admin_only_api",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "super_admin_route_ui",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "nav_super_admin_only",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "nav_hidden_from_admin",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "saas_super_admin_gate",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "shadow_is_user_visible_false",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "shadow_data_available",
+      "pass": true,
+      "detail": "108"
+    },
+    {
+      "name": "health_200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "unauthenticated_401",
+      "pass": true,
+      "detail": "401"
+    },
+    {
+      "name": "non_super_admin_403",
+      "pass": true,
+      "detail": "403"
+    },
+    {
+      "name": "super_admin_200",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "summary_shadow_only",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_public_elite_shadow_api",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "api_smoke_block",
+      "pass": false,
+      "detail": "(psycopg.errors.ConnectionTimeout) connection timeout expired\n(Background on this error at: https://sqlalche.me/e/20/e3q8)"
+    },
+    {
+      "name": "wde_unchanged",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "saas_plans_unchanged",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_deploy_flag_local",
+      "pass": true,
+      "detail": "local validate only"
+    }
+  ]
+}

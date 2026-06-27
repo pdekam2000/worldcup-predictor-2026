@@ -1,0 +1,368 @@
+{
+  "phase": "52C",
+  "phase_52c_status": "AUDIT_COMPLETE",
+  "mode": "read_only_audit",
+  "fixtures_published": 349,
+  "part_a_confidence_pipeline": {
+    "pipeline_steps": [
+      "1. Feature builder computes data_quality_score (event_cov, sample_cov, league_cov, manifest)",
+      "2. Baseline raw_confidence = min(0.88, 0.25 + feature_dq*0.45 + pattern_impact*0.25)",
+      "3. Calibrator clamps calibrated_confidence to [0.05, 0.95]",
+      "4. DQ agent impact_score blended with manifest coverage -> data_quality_score",
+      "5. model_confidence = min(calibrated_confidence, data_quality + 0.25)",
+      "6. display_confidence = min(model_confidence, 0.65) if data_quality < 0.70 else model_confidence"
+    ],
+    "hard_limits": {
+      "raw_confidence_ceiling": 0.88,
+      "calibrated_ceiling": 0.95,
+      "model_confidence_ceiling": "data_quality + 0.25",
+      "display_cap_when_dq_lt_0.70": 0.65,
+      "MIN_DATA_QUALITY_FOR_PREDICTION": 0.45
+    },
+    "concentration_at_0_65": {
+      "count": 320,
+      "pct_published": 91.69,
+      "dq_below_0_70_pct": 100.0,
+      "model_confidence_gte_0_65": 320
+    },
+    "root_cause_summary": "100% of published fixtures have data_quality=0.5714 (<0.70), triggering the 0.65 display cap. For 320/349 fixtures, model_confidence >= 0.65 so display pins at exactly 0.65. Confidence is therefore a compressed constant for 91.7% of picks \u2014 not a discriminative signal.",
+    "sample_pipeline_traces": [
+      {
+        "feature_dq": 0.5438,
+        "pattern_impact": 0.305,
+        "raw_confidence_formula": 0.571,
+        "raw_confidence_model": 0.571,
+        "calibrated_confidence": 0.571,
+        "dq_agent_impact": 0.5714285714285714,
+        "manifest_coverage": 0.5714,
+        "blended_data_quality": 0.5714,
+        "model_confidence_pre_cap": 0.571,
+        "display_cap_applied": true,
+        "display_cap_value": 0.65,
+        "display_confidence": 0.571,
+        "hits_cap_exactly": false
+      },
+      {
+        "feature_dq": 0.5458,
+        "pattern_impact": 0.305,
+        "raw_confidence_formula": 0.5719,
+        "raw_confidence_model": 0.5719,
+        "calibrated_confidence": 0.5719,
+        "dq_agent_impact": 0.5714285714285714,
+        "manifest_coverage": 0.5714,
+        "blended_data_quality": 0.5714,
+        "model_confidence_pre_cap": 0.5719,
+        "display_cap_applied": true,
+        "display_cap_value": 0.65,
+        "display_confidence": 0.5719,
+        "hits_cap_exactly": false
+      },
+      {
+        "feature_dq": 0.5458,
+        "pattern_impact": 0.305,
+        "raw_confidence_formula": 0.5719,
+        "raw_confidence_model": 0.5719,
+        "calibrated_confidence": 0.5719,
+        "dq_agent_impact": 0.5714285714285714,
+        "manifest_coverage": 0.5714,
+        "blended_data_quality": 0.5714,
+        "model_confidence_pre_cap": 0.5719,
+        "display_cap_applied": true,
+        "display_cap_value": 0.65,
+        "display_confidence": 0.5719,
+        "hits_cap_exactly": false
+      }
+    ]
+  },
+  "part_b_feature_importance": {
+    "ranked_predictors_team_market": [
+      {
+        "feature": "display_confidence",
+        "pearson_vs_team_hit": -0.1565,
+        "mean_when_hit": 0.6455,
+        "mean_when_miss": 0.6491
+      },
+      {
+        "feature": "team_margin",
+        "pearson_vs_team_hit": null,
+        "mean_when_hit": 0.0,
+        "mean_when_miss": 0.0
+      },
+      {
+        "feature": "history_depth",
+        "pearson_vs_team_hit": -0.1178,
+        "mean_when_hit": 36.03,
+        "mean_when_miss": 40.866
+      },
+      {
+        "feature": "goal_event_depth",
+        "pearson_vs_team_hit": -0.1134,
+        "mean_when_hit": 35.04,
+        "mean_when_miss": 39.5464
+      },
+      {
+        "feature": "survival_range_margin",
+        "pearson_vs_team_hit": -0.112,
+        "mean_when_hit": 0.097,
+        "mean_when_miss": 0.1191
+      },
+      {
+        "feature": "match_range_top_prob",
+        "pearson_vs_team_hit": -0.1116,
+        "mean_when_hit": 0.2618,
+        "mean_when_miss": 0.2684
+      },
+      {
+        "feature": "survival_team_margin",
+        "pearson_vs_team_hit": 0.0162,
+        "mean_when_hit": 0.0914,
+        "mean_when_miss": 0.0906
+      },
+      {
+        "feature": "baseline_range_margin",
+        "pearson_vs_team_hit": 0.0033,
+        "mean_when_hit": 0.0523,
+        "mean_when_miss": 0.052
+      },
+      {
+        "feature": "dq",
+        "pearson_vs_team_hit": -0.0,
+        "mean_when_hit": 0.5714,
+        "mean_when_miss": 0.5714
+      },
+      {
+        "feature": "predicted_none_flag",
+        "pearson_vs_team_hit": null,
+        "mean_when_hit": 0.0,
+        "mean_when_miss": 0.0
+      },
+      {
+        "feature": "manifest_coverage",
+        "pearson_vs_team_hit": -0.0,
+        "mean_when_hit": 0.5714,
+        "mean_when_miss": 0.5714
+      }
+    ],
+    "ranked_predictors_range_market": [
+      {
+        "feature": "team_margin",
+        "pearson_vs_range_hit": null
+      },
+      {
+        "feature": "survival_range_margin",
+        "pearson_vs_range_hit": 0.0997
+      },
+      {
+        "feature": "display_confidence",
+        "pearson_vs_range_hit": 0.0891
+      },
+      {
+        "feature": "history_depth",
+        "pearson_vs_range_hit": 0.0324
+      },
+      {
+        "feature": "goal_event_depth",
+        "pearson_vs_range_hit": 0.0313
+      },
+      {
+        "feature": "baseline_range_margin",
+        "pearson_vs_range_hit": -0.0229
+      },
+      {
+        "feature": "match_range_top_prob",
+        "pearson_vs_range_hit": 0.0134
+      },
+      {
+        "feature": "predicted_none_flag",
+        "pearson_vs_range_hit": -0.0032
+      },
+      {
+        "feature": "survival_team_margin",
+        "pearson_vs_range_hit": 0.0027
+      },
+      {
+        "feature": "dq",
+        "pearson_vs_range_hit": -0.0
+      },
+      {
+        "feature": "manifest_coverage",
+        "pearson_vs_range_hit": -0.0
+      }
+    ],
+    "top_team_predictors": [
+      "display_confidence",
+      "team_margin",
+      "history_depth",
+      "goal_event_depth",
+      "survival_range_margin"
+    ],
+    "top_range_predictors": [
+      "team_margin",
+      "survival_range_margin",
+      "display_confidence",
+      "history_depth",
+      "goal_event_depth"
+    ],
+    "odds_available": 0
+  },
+  "part_c_bucket_forensics": {
+    "0.40-0.45": {
+      "count": 0,
+      "pct_of_published": 0.0,
+      "team_accuracy": null,
+      "range_accuracy": null,
+      "minute_soft_accuracy": null,
+      "reliable": false,
+      "misleading": false
+    },
+    "0.45-0.50": {
+      "count": 0,
+      "pct_of_published": 0.0,
+      "team_accuracy": null,
+      "range_accuracy": null,
+      "minute_soft_accuracy": null,
+      "reliable": false,
+      "misleading": false
+    },
+    "0.50-0.55": {
+      "count": 0,
+      "pct_of_published": 0.0,
+      "team_accuracy": null,
+      "range_accuracy": null,
+      "minute_soft_accuracy": null,
+      "reliable": false,
+      "misleading": false
+    },
+    "0.55-0.60": {
+      "count": 11,
+      "pct_of_published": 3.15,
+      "team_accuracy": 0.75,
+      "range_accuracy": 0.1818,
+      "minute_soft_accuracy": 0.2727,
+      "reliable": true,
+      "misleading": false
+    },
+    "0.60-0.65": {
+      "count": 18,
+      "pct_of_published": 5.16,
+      "team_accuracy": 0.7778,
+      "range_accuracy": 0.1111,
+      "minute_soft_accuracy": 0.1667,
+      "reliable": true,
+      "misleading": false
+    },
+    "0.65-0.70": {
+      "count": 320,
+      "pct_of_published": 91.69,
+      "team_accuracy": 0.4891,
+      "range_accuracy": 0.2906,
+      "minute_soft_accuracy": 0.35,
+      "reliable": false,
+      "misleading": true
+    },
+    "0.70-0.75": {
+      "count": 0,
+      "pct_of_published": 0.0,
+      "team_accuracy": null,
+      "range_accuracy": null,
+      "minute_soft_accuracy": null,
+      "reliable": false,
+      "misleading": false
+    },
+    "0.75+": {
+      "count": 0,
+      "pct_of_published": 0.0,
+      "team_accuracy": null,
+      "range_accuracy": null,
+      "minute_soft_accuracy": null,
+      "reliable": false,
+      "misleading": false
+    }
+  },
+  "part_d_confidence_decomposition": {
+    "correlation_with_team_hit": {
+      "current_display_confidence": -0.1565,
+      "composite_statistical": 0.0033,
+      "composite_hybrid": -0.112,
+      "composite_full": -0.1694
+    },
+    "best_explainer_team": "composite_full",
+    "correlation_with_range_hit": {
+      "current": 0.0891,
+      "composite_statistical": -0.0229,
+      "composite_hybrid": 0.0214,
+      "composite_full": 0.0737
+    },
+    "best_explainer_range": "current"
+  },
+  "part_e_rebuild_designs": {
+    "design_A_statistical": {
+      "formula": "conf = w1*DQ + w2*team_margin + w3*range_margin + w4*survival_range_margin",
+      "expected_distribution": "Spread 0.35-0.85 if margins vary; uncapped",
+      "strengths": "Directly ties confidence to model separation",
+      "weaknesses": "Margins small in abstain-heavy cohort; needs per-market scores"
+    },
+    "design_B_historical_reliability": {
+      "formula": "conf = shrinkage_mean(team_backtest_hit, league_hit, bucket_hit | DQ band)",
+      "expected_distribution": "Clustered by team/league priors, not single cap",
+      "strengths": "Empirically grounded; monotonic if fit on hold-out",
+      "weaknesses": "Cold-start teams; needs ongoing eval pipeline"
+    },
+    "design_C_hybrid": {
+      "formula": "conf_team, conf_range, conf_minute separately; display = tier(map(max market conf))",
+      "expected_distribution": "3 scores 0.2-0.8; UI shows tier not raw %",
+      "strengths": "Fixes single-scalar conflation; supports premium gating per market",
+      "weaknesses": "More complex UI/API; requires shadow validation per market"
+    }
+  },
+  "part_f_calibration_readiness": {
+    "sample_sizes": {
+      "team_decided": 197,
+      "range": 349,
+      "minute": 349
+    },
+    "isotonic": {
+      "suitability": "Good for per-market hold-out with n>200",
+      "risk": "Current scalar has no variance at 0.65 \u2014 isotonic cannot fix without new features"
+    },
+    "logistic": {
+      "suitability": "Moderate for binary team hit with engineered features",
+      "risk": "Misleading on compressed input"
+    },
+    "beta_calibration": {
+      "suitability": "Good for probability outputs (survival range probs)",
+      "risk": "Needs true probabilities not display scalar"
+    },
+    "bucket_calibration": {
+      "suitability": "Best near-term for UI tiers",
+      "risk": "Sparse buckets below 0.65"
+    },
+    "recommended_hybrid": "Per-market beta/isotonic on survival probs + bucket tiers for display; hold-out 20% PL fixtures"
+  },
+  "part_g_premium_product_impact": {
+    "recommendation": "Confidence tiers + reliability badge (not raw percentage)",
+    "tiers": {
+      "HIGH": "Top quartile composite score + model agreement",
+      "MEDIUM": "Mid quartile",
+      "LOW": "Bottom quartile or NONE abstention",
+      "INSUFFICIENT_DATA": "DQ < 0.45 or thin history"
+    },
+    "avoid": [
+      "Raw % above 65% when capped",
+      "Single confidence for all three markets",
+      "Staking use before monotonic proof"
+    ],
+    "premium_safe": "Show tier + 'directional pick only' label for team; range probability bar for timing"
+  },
+  "part_h_deployment_readiness": {
+    "1_current_confidence_in_production": "Display-only with caution \u2014 unsuitable for trust/staking/ranking",
+    "2_recalibration_mandatory": true,
+    "3_rebuild_mandatory": true,
+    "4_next_design": "Design C (per-market hybrid) + bucket calibration for UI",
+    "5_expected_improvement": {
+      "calibration_ece": "0.40 -> 0.15-0.20 (per-market, hold-out)",
+      "monotonicity": "Achievable in tier buckets with n>=30 per tier",
+      "trust_use": "Enables tier gating after Phase 52D shadow validation"
+    }
+  }
+}

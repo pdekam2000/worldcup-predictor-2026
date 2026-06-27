@@ -1,0 +1,59 @@
+{
+  "passed": 10,
+  "total": 10,
+  "all_pass": true,
+  "threshold_met": true,
+  "threshold_status": "PRESSURE_BACKTEST_READY",
+  "checks": [
+    {
+      "name": "fixtures_increased_or_blocker_documented",
+      "pass": true,
+      "detail": "new=40"
+    },
+    {
+      "name": "no_duplicates",
+      "pass": true,
+      "detail": "sample=0"
+    },
+    {
+      "name": "no_token_leaked",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_production_prediction_changes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_wde_changes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_saas_changes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_deploy",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "threshold_status_calculated",
+      "pass": true,
+      "detail": "PRESSURE_BACKTEST_READY"
+    },
+    {
+      "name": "backfill_batch_recorded",
+      "pass": true,
+      "detail": "imported=40"
+    },
+    {
+      "name": "threshold_met",
+      "pass": true,
+      "detail": "fixtures=153"
+    }
+  ]
+}

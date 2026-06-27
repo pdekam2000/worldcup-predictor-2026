@@ -1,0 +1,114 @@
+{
+  "phase": "A23",
+  "goal_timing_reliability": {},
+  "egie_compatibility": {
+    "competitions": [
+      {
+        "competition_key": "world_cup_2026",
+        "finished_matches": 5,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_timing_allowed": false,
+        "egie_prediction_published": false,
+        "compatibility": "WC_BLUEPRINT_ONLY",
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "european_championship",
+        "finished_matches": 0,
+        "with_goal_events": 0,
+        "goal_timing_allowed": false,
+        "egie_prediction_published": false,
+        "compatibility": "DATA_PARTIAL",
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "champions_league",
+        "finished_matches": 90,
+        "with_goal_events": 61,
+        "with_first_goal_minute": 0,
+        "goal_timing_allowed": true,
+        "egie_prediction_published": false,
+        "compatibility": "ALLOWED_NOT_PUBLISHED",
+        "goal_event_coverage_pct": 67.8
+      },
+      {
+        "competition_key": "europa_league",
+        "finished_matches": 65,
+        "with_goal_events": 25,
+        "with_first_goal_minute": 0,
+        "goal_timing_allowed": true,
+        "egie_prediction_published": false,
+        "compatibility": "ALLOWED_NOT_PUBLISHED",
+        "goal_event_coverage_pct": 38.5
+      },
+      {
+        "competition_key": "conference_league",
+        "finished_matches": 65,
+        "with_goal_events": 54,
+        "with_first_goal_minute": 0,
+        "goal_timing_allowed": false,
+        "egie_prediction_published": false,
+        "compatibility": "DATA_PARTIAL",
+        "goal_event_coverage_pct": 83.1
+      },
+      {
+        "competition_key": "premier_league",
+        "finished_matches": 380,
+        "with_goal_events": 369,
+        "with_first_goal_minute": 10,
+        "goal_timing_allowed": true,
+        "egie_prediction_published": true,
+        "compatibility": "PRODUCTION_EGIE",
+        "goal_event_coverage_pct": 97.1
+      }
+    ]
+  },
+  "stored_predictions": {
+    "total": 48,
+    "missing_range_probabilities": 48,
+    "invalid_timing_rows": 13,
+    "invalid_samples": [
+      {
+        "fixture_id": 1539013,
+        "minute_range": "16-30",
+        "expected_minute": 38,
+        "reason": "expected_minute_outside_minute_range"
+      },
+      {
+        "fixture_id": 1539012,
+        "minute_range": "16-30",
+        "expected_minute": 38,
+        "reason": "expected_minute_outside_minute_range"
+      },
+      {
+        "fixture_id": 1539011,
+        "minute_range": "16-30",
+        "expected_minute": 8,
+        "reason": "expected_minute_outside_minute_range"
+      },
+      {
+        "fixture_id": 1489422,
+        "minute_range": "16-30",
+        "expected_minute": 38,
+        "reason": "expected_minute_outside_minute_range"
+      },
+      {
+        "fixture_id": 1489420,
+        "minute_range": "31-45",
+        "expected_minute": 68,
+        "reason": "expected_minute_outside_minute_range"
+      }
+    ]
+  },
+  "predops": {
+    "snapshots_total": 0,
+    "snapshots_latest": 0,
+    "active_fixtures_checked": 50,
+    "missing_latest_snapshot": 50,
+    "refresh_interval_gt_15m": 0,
+    "min_refresh_interval_hours": null,
+    "target_interval_hours": 0.25,
+    "policy_gap": "refresh_policy uses 0.5h within 3h of kickoff; scheduler ~1h cycle"
+  }
+}

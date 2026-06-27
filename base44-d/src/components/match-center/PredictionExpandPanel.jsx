@@ -1,6 +1,10 @@
 import React from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/AuthContext";
+import { qualityColorClass } from "@/lib/betQualityOverlay";
+import { fmtMarketSel, safeMarketSelection } from "@/lib/predictionDetailProUtils";
+import { TRUST_RESEARCH_ONLY } from "@/lib/trustCopy";
 
 function MarketRow({ title, selection, probability, confidence, risk, reason, onAdd }) {
   if (!selection) return null;
@@ -23,27 +27,31 @@ function MarketRow({ title, selection, probability, confidence, risk, reason, on
         {risk && <span>Risk {risk}</span>}
       </div>
       {reason && <p className="text-[11px] text-[#64748B]">{reason}</p>}
-      <p className="text-[10px] text-[#475569] italic">Research only — not betting advice.</p>
+      <p className="text-[10px] text-[#475569] italic">{TRUST_RESEARCH_ONLY}</p>
     </div>
   );
 }
 
 function fmtSel(v) {
-  if (!v) return null;
-  const map = {
-    home: "Home Win", away: "Away Win", draw: "Draw",
-    home_win: "Home Win", away_win: "Away Win",
-    over_2_5: "Over 2.5", under_2_5: "Under 2.5",
-    yes: "Yes", no: "No",
-  };
-  return map[String(v).toLowerCase()] || String(v).replace(/_/g, " ");
+  return fmtMarketSel(v) || safeMarketSelection(v);
 }
 
 export default function PredictionExpandPanel({ prediction, match, onAddLeg }) {
-  const dm = prediction.detailed_markets || {};
-  const probs = prediction.probabilities || {};
-  const risk = prediction.risk_level || "medium";
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === "super_admin";
+  const dm = prediction?.detailed_markets || {};
+  const probs = prediction?.probabilities || {};
+  const risk = prediction?.risk_level || "medium";
   const fixtureId = match.fixture_id || match.id;
+  const overlay = prediction?.publication_overlay || {};
+  const bqs = overlay.bet_quality_score ?? prediction?.bet_quality_score;
+  const bqt = overlay.bet_quality_tier ?? prediction?.bet_quality_tier;
+  const bqc = overlay.bet_quality_color ?? prediction?.bet_quality_color;
+  const sourceModel =
+    prediction?.source_model ||
+    prediction?.model_source ||
+    overlay.source_model ||
+    (prediction?.no_bet ? (isSuperAdmin ? "Internal (no bet)" : "No program best bet") : "Classic model");
 
   const markets = [
     {
@@ -109,7 +117,15 @@ export default function PredictionExpandPanel({ prediction, match, onAddLeg }) {
 
   return (
     <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-      <p className="text-xs text-[#94A3B8]">All available markets from cached prediction</p>
+      <div className="flex flex-wrap items-center gap-2 text-xs">
+        <span className="text-[#94A3B8]">All available markets from cached prediction</span>
+        {bqs != null && (
+          <span className={`px-2 py-0.5 rounded-full border font-semibold ${qualityColorClass(bqc)}`}>
+            Bet Quality {bqs}{bqt ? ` · ${bqt}` : ""}
+          </span>
+        )}
+        <span className="text-[#64748B]">Source: {sourceModel}</span>
+      </div>
       {markets.map((m) => (
         <MarketRow
           key={m.title}
@@ -150,7 +166,7 @@ export default function PredictionExpandPanel({ prediction, match, onAddLeg }) {
           <p className="text-[10px] uppercase text-[#FFD166] mb-2">Recommended bets</p>
           {prediction.recommended_bets.slice(0, 5).map((b, i) => (
             <p key={i} className="text-xs text-[#94A3B8]">
-              {b.market}: {b.pick} ({b.status})
+              {b.market}: {fmtSel(b.pick) || safeMarketSelection(b.pick) || "—"} ({b.status || "—"})
             </p>
           ))}
         </div>

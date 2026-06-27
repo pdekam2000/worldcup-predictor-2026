@@ -1,0 +1,127 @@
+{
+  "generated_at": "2026-06-23T16:11:42.780815+00:00",
+  "providers": {
+    "api_football": {
+      "role": "Primary fixtures/results/events spine",
+      "odds": "Limited enrichment (~4.3% in OA-1)",
+      "historical_depth": "Multi-season via SQLite import (1617+ PL/BL rows)",
+      "bookmaker_coverage": "Varies by cache",
+      "first_goal_markets": "Via events/lineups",
+      "probabilities": "No native model"
+    },
+    "sportmonks": {
+      "role": "UEFA odds + enrichment primary",
+      "odds": "Strong UEFA sharp odds",
+      "historical_depth": "UEFA club cache + xG",
+      "bookmaker_coverage": "Premium odds include Pinnacle/Bet365",
+      "first_goal_markets": "Sharp MW FG 78.7% (K2, n=104); direct FTS 0% UEFA cache",
+      "probabilities": "Premium predictions when entitled"
+    },
+    "oddalerts_advanced": {
+      "role_measured": "Catalogue + limited results pool",
+      "odds": "odds/history works on pool fixtures (3 sampled)",
+      "historical_depth": "PL/UCL/BL finished in pool: 0",
+      "bookmaker_coverage": {
+        "pinnacle": {
+          "listed_in_api": true,
+          "listed_names": [
+            "pinnacle"
+          ],
+          "historical_odds_rows_sampled": 135,
+          "opening_rows_sampled": 135,
+          "closing_rows_sampled": 135,
+          "fixtures_in_sample": 3
+        },
+        "sbo": {
+          "listed_in_api": false,
+          "listed_names": [],
+          "historical_odds_rows_sampled": 0,
+          "opening_rows_sampled": 0,
+          "closing_rows_sampled": 0,
+          "fixtures_in_sample": 3
+        },
+        "bet365": {
+          "listed_in_api": true,
+          "listed_names": [
+            "bet365"
+          ],
+          "historical_odds_rows_sampled": 229,
+          "opening_rows_sampled": 229,
+          "closing_rows_sampled": 229,
+          "fixtures_in_sample": 3
+        },
+        "1xbet": {
+          "listed_in_api": true,
+          "listed_names": [
+            "1xbet"
+          ],
+          "historical_odds_rows_sampled": 228,
+          "opening_rows_sampled": 226,
+          "closing_rows_sampled": 227,
+          "fixtures_in_sample": 3
+        },
+        "betfair": {
+          "listed_in_api": true,
+          "listed_names": [
+            "betfair exchange"
+          ],
+          "historical_odds_rows_sampled": 39,
+          "opening_rows_sampled": 39,
+          "closing_rows_sampled": 39,
+          "fixtures_in_sample": 3
+        },
+        "williamhill": {
+          "listed_in_api": true,
+          "listed_names": [
+            "williamhill"
+          ],
+          "historical_odds_rows_sampled": 84,
+          "opening_rows_sampled": 84,
+          "closing_rows_sampled": 84,
+          "fixtures_in_sample": 3
+        },
+        "william hill": {
+          "listed_in_api": false,
+          "listed_names": [],
+          "historical_odds_rows_sampled": 0,
+          "opening_rows_sampled": 0,
+          "closing_rows_sampled": 0,
+          "fixtures_in_sample": 3
+        },
+        "kambi": {
+          "listed_in_api": true,
+          "listed_names": [
+            "kambi group"
+          ],
+          "historical_odds_rows_sampled": 175,
+          "opening_rows_sampled": 175,
+          "closing_rows_sampled": 175,
+          "fixtures_in_sample": 3
+        }
+      },
+      "first_goal_markets": {
+        "generated_at": "2026-06-23T16:11:42.680308+00:00",
+        "direct_fts_markets_in_odds_history": [],
+        "proxy_first_goal_markets": [
+          "away_goals",
+          "home_goals"
+        ],
+        "fts_hits": [],
+        "pool_embedded_market_keys": [],
+        "upcoming_fts_available": false,
+        "historical_fts_available": false,
+        "historical_proxy_available": true
+      },
+      "probabilities": {
+        "ok": false,
+        "error": "non_json_response",
+        "row_count": 0,
+        "markets_sample": []
+      },
+      "trial_vs_advanced_pool_rows": {
+        "trial_value_results_rows": 4215,
+        "advanced_value_results_rows": 3889
+      }
+    }
+  }
+}

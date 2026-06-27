@@ -4,6 +4,7 @@ import { Cookie, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { Link } from "react-router-dom";
+import { initAnalyticsFromConsent } from "@/lib/analytics";
 
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false);
@@ -14,7 +15,11 @@ export default function CookieConsent() {
     if (!consent) setTimeout(() => setVisible(true), 1500);
   }, []);
 
-  const accept = () => { localStorage.setItem("cookie_consent", "accepted"); setVisible(false); };
+  const accept = () => {
+    localStorage.setItem("cookie_consent", "accepted");
+    initAnalyticsFromConsent();
+    setVisible(false);
+  };
   const decline = () => { localStorage.setItem("cookie_consent", "declined"); setVisible(false); };
 
   return (

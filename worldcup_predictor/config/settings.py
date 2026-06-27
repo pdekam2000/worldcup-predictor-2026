@@ -140,6 +140,22 @@ class Settings(BaseSettings):
         default=True,
         alias="WORLDCUP_BACKGROUND_PREDICTION_ENABLED",
     )
+    prediction_prefetch_window_days: int = Field(
+        default=7,
+        alias="PREDICTION_PREFETCH_WINDOW_DAYS",
+    )
+    prediction_prefetch_max_per_cycle: int = Field(
+        default=24,
+        alias="PREDICTION_PREFETCH_MAX_PER_CYCLE",
+    )
+    predops_max_jobs_per_cycle: int = Field(
+        default=24,
+        alias="PREDOPS_MAX_JOBS_PER_CYCLE",
+    )
+    predops_enabled: bool = Field(
+        default=True,
+        alias="PREDOPS_ENABLED",
+    )
 
     # Phase 60D — Elite World Cup experimental page (super_admin by default)
     elite_wc_public_enabled: bool = Field(
@@ -163,6 +179,60 @@ class Settings(BaseSettings):
     autonomous_dry_run: bool = Field(
         default=False,
         alias="AUTONOMOUS_DRY_RUN",
+    )
+
+    # Phase 61 — unified hybrid prediction engine (orchestration only; specialists unchanged)
+    unified_engine_enabled: bool = Field(
+        default=False,
+        alias="UNIFIED_ENGINE_ENABLED",
+    )
+    unified_engine_admin_preview: bool = Field(
+        default=True,
+        alias="UNIFIED_ENGINE_ADMIN_PREVIEW",
+    )
+    unified_engine_public: bool = Field(
+        default=False,
+        alias="UNIFIED_ENGINE_PUBLIC",
+    )
+    unified_engine_compare_mode: bool = Field(
+        default=True,
+        alias="UNIFIED_ENGINE_COMPARE_MODE",
+    )
+
+    # Phase A23 — prediction lifecycle & knowledge database (storage only)
+    prediction_lifecycle_enabled: bool = Field(
+        default=True,
+        alias="PREDICTION_LIFECYCLE_ENABLED",
+    )
+    prediction_lifecycle_eval_limit: int = Field(
+        default=100,
+        alias="PREDICTION_LIFECYCLE_EVAL_LIMIT",
+    )
+
+    # Phase A22 — autonomous Elite Shadow runtime (shadow-only, independent of production)
+    elite_shadow_scheduler_enabled: bool = Field(
+        default=True,
+        alias="ELITE_SHADOW_SCHEDULER_ENABLED",
+    )
+    elite_shadow_interval_hours: int = Field(
+        default=1,
+        alias="ELITE_SHADOW_INTERVAL_HOURS",
+    )
+    elite_shadow_days_ahead: int = Field(
+        default=7,
+        alias="ELITE_SHADOW_DAYS_AHEAD",
+    )
+    elite_shadow_fixture_limit: int = Field(
+        default=50,
+        alias="ELITE_SHADOW_FIXTURE_LIMIT",
+    )
+    elite_shadow_root_cause_limit: int | None = Field(
+        default=None,
+        alias="ELITE_SHADOW_ROOT_CAUSE_LIMIT",
+    )
+    elite_shadow_queue_batch_size: int = Field(
+        default=100,
+        alias="ELITE_SHADOW_QUEUE_BATCH_SIZE",
     )
 
     # Database — PostgreSQL primary for SaaS; SQLite for intelligence (legacy/local)

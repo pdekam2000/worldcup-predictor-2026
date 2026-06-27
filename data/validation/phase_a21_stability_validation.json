@@ -1,0 +1,297 @@
+{
+  "passed": 58,
+  "total": 58,
+  "base_url": "https://footballpredictor.it.com",
+  "checks": [
+    {
+      "name": "archive_detail_import",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route_archive_detail",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "route_archive_list",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "nav_archive_link",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "nav_predops_link",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "page_MatchCenter",
+      "ok": true,
+      "detail": "src/pages/MatchCenter.jsx"
+    },
+    {
+      "name": "page_MatchDetailPage",
+      "ok": true,
+      "detail": "src/pages/MatchDetailPage.jsx"
+    },
+    {
+      "name": "page_ComboTipsPage",
+      "ok": true,
+      "detail": "src/pages/ComboTipsPage.jsx"
+    },
+    {
+      "name": "page_BettingPlanPage",
+      "ok": true,
+      "detail": "src/pages/BettingPlanPage.jsx"
+    },
+    {
+      "name": "page_PaperBettingPage",
+      "ok": true,
+      "detail": "src/pages/PaperBettingPage.jsx"
+    },
+    {
+      "name": "page_WatchlistPage",
+      "ok": true,
+      "detail": "src/pages/WatchlistPage.jsx"
+    },
+    {
+      "name": "page_DailyBriefingPage",
+      "ok": true,
+      "detail": "src/pages/DailyBriefingPage.jsx"
+    },
+    {
+      "name": "page_ArchivePage",
+      "ok": true,
+      "detail": "src/pages/ArchivePage.jsx"
+    },
+    {
+      "name": "page_AccuracyCenter",
+      "ok": true,
+      "detail": "src/pages/AccuracyCenter.jsx"
+    },
+    {
+      "name": "page_PublicAccuracyPage",
+      "ok": true,
+      "detail": "src/pages/share/PublicAccuracyPage.jsx"
+    },
+    {
+      "name": "page_AdminPredOpsPage",
+      "ok": true,
+      "detail": "src/pages/admin/AdminPredOpsPage.jsx"
+    },
+    {
+      "name": "ui_no_raw_no_bet_elite",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "archive_no_draw_fallback",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "summary_no_draw_fallback",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "wde_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "scoring_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "calibration_module_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "protected_logic_unchanged",
+      "ok": true,
+      "detail": "none"
+    },
+    {
+      "name": "api_health",
+      "ok": true,
+      "detail": "got 200, want [200]"
+    },
+    {
+      "name": "api_competitions",
+      "ok": true,
+      "detail": "got 200, want [200]"
+    },
+    {
+      "name": "api_matches",
+      "ok": true,
+      "detail": "got 200, want [200]"
+    },
+    {
+      "name": "api_public_accuracy",
+      "ok": true,
+      "detail": "got 200, want [200]"
+    },
+    {
+      "name": "api_betting_plan",
+      "ok": true,
+      "detail": "got 200, want [200]"
+    },
+    {
+      "name": "api_performance",
+      "ok": true,
+      "detail": "got 200, want [200, 401]"
+    },
+    {
+      "name": "api_watchlist_protected",
+      "ok": true,
+      "detail": "got 401, want [401, 403]"
+    },
+    {
+      "name": "api_paper_account_protected",
+      "ok": true,
+      "detail": "got 401, want [401, 403]"
+    },
+    {
+      "name": "api_predops_coverage_public",
+      "ok": true,
+      "detail": "got 200, want [200]"
+    },
+    {
+      "name": "api_predops_combo_public",
+      "ok": true,
+      "detail": "got 200, want [200]"
+    },
+    {
+      "name": "api_predops_queue_protected",
+      "ok": true,
+      "detail": "got 401, want [401, 403]"
+    },
+    {
+      "name": "api_predops_admin_coverage_protected",
+      "ok": true,
+      "detail": "got 401, want [401, 403]"
+    },
+    {
+      "name": "public_accuracy_no_debug_leak",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "public_accuracy_disclaimer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "matches_no_bet_leak",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "sanitize_strips_no_bet",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "overlay_hides_wde_debug",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no_bet_not_published_as_draw",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "combo_readiness_runs",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "fe_home",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_matches",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_combo",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_betting_plan",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_paper",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_watchlist",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_briefing",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_archive",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_accuracy",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_public_accuracy",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_login",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "fe_share_pick",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "frontend_build",
+      "ok": true,
+      "detail": "skipped"
+    },
+    {
+      "name": "regression_a16_overlay",
+      "ok": true,
+      "detail": "_btts\n  [PASS] unavailable_not_faked\n  [PASS] owner_wde_reason\n  [PASS] public_hides_wde_debug\n  [PASS] combo_thresholds\n  [PASS] combo_readiness_api\n  [PASS] snapshot_overlay\n  [PASS] frontend_build\n"
+    },
+    {
+      "name": "regression_a18_paper",
+      "ok": true,
+      "detail": "lement_math\n  [PASS] roi_summary\n  [PASS] strategy_comparison_shape\n  [PASS] monthly_report\n  [PASS] user_isolation\n  [PASS] pending_settlement_runs\n  [PASS] no_bookmaker_refs\n  [PASS] frontend_build\n"
+    },
+    {
+      "name": "regression_a20_trust",
+      "ok": true,
+      "detail": "itize_strips_user\n  [PASS] paper_opt_in_required\n  [PASS] paper_share_anonymized\n  [PASS] combo_share\n  [PASS] public_accuracy\n  [PASS] no_fake_stats\n  [PASS] trust_disclaimer\n  [PASS] frontend_build\n"
+    }
+  ]
+}

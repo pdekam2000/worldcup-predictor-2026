@@ -20,10 +20,10 @@ ARCHIVE_MARKET_STATUS_COLUMNS: tuple[tuple[str, str], ...] = (
 
 def normalize_eval_status(raw: str | None) -> str:
     value = str(raw or "pending").lower().strip()
-    if value in {"correct", "wrong", "partial", "pending"}:
+    if value in {"correct", "wrong", "partial", "pending", "unavailable"}:
         return value
-    if value in {"unknown", "void", "unavailable", ""}:
-        return "pending"
+    if value in {"unknown", "void", ""}:
+        return "unavailable"
     return "pending"
 
 
@@ -33,8 +33,14 @@ def is_quarantined_evaluation(row: dict[str, Any] | None) -> bool:
     return bool(int(row.get("is_quarantined") or 0))
 
 
-def market_statuses_from_evaluation_row(evaluation: dict[str, Any] | None) -> dict[str, str]:
-    if not evaluation or is_quarantined_evaluation(evaluation):
+def market_statuses_from_evaluation_row(
+    evaluation: dict[str, Any] | None,
+    *,
+    include_quarantined: bool = False,
+) -> dict[str, str]:
+    if not evaluation:
+        return {}
+    if is_quarantined_evaluation(evaluation) and not include_quarantined:
         return {}
     out: dict[str, str] = {}
     for market_key, col in ARCHIVE_MARKET_STATUS_COLUMNS:
@@ -43,12 +49,14 @@ def market_statuses_from_evaluation_row(evaluation: dict[str, Any] | None) -> di
 
 
 def count_market_statuses(market_statuses: dict[str, str]) -> dict[str, int]:
-    correct = wrong = pending = 0
+    correct = wrong = pending = unavailable = 0
     for status in market_statuses.values():
         if status == "correct":
             correct += 1
         elif status == "wrong":
             wrong += 1
+        elif status == "unavailable":
+            unavailable += 1
         else:
             pending += 1
     evaluated = correct + wrong
@@ -57,26 +65,45 @@ def count_market_statuses(market_statuses: dict[str, str]) -> dict[str, int]:
         "correct_markets_count": correct,
         "wrong_markets_count": wrong,
         "pending_markets_count": pending,
+        "unavailable_markets_count": unavailable,
         "total_markets_tracked": len(market_statuses),
     }
 
 
-def compute_row_status_from_evaluation(evaluation: dict[str, Any] | None) -> tuple[str, str]:
-    """Return (row_status, row_status_reason) using production evaluation row."""
-    if not evaluation or is_quarantined_evaluation(evaluation):
+def compute_row_status_from_evaluation(
+    evaluation: dict[str, Any] | None,
+    *,
+    include_quarantined: bool = False,
+) -> tuple[str, str]:
+    """Return (row_status, row_status_reason) using market-level card aggregate."""
+    if not evaluation:
+        return "pending", "no_valid_evaluation"
+    if is_quarantined_evaluation(evaluation) and not include_quarantined:
         return "pending", "no_valid_evaluation"
 
-    market_statuses = market_statuses_from_evaluation_row(evaluation)
+    detail_raw = evaluation.get("detail_json")
+    if detail_raw:
+        try:
+            import json
+
+            detail = json.loads(detail_raw) if isinstance(detail_raw, str) else dict(detail_raw)
+            card = str(detail.get("card_status") or "").lower()
+            reason = str(detail.get("card_status_reason") or "market_card_aggregate")
+            if card in {"correct", "wrong", "partial", "pending", "unavailable"}:
+                return card, reason
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+    market_statuses = market_statuses_from_evaluation_row(
+        evaluation,
+        include_quarantined=include_quarantined,
+    )
     counts = count_market_statuses(market_statuses)
     if counts["evaluated_markets_count"] == 0:
         overall = normalize_eval_status(evaluation.get("overall_status"))
-        if overall in {"correct", "wrong"}:
+        if overall in {"correct", "wrong", "partial", "unavailable"}:
             return overall, "overall_status_fallback"
         return "pending", "no_valid_evaluation"
-
-    main = market_statuses.get("1x2", "pending")
-    if main in {"correct", "wrong"}:
-        return main, "main_1x2_evaluation"
 
     if counts["correct_markets_count"] > 0 and counts["wrong_markets_count"] > 0:
         return "partial", "mixed_market_results"

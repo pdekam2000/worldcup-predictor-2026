@@ -15,6 +15,7 @@ export default function SidebarNav({
 }) {
   const location = useLocation();
   const terminal = variant === "terminal";
+  const saas = variant === "saas";
 
   const handleClick = () => {
     if (mobile && onNavigate) onNavigate();
@@ -29,14 +30,14 @@ export default function SidebarNav({
               <p
                 className={cn(
                   "px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em]",
-                  terminal ? "text-[#94A3B8]/80" : "text-muted-foreground/70"
+                  saas ? "text-slate-400" : terminal ? "text-[#94A3B8]/80" : "text-muted-foreground/70"
                 )}
               >
                 {section.label}
               </p>
             )}
             {collapsed && section.items.length > 0 && (
-              <div className={cn("border-t my-2 first:border-0 first:mt-0", terminal ? "border-white/[0.06]" : "border-border")} />
+              <div className={cn("border-t my-2 first:border-0 first:mt-0", saas ? "border-slate-200" : terminal ? "border-white/[0.06]" : "border-border")} />
             )}
             <div className="space-y-0.5">
               {section.items.map((item) => {
@@ -52,12 +53,18 @@ export default function SidebarNav({
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all border",
                       active
-                        ? isAdmin
-                          ? "bg-[#FFD166]/12 text-[#FFD166] border-[#FFD166]/20"
-                          : "bg-[#00E676]/12 text-[#00E676] border-[#00E676]/20"
-                        : terminal
-                          ? "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/[0.04] border-transparent"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/60 border-transparent"
+                        ? saas
+                          ? isAdmin
+                            ? "bg-amber-50 text-amber-800 border-amber-200"
+                            : "bg-amber-50 text-amber-900 border-amber-300"
+                          : isAdmin
+                            ? "bg-[#FFD166]/12 text-[#FFD166] border-[#FFD166]/20"
+                            : "bg-[#00E676]/12 text-[#00E676] border-[#00E676]/20"
+                        : saas
+                          ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100 border-transparent"
+                          : terminal
+                            ? "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/[0.04] border-transparent"
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/60 border-transparent"
                     )}
                   >
                     <Icon className="w-[18px] h-[18px] flex-shrink-0" />
@@ -70,7 +77,7 @@ export default function SidebarNav({
         ))}
       </nav>
 
-      <div className={cn("p-3 border-t space-y-2", terminal ? "border-white/[0.06]" : "border-border")}>
+      <div className={cn("p-3 border-t space-y-2", saas ? "border-slate-200" : terminal ? "border-white/[0.06]" : "border-border")}>
         {!collapsed && (
           <div className="px-1">
             <LanguageSwitcher />
@@ -81,9 +88,11 @@ export default function SidebarNav({
           onClick={onLogout}
           className={cn(
             "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium w-full",
-            terminal
-              ? "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/[0.04]"
-              : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+            saas
+              ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+              : terminal
+                ? "text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/[0.04]"
+                : "text-muted-foreground hover:text-foreground hover:bg-white/5"
           )}
         >
           <LogOut className="w-[18px] h-[18px] flex-shrink-0" />

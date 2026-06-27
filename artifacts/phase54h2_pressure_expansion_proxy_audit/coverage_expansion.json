@@ -1,0 +1,91 @@
+{
+  "before_fixtures": 65,
+  "after_fixtures": 65,
+  "delta_fixtures": 0,
+  "target_minimum": 150,
+  "target_preferred": 300,
+  "target_met_minimum": false,
+  "coverage_gap_reason": "Local cache exhausted: 0 fixtures with pressure from 1624 cached payloads; 1624 payloads had no pressure rows. xG cache (1500+ fixtures) lacks include=pressure. API league backfill returned 0 new fixtures (token/plan or already ingested). World Cup 732: no pressure cache found.",
+  "cache_backfill": {
+    "job_key": "phase54h2_cache_expansion",
+    "fixtures_processed": 1624,
+    "fixtures_imported": 0,
+    "fixtures_skipped": 65,
+    "fixtures_empty": 1624,
+    "fixtures_error": 0,
+    "records_written": 0,
+    "api_calls_live": 0,
+    "api_calls_cached": 1624,
+    "errors": []
+  },
+  "league_api_backfill": {
+    "2": {
+      "job_key": "phase54h2_api_l2",
+      "fixtures_processed": 0,
+      "fixtures_imported": 0,
+      "fixtures_skipped": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "records_written": 0,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "errors": []
+    },
+    "5": {
+      "job_key": "phase54h2_api_l5",
+      "fixtures_processed": 0,
+      "fixtures_imported": 0,
+      "fixtures_skipped": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "records_written": 0,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "errors": []
+    },
+    "2286": {
+      "job_key": "phase54h2_api_l2286",
+      "fixtures_processed": 0,
+      "fixtures_imported": 0,
+      "fixtures_skipped": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "records_written": 0,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "errors": []
+    },
+    "732": {
+      "job_key": "phase54h2_api_l732",
+      "fixtures_processed": 0,
+      "fixtures_imported": 0,
+      "fixtures_skipped": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "records_written": 0,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "errors": []
+    }
+  },
+  "api_configured": true,
+  "audit_after": {
+    "configured": true,
+    "tables_ready": true,
+    "records": {
+      "record_count": 12676,
+      "fixture_count": 65,
+      "league_count": 3,
+      "season_count": 3,
+      "team_count": 65,
+      "avg_minute": "48.9831177027453455",
+      "max_minute": 121
+    },
+    "summaries": {
+      "summary_count": 65,
+      "avg_rows_per_fixture": "195.0153846153846154",
+      "avg_minutes_per_fixture": "97.5076923076923077"
+    },
+    "duplicate_groups_sample": []
+  }
+}

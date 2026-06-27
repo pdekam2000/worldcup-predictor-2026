@@ -1,0 +1,914 @@
+{
+  "phase": "51I",
+  "mode": "read_only_forensic_audit",
+  "source": "artifacts/phase51h_egie_backtest.jsonl",
+  "fixtures_total": 359,
+  "published": 349,
+  "no_pick": 10,
+  "part_a_predicted_none": {
+    "total_count": 152,
+    "pct_of_all_fixtures": 42.34,
+    "pct_of_published": 43.55,
+    "by_dq_bucket": {
+      "dq_0_55_0_60": 152
+    },
+    "by_conf_bucket": {
+      "0.55-0.60": 7,
+      "0.60-0.65": 9,
+      "0.65-0.70": 136
+    },
+    "by_actual_first_goal_team": {
+      "home": 81,
+      "away": 71
+    },
+    "by_league": {
+      "premier_league": 152
+    },
+    "by_season": {
+      "2023/24": 152
+    },
+    "actual_minute_histogram": {
+      "0-15": 53,
+      "16-30": 42,
+      "31-45": 26,
+      "46-60": 12,
+      "61-75": 13,
+      "76-90+": 6
+    },
+    "team_involvement": {
+      "Sheffield Utd": 24,
+      "Fulham": 18,
+      "West Ham": 17,
+      "Nottingham Forest": 16,
+      "Brentford": 16,
+      "Wolves": 16,
+      "Newcastle": 16,
+      "Manchester United": 16,
+      "Everton": 16,
+      "Burnley": 16,
+      "Chelsea": 15,
+      "Crystal Palace": 15,
+      "Aston Villa": 15,
+      "Bournemouth": 14,
+      "Manchester City": 14
+    },
+    "sample_cases": [
+      {
+        "fixture_id": 1035053,
+        "home_team": "Nottingham Forest",
+        "away_team": "Sheffield Utd",
+        "dq": 0.5714,
+        "confidence": 0.571,
+        "predicted_team": "none",
+        "actual_team": "home",
+        "actual_minute": 3,
+        "predicted_range": "16-30"
+      },
+      {
+        "fixture_id": 1035049,
+        "home_team": "Fulham",
+        "away_team": "Brentford",
+        "dq": 0.5714,
+        "confidence": 0.5719,
+        "predicted_team": "none",
+        "actual_team": "away",
+        "actual_minute": 44,
+        "predicted_range": "0-15"
+      },
+      {
+        "fixture_id": 1035050,
+        "home_team": "Liverpool",
+        "away_team": "Bournemouth",
+        "dq": 0.5714,
+        "confidence": 0.5719,
+        "predicted_team": "none",
+        "actual_team": "away",
+        "actual_minute": 3,
+        "predicted_range": "46-60"
+      },
+      {
+        "fixture_id": 1035056,
+        "home_team": "Wolves",
+        "away_team": "Brighton",
+        "dq": 0.5714,
+        "confidence": 0.5719,
+        "predicted_team": "none",
+        "actual_team": "away",
+        "actual_minute": 15,
+        "predicted_range": "76-90+"
+      },
+      {
+        "fixture_id": 1035052,
+        "home_team": "Manchester City",
+        "away_team": "Newcastle",
+        "dq": 0.5714,
+        "confidence": 0.5755,
+        "predicted_team": "none",
+        "actual_team": "home",
+        "actual_minute": 31,
+        "predicted_range": "0-15"
+      },
+      {
+        "fixture_id": 1035055,
+        "home_team": "West Ham",
+        "away_team": "Chelsea",
+        "dq": 0.5714,
+        "confidence": 0.5773,
+        "predicted_team": "none",
+        "actual_team": "home",
+        "actual_minute": 7,
+        "predicted_range": "46-60"
+      },
+      {
+        "fixture_id": 1035048,
+        "home_team": "Crystal Palace",
+        "away_team": "Arsenal",
+        "dq": 0.5714,
+        "confidence": 0.5782,
+        "predicted_team": "none",
+        "actual_team": "away",
+        "actual_minute": 54,
+        "predicted_range": "46-60"
+      },
+      {
+        "fixture_id": 1035057,
+        "home_team": "Bournemouth",
+        "away_team": "Tottenham",
+        "dq": 0.5714,
+        "confidence": 0.6012,
+        "predicted_team": "none",
+        "actual_team": "away",
+        "actual_minute": 17,
+        "predicted_range": "0-15"
+      },
+      {
+        "fixture_id": 1035064,
+        "home_team": "Manchester United",
+        "away_team": "Nottingham Forest",
+        "dq": 0.5714,
+        "confidence": 0.6021,
+        "predicted_team": "none",
+        "actual_team": "away",
+        "actual_minute": 2,
+        "predicted_range": "46-60"
+      },
+      {
+        "fixture_id": 1035060,
+        "home_team": "Brighton",
+        "away_team": "West Ham",
+        "dq": 0.5714,
+        "confidence": 0.6057,
+        "predicted_team": "none",
+        "actual_team": "away",
+        "actual_minute": 19,
+        "predicted_range": "0-15"
+      }
+    ],
+    "all_fixture_ids": [
+      1035053,
+      1035049,
+      1035050,
+      1035056,
+      1035052,
+      1035055,
+      1035048,
+      1035057,
+      1035064,
+      1035060,
+      1035066,
+      1035074,
+      1035068,
+      1035075,
+      1035069,
+      1035072,
+      1035086,
+      1035081,
+      1035084,
+      1035085,
+      1035082,
+      1035079,
+      1035083,
+      1035088,
+      1035087,
+      1035096,
+      1035098,
+      1035101,
+      1035102,
+      1035105,
+      1035104,
+      1035103,
+      1035100,
+      1035051,
+      1035109,
+      1035112,
+      1035115,
+      1035117,
+      1035118,
+      1035128,
+      1035140,
+      1035139,
+      1035145,
+      1035156,
+      1035152,
+      1035154,
+      1035147,
+      1035149,
+      1035150,
+      1035155,
+      1035295,
+      1035303,
+      1035296,
+      1035305,
+      1035307,
+      1035312,
+      1035304,
+      1035309,
+      1035321,
+      1035315,
+      1035317,
+      1035319,
+      1035314,
+      1035316,
+      1035325,
+      1035331,
+      1035327,
+      1035328,
+      1035329,
+      1035342,
+      1035338,
+      1035340,
+      1035341,
+      1035344,
+      1035346,
+      1035348,
+      1035363,
+      1035358,
+      1035356,
+      1035368,
+      1035364,
+      1035365,
+      1035369,
+      1035373,
+      1035366,
+      1035367,
+      1035379,
+      1035381,
+      1035375,
+      1035383,
+      1035387,
+      1035391,
+      1035389,
+      1035390,
+      1035398,
+      1035399,
+      1035396,
+      1035408,
+      1035413,
+      1035410,
+      1035405,
+      1035414,
+      1035417,
+      1035422,
+      1035416,
+      1035349,
+      1035426,
+      1035427,
+      1035431,
+      1035424,
+      1035434,
+      1035438,
+      1035439,
+      1035442,
+      1035334,
+      1035456,
+      1035462,
+      1035470,
+      1035464,
+      1035471,
+      1035465,
+      1035466,
+      1035478,
+      1035474,
+      1035477,
+      1035475,
+      1035486,
+      1035485,
+      1035490,
+      1035491,
+      1035492,
+      1035494,
+      1035499,
+      1035498,
+      1035507,
+      1035504,
+      1035506,
+      1035458,
+      1035461,
+      1035518,
+      1035519,
+      1035523,
+      1035515,
+      1035531,
+      1035524,
+      1035527,
+      1035528,
+      1035530,
+      1035537,
+      1035542,
+      1035540,
+      1035510
+    ],
+    "why_engine_produces_none": {
+      "code_rule": "GoalTimingBaselineModel._pick_first_goal_team returns none when abs(home_rate - away_rate) < 0.04",
+      "source_file": "worldcup_predictor/goal_timing/models_stat/baseline.py",
+      "interpretation": "Empirical first-goal scoring rates for home and away are within 4 percentage points after agent nudges; engine abstains from directional pick.",
+      "none_cases_with_range_still_published": 152,
+      "range_wrong_rate_in_none_cases": 0.7237,
+      "actual_first_goal_home_pct": 0.5329
+    }
+  },
+  "part_b_evaluation_policy": {
+    "policy_A_current": {
+      "correct": 100,
+      "wrong": 97,
+      "pending": 152,
+      "denominator": 197,
+      "winrate": 0.5076
+    },
+    "policy_B_strict": {
+      "correct": 100,
+      "wrong": 249,
+      "denominator": 349,
+      "winrate": 0.2865
+    },
+    "policy_C_separate": {
+      "picked_team_market": {
+        "correct": 100,
+        "wrong": 97,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 197,
+        "winrate": 0.5076
+      },
+      "no_edge_market": {
+        "correct": 0,
+        "wrong": 152,
+        "denominator": 152,
+        "winrate": 0.0,
+        "interpretation": "none means no directional edge; goal occurred = loss on no-edge contract"
+      }
+    },
+    "calibration_effect": {
+      "policy_A": {
+        "mean_conf_correct": 0.6455,
+        "mean_conf_wrong": 0.6491,
+        "n": 197
+      },
+      "policy_B": {
+        "mean_conf_correct": 0.6455,
+        "mean_conf_wrong": 0.6464,
+        "n": 349
+      }
+    },
+    "trust_impact": {
+      "policy_A": "Inflates team winrate to 50.8% by excluding 43.5% of published outputs from denominator",
+      "policy_B": "Honest 28.7% \u2014 exposes abstention failure when goals occur",
+      "policy_C": "Commercial split: 50.8% on directional picks (n=197); abstention product 0% hit when goals occur",
+      "recommendation": "Policy C for product; Policy B for internal model QA dashboards"
+    }
+  },
+  "part_c_dq_threshold_sweep": [
+    {
+      "threshold": 0.35,
+      "fixtures_above_threshold": 359,
+      "no_pick_below": 0,
+      "with_predictions": 349,
+      "team_winrate_policy_A": 0.5076,
+      "team_winrate_policy_B": 0.2865,
+      "range_winrate": 0.2779,
+      "minute_soft_winrate": 0.3381,
+      "coverage_pct": 97.21,
+      "mean_confidence": 0.6461
+    },
+    {
+      "threshold": 0.4,
+      "fixtures_above_threshold": 359,
+      "no_pick_below": 0,
+      "with_predictions": 349,
+      "team_winrate_policy_A": 0.5076,
+      "team_winrate_policy_B": 0.2865,
+      "range_winrate": 0.2779,
+      "minute_soft_winrate": 0.3381,
+      "coverage_pct": 97.21,
+      "mean_confidence": 0.6461
+    },
+    {
+      "threshold": 0.45,
+      "fixtures_above_threshold": 349,
+      "no_pick_below": 10,
+      "with_predictions": 349,
+      "team_winrate_policy_A": 0.5076,
+      "team_winrate_policy_B": 0.2865,
+      "range_winrate": 0.2779,
+      "minute_soft_winrate": 0.3381,
+      "coverage_pct": 97.21,
+      "mean_confidence": 0.6461
+    },
+    {
+      "threshold": 0.5,
+      "fixtures_above_threshold": 349,
+      "no_pick_below": 10,
+      "with_predictions": 349,
+      "team_winrate_policy_A": 0.5076,
+      "team_winrate_policy_B": 0.2865,
+      "range_winrate": 0.2779,
+      "minute_soft_winrate": 0.3381,
+      "coverage_pct": 97.21,
+      "mean_confidence": 0.6461
+    },
+    {
+      "threshold": 0.55,
+      "fixtures_above_threshold": 349,
+      "no_pick_below": 10,
+      "with_predictions": 349,
+      "team_winrate_policy_A": 0.5076,
+      "team_winrate_policy_B": 0.2865,
+      "range_winrate": 0.2779,
+      "minute_soft_winrate": 0.3381,
+      "coverage_pct": 97.21,
+      "mean_confidence": 0.6461
+    },
+    {
+      "threshold": 0.6
+    },
+    {
+      "threshold": 0.65
+    },
+    {
+      "threshold": 0.7
+    }
+  ],
+  "part_d_confidence_calibration": {
+    "0.45-0.50": {
+      "count": 0,
+      "team": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "range": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "minute_soft": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "none_predictions": 0
+    },
+    "0.50-0.55": {
+      "count": 0,
+      "team": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "range": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "minute_soft": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "none_predictions": 0
+    },
+    "0.55-0.60": {
+      "count": 11,
+      "team": {
+        "correct": 3,
+        "wrong": 1,
+        "partial": 0,
+        "pending": 7,
+        "denominator": 4,
+        "winrate": 0.75
+      },
+      "range": {
+        "correct": 2,
+        "wrong": 9,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 11,
+        "winrate": 0.1818
+      },
+      "minute_soft": {
+        "correct": 3,
+        "wrong": 8,
+        "partial": 2,
+        "pending": 0,
+        "denominator": 11,
+        "winrate": 0.2727
+      },
+      "none_predictions": 7
+    },
+    "0.60-0.65": {
+      "count": 18,
+      "team": {
+        "correct": 7,
+        "wrong": 2,
+        "partial": 0,
+        "pending": 9,
+        "denominator": 9,
+        "winrate": 0.7778
+      },
+      "range": {
+        "correct": 2,
+        "wrong": 16,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 18,
+        "winrate": 0.1111
+      },
+      "minute_soft": {
+        "correct": 3,
+        "wrong": 15,
+        "partial": 3,
+        "pending": 0,
+        "denominator": 18,
+        "winrate": 0.1667
+      },
+      "none_predictions": 9
+    },
+    "0.65-0.70": {
+      "count": 320,
+      "team": {
+        "correct": 90,
+        "wrong": 94,
+        "partial": 0,
+        "pending": 136,
+        "denominator": 184,
+        "winrate": 0.4891
+      },
+      "range": {
+        "correct": 93,
+        "wrong": 227,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 320,
+        "winrate": 0.2906
+      },
+      "minute_soft": {
+        "correct": 112,
+        "wrong": 208,
+        "partial": 105,
+        "pending": 0,
+        "denominator": 320,
+        "winrate": 0.35
+      },
+      "none_predictions": 136
+    },
+    "0.70+": {
+      "count": 0,
+      "team": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "range": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "minute_soft": {
+        "correct": 0,
+        "wrong": 0,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 0,
+        "winrate": null
+      },
+      "none_predictions": 0
+    },
+    "monotonicity_check": {
+      "higher_confidence_performs_better": false,
+      "team_winrates_by_bucket": {
+        "0.55-0.60": 0.75,
+        "0.60-0.65": 0.7778,
+        "0.65-0.70": 0.4891
+      },
+      "root_causes": [
+        "Display confidence capped at 0.65 when DQ < 0.70 (all published DQ=0.5714)",
+        "92% of published fixtures cluster in 0.65-0.70 bucket \u2014 insufficient granularity",
+        "High-confidence bucket contains 136/152 none predictions (42.5% of bucket)",
+        "Low-confidence buckets (0.55-0.65) are tiny (n=29) with fewer none abstentions"
+      ]
+    }
+  },
+  "part_e_goal_range": {
+    "0-15": {
+      "predictions": 191,
+      "correct": 61,
+      "wrong": 130,
+      "winrate": 0.3194,
+      "actual_distribution_count": 118,
+      "actual_distribution_pct": 33.81
+    },
+    "16-30": {
+      "predictions": 115,
+      "correct": 30,
+      "wrong": 85,
+      "winrate": 0.2609,
+      "actual_distribution_count": 96,
+      "actual_distribution_pct": 27.51
+    },
+    "31-45+": {
+      "predictions": 4,
+      "correct": 1,
+      "wrong": 3,
+      "winrate": 0.25,
+      "actual_distribution_count": 56,
+      "actual_distribution_pct": 16.05
+    },
+    "46-60": {
+      "predictions": 29,
+      "correct": 5,
+      "wrong": 24,
+      "winrate": 0.1724,
+      "actual_distribution_count": 40,
+      "actual_distribution_pct": 11.46
+    },
+    "61-75": {
+      "predictions": 6,
+      "correct": 0,
+      "wrong": 6,
+      "winrate": 0.0,
+      "actual_distribution_count": 24,
+      "actual_distribution_pct": 6.88
+    },
+    "76-90+": {
+      "predictions": 4,
+      "correct": 0,
+      "wrong": 4,
+      "winrate": 0.0,
+      "actual_distribution_count": 15,
+      "actual_distribution_pct": 4.3
+    },
+    "systematic_bias": {
+      "over_predicted_ranges": [
+        "0-15 (54.7% of preds vs 33.8% actual)",
+        "16-30 (32.9% vs 27.5%)"
+      ],
+      "under_predicted_ranges": [
+        "31-45+ (1.1% vs 16.0%)",
+        "61-75 (1.7% vs 6.9%)",
+        "76-90+ (1.1% vs 4.3%)"
+      ],
+      "strongest_range": "0-15 (31.9% winrate)",
+      "weakest_ranges": [
+        "61-75 (0.0%, n=6)",
+        "76-90+ (0.0%, n=4)"
+      ],
+      "random_baseline_winrate": 0.1667,
+      "aggregate_winrate": 0.2779
+    }
+  },
+  "part_f_minute_tolerance": {
+    "tolerance_pm_3": {
+      "hit_rate": 0.1404,
+      "hits": 49,
+      "sample_size": 349
+    },
+    "tolerance_pm_5": {
+      "hit_rate": 0.2292,
+      "hits": 80,
+      "sample_size": 349
+    },
+    "tolerance_pm_7": {
+      "hit_rate": 0.2779,
+      "hits": 97,
+      "sample_size": 349
+    },
+    "tolerance_pm_10": {
+      "hit_rate": 0.3381,
+      "hits": 118,
+      "sample_size": 349
+    },
+    "public_display_recommendation": {
+      "show_exact_minute": false,
+      "show_range_primary": true,
+      "show_soft_band_pm_7": true,
+      "rationale": "\u00b17 hits 27.8%; \u00b110 hits 33.8%; exact 2.3%. Range is only commercially honest primary metric."
+    }
+  },
+  "part_g_team_league": {
+    "home_pick_winrate": {
+      "correct": 57,
+      "wrong": 40,
+      "partial": 0,
+      "pending": 0,
+      "denominator": 97,
+      "winrate": 0.5876
+    },
+    "away_pick_winrate": {
+      "correct": 43,
+      "wrong": 57,
+      "partial": 0,
+      "pending": 0,
+      "denominator": 100,
+      "winrate": 0.43
+    },
+    "best_teams_when_picked": [
+      {
+        "team": "Arsenal",
+        "picks": 12,
+        "winrate": 0.8333
+      },
+      {
+        "team": "Newcastle",
+        "picks": 11,
+        "winrate": 0.8182
+      },
+      {
+        "team": "Manchester City",
+        "picks": 15,
+        "winrate": 0.7333
+      },
+      {
+        "team": "Bournemouth",
+        "picks": 14,
+        "winrate": 0.6429
+      },
+      {
+        "team": "Tottenham",
+        "picks": 17,
+        "winrate": 0.5882
+      },
+      {
+        "team": "Wolves",
+        "picks": 7,
+        "winrate": 0.5714
+      },
+      {
+        "team": "Everton",
+        "picks": 7,
+        "winrate": 0.5714
+      },
+      {
+        "team": "Brentford",
+        "picks": 10,
+        "winrate": 0.5
+      }
+    ],
+    "worst_teams_when_picked": [
+      {
+        "team": "Brighton",
+        "picks": 7,
+        "winrate": 0.1429
+      },
+      {
+        "team": "Sheffield Utd",
+        "picks": 10,
+        "winrate": 0.2
+      },
+      {
+        "team": "West Ham",
+        "picks": 8,
+        "winrate": 0.25
+      },
+      {
+        "team": "Luton",
+        "picks": 8,
+        "winrate": 0.25
+      },
+      {
+        "team": "Chelsea",
+        "picks": 11,
+        "winrate": 0.3636
+      },
+      {
+        "team": "Burnley",
+        "picks": 11,
+        "winrate": 0.3636
+      },
+      {
+        "team": "Aston Villa",
+        "picks": 13,
+        "winrate": 0.3846
+      },
+      {
+        "team": "Nottingham Forest",
+        "picks": 12,
+        "winrate": 0.4167
+      }
+    ],
+    "most_none_involvement": {
+      "Sheffield Utd": 24,
+      "Fulham": 18,
+      "West Ham": 17,
+      "Nottingham Forest": 16,
+      "Brentford": 16,
+      "Wolves": 16,
+      "Newcastle": 16,
+      "Manchester United": 16,
+      "Everton": 16,
+      "Burnley": 16,
+      "Chelsea": 15,
+      "Crystal Palace": 15,
+      "Aston Villa": 15,
+      "Bournemouth": 14,
+      "Manchester City": 14
+    },
+    "promoted_teams_2324": [
+      "Burnley",
+      "Luton",
+      "Sheffield Utd"
+    ],
+    "promoted_team_none_rate": {
+      "Burnley": {
+        "appearances": 36,
+        "none_predictions": 16,
+        "none_rate": 0.4444
+      },
+      "Luton": {
+        "appearances": 36,
+        "none_predictions": 14,
+        "none_rate": 0.3889
+      },
+      "Sheffield Utd": {
+        "appearances": 36,
+        "none_predictions": 24,
+        "none_rate": 0.6667
+      }
+    },
+    "thin_history_signal": {
+      "sheffield_utd": {
+        "none_rate": 0.6667,
+        "picked_winrate": 0.2,
+        "note": "Promoted club; highest none involvement (24 fixtures)"
+      },
+      "luton": {
+        "none_rate": 0.3889,
+        "picked_winrate": 0.25
+      },
+      "burnley": {
+        "none_rate": 0.4444,
+        "picked_winrate": 0.3636
+      },
+      "egie_works_best": "Established top sides when engine commits directional pick (Arsenal 83%, Newcastle 82%, Man City 73%)",
+      "egie_works_worst": "Promoted/thin-history sides and matches where engine abstains (none)"
+    }
+  },
+  "part_h_survival_readiness": {
+    "team_market": {
+      "potential_gain": "Medium",
+      "rationale": "43.5% of published picks are none; picked subset is 50.8% but policy-dependent. Survival/hazard models could replace binary none with continuous first-scorer probability."
+    },
+    "goal_range": {
+      "potential_gain": "High",
+      "rationale": "27.8% vs ~17% random baseline on 6 buckets; flat minute distribution not captured. Hazard curves directly model time-to-goal."
+    },
+    "goal_minute": {
+      "potential_gain": "High",
+      "rationale": "3.4% strict / 33.8% soft at \u00b110; point estimate from bucket midpoint is weak. Survival analysis provides full distribution."
+    },
+    "highest_roi_upgrade": "goal_range_and_minute_via_survival"
+  },
+  "final_answers": {
+    "1_count_none_as_wrong": "Policy B drops team winrate to 28.7%; Policy C treats none as separate product. Recommend Policy C commercially, Policy B for internal honesty.",
+    "2_dq_threshold": "0.45 is reasonable; raising to 0.50-0.55 improves range/minute slightly but cuts coverage; lowering adds 10 early-season low-DQ fixtures with no benefit.",
+    "3_recalibrate_confidence": "Yes \u2014 confidence is inverted (low-conf bucket 76.9% vs high-conf 48.9% on picked games); ceiling at 0.65 and none-inflation are root causes.",
+    "4_exact_minute_public": "No \u2014 show range + soft band only; strict minute is 3.4% and not commercially viable.",
+    "5_production_ready_market": "First Goal Team (directional picks only, excluding none) at ~51% \u2014 marginal; needs policy C framing.",
+    "6_experimental_markets": "Goal Range, Goal Minute (all variants experimental).",
+    "7_survival_highest_roi": "Yes for range/minute; medium for team. Combined highest ROI next upgrade."
+  },
+  "part_c_dq_threshold_sweep_note": "DQ is bimodal (0.4286 early-season NO_PICK n=10, 0.5714 published n=349). Thresholds 0.58+ exclude entire cohort. Lowering below 0.45 adds 10 fixtures without stored predictions \u2014 metrics unchanged."
+}

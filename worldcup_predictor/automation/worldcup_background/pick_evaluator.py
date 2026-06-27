@@ -4,6 +4,12 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
+from worldcup_predictor.api.market_level_evaluation import (
+    attach_market_evaluations_to_result,
+    btts_selection_from_payload,
+    canonical_1x2_selection,
+    ou_selection_from_payload,
+)
 from worldcup_predictor.api.prediction_history_evaluation import FixtureOutcome
 from worldcup_predictor.automation.worldcup_background.advanced_market_evaluator import (
     advanced_market_status_map,
@@ -128,21 +134,19 @@ def evaluate_stored_prediction(
     total = float(home + away) if home is not None and away is not None else None
 
     markets: dict[str, ResultStatus] = {}
-    markets["1x2"] = _eval_1x2(payload.get("prediction"), actual)
+    markets["1x2"] = _eval_1x2(canonical_1x2_selection(payload), actual)
 
-    probs = payload.get("probabilities") or {}
-    ou = probs.get("over_under_2_5") or {}
-    markets["over_under_2_5"] = _eval_ou(
-        (ou.get("selection") if isinstance(ou, dict) else None),
-        total if total is not None else -1,
-    ) if total is not None else "unknown"
+    ou_sel = ou_selection_from_payload(payload)
+    markets["over_under_2_5"] = (
+        _eval_ou(ou_sel, total if total is not None else -1) if total is not None else "unknown"
+    )
 
-    btts = probs.get("btts") or {}
-    markets["btts"] = _eval_btts(
-        (btts.get("selection") if isinstance(btts, dict) else None),
-        home or 0,
-        away or 0,
-    ) if home is not None and away is not None else "unknown"
+    btts_sel = btts_selection_from_payload(payload)
+    markets["btts"] = (
+        _eval_btts(btts_sel, home or 0, away or 0)
+        if home is not None and away is not None
+        else "unknown"
+    )
 
     dm = payload.get("detailed_markets") or {}
     dc = dm.get("double_chance") if isinstance(dm, dict) else None
@@ -190,7 +194,7 @@ def evaluate_stored_prediction(
     advanced_markets = evaluate_advanced_markets(payload, outcome)
     markets.update(advanced_market_status_map(advanced_markets))
 
-    return {
+    result = {
         "fixture_id": payload.get("fixture_id"),
         "status": overall,
         "actual_result": actual,
@@ -201,3 +205,4 @@ def evaluate_stored_prediction(
         "markets": markets,
         "advanced_markets": advanced_markets,
     }
+    return attach_market_evaluations_to_result(result, payload, outcome)

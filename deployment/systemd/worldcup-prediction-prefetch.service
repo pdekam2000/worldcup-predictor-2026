@@ -1,0 +1,26 @@
+# Phase A14 — Multi-competition prediction prefetch (hourly)
+#
+# Install:
+#   sudo cp deployment/systemd/worldcup-prediction-prefetch.service /etc/systemd/system/
+#   sudo cp deployment/systemd/worldcup-prediction-prefetch.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now worldcup-prediction-prefetch.timer
+
+[Unit]
+Description=World Cup prediction prefetch cycle (Phase A14)
+After=network.target worldcup-api.service
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=APP_ENV=production
+Environment=PREFETCH_WINDOW_DAYS=7
+Environment=PREFETCH_MAX_PER_CYCLE=24
+ExecStart=/opt/worldcup-predictor/.venv/bin/python main.py predops-run
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

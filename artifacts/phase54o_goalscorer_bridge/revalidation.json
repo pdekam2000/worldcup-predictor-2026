@@ -1,0 +1,1079 @@
+{
+  "status": "ok",
+  "markets": {
+    "anytime": {
+      "ranking": {
+        "ml_only": {
+          "fixtures_evaluated": 35,
+          "top1_hit": 0.4571,
+          "top3_hit": 0.7143,
+          "top5_hit": 0.8,
+          "overlap_top3_rate": 0.8857,
+          "disagreement_top3_rate": 0.1143,
+          "ml_only_hit_rate": 0.1143,
+          "bookmaker_only_hit_rate": 0.1714,
+          "combined_signal_hit_rate": 0.6
+        },
+        "odds_only": {
+          "fixtures_evaluated": 35,
+          "top1_hit": 0.6286,
+          "top3_hit": 0.7714,
+          "top5_hit": 0.8571,
+          "overlap_top3_rate": 0.8857,
+          "disagreement_top3_rate": 0.1143,
+          "ml_only_hit_rate": 0.1143,
+          "bookmaker_only_hit_rate": 0.1714,
+          "combined_signal_hit_rate": 0.6
+        },
+        "ml_odds_blend": {
+          "fixtures_evaluated": 35,
+          "top1_hit": 0.5429,
+          "top3_hit": 0.8,
+          "top5_hit": 0.8571,
+          "overlap_top3_rate": 0.8857,
+          "disagreement_top3_rate": 0.1143,
+          "ml_only_hit_rate": 0.1143,
+          "bookmaker_only_hit_rate": 0.1714,
+          "combined_signal_hit_rate": 0.6
+        }
+      },
+      "calibration": {
+        "status": "ok",
+        "raw": {
+          "ml_only": {
+            "n": 1346,
+            "brier": 0.2212,
+            "logloss": 0.6394,
+            "ece": 0.3961,
+            "curve": [
+              {
+                "bin": "0.20-0.30",
+                "n": 393,
+                "mean_pred": 0.2528,
+                "actual_rate": 0.0102
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 131,
+                "mean_pred": 0.3365,
+                "actual_rate": 0.0153
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 286,
+                "mean_pred": 0.4706,
+                "actual_rate": 0.0455
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 299,
+                "mean_pred": 0.5387,
+                "actual_rate": 0.0535
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 106,
+                "mean_pred": 0.6431,
+                "actual_rate": 0.1604
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 78,
+                "mean_pred": 0.7485,
+                "actual_rate": 0.141
+              },
+              {
+                "bin": "0.80-0.90",
+                "n": 37,
+                "mean_pred": 0.8508,
+                "actual_rate": 0.2432
+              },
+              {
+                "bin": "0.90-1.00",
+                "n": 16,
+                "mean_pred": 0.9351,
+                "actual_rate": 0.4375
+              }
+            ]
+          },
+          "odds_only": {
+            "n": 1346,
+            "brier": 0.0702,
+            "logloss": 0.2675,
+            "ece": 0.1261,
+            "curve": [
+              {
+                "bin": "0.00-0.10",
+                "n": 406,
+                "mean_pred": 0.0698,
+                "actual_rate": 0.0074
+              },
+              {
+                "bin": "0.10-0.20",
+                "n": 469,
+                "mean_pred": 0.141,
+                "actual_rate": 0.0384
+              },
+              {
+                "bin": "0.20-0.30",
+                "n": 236,
+                "mean_pred": 0.2424,
+                "actual_rate": 0.0805
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 127,
+                "mean_pred": 0.3427,
+                "actual_rate": 0.0787
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 70,
+                "mean_pred": 0.4438,
+                "actual_rate": 0.2
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 28,
+                "mean_pred": 0.5485,
+                "actual_rate": 0.3214
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 9,
+                "mean_pred": 0.6467,
+                "actual_rate": 0.5556
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 1,
+                "mean_pred": 0.7195,
+                "actual_rate": 1.0
+              }
+            ]
+          },
+          "ml_odds_blend": {
+            "n": 1346,
+            "brier": 0.1352,
+            "logloss": 0.4459,
+            "ece": 0.2879,
+            "curve": [
+              {
+                "bin": "0.10-0.20",
+                "n": 184,
+                "mean_pred": 0.1811,
+                "actual_rate": 0.0
+              },
+              {
+                "bin": "0.20-0.30",
+                "n": 277,
+                "mean_pred": 0.2412,
+                "actual_rate": 0.0144
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 526,
+                "mean_pred": 0.3457,
+                "actual_rate": 0.038
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 196,
+                "mean_pred": 0.4424,
+                "actual_rate": 0.0918
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 99,
+                "mean_pred": 0.5454,
+                "actual_rate": 0.1313
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 41,
+                "mean_pred": 0.6456,
+                "actual_rate": 0.2927
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 19,
+                "mean_pred": 0.7371,
+                "actual_rate": 0.5263
+              },
+              {
+                "bin": "0.80-0.90",
+                "n": 4,
+                "mean_pred": 0.8423,
+                "actual_rate": 0.5
+              }
+            ]
+          },
+          "market_adjusted_ml": {
+            "n": 1346,
+            "brier": 0.2329,
+            "logloss": 0.6965,
+            "ece": 0.4094,
+            "curve": [
+              {
+                "bin": "0.20-0.30",
+                "n": 379,
+                "mean_pred": 0.257,
+                "actual_rate": 0.0106
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 134,
+                "mean_pred": 0.3389,
+                "actual_rate": 0.0075
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 244,
+                "mean_pred": 0.4717,
+                "actual_rate": 0.0451
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 319,
+                "mean_pred": 0.5387,
+                "actual_rate": 0.0533
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 119,
+                "mean_pred": 0.6398,
+                "actual_rate": 0.1261
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 77,
+                "mean_pred": 0.7525,
+                "actual_rate": 0.1169
+              },
+              {
+                "bin": "0.80-0.90",
+                "n": 41,
+                "mean_pred": 0.8445,
+                "actual_rate": 0.2195
+              },
+              {
+                "bin": "0.90-1.00",
+                "n": 33,
+                "mean_pred": 0.9553,
+                "actual_rate": 0.3939
+              }
+            ]
+          }
+        },
+        "calibrated": {},
+        "ranking_by_track": {
+          "ml_only": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.4571,
+            "top3_hit": 0.7143,
+            "top5_hit": 0.8,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.1143,
+            "bookmaker_only_hit_rate": 0.1714,
+            "combined_signal_hit_rate": 0.6
+          },
+          "odds_only": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.6286,
+            "top3_hit": 0.7714,
+            "top5_hit": 0.8571,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.1143,
+            "bookmaker_only_hit_rate": 0.1714,
+            "combined_signal_hit_rate": 0.6
+          },
+          "ml_odds_blend": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.5429,
+            "top3_hit": 0.8,
+            "top5_hit": 0.8571,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.1143,
+            "bookmaker_only_hit_rate": 0.1714,
+            "combined_signal_hit_rate": 0.6
+          },
+          "market_adjusted_ml": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.4571,
+            "top3_hit": 0.7143,
+            "top5_hit": 0.8571,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.1143,
+            "bookmaker_only_hit_rate": 0.1714,
+            "combined_signal_hit_rate": 0.6
+          }
+        },
+        "ml_beats_odds_top3": false,
+        "blend_beats_ml_top3": true
+      },
+      "comparison": {
+        "status": "ok",
+        "rows": 1346,
+        "fixtures": 47,
+        "metrics": {
+          "ml_probability": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.4571,
+            "top3_hit": 0.7143,
+            "top5_hit": 0.8,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.1143,
+            "bookmaker_only_hit_rate": 0.1714,
+            "combined_signal_hit_rate": 0.6
+          },
+          "implied_probability": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.6286,
+            "top3_hit": 0.7714,
+            "top5_hit": 0.8571,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.1143,
+            "bookmaker_only_hit_rate": 0.1714,
+            "combined_signal_hit_rate": 0.6
+          },
+          "ml_odds_blend": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.5429,
+            "top3_hit": 0.8,
+            "top5_hit": 0.8571,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.1143,
+            "bookmaker_only_hit_rate": 0.1714,
+            "combined_signal_hit_rate": 0.6
+          },
+          "market_adjusted_ml": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.4571,
+            "top3_hit": 0.7143,
+            "top5_hit": 0.8571,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.1143,
+            "bookmaker_only_hit_rate": 0.1714,
+            "combined_signal_hit_rate": 0.6
+          }
+        }
+      },
+      "rows": 1346,
+      "fixtures": 47
+    },
+    "first_goal": {
+      "ranking": {
+        "ml_only": {
+          "fixtures_evaluated": 30,
+          "top1_hit": 0.2333,
+          "top3_hit": 0.4333,
+          "top5_hit": 0.5333,
+          "overlap_top3_rate": 0.8667,
+          "disagreement_top3_rate": 0.1333,
+          "ml_only_hit_rate": 0.1,
+          "bookmaker_only_hit_rate": 0.1,
+          "combined_signal_hit_rate": 0.3333
+        },
+        "odds_only": {
+          "fixtures_evaluated": 30,
+          "top1_hit": 0.3,
+          "top3_hit": 0.4333,
+          "top5_hit": 0.4667,
+          "overlap_top3_rate": 0.8667,
+          "disagreement_top3_rate": 0.1333,
+          "ml_only_hit_rate": 0.1,
+          "bookmaker_only_hit_rate": 0.1,
+          "combined_signal_hit_rate": 0.3333
+        },
+        "ml_odds_blend": {
+          "fixtures_evaluated": 30,
+          "top1_hit": 0.2333,
+          "top3_hit": 0.5,
+          "top5_hit": 0.5667,
+          "overlap_top3_rate": 0.8667,
+          "disagreement_top3_rate": 0.1333,
+          "ml_only_hit_rate": 0.1,
+          "bookmaker_only_hit_rate": 0.1,
+          "combined_signal_hit_rate": 0.3333
+        }
+      },
+      "calibration": {
+        "status": "ok",
+        "raw": {
+          "ml_only": {
+            "n": 1346,
+            "brier": 0.2292,
+            "logloss": 0.6596,
+            "ece": 0.4325,
+            "curve": [
+              {
+                "bin": "0.20-0.30",
+                "n": 393,
+                "mean_pred": 0.2528,
+                "actual_rate": 0.0
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 131,
+                "mean_pred": 0.3365,
+                "actual_rate": 0.0076
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 286,
+                "mean_pred": 0.4706,
+                "actual_rate": 0.014
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 299,
+                "mean_pred": 0.5387,
+                "actual_rate": 0.0234
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 106,
+                "mean_pred": 0.6431,
+                "actual_rate": 0.0566
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 78,
+                "mean_pred": 0.7485,
+                "actual_rate": 0.0513
+              },
+              {
+                "bin": "0.80-0.90",
+                "n": 37,
+                "mean_pred": 0.8508,
+                "actual_rate": 0.1081
+              },
+              {
+                "bin": "0.90-1.00",
+                "n": 16,
+                "mean_pred": 0.9351,
+                "actual_rate": 0.25
+              }
+            ]
+          },
+          "odds_only": {
+            "n": 1346,
+            "brier": 0.0254,
+            "logloss": 0.1294,
+            "ece": 0.059,
+            "curve": [
+              {
+                "bin": "0.00-0.10",
+                "n": 985,
+                "mean_pred": 0.0494,
+                "actual_rate": 0.0152
+              },
+              {
+                "bin": "0.10-0.20",
+                "n": 293,
+                "mean_pred": 0.1395,
+                "actual_rate": 0.0239
+              },
+              {
+                "bin": "0.20-0.30",
+                "n": 65,
+                "mean_pred": 0.2285,
+                "actual_rate": 0.0769
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 3,
+                "mean_pred": 0.3339,
+                "actual_rate": 1.0
+              }
+            ]
+          },
+          "ml_odds_blend": {
+            "n": 1346,
+            "brier": 0.1071,
+            "logloss": 0.3813,
+            "ece": 0.2819,
+            "curve": [
+              {
+                "bin": "0.10-0.20",
+                "n": 342,
+                "mean_pred": 0.171,
+                "actual_rate": 0.0
+              },
+              {
+                "bin": "0.20-0.30",
+                "n": 283,
+                "mean_pred": 0.2551,
+                "actual_rate": 0.0071
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 500,
+                "mean_pred": 0.3384,
+                "actual_rate": 0.018
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 131,
+                "mean_pred": 0.4464,
+                "actual_rate": 0.0534
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 67,
+                "mean_pred": 0.542,
+                "actual_rate": 0.0896
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 20,
+                "mean_pred": 0.6294,
+                "actual_rate": 0.2
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 3,
+                "mean_pred": 0.7153,
+                "actual_rate": 0.6667
+              }
+            ]
+          },
+          "market_adjusted_ml": {
+            "n": 1346,
+            "brier": 0.2352,
+            "logloss": 0.6927,
+            "ece": 0.4382,
+            "curve": [
+              {
+                "bin": "0.20-0.30",
+                "n": 387,
+                "mean_pred": 0.2546,
+                "actual_rate": 0.0
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 134,
+                "mean_pred": 0.3385,
+                "actual_rate": 0.0075
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 265,
+                "mean_pred": 0.4715,
+                "actual_rate": 0.0151
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 311,
+                "mean_pred": 0.5388,
+                "actual_rate": 0.0193
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 107,
+                "mean_pred": 0.6408,
+                "actual_rate": 0.0654
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 79,
+                "mean_pred": 0.7488,
+                "actual_rate": 0.0127
+              },
+              {
+                "bin": "0.80-0.90",
+                "n": 37,
+                "mean_pred": 0.8448,
+                "actual_rate": 0.1351
+              },
+              {
+                "bin": "0.90-1.00",
+                "n": 26,
+                "mean_pred": 0.9409,
+                "actual_rate": 0.2308
+              }
+            ]
+          }
+        },
+        "calibrated": {},
+        "ranking_by_track": {
+          "ml_only": {
+            "fixtures_evaluated": 30,
+            "top1_hit": 0.2333,
+            "top3_hit": 0.4333,
+            "top5_hit": 0.5333,
+            "overlap_top3_rate": 0.8667,
+            "disagreement_top3_rate": 0.1333,
+            "ml_only_hit_rate": 0.1,
+            "bookmaker_only_hit_rate": 0.1,
+            "combined_signal_hit_rate": 0.3333
+          },
+          "odds_only": {
+            "fixtures_evaluated": 30,
+            "top1_hit": 0.3,
+            "top3_hit": 0.4333,
+            "top5_hit": 0.4667,
+            "overlap_top3_rate": 0.8667,
+            "disagreement_top3_rate": 0.1333,
+            "ml_only_hit_rate": 0.1,
+            "bookmaker_only_hit_rate": 0.1,
+            "combined_signal_hit_rate": 0.3333
+          },
+          "ml_odds_blend": {
+            "fixtures_evaluated": 30,
+            "top1_hit": 0.2333,
+            "top3_hit": 0.5,
+            "top5_hit": 0.5667,
+            "overlap_top3_rate": 0.8667,
+            "disagreement_top3_rate": 0.1333,
+            "ml_only_hit_rate": 0.1,
+            "bookmaker_only_hit_rate": 0.1,
+            "combined_signal_hit_rate": 0.3333
+          },
+          "market_adjusted_ml": {
+            "fixtures_evaluated": 30,
+            "top1_hit": 0.2333,
+            "top3_hit": 0.4333,
+            "top5_hit": 0.5667,
+            "overlap_top3_rate": 0.8667,
+            "disagreement_top3_rate": 0.1333,
+            "ml_only_hit_rate": 0.1,
+            "bookmaker_only_hit_rate": 0.1,
+            "combined_signal_hit_rate": 0.3333
+          }
+        },
+        "ml_beats_odds_top3": false,
+        "blend_beats_ml_top3": true
+      },
+      "comparison": {
+        "status": "ok",
+        "rows": 1346,
+        "fixtures": 47,
+        "metrics": {
+          "ml_probability": {
+            "fixtures_evaluated": 30,
+            "top1_hit": 0.2333,
+            "top3_hit": 0.4333,
+            "top5_hit": 0.5333,
+            "overlap_top3_rate": 0.8667,
+            "disagreement_top3_rate": 0.1333,
+            "ml_only_hit_rate": 0.1,
+            "bookmaker_only_hit_rate": 0.1,
+            "combined_signal_hit_rate": 0.3333
+          },
+          "implied_probability": {
+            "fixtures_evaluated": 30,
+            "top1_hit": 0.3,
+            "top3_hit": 0.4333,
+            "top5_hit": 0.4667,
+            "overlap_top3_rate": 0.8667,
+            "disagreement_top3_rate": 0.1333,
+            "ml_only_hit_rate": 0.1,
+            "bookmaker_only_hit_rate": 0.1,
+            "combined_signal_hit_rate": 0.3333
+          },
+          "ml_odds_blend": {
+            "fixtures_evaluated": 30,
+            "top1_hit": 0.2333,
+            "top3_hit": 0.5,
+            "top5_hit": 0.5667,
+            "overlap_top3_rate": 0.8667,
+            "disagreement_top3_rate": 0.1333,
+            "ml_only_hit_rate": 0.1,
+            "bookmaker_only_hit_rate": 0.1,
+            "combined_signal_hit_rate": 0.3333
+          },
+          "market_adjusted_ml": {
+            "fixtures_evaluated": 30,
+            "top1_hit": 0.2333,
+            "top3_hit": 0.4333,
+            "top5_hit": 0.5667,
+            "overlap_top3_rate": 0.8667,
+            "disagreement_top3_rate": 0.1333,
+            "ml_only_hit_rate": 0.1,
+            "bookmaker_only_hit_rate": 0.1,
+            "combined_signal_hit_rate": 0.3333
+          }
+        }
+      },
+      "rows": 1346,
+      "fixtures": 47
+    },
+    "most_likely": {
+      "ranking": {
+        "ml_only": {
+          "fixtures_evaluated": 35,
+          "top1_hit": 0.3143,
+          "top3_hit": 0.5714,
+          "top5_hit": 0.6857,
+          "overlap_top3_rate": 0.8857,
+          "disagreement_top3_rate": 0.1143,
+          "ml_only_hit_rate": 0.0857,
+          "bookmaker_only_hit_rate": 0.2,
+          "combined_signal_hit_rate": 0.4857
+        },
+        "odds_only": {
+          "fixtures_evaluated": 35,
+          "top1_hit": 0.4857,
+          "top3_hit": 0.6857,
+          "top5_hit": 0.7714,
+          "overlap_top3_rate": 0.8857,
+          "disagreement_top3_rate": 0.1143,
+          "ml_only_hit_rate": 0.0857,
+          "bookmaker_only_hit_rate": 0.2,
+          "combined_signal_hit_rate": 0.4857
+        },
+        "ml_odds_blend": {
+          "fixtures_evaluated": 35,
+          "top1_hit": 0.3714,
+          "top3_hit": 0.6571,
+          "top5_hit": 0.7429,
+          "overlap_top3_rate": 0.8857,
+          "disagreement_top3_rate": 0.1143,
+          "ml_only_hit_rate": 0.0857,
+          "bookmaker_only_hit_rate": 0.2,
+          "combined_signal_hit_rate": 0.4857
+        }
+      },
+      "calibration": {
+        "status": "ok",
+        "raw": {
+          "ml_only": {
+            "n": 1346,
+            "brier": 0.2276,
+            "logloss": 0.6551,
+            "ece": 0.4287,
+            "curve": [
+              {
+                "bin": "0.20-0.30",
+                "n": 393,
+                "mean_pred": 0.2528,
+                "actual_rate": 0.0025
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 131,
+                "mean_pred": 0.3365,
+                "actual_rate": 0.0153
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 286,
+                "mean_pred": 0.4706,
+                "actual_rate": 0.0105
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 299,
+                "mean_pred": 0.5387,
+                "actual_rate": 0.0167
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 106,
+                "mean_pred": 0.6431,
+                "actual_rate": 0.0755
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 78,
+                "mean_pred": 0.7485,
+                "actual_rate": 0.0769
+              },
+              {
+                "bin": "0.80-0.90",
+                "n": 37,
+                "mean_pred": 0.8508,
+                "actual_rate": 0.1081
+              },
+              {
+                "bin": "0.90-1.00",
+                "n": 16,
+                "mean_pred": 0.9351,
+                "actual_rate": 0.375
+              }
+            ]
+          },
+          "odds_only": {
+            "n": 1346,
+            "brier": 0.0561,
+            "logloss": 0.2329,
+            "ece": 0.1588,
+            "curve": [
+              {
+                "bin": "0.00-0.10",
+                "n": 406,
+                "mean_pred": 0.0698,
+                "actual_rate": 0.0
+              },
+              {
+                "bin": "0.10-0.20",
+                "n": 469,
+                "mean_pred": 0.141,
+                "actual_rate": 0.0107
+              },
+              {
+                "bin": "0.20-0.30",
+                "n": 236,
+                "mean_pred": 0.2424,
+                "actual_rate": 0.0297
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 127,
+                "mean_pred": 0.3427,
+                "actual_rate": 0.0472
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 70,
+                "mean_pred": 0.4438,
+                "actual_rate": 0.1143
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 28,
+                "mean_pred": 0.5485,
+                "actual_rate": 0.1429
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 9,
+                "mean_pred": 0.6467,
+                "actual_rate": 0.4444
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 1,
+                "mean_pred": 0.7195,
+                "actual_rate": 1.0
+              }
+            ]
+          },
+          "ml_odds_blend": {
+            "n": 1346,
+            "brier": 0.1334,
+            "logloss": 0.4423,
+            "ece": 0.3206,
+            "curve": [
+              {
+                "bin": "0.10-0.20",
+                "n": 184,
+                "mean_pred": 0.1811,
+                "actual_rate": 0.0
+              },
+              {
+                "bin": "0.20-0.30",
+                "n": 277,
+                "mean_pred": 0.2412,
+                "actual_rate": 0.0036
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 526,
+                "mean_pred": 0.3457,
+                "actual_rate": 0.0095
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 196,
+                "mean_pred": 0.4424,
+                "actual_rate": 0.0306
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 99,
+                "mean_pred": 0.5454,
+                "actual_rate": 0.0909
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 41,
+                "mean_pred": 0.6456,
+                "actual_rate": 0.1707
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 19,
+                "mean_pred": 0.7371,
+                "actual_rate": 0.2632
+              },
+              {
+                "bin": "0.80-0.90",
+                "n": 4,
+                "mean_pred": 0.8423,
+                "actual_rate": 0.5
+              }
+            ]
+          },
+          "market_adjusted_ml": {
+            "n": 1346,
+            "brier": 0.241,
+            "logloss": 0.726,
+            "ece": 0.442,
+            "curve": [
+              {
+                "bin": "0.20-0.30",
+                "n": 379,
+                "mean_pred": 0.257,
+                "actual_rate": 0.0026
+              },
+              {
+                "bin": "0.30-0.40",
+                "n": 134,
+                "mean_pred": 0.3389,
+                "actual_rate": 0.0075
+              },
+              {
+                "bin": "0.40-0.50",
+                "n": 244,
+                "mean_pred": 0.4717,
+                "actual_rate": 0.0123
+              },
+              {
+                "bin": "0.50-0.60",
+                "n": 319,
+                "mean_pred": 0.5387,
+                "actual_rate": 0.0157
+              },
+              {
+                "bin": "0.60-0.70",
+                "n": 119,
+                "mean_pred": 0.6398,
+                "actual_rate": 0.0588
+              },
+              {
+                "bin": "0.70-0.80",
+                "n": 77,
+                "mean_pred": 0.7525,
+                "actual_rate": 0.0519
+              },
+              {
+                "bin": "0.80-0.90",
+                "n": 41,
+                "mean_pred": 0.8445,
+                "actual_rate": 0.1463
+              },
+              {
+                "bin": "0.90-1.00",
+                "n": 33,
+                "mean_pred": 0.9553,
+                "actual_rate": 0.2424
+              }
+            ]
+          }
+        },
+        "calibrated": {},
+        "ranking_by_track": {
+          "ml_only": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.3143,
+            "top3_hit": 0.5714,
+            "top5_hit": 0.6857,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.0857,
+            "bookmaker_only_hit_rate": 0.2,
+            "combined_signal_hit_rate": 0.4857
+          },
+          "odds_only": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.4857,
+            "top3_hit": 0.6857,
+            "top5_hit": 0.7714,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.0857,
+            "bookmaker_only_hit_rate": 0.2,
+            "combined_signal_hit_rate": 0.4857
+          },
+          "ml_odds_blend": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.3714,
+            "top3_hit": 0.6571,
+            "top5_hit": 0.7429,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.0857,
+            "bookmaker_only_hit_rate": 0.2,
+            "combined_signal_hit_rate": 0.4857
+          },
+          "market_adjusted_ml": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.3143,
+            "top3_hit": 0.5714,
+            "top5_hit": 0.7143,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.0857,
+            "bookmaker_only_hit_rate": 0.2,
+            "combined_signal_hit_rate": 0.4857
+          }
+        },
+        "ml_beats_odds_top3": false,
+        "blend_beats_ml_top3": true
+      },
+      "comparison": {
+        "status": "ok",
+        "rows": 1346,
+        "fixtures": 47,
+        "metrics": {
+          "ml_probability": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.3143,
+            "top3_hit": 0.5714,
+            "top5_hit": 0.6857,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.0857,
+            "bookmaker_only_hit_rate": 0.2,
+            "combined_signal_hit_rate": 0.4857
+          },
+          "implied_probability": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.4857,
+            "top3_hit": 0.6857,
+            "top5_hit": 0.7714,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.0857,
+            "bookmaker_only_hit_rate": 0.2,
+            "combined_signal_hit_rate": 0.4857
+          },
+          "ml_odds_blend": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.3714,
+            "top3_hit": 0.6571,
+            "top5_hit": 0.7429,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.0857,
+            "bookmaker_only_hit_rate": 0.2,
+            "combined_signal_hit_rate": 0.4857
+          },
+          "market_adjusted_ml": {
+            "fixtures_evaluated": 35,
+            "top1_hit": 0.3143,
+            "top3_hit": 0.5714,
+            "top5_hit": 0.7143,
+            "overlap_top3_rate": 0.8857,
+            "disagreement_top3_rate": 0.1143,
+            "ml_only_hit_rate": 0.0857,
+            "bookmaker_only_hit_rate": 0.2,
+            "combined_signal_hit_rate": 0.4857
+          }
+        }
+      },
+      "rows": 1346,
+      "fixtures": 47
+    }
+  }
+}

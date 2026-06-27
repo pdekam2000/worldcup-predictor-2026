@@ -1,0 +1,221 @@
+{
+  "generated_at": "2026-06-25T06:15:53.081203Z",
+  "disclaimer": "Research stats, not betting advice.",
+  "first_goal_distribution": {
+    "first_goal_1_30_pct": 62.02,
+    "first_goal_31_plus_pct": 37.98,
+    "no_goal_pct": 12.5,
+    "sample_size_with_goal": 903,
+    "sample_size_reliable": 1032,
+    "last_updated": "2026-06-25T06:15:53.081203Z"
+  },
+  "bucket_distribution": {
+    "counts": {
+      "1-15": 322,
+      "16-30": 238,
+      "31-45+": 159,
+      "46-60": 86,
+      "61-75": 58,
+      "76-90+": 40,
+      "no_goal": 129,
+      "data_missing": 0
+    },
+    "pct_of_reliable": {
+      "1-15": 31.2,
+      "16-30": 23.06,
+      "31-45+": 15.41,
+      "46-60": 8.33,
+      "61-75": 5.62,
+      "76-90+": 3.88,
+      "no_goal": 12.5
+    }
+  },
+  "odds_bucket_stats": {
+    "1.01-1.20": {
+      "match_count": 0
+    },
+    "1.21-1.40": {
+      "match_count": 1,
+      "favorite_win_pct": 100.0,
+      "draw_pct": 0.0,
+      "underdog_win_pct": 0.0,
+      "over_25_pct": 0.0,
+      "under_25_pct": 100.0,
+      "btts_yes_pct": 0.0,
+      "btts_no_pct": 100.0,
+      "first_goal_1_30_pct": null,
+      "first_goal_31_plus_pct": null,
+      "no_goal_pct": 0.0,
+      "avg_goals": 2.0,
+      "favorite_blind_roi_pct": 39.0,
+      "with_goal_sample": 0
+    },
+    "1.41-1.60": {
+      "match_count": 0
+    },
+    "1.61-1.80": {
+      "match_count": 1,
+      "favorite_win_pct": 0.0,
+      "draw_pct": 100.0,
+      "underdog_win_pct": 0.0,
+      "over_25_pct": 0.0,
+      "under_25_pct": 100.0,
+      "btts_yes_pct": 100.0,
+      "btts_no_pct": 0.0,
+      "first_goal_1_30_pct": null,
+      "first_goal_31_plus_pct": null,
+      "no_goal_pct": 0.0,
+      "avg_goals": 2.0,
+      "favorite_blind_roi_pct": -100.0,
+      "with_goal_sample": 0
+    },
+    "1.81-2.00": {
+      "match_count": 1,
+      "favorite_win_pct": 100.0,
+      "draw_pct": 0.0,
+      "underdog_win_pct": 0.0,
+      "over_25_pct": 100.0,
+      "under_25_pct": 0.0,
+      "btts_yes_pct": 100.0,
+      "btts_no_pct": 0.0,
+      "first_goal_1_30_pct": null,
+      "first_goal_31_plus_pct": null,
+      "no_goal_pct": 0.0,
+      "avg_goals": 5.0,
+      "favorite_blind_roi_pct": 99.0,
+      "with_goal_sample": 0
+    },
+    "2.01-2.50": {
+      "match_count": 1,
+      "favorite_win_pct": 100.0,
+      "draw_pct": 0.0,
+      "underdog_win_pct": 0.0,
+      "over_25_pct": 100.0,
+      "under_25_pct": 0.0,
+      "btts_yes_pct": 100.0,
+      "btts_no_pct": 0.0,
+      "first_goal_1_30_pct": null,
+      "first_goal_31_plus_pct": null,
+      "no_goal_pct": 0.0,
+      "avg_goals": 3.0,
+      "favorite_blind_roi_pct": 150.0,
+      "with_goal_sample": 0
+    },
+    "2.51-3.00": {
+      "match_count": 0
+    },
+    "3.01+": {
+      "match_count": 0
+    }
+  },
+  "ou_bucket_stats": {
+    "1.01-1.50": {
+      "match_count": 4,
+      "over_25_hit_rate_pct": 50.0,
+      "avg_implied_over_prob": 0.5233,
+      "actual_over_prob": 0.5,
+      "edge_estimate": -0.0233
+    },
+    "1.51-1.80": {
+      "match_count": 0
+    },
+    "1.81-2.10": {
+      "match_count": 0
+    },
+    "2.11-2.50": {
+      "match_count": 0
+    },
+    "2.51+": {
+      "match_count": 0
+    }
+  },
+  "data_quality": {
+    "reliable_fixtures": 1032,
+    "excluded_fixtures": 781,
+    "api_calls_used": 0,
+    "fixtures_backfilled": 100,
+    "coverage_warning": "Large share of finished fixtures may still lack goal-event timing until backfill expands.",
+    "comparison": {
+      "reliable_fixtures_before": 632,
+      "reliable_fixtures_after": 1032,
+      "reliable_delta": 400,
+      "excluded_before": 1181,
+      "excluded_after": 781,
+      "excluded_delta": -400,
+      "with_goal_before": 503,
+      "with_goal_after": 903,
+      "pct_1_30_with_goal_before": 61.23,
+      "pct_1_30_with_goal_after": 62.02,
+      "pct_31_plus_with_goal_before": 38.77,
+      "pct_31_plus_with_goal_after": 37.98,
+      "pct_no_goal_before": 20.41,
+      "pct_no_goal_after": 12.5,
+      "bucket_counts_before": {
+        "1-15": 175,
+        "16-30": 133,
+        "31-45+": 78,
+        "46-60": 54,
+        "61-75": 31,
+        "76-90+": 32,
+        "no_goal": 129,
+        "data_missing": 0
+      },
+      "bucket_counts_after": {
+        "1-15": 322,
+        "16-30": 238,
+        "31-45+": 159,
+        "46-60": 86,
+        "61-75": 58,
+        "76-90+": 40,
+        "no_goal": 129,
+        "data_missing": 0
+      }
+    }
+  },
+  "autonomous_stats": {
+    "rolling_30d_production_winrate": null,
+    "rolling_30d_production_evaluated": 0,
+    "rolling_30d_elite_winrate": null,
+    "rolling_30d_elite_evaluated": 0,
+    "latest_certification": {
+      "production_evaluated": 0,
+      "production_winrate": null,
+      "elite_evaluated": 0,
+      "elite_winrate": null,
+      "production_certification": "BLOCKED",
+      "elite_certification": "BLOCKED",
+      "thresholds": {
+        "PRODUCTION_READY": {
+          "min_evaluated": 30,
+          "min_winrate": 0.52
+        },
+        "PAPER_READY": {
+          "min_evaluated": 15,
+          "min_winrate": 0.48
+        },
+        "RESEARCH_ONLY": {
+          "min_evaluated": 5,
+          "min_winrate": 0.0
+        }
+      },
+      "coverage": {
+        "markets_tracked": [
+          "1x2",
+          "double_chance",
+          "btts",
+          "over_under_2_5",
+          "correct_score",
+          "goal_timing",
+          "first_goal_team",
+          "team_to_score_first",
+          "goalscorer"
+        ],
+        "engines_tracked": [
+          "production",
+          "elite_shadow"
+        ]
+      }
+    },
+    "disclaimer": "Research statistics from autonomous shadow tracking. Not betting advice."
+  }
+}

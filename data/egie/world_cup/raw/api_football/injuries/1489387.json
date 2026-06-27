@@ -1,0 +1,43 @@
+{
+  "provider": "api_football",
+  "resource_type": "injuries",
+  "fixture_id": 1489387,
+  "saved_at": "2026-06-26T14:45:56.491455+00:00",
+  "payload": [
+    {
+      "player": {
+        "id": 18938,
+        "name": "A. Jones",
+        "photo": "https://media.api-sports.io/football/players/18938.png",
+        "type": "Missing Fixture",
+        "reason": "Muscle Bruise"
+      },
+      "team": {
+        "id": 5529,
+        "name": "Canada",
+        "logo": "https://media.api-sports.io/football/teams/5529.png"
+      },
+      "fixture": {
+        "id": 1489387,
+        "timezone": "UTC",
+        "date": "2026-06-18T22:00:00+00:00",
+        "timestamp": 1781820000
+      },
+      "league": {
+        "id": 1,
+        "season": 2026,
+        "name": "World Cup",
+        "country": "World",
+        "logo": "https://media.api-sports.io/football/leagues/1.png",
+        "flag": null
+      }
+    }
+  ],
+  "meta": {
+    "request_endpoint": "/fixtures/injuries",
+    "source": "live",
+    "competition_key": "world_cup_2026",
+    "season": 2026,
+    "league_id": 1
+  }
+}

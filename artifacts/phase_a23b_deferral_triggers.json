@@ -1,0 +1,29 @@
+{
+  "status": "DEFERRED",
+  "a23b": "DEFERRED_READY",
+  "triggers": {
+    "evaluated_fixtures_gte_100": {
+      "met": false,
+      "current": 19,
+      "required": 100
+    },
+    "wc_historical_timing_dataset": {
+      "met": false,
+      "finished_matches": 5,
+      "with_goal_events": 0,
+      "with_first_goal_minute": 0,
+      "note": "met when >=20 finished WC matches, >=50% with goal events, >=10 with FG minute"
+    },
+    "national_team_egie_coverage_gt_70pct": {
+      "met": false,
+      "current_pct": 0.0,
+      "required_pct": 70.0,
+      "proxy": "world_cup_2026 goal_event_coverage_pct"
+    }
+  },
+  "context": {
+    "predops_latest_snapshots": 0,
+    "priority_note": "Model Center, certification, results, archive, evaluation, stability first"
+  },
+  "reopen_eligible": false
+}

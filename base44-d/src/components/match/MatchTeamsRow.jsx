@@ -10,6 +10,8 @@ export default function MatchTeamsRow({
   awayTeam,
   homeLogo = null,
   awayLogo = null,
+  homeTeamId = null,
+  awayTeamId = null,
   countryHint = null,
   size = "md",
   className = "",
@@ -21,6 +23,7 @@ export default function MatchTeamsRow({
         <TeamBadge
           teamName={homeTeam}
           logoUrl={homeLogo}
+          teamId={homeTeamId}
           countryHint={countryHint}
           size={size}
         />
@@ -41,6 +44,7 @@ export default function MatchTeamsRow({
         <TeamBadge
           teamName={awayTeam}
           logoUrl={awayLogo}
+          teamId={awayTeamId}
           countryHint={countryHint}
           size={size}
         />

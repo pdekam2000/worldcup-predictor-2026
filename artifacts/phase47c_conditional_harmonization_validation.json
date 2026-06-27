@@ -1,0 +1,82 @@
+{
+  "phase": "47C",
+  "passed": 15,
+  "total": 15,
+  "checks": [
+    {
+      "name": "rule_a_keeps_wde_without_odds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_a_scoreline_with_odds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "harmonize_rule_a_1x2_preserved",
+      "ok": true,
+      "detail": "home_win"
+    },
+    {
+      "name": "harmonize_ou_still_applied",
+      "ok": true,
+      "detail": "under_2_5"
+    },
+    {
+      "name": "telemetry_fields_present",
+      "ok": true,
+      "detail": "rule_a_odds_absent"
+    },
+    {
+      "name": "ou_consistent_when_1x2_skipped",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "unconditional_still_forces_draw",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "replay_dataset_loaded",
+      "ok": true,
+      "detail": "207"
+    },
+    {
+      "name": "replay_current_accuracy",
+      "ok": true,
+      "detail": "30.0%"
+    },
+    {
+      "name": "replay_wde_accuracy",
+      "ok": true,
+      "detail": "34.8%"
+    },
+    {
+      "name": "replay_rule_a_accuracy",
+      "ok": true,
+      "detail": "36.7%"
+    },
+    {
+      "name": "override_rate_reduced",
+      "ok": true,
+      "detail": "before=91.8% after~=4.3%"
+    },
+    {
+      "name": "harmful_overrides_reduced",
+      "ok": true,
+      "detail": "before=63 after=1"
+    },
+    {
+      "name": "beneficial_odds_cohort_preserved",
+      "ok": true,
+      "detail": "odds_helpful=5/5 total_helpful=53"
+    },
+    {
+      "name": "default_rule_a_mode_active",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

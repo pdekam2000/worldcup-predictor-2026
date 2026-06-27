@@ -162,10 +162,9 @@ export default function OwnerAutonomousPage() {
             <p>Pending evaluations: {(report.evaluation || {}).pending ?? "—"}</p>
             <p>API calls: {report.api_calls_used ?? "—"}</p>
             <p>Errors: {(report.predictions || {}).errors ?? 0}</p>
+            <p>Cycle status: {report.status ?? "—"}</p>
+            <p>Duration: {report.duration_seconds != null ? `${report.duration_seconds}s` : "—"}</p>
           </div>
-          <pre className="text-xs overflow-auto max-h-64 text-[#94A3B8]">
-            {JSON.stringify(report, null, 2)}
-          </pre>
         </IntelligenceCard>
       )}
     </div>

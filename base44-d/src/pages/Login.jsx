@@ -9,6 +9,7 @@ import PasswordInput from "@/components/auth/PasswordInput";
 import AuthLayout from "@/components/AuthLayout";
 import { LogIn, Mail, Loader2, Lock } from "lucide-react";
 import { postLoginPath } from "@/lib/roles";
+import { TRUST_RESEARCH_ONLY } from "@/lib/trustCopy";
 
 export default function Login() {
   const { login } = useAuth();
@@ -98,7 +99,7 @@ export default function Login() {
       }
     >
       <p className="text-center text-xs text-muted-foreground mb-6">
-        Google login coming soon.
+        {TRUST_RESEARCH_ONLY} Google login coming soon.
       </p>
 
       {infoMessage && (

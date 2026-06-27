@@ -13,6 +13,7 @@ from worldcup_predictor.goal_timing.minute_display import (
     display_estimated_first_goal_minute,
     weighted_average_minute,
 )
+from worldcup_predictor.goal_timing.bucket_selection import pick_goal_time_range
 
 AGENT_RANGE_WEIGHTS: dict[str, float] = {
     "goal_timing_pattern": 0.40,
@@ -46,10 +47,12 @@ class GoalTimingBaselineModel:
         match_range = self._normalize(self._blend_dicts([blended_match, agent_shift], weights=[0.85, 0.15]))
 
         first_goal_team = self._pick_first_goal_team(features, agent_outputs)
-        first_goal_time_range = max(GOAL_TIMING_MINUTE_RANGES, key=lambda k: match_range.get(k, 0.0))
+        first_goal_time_range, bucket_is_default, bucket_reason = pick_goal_time_range(match_range)
         wavg = weighted_average_minute(match_range)
-        bucket_minute = bucket_representative_minute(first_goal_time_range)
-        display_minute = display_estimated_first_goal_minute(first_goal_time_range)
+        bucket_minute = bucket_representative_minute(first_goal_time_range) if first_goal_time_range else None
+        display_minute = (
+            display_estimated_first_goal_minute(first_goal_time_range) if first_goal_time_range else None
+        )
 
         home_scored = self._team_scoring_range(features, side="home")
         away_scored = self._team_scoring_range(features, side="away")
@@ -64,6 +67,9 @@ class GoalTimingBaselineModel:
         return {
             "first_goal_team": first_goal_team,
             "first_goal_time_range": first_goal_time_range,
+            "bucket_is_default": bucket_is_default,
+            "bucket_reason": bucket_reason,
+            "bucket_source": "fallback" if bucket_is_default else "model_output",
             "weighted_average_minute": wavg,
             "bucket_representative_minute": bucket_minute,
             "display_estimated_first_goal_minute": display_minute,

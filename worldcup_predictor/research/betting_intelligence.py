@@ -16,6 +16,7 @@ BetLabel = Literal[
     "VALUE_CANDIDATE",
     "WATCH_ONLY",
     "NO_BET",
+    "NO_ODDS_AVAILABLE",
     "INSUFFICIENT_ODDS",
     "INSUFFICIENT_MODEL_CONFIDENCE",
     "DATA_QUALITY_BLOCKED",
@@ -149,8 +150,12 @@ def analyze_snapshot_row(
         pass  # owner research only — still analyze for owner dashboard
 
     if odds_f is None or implied is None:
-        label = "INSUFFICIENT_ODDS"
-        reasons.append("Missing or invalid bookmaker odds")
+        label = "NO_ODDS_AVAILABLE" if odds_f is None else "INSUFFICIENT_ODDS"
+        reasons.append(
+            "No bookmaker odds ingested for this fixture"
+            if odds_f is None
+            else "Bookmaker odds below minimum threshold"
+        )
     elif model_p is None:
         label = "INSUFFICIENT_MODEL_CONFIDENCE"
         reasons.append("Model probability unavailable")
@@ -224,6 +229,187 @@ def analyze_sample_odds(
     return analyze_snapshot_row(snap, config=config).to_dict()
 
 
+def _market_key_for_snapshot(market_id: str) -> str:
+    mid = (market_id or "1x2").lower()
+    if mid in ("1x2", "match_winner"):
+        return "1x2"
+    return mid
+
+
+def _count_bookmakers_from_payload(payload: dict[str, Any] | None) -> int:
+    if not payload:
+        return 0
+    bi = payload.get("betting_intelligence") or {}
+    if isinstance(bi.get("bookmaker_count"), (int, float)):
+        return int(bi["bookmaker_count"])
+    odds_block = payload.get("odds") or payload.get("bookmakers") or []
+    if isinstance(odds_block, list):
+        names = {
+            str((row.get("bookmaker") or {}).get("name") or row.get("bookmaker") or "")
+            for row in odds_block
+            if isinstance(row, dict)
+        }
+        names.discard("")
+        if names:
+            return len(names)
+    ranking = payload.get("market_ranking") or []
+    books = {
+        str(row.get("bookmaker") or "")
+        for row in ranking
+        if isinstance(row, dict) and row.get("bookmaker")
+    }
+    books.discard("")
+    return len(books)
+
+
+def _enrich_snapshot_odds(
+    snap: dict[str, Any],
+    *,
+    predops_cache: dict[int, dict[str, Any] | None],
+    stored_cache: dict[int, dict[str, Any] | None],
+) -> tuple[dict[str, Any], int]:
+    """Attach odds from PredOps / stored predictions when snapshot lacks them."""
+    enriched = dict(snap)
+    bookmaker_count = 0
+    if enriched.get("odds_decimal") is not None:
+        return enriched, bookmaker_count
+
+    fid = int(enriched.get("fixture_id") or 0)
+    market_key = _market_key_for_snapshot(str(enriched.get("market_id") or "1x2"))
+
+    if fid and fid not in predops_cache:
+        try:
+            from worldcup_predictor.predops.store import PredOpsStore
+
+            predops_cache[fid] = PredOpsStore().get_latest_snapshot(fid)
+        except Exception:
+            predops_cache[fid] = None
+
+    predops_snap = predops_cache.get(fid) if fid else None
+    predops_payload = (predops_snap or {}).get("payload") or {}
+    bookmaker_count = max(bookmaker_count, _count_bookmakers_from_payload(predops_payload))
+
+    if predops_payload:
+        from worldcup_predictor.betting_plan.legs import _odds_decimal
+
+        odds = _odds_decimal(predops_payload, market_key)
+        if odds is not None:
+            enriched["odds_decimal"] = odds
+            enriched["odds_source"] = "predops"
+            return enriched, bookmaker_count
+
+    if fid and fid not in stored_cache:
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+            repo = FootballIntelligenceRepository()
+            row = repo.get_worldcup_stored_prediction(fid)
+            stored_cache[fid] = None
+            if row:
+                raw = row.get("payload_json")
+                stored_cache[fid] = json.loads(raw) if isinstance(raw, str) else raw
+            repo.close()
+        except Exception:
+            stored_cache[fid] = None
+
+    stored_payload = stored_cache.get(fid) if fid else None
+    if isinstance(stored_payload, dict):
+        bookmaker_count = max(bookmaker_count, _count_bookmakers_from_payload(stored_payload))
+        if enriched.get("odds_decimal") is None:
+            from worldcup_predictor.betting_plan.legs import _odds_decimal
+
+            odds = _odds_decimal(stored_payload, market_key)
+            if odds is not None:
+                enriched["odds_decimal"] = odds
+                enriched["odds_source"] = "stored_prediction"
+
+    return enriched, bookmaker_count
+
+
+def _build_ev_pipeline_audit(rows: list[dict[str, Any]], ev_buckets: dict[str, int]) -> dict[str, Any]:
+    label_counts: dict[str, int] = {}
+    for r in rows:
+        label = str(r.get("label") or "unknown")
+        label_counts[label] = label_counts.get(label, 0) + 1
+
+    no_odds = label_counts.get("NO_ODDS_AVAILABLE", 0)
+    low_conf = label_counts.get("INSUFFICIENT_MODEL_CONFIDENCE", 0)
+    with_odds = sum(1 for r in rows if r.get("odds_decimal") is not None)
+    with_ev = sum(1 for r in rows if r.get("ev") is not None)
+
+    root_cause = "unknown"
+    detail = "EV could not be computed for analyzed rows."
+    if rows and ev_buckets.get("unknown", 0) == len(rows):
+        if no_odds == len(rows):
+            root_cause = "missing_odds"
+            detail = "All rows lack ingested bookmaker odds (autonomous snapshots + PredOps enrichment)."
+        elif no_odds + low_conf >= len(rows) * 0.8:
+            root_cause = "missing_odds_and_low_confidence"
+            detail = "Primary blockers: missing odds and/or model confidence below threshold."
+        elif low_conf > no_odds:
+            root_cause = "low_model_confidence"
+            detail = f"Model confidence below minimum ({MIN_MODEL_CONFIDENCE})."
+        elif no_odds > 0:
+            root_cause = "missing_odds"
+            detail = f"{no_odds} rows have NO_ODDS_AVAILABLE after PredOps/stored enrichment."
+
+    return {
+        "root_cause": root_cause,
+        "detail": detail,
+        "ev_buckets": ev_buckets,
+        "label_breakdown": label_counts,
+        "rows_with_odds": with_odds,
+        "rows_with_ev": with_ev,
+        "rows_total": len(rows),
+    }
+
+
+def _build_betting_audit(
+    rows: list[dict[str, Any]],
+    *,
+    config: BettingIntelligenceConfig,
+) -> dict[str, Any]:
+    value = sum(1 for r in rows if r.get("label") == "VALUE_CANDIDATE")
+    no_odds = sum(1 for r in rows if r.get("label") == "NO_ODDS_AVAILABLE")
+    positive_edge = sum(1 for r in rows if (r.get("edge") or 0) > 0)
+    above_threshold = sum(
+        1
+        for r in rows
+        if r.get("edge") is not None and r["edge"] >= config.min_edge_for_value and (r.get("ev") or 0) > 0
+    )
+
+    root_cause = "none"
+    detail = "Value candidates found."
+    if value == 0 and len(rows) > 0:
+        if no_odds == len(rows):
+            root_cause = "missing_odds"
+            detail = "102/102 analyzed as no-bet because bookmaker odds are not available on snapshots."
+        elif no_odds >= len(rows) * 0.9:
+            root_cause = "missing_odds"
+            detail = f"{no_odds}/{len(rows)} rows blocked — odds ingestion / bookmaker mapping failure."
+        elif positive_edge > 0 and above_threshold == 0:
+            root_cause = "threshold_too_high"
+            detail = (
+                f"Positive edge on {positive_edge} rows but none meet min_edge={config.min_edge_for_value} "
+                f"and positive EV."
+            )
+        else:
+            root_cause = "no_positive_edge"
+            detail = "Odds present but no row exceeds value threshold with positive EV."
+
+    return {
+        "root_cause": root_cause,
+        "detail": detail,
+        "analyzed": len(rows),
+        "value_candidates": value,
+        "no_odds_available": no_odds,
+        "positive_edge_rows": positive_edge,
+        "above_value_threshold": above_threshold,
+        "min_edge": config.min_edge_for_value,
+        "min_model_confidence": config.min_model_confidence,
+    }
+
+
 def build_betting_intelligence(
     *,
     settings: Settings | None = None,
@@ -231,12 +417,39 @@ def build_betting_intelligence(
     config: BettingIntelligenceConfig | None = None,
 ) -> dict[str, Any]:
     settings = settings or get_settings()
+    cfg = config or BettingIntelligenceConfig()
     store = AutonomousStore(settings)
     snaps = store.list_snapshots(limit=limit)
-    rows = [analyze_snapshot_row(s, config=config).to_dict() for s in snaps]
+    predops_cache: dict[int, dict[str, Any] | None] = {}
+    stored_cache: dict[int, dict[str, Any] | None] = {}
+    bookmaker_counts: list[int] = []
+    rows: list[dict[str, Any]] = []
+    for snap in snaps:
+        enriched, bm_count = _enrich_snapshot_odds(
+            snap,
+            predops_cache=predops_cache,
+            stored_cache=stored_cache,
+        )
+        if bm_count:
+            bookmaker_counts.append(bm_count)
+        row = analyze_snapshot_row(enriched, config=cfg).to_dict()
+        if bm_count:
+            row["bookmaker_count"] = bm_count
+        rows.append(row)
 
     value_candidates = [r for r in rows if r["label"] == "VALUE_CANDIDATE"]
-    no_bet = [r for r in rows if r["label"] in ("NO_BET", "INSUFFICIENT_ODDS", "INSUFFICIENT_MODEL_CONFIDENCE", "DATA_QUALITY_BLOCKED")]
+    no_bet = [
+        r
+        for r in rows
+        if r["label"]
+        in (
+            "NO_BET",
+            "NO_ODDS_AVAILABLE",
+            "INSUFFICIENT_ODDS",
+            "INSUFFICIENT_MODEL_CONFIDENCE",
+            "DATA_QUALITY_BLOCKED",
+        )
+    ]
     watch = [r for r in rows if r["label"] == "WATCH_ONLY"]
 
     ev_buckets: dict[str, int] = {"negative": 0, "zero": 0, "small_positive": 0, "strong_positive": 0, "unknown": 0}
@@ -253,23 +466,36 @@ def build_betting_intelligence(
         else:
             ev_buckets["strong_positive"] += 1
 
+    ev_audit = _build_ev_pipeline_audit(rows, ev_buckets)
+    betting_audit = _build_betting_audit(rows, config=cfg)
+
     return {
         "status": "ok",
         "disclaimer": DISCLAIMER,
         "generated_at": datetime.now(timezone.utc).isoformat() + "Z",
         "config": {
-            "kelly_fraction": (config or BettingIntelligenceConfig()).kelly_fraction,
-            "max_stake_risk": (config or BettingIntelligenceConfig()).max_stake_risk,
+            "kelly_fraction": cfg.kelly_fraction,
+            "max_stake_risk": cfg.max_stake_risk,
+            "min_edge_for_value": cfg.min_edge_for_value,
+            "min_model_confidence": cfg.min_model_confidence,
         },
         "summary": {
             "total_analyzed": len(rows),
             "value_candidates": len(value_candidates),
             "watch_only": len(watch),
             "no_bet": len(no_bet),
+            "no_odds_available": sum(1 for r in rows if r["label"] == "NO_ODDS_AVAILABLE"),
+            "available_bookmakers_avg": round(sum(bookmaker_counts) / len(bookmaker_counts), 1)
+            if bookmaker_counts
+            else 0,
+            "available_bookmakers_max": max(bookmaker_counts) if bookmaker_counts else 0,
+            "fixtures_with_odds": len(bookmaker_counts),
             "ev_buckets": ev_buckets,
         },
         "value_candidates": value_candidates[:50],
         "watch_only": watch[:30],
         "no_bet": no_bet[:50],
         "rows": rows,
+        "ev_pipeline_audit": ev_audit,
+        "audit": betting_audit,
     }

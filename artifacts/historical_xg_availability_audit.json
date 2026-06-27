@@ -1,0 +1,320 @@
+{
+  "generated_at": "2026-06-23T08:47:04.243762+00:00",
+  "cache_scan": {
+    "fixtures_in_cache": 105,
+    "parser_xg_resolved_total": 0,
+    "by_season": {
+      "season_5309": {
+        "checked": 1,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 0,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5308": {
+        "checked": 18,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 1,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5310": {
+        "checked": 3,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 0,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5311": {
+        "checked": 2,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 0,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5313": {
+        "checked": 2,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 0,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5315": {
+        "checked": 4,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 4,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5318": {
+        "checked": 2,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 1,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5321": {
+        "checked": 1,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 1,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5322": {
+        "checked": 2,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 1,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5326": {
+        "checked": 34,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 0,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_18283": {
+        "checked": 35,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 35,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "season_5334": {
+        "checked": 1,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 1,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      }
+    },
+    "by_league": {
+      "champions_league": {
+        "checked": 35,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 8,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "europa_league": {
+        "checked": 35,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 1,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      },
+      "conference_league": {
+        "checked": 35,
+        "xg_type_5304": 0,
+        "xg_block_nonempty": 35,
+        "parser_xg_resolved": 0,
+        "predictions_nonempty": 0
+      }
+    }
+  },
+  "live_probe": {
+    "api_calls": 25,
+    "leagues": [
+      {
+        "competition_key": "champions_league",
+        "league_id": 2,
+        "seasons_probed": [
+          {
+            "bucket": "current",
+            "season_id": 28155,
+            "season_name": "2026/2027",
+            "fixture_list_count": 25,
+            "finished_in_page": 0,
+            "probe_fixture_id": null,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 0,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "previous",
+            "season_id": 25580,
+            "season_name": "2025/2026",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 19427096,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 36,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/19427096",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "older",
+            "season_id": 24218,
+            "season_name": "2000/2001",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 19243405,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 2,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/19243405",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "older",
+            "season_id": 24217,
+            "season_name": "2001/2002",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 19243161,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 0,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/19243161",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          }
+        ]
+      },
+      {
+        "competition_key": "europa_league",
+        "league_id": 5,
+        "seasons_probed": [
+          {
+            "bucket": "current",
+            "season_id": 27913,
+            "season_name": "2026/2027",
+            "fixture_list_count": 25,
+            "finished_in_page": 0,
+            "probe_fixture_id": null,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 0,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "previous",
+            "season_id": 25582,
+            "season_name": "2025/2026",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 19428940,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 40,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/19428940",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "older",
+            "season_id": 24254,
+            "season_name": "2000/2001",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 19251172,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 0,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/19251172",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "older",
+            "season_id": 24253,
+            "season_name": "2001/2002",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 19250885,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 0,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/19250885",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          }
+        ]
+      },
+      {
+        "competition_key": "conference_league",
+        "league_id": 2286,
+        "seasons_probed": [
+          {
+            "bucket": "current",
+            "season_id": 27911,
+            "season_name": "2026/2027",
+            "fixture_list_count": 25,
+            "finished_in_page": 0,
+            "probe_fixture_id": null,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 0,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "previous",
+            "season_id": 25581,
+            "season_name": "2025/2026",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 19427116,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 40,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/19427116",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "older",
+            "season_id": 23616,
+            "season_name": "2024/2025",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 19135061,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 26,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/19135061",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          },
+          {
+            "bucket": "older",
+            "season_id": 21669,
+            "season_name": "2023/2024",
+            "fixture_list_count": 25,
+            "finished_in_page": 25,
+            "probe_fixture_id": 18844463,
+            "xg_available_type_5304": false,
+            "xgfixture_row_count": 34,
+            "parser_home_xg": null,
+            "endpoint": "/fixtures/18844463",
+            "include": "participants;league;venue;state;scores;events.type;events.period;events.player;xGFixture.type;lineups.player;lineups.xGLineup.type;lineups.details.type",
+            "response_structure": "payload.data.xgfixture[] with type_id + location + data.value"
+          }
+        ]
+      },
+      {
+        "competition_key": "uefa_super_cup",
+        "league_id": 1326,
+        "seasons_probed": []
+      }
+    ]
+  },
+  "findings": {
+    "xg_only_recent_seasons": false,
+    "xg_only_completed_fixtures": "Probed finished state_id in {5,7,8}",
+    "xg_season_cutoff": "Available on Europa League 2024/2025 probe; absent on CL/ECL samples and all cached pre-2024 seasons",
+    "alternate_endpoint": "Same /fixtures/{id} with xGFixture.type include; no separate historical xG endpoint found",
+    "parser_misses_lowercase_key": true,
+    "parser_fixed_in_api_j": "parse_uefa_xg now reads lowercase xgfixture type_id 5304"
+  }
+}

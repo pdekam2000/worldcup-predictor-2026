@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "usable_rows_leakage_safe",
+      "pass": true,
+      "detail": "rows=126"
+    },
+    {
+      "name": "usable_rows_have_rolling_xg",
+      "pass": true,
+      "detail": "rolling_xg_5 both sides"
+    },
+    {
+      "name": "no_post_match_xg_columns",
+      "pass": true,
+      "detail": "forbidden_present=[]"
+    }
+  ],
+  "fixtures_audited": 126
+}

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { trackPageView } from "@/lib/analytics";
 import { useLocation, useNavigationType } from "react-router-dom";
 
 const getHashId = (hash) => {
@@ -27,6 +28,7 @@ export default function ScrollToTop() {
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    trackPageView(pathname);
   }, [pathname, hash, navigationType]);
 
   return null;

@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { Menu, ChevronLeft, LogOut, Crown } from "lucide-react";
 import { OWNER_NAV_SECTIONS, isOwnerNavActive } from "@/lib/ownerNavConfig";
+import AppVersionBadge from "@/components/layout/AppVersionBadge";
 
 function OwnerSidebar({ sections, collapsed, mobile, onNavigate, onLogout }) {
   const location = useLocation();
@@ -58,7 +59,7 @@ export default function OwnerLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const pageTitle =
     OWNER_NAV_SECTIONS.flatMap((s) => s.items).find((i) => isOwnerNavActive(location.pathname, i))
@@ -118,7 +119,10 @@ export default function OwnerLayout() {
               <p className="text-[10px] text-[#94A3B8]">Enterprise platform control</p>
             </div>
           </div>
-          <span className="intel-badge-gold hidden sm:inline-flex">OWNER</span>
+          <div className="flex items-center gap-2">
+            <AppVersionBadge user={user} />
+            <span className="intel-badge-gold hidden sm:inline-flex">OWNER</span>
+          </div>
         </header>
         <main className="flex-1 p-4 lg:p-6 overflow-y-auto">
           <Outlet />

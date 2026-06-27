@@ -1,0 +1,113 @@
+{
+  "phase": "54F-4",
+  "prior_coverage": {
+    "54F": {
+      "rolling_xg_available": 4,
+      "usable_rolling_xg_coverage_pct": 5.0
+    },
+    "54F-2": {
+      "rolling_xg_available": 4,
+      "usable_rolling_xg_coverage_pct": 5.0
+    }
+  },
+  "summary": {
+    "uefa_cache_fixtures": 80,
+    "total_records": 9668,
+    "total_summaries": 238,
+    "global_rolling_xg_available": 183,
+    "uefa_rolling_xg_available": 4,
+    "rolling_xg_available": 4,
+    "rolling_xg_3_fixtures": 4,
+    "rolling_xg_5_fixtures": 4,
+    "rolling_xg_10_fixtures": 4,
+    "usable_rolling_xg_coverage_pct": 5.0,
+    "fixtures_with_player_xg": 0,
+    "fixtures_xgot_only": 0
+  },
+  "by_league": {
+    "champions_league": {
+      "league_id": 2,
+      "seasons": [
+        {
+          "season_id": 23619,
+          "summaries": 35,
+          "fixtures_with_team_xg": 35
+        },
+        {
+          "season_id": 25580,
+          "summaries": 45,
+          "fixtures_with_team_xg": 45
+        }
+      ]
+    },
+    "europa_league": {
+      "league_id": 5,
+      "seasons": [
+        {
+          "season_id": 23620,
+          "summaries": 47,
+          "fixtures_with_team_xg": 47
+        },
+        {
+          "season_id": 25582,
+          "summaries": 54,
+          "fixtures_with_team_xg": 54
+        }
+      ]
+    },
+    "world_cup": {
+      "league_id": 732,
+      "seasons": [
+        {
+          "season_id": 26618,
+          "summaries": 45,
+          "fixtures_with_team_xg": 45
+        }
+      ]
+    },
+    "conference_league": {
+      "league_id": 2286,
+      "seasons": [
+        {
+          "season_id": 25581,
+          "summaries": 12,
+          "fixtures_with_team_xg": 12
+        }
+      ]
+    }
+  },
+  "metric_summary": {
+    "team_metric:xgot": 476,
+    "team_metric:shooting_performance": 476,
+    "team_metric:xg_open_play": 476,
+    "team_metric:xg_free_kicks": 234,
+    "team_metric:xg_corners": 458,
+    "team_metric:xg": 476,
+    "team_xg:npxg": 476,
+    "team_xg:xg_corners": 458,
+    "team_metric:npxg": 476,
+    "team_xg:xg_open_play": 476,
+    "team_metric:xgd": 32,
+    "team_xg:shooting_performance": 476,
+    "team_xg:xgot": 476,
+    "team_xg:xga": 476,
+    "team_xg:xg_free_kicks": 234,
+    "team_metric:xg_set_play": 472,
+    "team_metric:xg_prevented": 158,
+    "team_xg:xpts": 476,
+    "team_metric:xpts": 476,
+    "team_xg:xg_prevented": 158,
+    "team_xg:xg_set_play": 472,
+    "team_xg:xgd": 32,
+    "team_metric:xg_penalties": 148,
+    "team_xg:xg": 476,
+    "team_xg:xg_penalties": 148,
+    "team_metric:xga": 476
+  },
+  "manifest_skipped": {
+    "empty:no_true_xg_metrics": 379,
+    "imported": 246
+  },
+  "threshold_met": false,
+  "threshold_target_pct": 30.0
+}

@@ -1,0 +1,2320 @@
+{
+  "status": "completed",
+  "fixtures_scanned": 120,
+  "strategies": {
+    "A": {
+      "label": "baseline_current",
+      "coverage": {
+        "eligible": 93,
+        "with_paid_data": 0
+      },
+      "metrics": {
+        "fixtures_scanned": 93,
+        "published_predictions": 65,
+        "no_pick_count": 28,
+        "evaluable_published": 65,
+        "skipped_not_evaluable": 0,
+        "by_market": {
+          "first_goal_team": {
+            "correct": 4,
+            "wrong": 4,
+            "partial": 0,
+            "pending": 57,
+            "total": 65,
+            "winrate": 0.5,
+            "soft_winrate": 0.5
+          },
+          "goal_range": {
+            "correct": 16,
+            "wrong": 49,
+            "partial": 0,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.2462,
+            "soft_winrate": 0.2462
+          },
+          "goal_minute": {
+            "correct": 0,
+            "wrong": 42,
+            "partial": 23,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.0,
+            "soft_winrate": 0.3538
+          }
+        },
+        "by_league": {
+          "champions_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 4,
+              "wrong": 4,
+              "partial": 0,
+              "pending": 24,
+              "total": 32,
+              "winrate": 0.5,
+              "soft_winrate": 0.5
+            },
+            "goal_range": {
+              "correct": 5,
+              "wrong": 27,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.1562,
+              "soft_winrate": 0.1562
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 22,
+              "partial": 10,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.3125
+            }
+          },
+          "conference_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 0,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 32,
+              "total": 32,
+              "winrate": null,
+              "soft_winrate": null
+            },
+            "goal_range": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          },
+          "europa_league": {
+            "sample_size": 1,
+            "first_goal_team": {
+              "correct": 0,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 1,
+              "total": 1,
+              "winrate": null,
+              "soft_winrate": null
+            },
+            "goal_range": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            }
+          }
+        },
+        "by_dq_bucket": {
+          "first_goal_team": {
+            "dq_0_45_0_55": {
+              "correct": 4,
+              "wrong": 4,
+              "partial": 0,
+              "pending": 25,
+              "total": 33,
+              "winrate": 0.5,
+              "soft_winrate": 0.5
+            },
+            "dq_gte_0_65": {
+              "correct": 0,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 32,
+              "total": 32,
+              "winrate": null,
+              "soft_winrate": null
+            }
+          },
+          "goal_range": {
+            "dq_0_45_0_55": {
+              "correct": 5,
+              "wrong": 28,
+              "partial": 0,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.1515,
+              "soft_winrate": 0.1515
+            },
+            "dq_gte_0_65": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            }
+          },
+          "goal_minute": {
+            "dq_0_45_0_55": {
+              "correct": 0,
+              "wrong": 23,
+              "partial": 10,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.0,
+              "soft_winrate": 0.303
+            },
+            "dq_gte_0_65": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          }
+        },
+        "by_confidence_bucket": {
+          "first_goal_team": {
+            "conf_0_50_0_65": {
+              "correct": 1,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 20,
+              "total": 23,
+              "winrate": 0.3333,
+              "soft_winrate": 0.3333
+            },
+            "conf_gte_0_65": {
+              "correct": 3,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.6,
+              "soft_winrate": 0.6
+            },
+            "conf_lt_0_50": {
+              "correct": 0,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 37,
+              "total": 37,
+              "winrate": null,
+              "soft_winrate": null
+            }
+          },
+          "goal_range": {
+            "conf_0_50_0_65": {
+              "correct": 3,
+              "wrong": 20,
+              "partial": 0,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.1304,
+              "soft_winrate": 0.1304
+            },
+            "conf_gte_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_lt_0_50": {
+              "correct": 11,
+              "wrong": 26,
+              "partial": 0,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.2973,
+              "soft_winrate": 0.2973
+            }
+          },
+          "goal_minute": {
+            "conf_0_50_0_65": {
+              "correct": 0,
+              "wrong": 17,
+              "partial": 6,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.0,
+              "soft_winrate": 0.2609
+            },
+            "conf_gte_0_65": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 4,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.0,
+              "soft_winrate": 0.8
+            },
+            "conf_lt_0_50": {
+              "correct": 0,
+              "wrong": 24,
+              "partial": 13,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.0,
+              "soft_winrate": 0.3514
+            }
+          }
+        }
+      },
+      "calibration": {
+        "first_goal_team": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 3,
+            "correct": 1,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.3333,
+            "soft_hit_rate": 0.3333,
+            "mean_confidence": 0.6048
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.6,
+            "soft_hit_rate": 0.6,
+            "mean_confidence": 0.65
+          }
+        },
+        "goal_range": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 20,
+            "hit_rate": 0.1304,
+            "soft_hit_rate": 0.1304,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 11,
+            "partial": 0,
+            "wrong": 26,
+            "hit_rate": 0.2973,
+            "soft_hit_rate": 0.2973,
+            "mean_confidence": 0.3171
+          }
+        },
+        "goal_minute": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 0,
+            "partial": 6,
+            "wrong": 17,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.2609,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 0,
+            "partial": 4,
+            "wrong": 1,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.8,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 0,
+            "partial": 13,
+            "wrong": 24,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.3514,
+            "mean_confidence": 0.3171
+          }
+        }
+      },
+      "first_goal_team_hit_rate": 0.5,
+      "goal_range_hit_rate": 0.2462,
+      "goal_minute_soft_hit_rate": 0.3538
+    },
+    "B": {
+      "label": "baseline_plus_xg",
+      "coverage": {
+        "eligible": 93,
+        "with_paid_data": 0
+      },
+      "metrics": {
+        "fixtures_scanned": 93,
+        "published_predictions": 65,
+        "no_pick_count": 28,
+        "evaluable_published": 65,
+        "skipped_not_evaluable": 0,
+        "by_market": {
+          "first_goal_team": {
+            "correct": 18,
+            "wrong": 21,
+            "partial": 0,
+            "pending": 26,
+            "total": 65,
+            "winrate": 0.4615,
+            "soft_winrate": 0.4615
+          },
+          "goal_range": {
+            "correct": 16,
+            "wrong": 49,
+            "partial": 0,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.2462,
+            "soft_winrate": 0.2462
+          },
+          "goal_minute": {
+            "correct": 0,
+            "wrong": 42,
+            "partial": 23,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.0,
+            "soft_winrate": 0.3538
+          }
+        },
+        "by_league": {
+          "champions_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 5,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 32,
+              "winrate": 0.5,
+              "soft_winrate": 0.5
+            },
+            "goal_range": {
+              "correct": 5,
+              "wrong": 27,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.1562,
+              "soft_winrate": 0.1562
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 22,
+              "partial": 10,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.3125
+            }
+          },
+          "conference_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 12,
+              "wrong": 16,
+              "partial": 0,
+              "pending": 4,
+              "total": 32,
+              "winrate": 0.4286,
+              "soft_winrate": 0.4286
+            },
+            "goal_range": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          },
+          "europa_league": {
+            "sample_size": 1,
+            "first_goal_team": {
+              "correct": 1,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 1.0,
+              "soft_winrate": 1.0
+            },
+            "goal_range": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            }
+          }
+        },
+        "by_dq_bucket": {
+          "first_goal_team": {
+            "dq_0_45_0_55": {
+              "correct": 6,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 33,
+              "winrate": 0.5455,
+              "soft_winrate": 0.5455
+            },
+            "dq_gte_0_65": {
+              "correct": 12,
+              "wrong": 16,
+              "partial": 0,
+              "pending": 4,
+              "total": 32,
+              "winrate": 0.4286,
+              "soft_winrate": 0.4286
+            }
+          },
+          "goal_range": {
+            "dq_0_45_0_55": {
+              "correct": 5,
+              "wrong": 28,
+              "partial": 0,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.1515,
+              "soft_winrate": 0.1515
+            },
+            "dq_gte_0_65": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            }
+          },
+          "goal_minute": {
+            "dq_0_45_0_55": {
+              "correct": 0,
+              "wrong": 23,
+              "partial": 10,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.0,
+              "soft_winrate": 0.303
+            },
+            "dq_gte_0_65": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          }
+        },
+        "by_confidence_bucket": {
+          "first_goal_team": {
+            "conf_0_50_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 18,
+              "total": 23,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_gte_0_65": {
+              "correct": 3,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.6,
+              "soft_winrate": 0.6
+            },
+            "conf_lt_0_50": {
+              "correct": 13,
+              "wrong": 16,
+              "partial": 0,
+              "pending": 8,
+              "total": 37,
+              "winrate": 0.4483,
+              "soft_winrate": 0.4483
+            }
+          },
+          "goal_range": {
+            "conf_0_50_0_65": {
+              "correct": 3,
+              "wrong": 20,
+              "partial": 0,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.1304,
+              "soft_winrate": 0.1304
+            },
+            "conf_gte_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_lt_0_50": {
+              "correct": 11,
+              "wrong": 26,
+              "partial": 0,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.2973,
+              "soft_winrate": 0.2973
+            }
+          },
+          "goal_minute": {
+            "conf_0_50_0_65": {
+              "correct": 0,
+              "wrong": 17,
+              "partial": 6,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.0,
+              "soft_winrate": 0.2609
+            },
+            "conf_gte_0_65": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 4,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.0,
+              "soft_winrate": 0.8
+            },
+            "conf_lt_0_50": {
+              "correct": 0,
+              "wrong": 24,
+              "partial": 13,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.0,
+              "soft_winrate": 0.3514
+            }
+          }
+        }
+      },
+      "calibration": {
+        "first_goal_team": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.5809
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.6,
+            "soft_hit_rate": 0.6,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 29,
+            "correct": 13,
+            "partial": 0,
+            "wrong": 16,
+            "hit_rate": 0.4483,
+            "soft_hit_rate": 0.4483,
+            "mean_confidence": 0.3144
+          }
+        },
+        "goal_range": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 20,
+            "hit_rate": 0.1304,
+            "soft_hit_rate": 0.1304,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 11,
+            "partial": 0,
+            "wrong": 26,
+            "hit_rate": 0.2973,
+            "soft_hit_rate": 0.2973,
+            "mean_confidence": 0.3171
+          }
+        },
+        "goal_minute": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 0,
+            "partial": 6,
+            "wrong": 17,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.2609,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 0,
+            "partial": 4,
+            "wrong": 1,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.8,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 0,
+            "partial": 13,
+            "wrong": 24,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.3514,
+            "mean_confidence": 0.3171
+          }
+        }
+      },
+      "first_goal_team_hit_rate": 0.4615,
+      "goal_range_hit_rate": 0.2462,
+      "goal_minute_soft_hit_rate": 0.3538
+    },
+    "C": {
+      "label": "baseline_plus_pressure",
+      "coverage": {
+        "eligible": 93,
+        "with_paid_data": 38
+      },
+      "metrics": {
+        "fixtures_scanned": 93,
+        "published_predictions": 65,
+        "no_pick_count": 28,
+        "evaluable_published": 65,
+        "skipped_not_evaluable": 0,
+        "by_market": {
+          "first_goal_team": {
+            "correct": 18,
+            "wrong": 21,
+            "partial": 0,
+            "pending": 26,
+            "total": 65,
+            "winrate": 0.4615,
+            "soft_winrate": 0.4615
+          },
+          "goal_range": {
+            "correct": 16,
+            "wrong": 49,
+            "partial": 0,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.2462,
+            "soft_winrate": 0.2462
+          },
+          "goal_minute": {
+            "correct": 0,
+            "wrong": 42,
+            "partial": 23,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.0,
+            "soft_winrate": 0.3538
+          }
+        },
+        "by_league": {
+          "champions_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 5,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 32,
+              "winrate": 0.5,
+              "soft_winrate": 0.5
+            },
+            "goal_range": {
+              "correct": 5,
+              "wrong": 27,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.1562,
+              "soft_winrate": 0.1562
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 22,
+              "partial": 10,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.3125
+            }
+          },
+          "conference_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 12,
+              "wrong": 16,
+              "partial": 0,
+              "pending": 4,
+              "total": 32,
+              "winrate": 0.4286,
+              "soft_winrate": 0.4286
+            },
+            "goal_range": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          },
+          "europa_league": {
+            "sample_size": 1,
+            "first_goal_team": {
+              "correct": 1,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 1.0,
+              "soft_winrate": 1.0
+            },
+            "goal_range": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            }
+          }
+        },
+        "by_dq_bucket": {
+          "first_goal_team": {
+            "dq_0_45_0_55": {
+              "correct": 6,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 33,
+              "winrate": 0.5455,
+              "soft_winrate": 0.5455
+            },
+            "dq_gte_0_65": {
+              "correct": 12,
+              "wrong": 16,
+              "partial": 0,
+              "pending": 4,
+              "total": 32,
+              "winrate": 0.4286,
+              "soft_winrate": 0.4286
+            }
+          },
+          "goal_range": {
+            "dq_0_45_0_55": {
+              "correct": 5,
+              "wrong": 28,
+              "partial": 0,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.1515,
+              "soft_winrate": 0.1515
+            },
+            "dq_gte_0_65": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            }
+          },
+          "goal_minute": {
+            "dq_0_45_0_55": {
+              "correct": 0,
+              "wrong": 23,
+              "partial": 10,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.0,
+              "soft_winrate": 0.303
+            },
+            "dq_gte_0_65": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          }
+        },
+        "by_confidence_bucket": {
+          "first_goal_team": {
+            "conf_0_50_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 18,
+              "total": 23,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_gte_0_65": {
+              "correct": 3,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.6,
+              "soft_winrate": 0.6
+            },
+            "conf_lt_0_50": {
+              "correct": 13,
+              "wrong": 16,
+              "partial": 0,
+              "pending": 8,
+              "total": 37,
+              "winrate": 0.4483,
+              "soft_winrate": 0.4483
+            }
+          },
+          "goal_range": {
+            "conf_0_50_0_65": {
+              "correct": 3,
+              "wrong": 20,
+              "partial": 0,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.1304,
+              "soft_winrate": 0.1304
+            },
+            "conf_gte_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_lt_0_50": {
+              "correct": 11,
+              "wrong": 26,
+              "partial": 0,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.2973,
+              "soft_winrate": 0.2973
+            }
+          },
+          "goal_minute": {
+            "conf_0_50_0_65": {
+              "correct": 0,
+              "wrong": 17,
+              "partial": 6,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.0,
+              "soft_winrate": 0.2609
+            },
+            "conf_gte_0_65": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 4,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.0,
+              "soft_winrate": 0.8
+            },
+            "conf_lt_0_50": {
+              "correct": 0,
+              "wrong": 24,
+              "partial": 13,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.0,
+              "soft_winrate": 0.3514
+            }
+          }
+        }
+      },
+      "calibration": {
+        "first_goal_team": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.5809
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.6,
+            "soft_hit_rate": 0.6,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 29,
+            "correct": 13,
+            "partial": 0,
+            "wrong": 16,
+            "hit_rate": 0.4483,
+            "soft_hit_rate": 0.4483,
+            "mean_confidence": 0.3144
+          }
+        },
+        "goal_range": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 20,
+            "hit_rate": 0.1304,
+            "soft_hit_rate": 0.1304,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 11,
+            "partial": 0,
+            "wrong": 26,
+            "hit_rate": 0.2973,
+            "soft_hit_rate": 0.2973,
+            "mean_confidence": 0.3171
+          }
+        },
+        "goal_minute": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 0,
+            "partial": 6,
+            "wrong": 17,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.2609,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 0,
+            "partial": 4,
+            "wrong": 1,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.8,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 0,
+            "partial": 13,
+            "wrong": 24,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.3514,
+            "mean_confidence": 0.3171
+          }
+        }
+      },
+      "first_goal_team_hit_rate": 0.4615,
+      "goal_range_hit_rate": 0.2462,
+      "goal_minute_soft_hit_rate": 0.3538
+    },
+    "D": {
+      "label": "baseline_plus_odds",
+      "coverage": {
+        "eligible": 93,
+        "with_paid_data": 32
+      },
+      "metrics": {
+        "fixtures_scanned": 93,
+        "published_predictions": 65,
+        "no_pick_count": 28,
+        "evaluable_published": 65,
+        "skipped_not_evaluable": 0,
+        "by_market": {
+          "first_goal_team": {
+            "correct": 36,
+            "wrong": 7,
+            "partial": 0,
+            "pending": 22,
+            "total": 65,
+            "winrate": 0.8372,
+            "soft_winrate": 0.8372
+          },
+          "goal_range": {
+            "correct": 16,
+            "wrong": 49,
+            "partial": 0,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.2462,
+            "soft_winrate": 0.2462
+          },
+          "goal_minute": {
+            "correct": 0,
+            "wrong": 42,
+            "partial": 23,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.0,
+            "soft_winrate": 0.3538
+          }
+        },
+        "by_league": {
+          "champions_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 5,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 32,
+              "winrate": 0.5,
+              "soft_winrate": 0.5
+            },
+            "goal_range": {
+              "correct": 5,
+              "wrong": 27,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.1562,
+              "soft_winrate": 0.1562
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 22,
+              "partial": 10,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.3125
+            }
+          },
+          "conference_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 30,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.9375,
+              "soft_winrate": 0.9375
+            },
+            "goal_range": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          },
+          "europa_league": {
+            "sample_size": 1,
+            "first_goal_team": {
+              "correct": 1,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 1.0,
+              "soft_winrate": 1.0
+            },
+            "goal_range": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            }
+          }
+        },
+        "by_dq_bucket": {
+          "first_goal_team": {
+            "dq_0_45_0_55": {
+              "correct": 6,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 33,
+              "winrate": 0.5455,
+              "soft_winrate": 0.5455
+            },
+            "dq_gte_0_65": {
+              "correct": 30,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.9375,
+              "soft_winrate": 0.9375
+            }
+          },
+          "goal_range": {
+            "dq_0_45_0_55": {
+              "correct": 5,
+              "wrong": 28,
+              "partial": 0,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.1515,
+              "soft_winrate": 0.1515
+            },
+            "dq_gte_0_65": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            }
+          },
+          "goal_minute": {
+            "dq_0_45_0_55": {
+              "correct": 0,
+              "wrong": 23,
+              "partial": 10,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.0,
+              "soft_winrate": 0.303
+            },
+            "dq_gte_0_65": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          }
+        },
+        "by_confidence_bucket": {
+          "first_goal_team": {
+            "conf_0_50_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 18,
+              "total": 23,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_gte_0_65": {
+              "correct": 3,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.6,
+              "soft_winrate": 0.6
+            },
+            "conf_lt_0_50": {
+              "correct": 31,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 4,
+              "total": 37,
+              "winrate": 0.9394,
+              "soft_winrate": 0.9394
+            }
+          },
+          "goal_range": {
+            "conf_0_50_0_65": {
+              "correct": 3,
+              "wrong": 20,
+              "partial": 0,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.1304,
+              "soft_winrate": 0.1304
+            },
+            "conf_gte_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_lt_0_50": {
+              "correct": 11,
+              "wrong": 26,
+              "partial": 0,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.2973,
+              "soft_winrate": 0.2973
+            }
+          },
+          "goal_minute": {
+            "conf_0_50_0_65": {
+              "correct": 0,
+              "wrong": 17,
+              "partial": 6,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.0,
+              "soft_winrate": 0.2609
+            },
+            "conf_gte_0_65": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 4,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.0,
+              "soft_winrate": 0.8
+            },
+            "conf_lt_0_50": {
+              "correct": 0,
+              "wrong": 24,
+              "partial": 13,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.0,
+              "soft_winrate": 0.3514
+            }
+          }
+        }
+      },
+      "calibration": {
+        "first_goal_team": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.5809
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.6,
+            "soft_hit_rate": 0.6,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 33,
+            "correct": 31,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.9394,
+            "soft_hit_rate": 0.9394,
+            "mean_confidence": 0.3141
+          }
+        },
+        "goal_range": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 20,
+            "hit_rate": 0.1304,
+            "soft_hit_rate": 0.1304,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 11,
+            "partial": 0,
+            "wrong": 26,
+            "hit_rate": 0.2973,
+            "soft_hit_rate": 0.2973,
+            "mean_confidence": 0.3171
+          }
+        },
+        "goal_minute": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 0,
+            "partial": 6,
+            "wrong": 17,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.2609,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 0,
+            "partial": 4,
+            "wrong": 1,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.8,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 0,
+            "partial": 13,
+            "wrong": 24,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.3514,
+            "mean_confidence": 0.3171
+          }
+        }
+      },
+      "first_goal_team_hit_rate": 0.8372,
+      "goal_range_hit_rate": 0.2462,
+      "goal_minute_soft_hit_rate": 0.3538
+    },
+    "E": {
+      "label": "baseline_plus_xg_pressure_odds",
+      "coverage": {
+        "eligible": 93,
+        "with_paid_data": 39
+      },
+      "metrics": {
+        "fixtures_scanned": 93,
+        "published_predictions": 65,
+        "no_pick_count": 28,
+        "evaluable_published": 65,
+        "skipped_not_evaluable": 0,
+        "by_market": {
+          "first_goal_team": {
+            "correct": 36,
+            "wrong": 7,
+            "partial": 0,
+            "pending": 22,
+            "total": 65,
+            "winrate": 0.8372,
+            "soft_winrate": 0.8372
+          },
+          "goal_range": {
+            "correct": 16,
+            "wrong": 49,
+            "partial": 0,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.2462,
+            "soft_winrate": 0.2462
+          },
+          "goal_minute": {
+            "correct": 0,
+            "wrong": 42,
+            "partial": 23,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.0,
+            "soft_winrate": 0.3538
+          }
+        },
+        "by_league": {
+          "champions_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 5,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 32,
+              "winrate": 0.5,
+              "soft_winrate": 0.5
+            },
+            "goal_range": {
+              "correct": 5,
+              "wrong": 27,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.1562,
+              "soft_winrate": 0.1562
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 22,
+              "partial": 10,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.3125
+            }
+          },
+          "conference_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 30,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.9375,
+              "soft_winrate": 0.9375
+            },
+            "goal_range": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          },
+          "europa_league": {
+            "sample_size": 1,
+            "first_goal_team": {
+              "correct": 1,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 1.0,
+              "soft_winrate": 1.0
+            },
+            "goal_range": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            }
+          }
+        },
+        "by_dq_bucket": {
+          "first_goal_team": {
+            "dq_0_45_0_55": {
+              "correct": 6,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 33,
+              "winrate": 0.5455,
+              "soft_winrate": 0.5455
+            },
+            "dq_gte_0_65": {
+              "correct": 30,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.9375,
+              "soft_winrate": 0.9375
+            }
+          },
+          "goal_range": {
+            "dq_0_45_0_55": {
+              "correct": 5,
+              "wrong": 28,
+              "partial": 0,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.1515,
+              "soft_winrate": 0.1515
+            },
+            "dq_gte_0_65": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            }
+          },
+          "goal_minute": {
+            "dq_0_45_0_55": {
+              "correct": 0,
+              "wrong": 23,
+              "partial": 10,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.0,
+              "soft_winrate": 0.303
+            },
+            "dq_gte_0_65": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          }
+        },
+        "by_confidence_bucket": {
+          "first_goal_team": {
+            "conf_0_50_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 18,
+              "total": 23,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_gte_0_65": {
+              "correct": 3,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.6,
+              "soft_winrate": 0.6
+            },
+            "conf_lt_0_50": {
+              "correct": 31,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 4,
+              "total": 37,
+              "winrate": 0.9394,
+              "soft_winrate": 0.9394
+            }
+          },
+          "goal_range": {
+            "conf_0_50_0_65": {
+              "correct": 3,
+              "wrong": 20,
+              "partial": 0,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.1304,
+              "soft_winrate": 0.1304
+            },
+            "conf_gte_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_lt_0_50": {
+              "correct": 11,
+              "wrong": 26,
+              "partial": 0,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.2973,
+              "soft_winrate": 0.2973
+            }
+          },
+          "goal_minute": {
+            "conf_0_50_0_65": {
+              "correct": 0,
+              "wrong": 17,
+              "partial": 6,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.0,
+              "soft_winrate": 0.2609
+            },
+            "conf_gte_0_65": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 4,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.0,
+              "soft_winrate": 0.8
+            },
+            "conf_lt_0_50": {
+              "correct": 0,
+              "wrong": 24,
+              "partial": 13,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.0,
+              "soft_winrate": 0.3514
+            }
+          }
+        }
+      },
+      "calibration": {
+        "first_goal_team": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.5809
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.6,
+            "soft_hit_rate": 0.6,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 33,
+            "correct": 31,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.9394,
+            "soft_hit_rate": 0.9394,
+            "mean_confidence": 0.3141
+          }
+        },
+        "goal_range": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 20,
+            "hit_rate": 0.1304,
+            "soft_hit_rate": 0.1304,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 11,
+            "partial": 0,
+            "wrong": 26,
+            "hit_rate": 0.2973,
+            "soft_hit_rate": 0.2973,
+            "mean_confidence": 0.3171
+          }
+        },
+        "goal_minute": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 0,
+            "partial": 6,
+            "wrong": 17,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.2609,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 0,
+            "partial": 4,
+            "wrong": 1,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.8,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 0,
+            "partial": 13,
+            "wrong": 24,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.3514,
+            "mean_confidence": 0.3171
+          }
+        }
+      },
+      "first_goal_team_hit_rate": 0.8372,
+      "goal_range_hit_rate": 0.2462,
+      "goal_minute_soft_hit_rate": 0.3538
+    },
+    "F": {
+      "label": "full_paid_provider",
+      "coverage": {
+        "eligible": 93,
+        "with_paid_data": 65
+      },
+      "metrics": {
+        "fixtures_scanned": 93,
+        "published_predictions": 65,
+        "no_pick_count": 28,
+        "evaluable_published": 65,
+        "skipped_not_evaluable": 0,
+        "by_market": {
+          "first_goal_team": {
+            "correct": 36,
+            "wrong": 7,
+            "partial": 0,
+            "pending": 22,
+            "total": 65,
+            "winrate": 0.8372,
+            "soft_winrate": 0.8372
+          },
+          "goal_range": {
+            "correct": 16,
+            "wrong": 49,
+            "partial": 0,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.2462,
+            "soft_winrate": 0.2462
+          },
+          "goal_minute": {
+            "correct": 0,
+            "wrong": 42,
+            "partial": 23,
+            "pending": 0,
+            "total": 65,
+            "winrate": 0.0,
+            "soft_winrate": 0.3538
+          }
+        },
+        "by_league": {
+          "champions_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 5,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 32,
+              "winrate": 0.5,
+              "soft_winrate": 0.5
+            },
+            "goal_range": {
+              "correct": 5,
+              "wrong": 27,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.1562,
+              "soft_winrate": 0.1562
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 22,
+              "partial": 10,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.3125
+            }
+          },
+          "conference_league": {
+            "sample_size": 32,
+            "first_goal_team": {
+              "correct": 30,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.9375,
+              "soft_winrate": 0.9375
+            },
+            "goal_range": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          },
+          "europa_league": {
+            "sample_size": 1,
+            "first_goal_team": {
+              "correct": 1,
+              "wrong": 0,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 1.0,
+              "soft_winrate": 1.0
+            },
+            "goal_range": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            },
+            "goal_minute": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 0,
+              "pending": 0,
+              "total": 1,
+              "winrate": 0.0,
+              "soft_winrate": 0.0
+            }
+          }
+        },
+        "by_dq_bucket": {
+          "first_goal_team": {
+            "dq_0_45_0_55": {
+              "correct": 6,
+              "wrong": 5,
+              "partial": 0,
+              "pending": 22,
+              "total": 33,
+              "winrate": 0.5455,
+              "soft_winrate": 0.5455
+            },
+            "dq_gte_0_65": {
+              "correct": 30,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.9375,
+              "soft_winrate": 0.9375
+            }
+          },
+          "goal_range": {
+            "dq_0_45_0_55": {
+              "correct": 5,
+              "wrong": 28,
+              "partial": 0,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.1515,
+              "soft_winrate": 0.1515
+            },
+            "dq_gte_0_65": {
+              "correct": 11,
+              "wrong": 21,
+              "partial": 0,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.3438,
+              "soft_winrate": 0.3438
+            }
+          },
+          "goal_minute": {
+            "dq_0_45_0_55": {
+              "correct": 0,
+              "wrong": 23,
+              "partial": 10,
+              "pending": 0,
+              "total": 33,
+              "winrate": 0.0,
+              "soft_winrate": 0.303
+            },
+            "dq_gte_0_65": {
+              "correct": 0,
+              "wrong": 19,
+              "partial": 13,
+              "pending": 0,
+              "total": 32,
+              "winrate": 0.0,
+              "soft_winrate": 0.4062
+            }
+          }
+        },
+        "by_confidence_bucket": {
+          "first_goal_team": {
+            "conf_0_50_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 18,
+              "total": 23,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_gte_0_65": {
+              "correct": 3,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.6,
+              "soft_winrate": 0.6
+            },
+            "conf_lt_0_50": {
+              "correct": 31,
+              "wrong": 2,
+              "partial": 0,
+              "pending": 4,
+              "total": 37,
+              "winrate": 0.9394,
+              "soft_winrate": 0.9394
+            }
+          },
+          "goal_range": {
+            "conf_0_50_0_65": {
+              "correct": 3,
+              "wrong": 20,
+              "partial": 0,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.1304,
+              "soft_winrate": 0.1304
+            },
+            "conf_gte_0_65": {
+              "correct": 2,
+              "wrong": 3,
+              "partial": 0,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.4,
+              "soft_winrate": 0.4
+            },
+            "conf_lt_0_50": {
+              "correct": 11,
+              "wrong": 26,
+              "partial": 0,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.2973,
+              "soft_winrate": 0.2973
+            }
+          },
+          "goal_minute": {
+            "conf_0_50_0_65": {
+              "correct": 0,
+              "wrong": 17,
+              "partial": 6,
+              "pending": 0,
+              "total": 23,
+              "winrate": 0.0,
+              "soft_winrate": 0.2609
+            },
+            "conf_gte_0_65": {
+              "correct": 0,
+              "wrong": 1,
+              "partial": 4,
+              "pending": 0,
+              "total": 5,
+              "winrate": 0.0,
+              "soft_winrate": 0.8
+            },
+            "conf_lt_0_50": {
+              "correct": 0,
+              "wrong": 24,
+              "partial": 13,
+              "pending": 0,
+              "total": 37,
+              "winrate": 0.0,
+              "soft_winrate": 0.3514
+            }
+          }
+        }
+      },
+      "calibration": {
+        "first_goal_team": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.5809
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.6,
+            "soft_hit_rate": 0.6,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 33,
+            "correct": 31,
+            "partial": 0,
+            "wrong": 2,
+            "hit_rate": 0.9394,
+            "soft_hit_rate": 0.9394,
+            "mean_confidence": 0.3141
+          }
+        },
+        "goal_range": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 3,
+            "partial": 0,
+            "wrong": 20,
+            "hit_rate": 0.1304,
+            "soft_hit_rate": 0.1304,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 2,
+            "partial": 0,
+            "wrong": 3,
+            "hit_rate": 0.4,
+            "soft_hit_rate": 0.4,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 11,
+            "partial": 0,
+            "wrong": 26,
+            "hit_rate": 0.2973,
+            "soft_hit_rate": 0.2973,
+            "mean_confidence": 0.3171
+          }
+        },
+        "goal_minute": {
+          "conf_0_50_0_65": {
+            "bucket": "conf_0_50_0_65",
+            "total": 23,
+            "correct": 0,
+            "partial": 6,
+            "wrong": 17,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.2609,
+            "mean_confidence": 0.5751
+          },
+          "conf_gte_0_65": {
+            "bucket": "conf_gte_0_65",
+            "total": 5,
+            "correct": 0,
+            "partial": 4,
+            "wrong": 1,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.8,
+            "mean_confidence": 0.65
+          },
+          "conf_lt_0_50": {
+            "bucket": "conf_lt_0_50",
+            "total": 37,
+            "correct": 0,
+            "partial": 13,
+            "wrong": 24,
+            "hit_rate": 0.0,
+            "soft_hit_rate": 0.3514,
+            "mean_confidence": 0.3171
+          }
+        }
+      },
+      "first_goal_team_hit_rate": 0.8372,
+      "goal_range_hit_rate": 0.2462,
+      "goal_minute_soft_hit_rate": 0.3538
+    }
+  },
+  "winning_strategy": "D",
+  "production_promotion_safe": true
+}

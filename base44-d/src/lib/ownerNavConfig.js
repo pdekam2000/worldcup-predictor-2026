@@ -15,6 +15,7 @@ import {
   DollarSign,
   CreditCard,
   Activity,
+  Database,
 } from "lucide-react";
 
 /** Owner-only navigation — Phase 64 product owner upgrade */
@@ -29,6 +30,8 @@ export const OWNER_NAV_SECTIONS = [
       { label: "Research Lab", path: "/owner/research-lab", icon: Beaker },
       { label: "Promotion Center", path: "/owner/promotion-center", icon: TrendingUp },
       { label: "Betting Intelligence", path: "/owner/betting-intelligence", icon: DollarSign },
+      { label: "Prefetch Coverage", path: "/owner/prefetch-coverage", icon: Database },
+      { label: "PredOps Core", path: "/admin/predops", icon: Layers },
     ],
   },
   {

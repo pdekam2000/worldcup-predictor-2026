@@ -1,0 +1,350 @@
+{
+  "world_cup_with_odds": {
+    "fixtures": 47,
+    "composite": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.5143,
+        "top3_hit": 0.7714,
+        "top5_hit": 0.8857,
+        "mrr": 0.6719
+      },
+      "calibration": {
+        "n": 1346,
+        "brier": 0.1974,
+        "ece": 0.3709
+      },
+      "confidence_tiers_top3": {
+        "A": 1.0,
+        "B": 0.85,
+        "C": 0.8182,
+        "D": 0.5294
+      }
+    },
+    "ml_only": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "ml_score",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.4571,
+        "top3_hit": 0.7143,
+        "top5_hit": 0.8,
+        "mrr": 0.6188
+      },
+      "calibration": {
+        "n": 1346,
+        "brier": 0.2212,
+        "ece": 0.3961
+      },
+      "confidence_tiers_top3": {
+        "A": 1.0,
+        "B": 0.85,
+        "C": 0.7273,
+        "D": 0.5294
+      }
+    },
+    "odds_only": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "odds_implied_anytime",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.6286,
+        "top3_hit": 0.7429,
+        "top5_hit": 0.8571,
+        "mrr": 0.715
+      },
+      "calibration": {
+        "n": 1346,
+        "brier": 0.0702,
+        "ece": 0.1261
+      },
+      "confidence_tiers_top3": {
+        "A": 1.0,
+        "B": 0.85,
+        "C": 0.8182,
+        "D": 0.5294
+      }
+    },
+    "ml_odds_blend": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "ml_odds_blend",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.5429,
+        "top3_hit": 0.8,
+        "top5_hit": 0.8571,
+        "mrr": 0.6829
+      },
+      "calibration": {
+        "n": 1346,
+        "brier": 0.1352,
+        "ece": 0.2879
+      },
+      "confidence_tiers_top3": {
+        "A": 1.0,
+        "B": 0.85,
+        "C": 0.9091,
+        "D": 0.6471
+      }
+    }
+  },
+  "world_cup_all": {
+    "fixtures": 47,
+    "composite": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.5143,
+        "top3_hit": 0.7714,
+        "top5_hit": 0.8857,
+        "mrr": 0.6719
+      },
+      "calibration": {
+        "n": 1416,
+        "brier": 0.1909,
+        "ece": 0.3638
+      },
+      "confidence_tiers_top3": {
+        "A": 1.0,
+        "B": 0.85,
+        "C": 0.8182,
+        "D": 0.5294
+      }
+    },
+    "ml_only": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "ml_score",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.4571,
+        "top3_hit": 0.7143,
+        "top5_hit": 0.8,
+        "mrr": 0.6188
+      },
+      "calibration": {
+        "n": 1416,
+        "brier": 0.2143,
+        "ece": 0.3891
+      },
+      "confidence_tiers_top3": {
+        "A": 1.0,
+        "B": 0.85,
+        "C": 0.7273,
+        "D": 0.5294
+      }
+    },
+    "odds_only": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "odds_implied_anytime",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.6286,
+        "top3_hit": 0.7429,
+        "top5_hit": 0.8571,
+        "mrr": 0.715
+      },
+      "calibration": {
+        "n": 1346,
+        "brier": 0.0702,
+        "ece": 0.1261
+      },
+      "confidence_tiers_top3": {
+        "A": 1.0,
+        "B": 0.85,
+        "C": 0.8182,
+        "D": 0.5294
+      }
+    },
+    "ml_odds_blend": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "ml_odds_blend",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.5429,
+        "top3_hit": 0.8,
+        "top5_hit": 0.8571,
+        "mrr": 0.6829
+      },
+      "calibration": {
+        "n": 1416,
+        "brier": 0.1302,
+        "ece": 0.2809
+      },
+      "confidence_tiers_top3": {
+        "A": 1.0,
+        "B": 0.85,
+        "C": 0.9091,
+        "D": 0.6471
+      }
+    }
+  },
+  "uefa_with_odds": {
+    "status": "empty",
+    "fixtures": 0
+  },
+  "uefa_without_odds": {
+    "fixtures": 1494,
+    "composite": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.2926,
+        "top3_hit": 0.5658,
+        "top5_hit": 0.695,
+        "mrr": 0.4716
+      },
+      "calibration": {
+        "n": 45613,
+        "brier": 0.1356,
+        "ece": 0.248
+      },
+      "confidence_tiers_top3": {
+        "C": 0.6866,
+        "D": 0.3022
+      }
+    },
+    "ml_only": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "ml_score",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.3026,
+        "top3_hit": 0.5836,
+        "top5_hit": 0.7167,
+        "mrr": 0.4848
+      },
+      "calibration": {
+        "n": 45613,
+        "brier": 0.2198,
+        "ece": 0.3769
+      },
+      "confidence_tiers_top3": {
+        "C": 0.7025,
+        "D": 0.3419
+      }
+    },
+    "odds_only": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "odds_implied_anytime",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.0697,
+        "top3_hit": 0.2206,
+        "top5_hit": 0.3529,
+        "mrr": 0.2168
+      },
+      "calibration": {
+        "n": 0
+      },
+      "confidence_tiers_top3": {
+        "C": 0.5033,
+        "D": 0.2086
+      }
+    },
+    "ml_odds_blend": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "ml_odds_blend",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.3026,
+        "top3_hit": 0.5836,
+        "top5_hit": 0.7167,
+        "mrr": 0.4848
+      },
+      "calibration": {
+        "n": 45613,
+        "brier": 0.106,
+        "ece": 0.1963
+      },
+      "confidence_tiers_top3": {
+        "C": 0.7025,
+        "D": 0.3419
+      }
+    }
+  },
+  "uefa_all": {
+    "fixtures": 1494,
+    "composite": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.2926,
+        "top3_hit": 0.5658,
+        "top5_hit": 0.695,
+        "mrr": 0.4716
+      },
+      "calibration": {
+        "n": 45613,
+        "brier": 0.1356,
+        "ece": 0.248
+      },
+      "confidence_tiers_top3": {
+        "C": 0.6866,
+        "D": 0.3022
+      }
+    },
+    "ml_only": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "ml_score",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.3026,
+        "top3_hit": 0.5836,
+        "top5_hit": 0.7167,
+        "mrr": 0.4848
+      },
+      "calibration": {
+        "n": 45613,
+        "brier": 0.2198,
+        "ece": 0.3769
+      },
+      "confidence_tiers_top3": {
+        "C": 0.7025,
+        "D": 0.3419
+      }
+    },
+    "odds_only": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "odds_implied_anytime",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.0697,
+        "top3_hit": 0.2206,
+        "top5_hit": 0.3529,
+        "mrr": 0.2168
+      },
+      "calibration": {
+        "n": 0
+      },
+      "confidence_tiers_top3": {
+        "C": 0.5033,
+        "D": 0.2086
+      }
+    },
+    "ml_odds_blend": {
+      "ranking": {
+        "market": "target_anytime",
+        "signal": "ml_odds_blend",
+        "fixtures_evaluated": 1292,
+        "top1_hit": 0.3026,
+        "top3_hit": 0.5836,
+        "top5_hit": 0.7167,
+        "mrr": 0.4848
+      },
+      "calibration": {
+        "n": 45613,
+        "brier": 0.106,
+        "ece": 0.1963
+      },
+      "confidence_tiers_top3": {
+        "C": 0.7025,
+        "D": 0.3419
+      }
+    }
+  }
+}

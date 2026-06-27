@@ -1,0 +1,96 @@
+{
+  "generated_at": "2026-06-24T06:10:55.691057+00:00",
+  "phase": "54H-4",
+  "fixtures_before": 0,
+  "fixtures_after": 30,
+  "new_fixtures": 30,
+  "target_minimum": 150,
+  "target_met": false,
+  "record_count": 6134,
+  "avg_rows_per_fixture": 204.47,
+  "fixtures_with_zero_pressure_rows": 0,
+  "by_league": {
+    "732": 30
+  },
+  "by_season": {
+    "26618": 30
+  },
+  "duplicate_groups_sample": [],
+  "api_calls_live_total": 30,
+  "api_calls_cached_total": 0,
+  "fixtures_imported_batches": 30,
+  "cache_files": 30,
+  "manifest_stats": [
+    {
+      "job_key": "phase54h4_cl_batch1",
+      "status": "skipped_upcoming",
+      "n": 56
+    },
+    {
+      "job_key": "phase54h4_conference_batch1",
+      "status": "skipped_upcoming",
+      "n": 138
+    },
+    {
+      "job_key": "phase54h4_el_batch1",
+      "status": "skipped_upcoming",
+      "n": 30
+    },
+    {
+      "job_key": "phase54h4_wc_batch1",
+      "status": "imported",
+      "n": 30
+    },
+    {
+      "job_key": "phase54h4_wc_batch1",
+      "status": "skipped_upcoming",
+      "n": 56
+    }
+  ],
+  "batch_results": [
+    {
+      "file": "backfill_phase54h4_cl_batch1.json",
+      "job_key": "phase54h4_cl_batch1",
+      "fixtures_imported": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "fixtures_skipped": 56,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "records_written": 0
+    },
+    {
+      "file": "backfill_phase54h4_conference_batch1.json",
+      "job_key": "phase54h4_conference_batch1",
+      "fixtures_imported": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "fixtures_skipped": 138,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "records_written": 0
+    },
+    {
+      "file": "backfill_phase54h4_el_batch1.json",
+      "job_key": "phase54h4_el_batch1",
+      "fixtures_imported": 0,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "fixtures_skipped": 30,
+      "api_calls_live": 0,
+      "api_calls_cached": 0,
+      "records_written": 0
+    },
+    {
+      "file": "backfill_phase54h4_wc_batch1.json",
+      "job_key": "phase54h4_wc_batch1",
+      "fixtures_imported": 30,
+      "fixtures_empty": 0,
+      "fixtures_error": 0,
+      "fixtures_skipped": 74,
+      "api_calls_live": 30,
+      "api_calls_cached": 0,
+      "records_written": 6134
+    }
+  ]
+}

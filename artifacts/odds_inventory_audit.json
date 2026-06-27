@@ -1,0 +1,166 @@
+{
+  "fixtures_audited": 185,
+  "fixtures_with_any_odds": 105,
+  "market_inventory": [
+    {
+      "market": "Match Winner / Fulltime Result",
+      "market_key": "match_winner",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": "consensus_implied_home",
+      "feature_usage": "parse_uefa_odds_deep",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "Double Chance",
+      "market_key": "double_chance",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": null,
+      "feature_usage": "available in cache, not wired to EGIE",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "Both Teams To Score",
+      "market_key": "btts",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": "btts_yes_implied",
+      "feature_usage": "parse_uefa_odds_deep",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "Over/Under 2.5",
+      "market_key": "over_under",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": "over_25_implied",
+      "feature_usage": "parse_uefa_odds_deep",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "First Team To Score",
+      "market_key": "first_team_to_score",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": "first_team_score_home",
+      "feature_usage": "parse_uefa_odds_deep",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "1st Half Goals",
+      "market_key": "first_half_goals",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": null,
+      "feature_usage": "cache only",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "Asian Handicap",
+      "market_key": "asian_handicap",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": null,
+      "feature_usage": "cache only",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "Odds Movement",
+      "market_key": "movement",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": "movement_home",
+      "feature_usage": "opening vs closing 1X2",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "Market Consensus",
+      "market_key": "consensus",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": "consensus_implied_home",
+      "feature_usage": "mean across books",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    },
+    {
+      "market": "Sharp vs Soft",
+      "market_key": "sharp_soft",
+      "source_provider": "sportmonks",
+      "storage_location": "data/egie/uefa_club/raw/{fixture_id}.json -> payload.data.odds[]",
+      "feature_name": "sharp_implied_home",
+      "feature_usage": "Pinnacle/SBO vs recreational",
+      "fixture_coverage_pct": 56.76,
+      "fixtures_with_market": 105
+    }
+  ],
+  "legacy_egie_fields": [
+    {
+      "feature_name": "odds_implied_home",
+      "source_provider": "sportmonks",
+      "storage_location": "UefaClubFeatureStore via parse_uefa_odds",
+      "coverage_pct": 56.76,
+      "feature_usage": "enrich_agent_outputs -> first_goal_pressure (Strategy D)"
+    },
+    {
+      "feature_name": "odds_implied_away",
+      "source_provider": "sportmonks",
+      "coverage_pct": 0.0,
+      "feature_usage": "enrich_agent_outputs -> first_goal_pressure"
+    },
+    {
+      "feature_name": "odds_implied_draw",
+      "source_provider": "sportmonks",
+      "coverage_pct": 0.0,
+      "feature_usage": "odds_goal_intelligence agent signal only (not FG pick path)"
+    },
+    {
+      "feature_name": "first_goal_odds",
+      "source_provider": "sportmonks",
+      "coverage_pct": 56.76,
+      "feature_usage": "parsed but not used in production enrichment"
+    },
+    {
+      "feature_name": "odds_movement",
+      "source_provider": "sportmonks",
+      "coverage_pct": 56.76,
+      "feature_usage": "stored on ProviderFeatureVector; not applied in Strategy D enrichment"
+    }
+  ],
+  "top_bookmakers": {
+    "1xbet": 46700,
+    "bet365": 37568,
+    "Betway": 20038,
+    "10Bet": 18393,
+    "Unibet": 18322,
+    "Marathonbet": 17165,
+    "Betsson": 15366,
+    "NordicBet": 15224,
+    "Pinnacle": 13468,
+    "BetCRIS": 10811,
+    "Tipico": 9650,
+    "WilliamHill": 9159,
+    "Marathon": 8709,
+    "888Sport": 7847,
+    "Sbo": 7452
+  },
+  "field_coverage": {
+    "consensus_implied_home": 56.76,
+    "opening_implied_home": 56.76,
+    "closing_implied_home": 56.76,
+    "movement_home": 56.76,
+    "first_team_score_home": 56.76,
+    "btts_yes_implied": 56.76,
+    "over_25_implied": 56.76,
+    "sharp_implied_home": 56.76
+  }
+}

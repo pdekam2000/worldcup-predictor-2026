@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from worldcup_predictor.elite_orchestrator.shadow_config import EVALUATIONS_PATH, MODEL_VERSION, PREDICTIONS_PATH
+from worldcup_predictor.elite_orchestrator.shadow_jsonl_io import append_jsonl_rows, load_jsonl
 
 ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "football_intelligence.db"
@@ -21,19 +22,15 @@ def _utc_now() -> str:
 
 
 def _load_predictions(path: Path | None = None) -> list[dict[str, Any]]:
-    p = path or PREDICTIONS_PATH
-    if not p.is_file():
-        return []
-    rows: list[dict[str, Any]] = []
-    for line in p.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError:
-            continue
-    return rows
+    return load_jsonl(path or PREDICTIONS_PATH)
+
+
+def _eval_dedupe_key(row: dict[str, Any]) -> tuple[int, str, str]:
+    return (
+        int(row.get("fixture_id") or 0),
+        str(row.get("market_id") or ""),
+        str(row.get("prediction_day") or ""),
+    )
 
 
 def _fixture_result(fixture_id: int) -> dict[str, Any] | None:
@@ -78,10 +75,13 @@ def _fixture_result(fixture_id: int) -> dict[str, Any] | None:
         team = str(fg["team"] or "")
         home = str(fx["home_team"] or "")
         away = str(fx["away_team"] or "")
+        minute = int(fg["minute"] or 0) + int(fg["extra_minute"] or 0)
+        out["first_goal_minute"] = minute
         if team == home:
             out["first_goal_team"] = "home"
         elif team == away:
             out["first_goal_team"] = "away"
+        out["goalscorer"] = team
     return out
 
 
@@ -90,8 +90,22 @@ def _reality_for_market(market_id: str, result: dict[str, Any]) -> Any:
         return result.get("first_goal_team")
     if market_id == "1x2":
         return result.get("match_winner")
+    if market_id in ("btts", "both_teams_to_score"):
+        hg, ag = result.get("home_goals"), result.get("away_goals")
+        if hg is None or ag is None:
+            return None
+        return "yes" if int(hg) > 0 and int(ag) > 0 else "no"
+    if market_id in ("over_under_2_5", "over_under_25", "over_under"):
+        return result.get("over_under")
+    if market_id == "correct_score":
+        hg, ag = result.get("home_goals"), result.get("away_goals")
+        if hg is None or ag is None:
+            return None
+        return f"{int(hg)}-{int(ag)}"
+    if market_id in ("anytime_goalscorer", "first_goalscorer", "goalscorer"):
+        return result.get("goalscorer")
     if market_id == "goal_timing":
-        return None
+        return result.get("first_goal_minute")
     return None
 
 
@@ -118,68 +132,65 @@ def pair_predictions(
     out_path = evaluations_path or EVALUATIONS_PATH
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    existing: set[str] = set()
+    existing_days: set[tuple[int, str, str]] = set()
     if out_path.is_file() and not force:
-        for line in out_path.read_text(encoding="utf-8").splitlines():
-            try:
-                row = json.loads(line)
-                existing.add(f"{row.get('fixture_id')}:{row.get('market_id')}:{row.get('prediction_day')}")
-            except json.JSONDecodeError:
-                pass
+        for row in load_jsonl(out_path):
+            existing_days.add(_eval_dedupe_key(row))
 
-    written = 0
     pending = 0
     paired = 0
+    to_write: list[dict[str, Any]] = []
 
-    with out_path.open("a", encoding="utf-8") as fh:
-        for pred in preds:
-            fid = int(pred.get("fixture_id") or 0)
-            market_id = str(pred.get("market_id") or "")
-            day = str(pred.get("prediction_day") or "")
-            dedupe = f"{fid}:{market_id}:{day}"
-            if dedupe in existing:
-                continue
+    for pred in preds:
+        fid = int(pred.get("fixture_id") or 0)
+        market_id = str(pred.get("market_id") or "")
+        day = str(pred.get("prediction_day") or "")
+        dedupe = (fid, market_id, day)
+        if dedupe in existing_days:
+            continue
 
-            result = _fixture_result(fid)
-            mp = pred.get("market_predictions") or {}
-            prediction = mp.get("prediction")
-            reality = None
-            status = "pending"
+        result = _fixture_result(fid)
+        mp = pred.get("market_predictions") or {}
+        prediction = mp.get("prediction")
+        reality = None
+        status = "pending"
 
-            if result and result.get("finished"):
-                reality = _reality_for_market(market_id, result)
-                if reality is not None:
-                    status = _outcome(market_id, prediction, reality)
-                    paired += 1
-                else:
-                    status = "pending"
-                    pending += 1
+        if result and result.get("finished"):
+            reality = _reality_for_market(market_id, result)
+            if reality is not None:
+                status = _outcome(market_id, prediction, reality)
+                paired += 1
             else:
+                status = "pending"
                 pending += 1
+        else:
+            pending += 1
 
-            record = {
-                "fixture_id": fid,
-                "market_id": market_id,
-                "prediction_day": day,
-                "generated_at": pred.get("generated_at"),
-                "paired_at": _utc_now(),
-                "prediction": prediction,
-                "confidence": mp.get("confidence"),
-                "tier": mp.get("tier"),
-                "reality": reality,
-                "outcome": status,
-                "component_contributions": pred.get("component_contributions"),
-                "model_version": (pred.get("model_versions") or {}).get("elite_orchestrator", MODEL_VERSION),
-                "is_shadow": True,
-                "meta": {"result_status": (result or {}).get("status")},
-            }
-            fh.write(json.dumps(record, default=str) + "\n")
-            existing.add(dedupe)
-            written += 1
+        record = {
+            "fixture_id": fid,
+            "market_id": market_id,
+            "prediction_day": day,
+            "generated_at": pred.get("generated_at"),
+            "paired_at": _utc_now(),
+            "prediction": prediction,
+            "confidence": mp.get("confidence"),
+            "tier": mp.get("tier"),
+            "reality": reality,
+            "outcome": status,
+            "component_contributions": pred.get("component_contributions"),
+            "model_version": (pred.get("model_versions") or {}).get("elite_orchestrator", MODEL_VERSION),
+            "is_shadow": True,
+            "meta": {"result_status": (result or {}).get("status")},
+        }
+        to_write.append(record)
+        existing_days.add(dedupe)
+
+    write_result = append_jsonl_rows(out_path, to_write, dedupe_key=_eval_dedupe_key, force=force)
 
     return {
         "predictions_read": len(preds),
-        "evaluations_written": written,
+        "evaluations_written": write_result.get("written", 0),
+        "skipped_duplicates": write_result.get("skipped_duplicates", 0),
         "paired_with_result": paired,
         "pending": pending,
         "path": str(out_path),

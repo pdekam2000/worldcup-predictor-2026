@@ -1,0 +1,30 @@
+{
+  "can_become_self_learning": true,
+  "components_to_adapt": [
+    "first_goal_team_v2",
+    "egie_historical_baseline",
+    "goalscorer_intelligence",
+    "odds_intelligence",
+    "market_behavior_intelligence",
+    "lineup_intelligence",
+    "first_goal_team_v2",
+    "egie_historical_baseline",
+    "goalscorer_intelligence",
+    "odds_intelligence",
+    "market_behavior_intelligence",
+    "lineup_intelligence"
+  ],
+  "components_to_reduce": [],
+  "weight_evolution": "Slow shadow-only EMA (lr=0.02, max_delta=5%) with renormalization",
+  "safeguards": [
+    "shadow_only_gate",
+    "max_delta_cap",
+    "min_sample_floor",
+    "weight_bounds",
+    "tier_calibration_check",
+    "league_isolation",
+    "human_approval_gate",
+    "no_model_retrain"
+  ],
+  "recommendation": "SELF_LEARNING_READY"
+}

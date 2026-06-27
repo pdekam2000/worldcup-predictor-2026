@@ -1,0 +1,282 @@
+{
+  "data": {
+    "timestamp_utc": "2026-06-26T13:46:07.087504+00:00",
+    "sqlite_path": "data/football_intelligence.db",
+    "postgres_configured": true,
+    "stored_predictions": 56,
+    "stored_predictions_all": 56,
+    "evaluations_wc": 4,
+    "evaluations_all": 4,
+    "competition_keys": [
+      "world_cup_2026"
+    ],
+    "postgresql": {
+      "connected": true,
+      "count_goal_timing_predictions": 90,
+      "count_goal_timing_features": 107,
+      "count_goal_timing_evaluations": 1,
+      "count_goal_timing_agents": "error:(psycopg.errors.UndefinedTable) relation \"goal_timing_agents\" does not exist\nLINE 1: SELECT COUNT(1) FROM goal_timing_agents\n                             ^\n[SQL: SELECT COUNT(1) FROM goal_timing_agents]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+      "hybrid_confidence_rows": 0,
+      "active_egie_predictions": 0,
+      "recent_egie_sample": []
+    },
+    "survival_artifacts": []
+  },
+  "backtest": {
+    "fixtures_sampled": 56,
+    "unified_engine_available": true,
+    "markets": {
+      "classic": {
+        "1x2": {
+          "evaluated": 6,
+          "correct": 5,
+          "wrong": 1,
+          "partial": 0,
+          "pending": 50,
+          "picks": 56,
+          "accuracy": 0.8333,
+          "coverage": 1.0
+        },
+        "btts": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 44,
+          "picks": 44,
+          "accuracy": null,
+          "coverage": 0.7857
+        },
+        "over_under": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 44,
+          "picks": 44,
+          "accuracy": null,
+          "coverage": 0.7857
+        },
+        "first_goal_team": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "goal_range": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "goal_minute_soft": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        }
+      },
+      "egie": {
+        "1x2": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "btts": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "over_under": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "first_goal_team": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "goal_range": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "goal_minute_soft": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        }
+      },
+      "unified": {
+        "1x2": {
+          "evaluated": 6,
+          "correct": 5,
+          "wrong": 1,
+          "partial": 0,
+          "pending": 35,
+          "picks": 41,
+          "accuracy": 0.8333,
+          "coverage": 0.7321
+        },
+        "btts": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 44,
+          "picks": 44,
+          "accuracy": null,
+          "coverage": 0.7857
+        },
+        "over_under": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 54,
+          "picks": 54,
+          "accuracy": null,
+          "coverage": 0.9643
+        },
+        "first_goal_team": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "goal_range": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        },
+        "goal_minute_soft": {
+          "evaluated": 0,
+          "correct": 0,
+          "wrong": 0,
+          "partial": 0,
+          "pending": 0,
+          "picks": 0,
+          "accuracy": null,
+          "coverage": 0.0
+        }
+      }
+    },
+    "provider_hits": {
+      "odds": 50,
+      "xg": 0,
+      "lineups": 0,
+      "classic_cache": 56,
+      "egie_cache": 0
+    },
+    "contributions_by_market": {
+      "1x2": {
+        "classic": 41,
+        "hybrid": 15
+      },
+      "btts": {
+        "classic": 44,
+        "hybrid": 12
+      },
+      "over_under": {
+        "classic": 54,
+        "hybrid": 2
+      },
+      "first_goal_team": {
+        "hybrid": 56
+      },
+      "goal_range": {
+        "hybrid": 56
+      },
+      "goal_minute_soft": {
+        "hybrid": 56
+      }
+    },
+    "tier_buckets": {
+      "unified": {
+        "B": 9,
+        "C": 43,
+        "D": 4
+      },
+      "1x2": {
+        "B": 9,
+        "C": 28,
+        "D": 4
+      },
+      "btts": {
+        "C": 39,
+        "B": 3,
+        "D": 2
+      },
+      "over_under": {
+        "C": 42,
+        "B": 2,
+        "D": 10
+      }
+    },
+    "unified_vs_classic_proxy": {
+      "unified_wins": 0,
+      "classic_wins": 0,
+      "ties": 5,
+      "both_wrong": 1
+    },
+    "unified_vs_egie_proxy": {
+      "unified_wins": 0,
+      "egie_wins": 0,
+      "ties": 0,
+      "both_wrong": 0
+    }
+  },
+  "decision": "NEED_MORE_DATA"
+}

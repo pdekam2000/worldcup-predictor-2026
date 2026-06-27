@@ -1,0 +1,72 @@
+{
+  "passed": 13,
+  "total": 13,
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "feature_store_module_imports",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "xg_normalized",
+      "pass": true,
+      "detail": "fixtures_with_xg=22"
+    },
+    {
+      "name": "rolling_features_work",
+      "pass": true,
+      "detail": "for=1.5 xga=0.7667"
+    },
+    {
+      "name": "migration_file_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "postgres_configured",
+      "pass": true,
+      "detail": "optional for local normalize-only"
+    },
+    {
+      "name": "xg_imported_or_ready",
+      "pass": true,
+      "detail": "records=442"
+    },
+    {
+      "name": "xg_retrievable",
+      "pass": true,
+      "detail": "repository wired"
+    },
+    {
+      "name": "duplicate_protection",
+      "pass": true,
+      "detail": "dup_groups=0"
+    },
+    {
+      "name": "fixture_summaries_work",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "cache_works",
+      "pass": true,
+      "detail": "cache_files=80"
+    },
+    {
+      "name": "no_prediction_logic_changed",
+      "pass": true,
+      "detail": "feature store only"
+    },
+    {
+      "name": "no_wde_changed",
+      "pass": true,
+      "detail": "feature store only"
+    },
+    {
+      "name": "no_saas_deploy",
+      "pass": true,
+      "detail": "no deploy artifacts"
+    }
+  ]
+}

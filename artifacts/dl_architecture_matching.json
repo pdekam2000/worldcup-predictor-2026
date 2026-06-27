@@ -1,0 +1,78 @@
+{
+  "generated_at": "2026-06-23T10:18:50.534039+00:00",
+  "matches": {
+    "first_goal_team": {
+      "recommended": [
+        "market_intelligence",
+        "logistic_regression",
+        "lightgbm"
+      ],
+      "not_recommended": [
+        "ft_transformer",
+        "lstm"
+      ],
+      "reason": "Sharp odds dominate; parser/enrichment fixes beat ML"
+    },
+    "goal_range": {
+      "recommended": [
+        "kaplan_meier",
+        "hazard_model",
+        "lightgbm"
+      ],
+      "future_dl": [
+        "deep_survival_network"
+      ],
+      "reason": "Phase 52A survival +3.2pp without deep learning"
+    },
+    "goal_minute": {
+      "recommended": [
+        "hazard_model",
+        "temporal_survival"
+      ],
+      "future_dl": [
+        "deep_survival_network",
+        "temporal_transformer"
+      ],
+      "reason": "Needs timing labels before any architecture"
+    },
+    "btts": {
+      "recommended": [
+        "logistic",
+        "lightgbm",
+        "poisson_btts"
+      ],
+      "not_recommended": [
+        "transformer"
+      ]
+    },
+    "over_under": {
+      "recommended": [
+        "poisson",
+        "lightgbm",
+        "market_intelligence"
+      ]
+    },
+    "correct_score": {
+      "recommended": [
+        "poisson",
+        "dixon_coles"
+      ],
+      "future_dl": [
+        "neural_poisson"
+      ]
+    },
+    "goalscorer": {
+      "recommended": [
+        "player_embeddings"
+      ],
+      "prerequisite": "player match history ingestion"
+    },
+    "match_winner": {
+      "recommended": [
+        "market_intelligence",
+        "elo",
+        "lightgbm"
+      ]
+    }
+  }
+}

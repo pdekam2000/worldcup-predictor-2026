@@ -1,0 +1,38 @@
+{
+  "backfill": {
+    "job_key": "phase54f4_uefa_cache",
+    "fixtures_processed": 80,
+    "fixtures_imported": 8,
+    "fixtures_skipped": 0,
+    "fixtures_empty": 72,
+    "fixtures_error": 0,
+    "records_written": 316,
+    "api_calls_live": 0,
+    "api_calls_cached": 8,
+    "errors": []
+  },
+  "audit": {
+    "configured": true,
+    "tables_ready": true,
+    "records": {
+      "record_count": 9668,
+      "fixture_count": 238,
+      "league_count": 4,
+      "season_count": 6,
+      "team_count": 167,
+      "player_record_count": 0
+    },
+    "summaries": {
+      "summary_count": 238,
+      "with_rolling_xg": 156
+    },
+    "duplicate_groups_sample": []
+  },
+  "postgres_configured": true,
+  "league_id": 0,
+  "season_id": null,
+  "season_label": null,
+  "metric_key_filter": null,
+  "require_team_xg": true,
+  "dry_run": false
+}

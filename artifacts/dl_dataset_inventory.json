@@ -1,0 +1,413 @@
+{
+  "generated_at": "2026-06-23T10:18:50.334552+00:00",
+  "datasets": {
+    "egie_survival": {
+      "name": "EGIE Survival Dataset",
+      "source": "data/egie/survival/survival_dataset.parquet",
+      "exists": true,
+      "path": "data/egie/survival/survival_dataset.parquet",
+      "row_count": 380,
+      "feature_count": 36,
+      "columns": [
+        "fixture_id",
+        "league",
+        "season",
+        "home_team",
+        "away_team",
+        "kickoff_utc",
+        "first_goal_minute",
+        "censored_match",
+        "home_goal_rate",
+        "away_goal_rate",
+        "dq",
+        "confidence",
+        "home_history_samples",
+        "away_history_samples",
+        "home_xg_for",
+        "away_xg_for",
+        "home_xg_against",
+        "away_xg_against",
+        "pressure_index_home",
+        "pressure_index_away",
+        "home_shots",
+        "away_shots",
+        "home_shots_on_target",
+        "away_shots_on_target",
+        "odds_implied_home",
+        "odds_implied_away",
+        "odds_movement_home",
+        "lineup_strength_home",
+        "lineup_strength_away",
+        "injuries_impact_home",
+        "injuries_impact_away",
+        "provider_coverage_xg",
+        "provider_coverage_odds",
+        "provider_coverage_pressure",
+        "provider_coverage_lineups",
+        "match_state_features"
+      ],
+      "missing_value_pct": {
+        "fixture_id": 0.0,
+        "league": 0.0,
+        "season": 0.0,
+        "home_team": 0.0,
+        "away_team": 0.0,
+        "kickoff_utc": 0.0,
+        "first_goal_minute": 1.0,
+        "censored_match": 0.0,
+        "home_goal_rate": 0.0,
+        "away_goal_rate": 0.0,
+        "dq": 0.0,
+        "confidence": 0.0,
+        "home_history_samples": 0.0,
+        "away_history_samples": 0.0,
+        "home_xg_for": 1.0,
+        "away_xg_for": 1.0,
+        "home_xg_against": 1.0,
+        "away_xg_against": 1.0,
+        "pressure_index_home": 1.0,
+        "pressure_index_away": 1.0,
+        "home_shots": 0.9684,
+        "away_shots": 0.9684,
+        "home_shots_on_target": 0.9684,
+        "away_shots_on_target": 0.9684,
+        "odds_implied_home": 1.0,
+        "odds_implied_away": 1.0,
+        "odds_movement_home": 1.0,
+        "lineup_strength_home": 0.9684,
+        "lineup_strength_away": 0.9684,
+        "injuries_impact_home": 1.0,
+        "injuries_impact_away": 1.0,
+        "provider_coverage_xg": 0.0,
+        "provider_coverage_odds": 0.0,
+        "provider_coverage_pressure": 0.0,
+        "provider_coverage_lineups": 0.0,
+        "match_state_features": 0.0
+      },
+      "duplicate_pct": 0.0,
+      "season_coverage": {
+        "2023/2024": 380
+      },
+      "league_coverage": {
+        "premier_league": 380
+      },
+      "label_availability": {
+        "first_goal_minute": {
+          "non_null_pct": 0.0,
+          "unique_values": 0
+        },
+        "censored_match": {
+          "non_null_pct": 1.0,
+          "unique_values": 1
+        }
+      },
+      "shadow_predictions": {
+        "exists": true,
+        "path": "data/egie/survival/survival_shadow_predictions.jsonl",
+        "row_count": 359,
+        "feature_count": 8,
+        "duplicate_fixture_pct": 0.0,
+        "sample_keys": [
+          "actuals",
+          "baseline",
+          "baseline_eval",
+          "competition_key",
+          "fixture_id",
+          "recorded_at",
+          "survival",
+          "survival_eval"
+        ]
+      }
+    },
+    "goal_events": {
+      "name": "Goal Event Dataset",
+      "source": "sqlite:fixture_goal_events",
+      "row_count": 1621,
+      "fixtures_with_events": 499,
+      "fixtures_with_minute": 499,
+      "league_coverage": {
+        "premier_league": 359,
+        "champions_league": 61,
+        "conference_league": 54,
+        "europa_league": 25
+      },
+      "label_availability": {
+        "first_goal_minute": {
+          "fixtures": 499
+        },
+        "goal_sequence": {
+          "row_count": 1621
+        }
+      },
+      "feature_count": 8,
+      "missing_value_pct": {},
+      "duplicate_pct": 0.0
+    },
+    "api_football_historical": {
+      "name": "API-Football Historical Dataset",
+      "source": "sqlite:fixtures + fixture_enrichment",
+      "row_count": 1905,
+      "demo_csv_rows": 13,
+      "league_coverage": {
+        "bundesliga": 1232,
+        "champions_league": 90,
+        "conference_league": 65,
+        "europa_league": 65,
+        "premier_league": 380,
+        "world_cup_2026": 73
+      },
+      "enrichment_rows": 1684,
+      "feature_count": 12,
+      "label_availability": {
+        "fixture_results": {
+          "row_count": 1617
+        }
+      }
+    },
+    "uefa_club": {
+      "name": "UEFA Club Dataset",
+      "source": "artifacts/uefa_fixture_mapping.json + sportmonks raw cache",
+      "row_count": 220,
+      "league_coverage": {
+        "champions_league": 90,
+        "europa_league": 65,
+        "conference_league": 65
+      },
+      "exists": true,
+      "path": "data/egie/uefa_club/uefa_survival_dataset.parquet",
+      "feature_count": 45,
+      "columns": [
+        "sportmonks_fixture_id",
+        "fixture_id",
+        "competition_key",
+        "home_team",
+        "away_team",
+        "kickoff_utc",
+        "first_goal_minute",
+        "home_goals",
+        "away_goals",
+        "baseline_first_goal_team",
+        "baseline_goal_range",
+        "data_quality_score",
+        "home_xg",
+        "away_xg",
+        "xg_diff",
+        "home_xg_for",
+        "away_xg_for",
+        "home_pressure",
+        "away_pressure",
+        "pressure_diff",
+        "implied_home",
+        "implied_draw",
+        "implied_away",
+        "odds_implied_home",
+        "odds_implied_draw",
+        "odds_implied_away",
+        "first_goal_odds",
+        "odds_movement",
+        "sportmonks_home_win",
+        "sportmonks_draw",
+        "sportmonks_away_win",
+        "lineup_strength_home",
+        "lineup_strength_away",
+        "lineup_stability",
+        "missing_key_players",
+        "provider_coverage_xg",
+        "provider_coverage_pressure",
+        "provider_coverage_odds",
+        "provider_coverage_predictions",
+        "provider_coverage_lineups",
+        "provider_coverage_events",
+        "provider_coverage_statistics",
+        "recent_first_goal_patterns",
+        "pressure_index_home",
+        "pressure_index_away"
+      ],
+      "missing_value_pct": {
+        "sportmonks_fixture_id": 0.0,
+        "fixture_id": 0.0,
+        "competition_key": 0.0,
+        "home_team": 0.0,
+        "away_team": 0.0,
+        "kickoff_utc": 0.0,
+        "first_goal_minute": 0.3909,
+        "home_goals": 0.0,
+        "away_goals": 0.0,
+        "baseline_first_goal_team": 0.0,
+        "baseline_goal_range": 0.0,
+        "data_quality_score": 0.0,
+        "home_xg": 0.9636,
+        "away_xg": 0.9636,
+        "xg_diff": 0.9636,
+        "home_xg_for": 0.9636,
+        "away_xg_for": 0.9636,
+        "home_pressure": 0.7818,
+        "away_pressure": 0.7818,
+        "pressure_diff": 0.7818,
+        "implied_home": 0.5227,
+        "implied_draw": 0.5227,
+        "implied_away": 0.5227,
+        "odds_implied_home": 0.5227,
+        "odds_implied_draw": 0.5227,
+        "odds_implied_away": 0.5227,
+        "first_goal_odds": 0.5227,
+        "odds_movement": 1.0,
+        "sportmonks_home_win": 0.7045,
+        "sportmonks_draw": 0.7045,
+        "sportmonks_away_win": 0.7045,
+        "lineup_strength_home": 0.3409,
+        "lineup_strength_away": 0.3409,
+        "lineup_stability": 0.3409,
+        "missing_key_players": 0.3409,
+        "provider_coverage_xg": 0.0,
+        "provider_coverage_pressure": 0.0,
+        "provider_coverage_odds": 0.0,
+        "provider_coverage_predictions": 0.0,
+        "provider_coverage_lineups": 0.0,
+        "provider_coverage_events": 0.0,
+        "provider_coverage_statistics": 0.0,
+        "recent_first_goal_patterns": 0.3909,
+        "pressure_index_home": 0.7818,
+        "pressure_index_away": 0.7818
+      },
+      "duplicate_pct": 0.0,
+      "season_coverage": {},
+      "label_availability": {
+        "first_goal_minute": {
+          "non_null_pct": 0.6091,
+          "unique_values": 63
+        },
+        "baseline_first_goal_team": {
+          "non_null_pct": 1.0,
+          "unique_values": 3
+        },
+        "baseline_goal_range": {
+          "non_null_pct": 1.0,
+          "unique_values": 6
+        },
+        "home_goals": {
+          "non_null_pct": 1.0,
+          "unique_values": 8
+        },
+        "away_goals": {
+          "non_null_pct": 1.0,
+          "unique_values": 7
+        }
+      }
+    },
+    "odds": {
+      "name": "Odds Dataset",
+      "source": "odds_snapshots + UEFA sportmonks cache + odds_api_cache",
+      "row_count": 1240,
+      "odds_snapshots": 1055,
+      "odds_api_cache_entries": 16,
+      "fixture_enrichment_odds": 72,
+      "uefa_sportmonks_cache_fixtures": 185,
+      "sharp_mw_fg_accuracy_uefa": 0.7872,
+      "feature_count": 15,
+      "label_availability": {
+        "match_winner_implied": {
+          "coverage_fixtures": 104
+        }
+      }
+    },
+    "lineups": {
+      "name": "Lineup Dataset",
+      "source": "fixture_enrichment.lineups_json + expected_lineup shadow",
+      "row_count": 1531,
+      "shadow_accuracy_rows": 2622,
+      "coverage_pct_of_enrichment": 90.91,
+      "feature_count": 6,
+      "label_availability": {
+        "confirmed_lineups": {
+          "fixture_count": 1531
+        }
+      }
+    },
+    "injuries": {
+      "name": "Injuries Dataset",
+      "source": "EGIE provider features (sparse)",
+      "row_count": 0,
+      "coverage_pct": 0.0,
+      "note": "egie_paid_provider_audit: 0% injuries in premier_league provider store",
+      "feature_count": 4,
+      "label_availability": {}
+    },
+    "match_statistics": {
+      "name": "Match Statistics Dataset",
+      "source": "fixture_enrichment.statistics_json",
+      "row_count": 1531,
+      "coverage_pct_of_enrichment": 90.91,
+      "feature_count": 20
+    },
+    "xg": {
+      "name": "xG Dataset",
+      "source": "xg_snapshots + sportmonks UEFA cache",
+      "row_count": 0,
+      "sqlite_xg_snapshots": 0,
+      "uefa_parser_xg_resolved_pct": null,
+      "feature_count": 8,
+      "note": "UEFA cache: xG mostly absent on legacy seasons; ~3.6% after API-J expansion",
+      "uefa_home_xg_non_null_pct": null
+    },
+    "pressure": {
+      "name": "Pressure Dataset",
+      "source": "Sportmonks pressure index (not in API-Football store)",
+      "row_count": 0,
+      "coverage_pct": 0.0,
+      "note": "egie_paid_provider_audit: 0% pressure in premier_league provider store",
+      "feature_count": 4
+    },
+    "prediction_history": {
+      "name": "Prediction History Dataset",
+      "source": "data/predictions/prediction_history.jsonl + sqlite predictions",
+      "exists": true,
+      "path": "data/predictions/prediction_history.jsonl",
+      "row_count": 108,
+      "feature_count": 22,
+      "duplicate_fixture_pct": 0.75,
+      "sample_keys": [
+        "away_team",
+        "confidence_score",
+        "created_at",
+        "data_quality_score",
+        "date",
+        "fixture_id",
+        "home_team",
+        "is_preliminary",
+        "lineups_available",
+        "no_bet_flag",
+        "predicted_1x2",
+        "predicted_first_goal_scorer",
+        "predicted_first_goal_team",
+        "predicted_halftime_goals",
+        "predicted_over_under_2_5",
+        "predicted_scoreline",
+        "prediction_id",
+        "prediction_version",
+        "reason_for_refresh",
+        "refreshed_from_prediction_id",
+        "risk_level",
+        "source"
+      ],
+      "sqlite_predictions": 17,
+      "sqlite_prediction_markets": 85,
+      "label_availability": {
+        "verification_results": {
+          "row_count": 70
+        }
+      }
+    },
+    "accuracy_tracker": {
+      "name": "Accuracy Tracker Dataset",
+      "source": "verification_results + learning_records_v2 + phase backtests",
+      "row_count": 134,
+      "verification_results": 70,
+      "learning_records_v2": 64,
+      "worldcup_stored_predictions": 30,
+      "phase52a_fg_baseline": 0.5076,
+      "phase52a_goal_range_baseline": 0.2779,
+      "uefa_sharp_odds_fg": 0.7872
+    }
+  }
+}

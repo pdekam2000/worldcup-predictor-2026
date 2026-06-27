@@ -1,0 +1,375 @@
+{
+  "generated_at": "2026-06-24T17:56:04.328246+00:00",
+  "phase": "55C",
+  "dataset_v2": {
+    "status": "ok",
+    "rows": 950,
+    "fixtures": 950,
+    "sources": {
+      "expanded_egie": "artifacts\\phase54f6_expanded_dataset\\expanded_egie_dataset.parquet",
+      "goalscorer_v3": "artifacts\\phase54q_goalscorer_generalization\\goalscorer_dataset_v3.parquet",
+      "goalscorer_fixtures_merged": 1452,
+      "fts_odds_non_null": 3
+    },
+    "label_balance": 0.5568421052631579
+  },
+  "backtest": {
+    "groups": {
+      "baseline": {
+        "group": "baseline",
+        "status": "ok",
+        "features_used": [
+          "home_goal_rate_proxy",
+          "away_goal_rate_proxy",
+          "data_quality_score",
+          "home_history_samples",
+          "away_history_samples"
+        ],
+        "n_train": 665,
+        "n_test": 143,
+        "accuracy": 0.5175,
+        "brier": 0.2488,
+        "ece": 0.0474,
+        "log_loss": 0.6907,
+        "tier_metrics": {
+          "B": {
+            "n": 10,
+            "accuracy": 0.5,
+            "mean_confidence": 0.298
+          },
+          "C": {
+            "n": 54,
+            "accuracy": 0.5741,
+            "mean_confidence": 0.172
+          },
+          "D": {
+            "n": 79,
+            "accuracy": 0.481,
+            "mean_confidence": 0.0563
+          }
+        },
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.2016,
+          "away_goal_rate_proxy": 0.2288,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.0572,
+          "away_history_samples": 0.0675
+        }
+      },
+      "baseline_lineups": {
+        "group": "baseline_lineups",
+        "status": "ok",
+        "features_used": [
+          "home_goal_rate_proxy",
+          "away_goal_rate_proxy",
+          "data_quality_score",
+          "home_history_samples",
+          "away_history_samples",
+          "home_starter_count",
+          "away_starter_count",
+          "home_avg_starter_probability",
+          "away_avg_starter_probability",
+          "home_lineup_quality",
+          "away_lineup_quality"
+        ],
+        "n_train": 665,
+        "n_test": 143,
+        "accuracy": 0.5105,
+        "brier": 0.2524,
+        "ece": 0.0512,
+        "log_loss": 0.698,
+        "tier_metrics": {
+          "B": {
+            "n": 16,
+            "accuracy": 0.6875,
+            "mean_confidence": 0.288
+          },
+          "C": {
+            "n": 48,
+            "accuracy": 0.4792,
+            "mean_confidence": 0.1687
+          },
+          "D": {
+            "n": 79,
+            "accuracy": 0.4937,
+            "mean_confidence": 0.0625
+          }
+        },
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.1894,
+          "away_goal_rate_proxy": 0.2263,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.0239,
+          "away_history_samples": 0.0629,
+          "home_starter_count": 0.0754,
+          "away_starter_count": 0.1126,
+          "home_avg_starter_probability": 0.1844,
+          "away_avg_starter_probability": 0.1825,
+          "home_lineup_quality": 0.2121,
+          "away_lineup_quality": 0.3269
+        }
+      },
+      "baseline_goalscorer": {
+        "group": "baseline_goalscorer",
+        "status": "ok",
+        "features_used": [
+          "home_goal_rate_proxy",
+          "away_goal_rate_proxy",
+          "data_quality_score",
+          "home_history_samples",
+          "away_history_samples",
+          "home_top_goals_per_90",
+          "away_top_goals_per_90",
+          "home_top_xg_per_90",
+          "away_top_xg_per_90",
+          "home_top_recent_form",
+          "away_top_recent_form",
+          "goalscorer_intel_gap"
+        ],
+        "n_train": 665,
+        "n_test": 143,
+        "accuracy": 0.5455,
+        "brier": 0.2441,
+        "ece": 0.0376,
+        "log_loss": 0.6809,
+        "tier_metrics": {
+          "A": {
+            "n": 1,
+            "accuracy": 1.0,
+            "mean_confidence": 0.4281
+          },
+          "B": {
+            "n": 16,
+            "accuracy": 0.625,
+            "mean_confidence": 0.3155
+          },
+          "C": {
+            "n": 51,
+            "accuracy": 0.6078,
+            "mean_confidence": 0.1784
+          },
+          "D": {
+            "n": 75,
+            "accuracy": 0.48,
+            "mean_confidence": 0.058
+          }
+        },
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.1242,
+          "away_goal_rate_proxy": 0.2232,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.0599,
+          "away_history_samples": 0.0767,
+          "home_top_goals_per_90": 0.0514,
+          "away_top_goals_per_90": 0.0391,
+          "home_top_xg_per_90": 0.0942,
+          "away_top_xg_per_90": 0.1332,
+          "home_top_recent_form": 0.1853,
+          "away_top_recent_form": 0.0113,
+          "goalscorer_intel_gap": 0.0655
+        }
+      },
+      "baseline_fts_odds": {
+        "group": "baseline_fts_odds",
+        "status": "ok",
+        "features_used": [
+          "home_goal_rate_proxy",
+          "away_goal_rate_proxy",
+          "data_quality_score",
+          "home_history_samples",
+          "away_history_samples",
+          "fts_implied_home",
+          "fts_implied_away",
+          "mw_implied_home",
+          "mw_implied_away",
+          "mw_implied_draw",
+          "odds_movement_home",
+          "odds_movement_away"
+        ],
+        "n_train": 665,
+        "n_test": 143,
+        "accuracy": 0.5175,
+        "brier": 0.249,
+        "ece": 0.0487,
+        "log_loss": 0.6911,
+        "tier_metrics": {
+          "B": {
+            "n": 15,
+            "accuracy": 0.4,
+            "mean_confidence": 0.2828
+          },
+          "C": {
+            "n": 51,
+            "accuracy": 0.6275,
+            "mean_confidence": 0.1691
+          },
+          "D": {
+            "n": 77,
+            "accuracy": 0.4675,
+            "mean_confidence": 0.0567
+          }
+        },
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.2066,
+          "away_goal_rate_proxy": 0.239,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.0523,
+          "away_history_samples": 0.0706,
+          "fts_implied_home": 0.2642,
+          "fts_implied_away": 0.2157,
+          "mw_implied_home": 0.2642,
+          "mw_implied_away": 0.2157,
+          "mw_implied_draw": 0.0839,
+          "odds_movement_home": 0.0,
+          "odds_movement_away": 0.0
+        }
+      },
+      "full_blend": {
+        "group": "full_blend",
+        "status": "ok",
+        "features_used": [
+          "home_goal_rate_proxy",
+          "away_goal_rate_proxy",
+          "data_quality_score",
+          "home_history_samples",
+          "away_history_samples",
+          "home_starter_count",
+          "away_starter_count",
+          "home_avg_starter_probability",
+          "away_avg_starter_probability",
+          "home_lineup_quality",
+          "away_lineup_quality",
+          "home_top_goals_per_90",
+          "away_top_goals_per_90",
+          "home_top_xg_per_90",
+          "away_top_xg_per_90",
+          "home_top_recent_form",
+          "away_top_recent_form",
+          "goalscorer_intel_gap",
+          "fts_implied_home",
+          "fts_implied_away",
+          "mw_implied_home",
+          "mw_implied_away",
+          "mw_implied_draw",
+          "odds_movement_home",
+          "odds_movement_away",
+          "home_recent_xg",
+          "away_recent_xg",
+          "xg_difference",
+          "rolling_xg_5_home",
+          "rolling_xg_5_away"
+        ],
+        "n_train": 665,
+        "n_test": 143,
+        "accuracy": 0.5245,
+        "brier": 0.2484,
+        "ece": 0.0953,
+        "log_loss": 0.6901,
+        "tier_metrics": {
+          "A": {
+            "n": 4,
+            "accuracy": 0.25,
+            "mean_confidence": 0.4094
+          },
+          "B": {
+            "n": 24,
+            "accuracy": 0.75,
+            "mean_confidence": 0.2947
+          },
+          "C": {
+            "n": 49,
+            "accuracy": 0.551,
+            "mean_confidence": 0.1705
+          },
+          "D": {
+            "n": 66,
+            "accuracy": 0.4394,
+            "mean_confidence": 0.0557
+          }
+        },
+        "feature_importance": {
+          "home_goal_rate_proxy": 0.0054,
+          "away_goal_rate_proxy": 0.0951,
+          "data_quality_score": 0.0,
+          "home_history_samples": 0.016,
+          "away_history_samples": 0.0934,
+          "home_starter_count": 0.0835,
+          "away_starter_count": 0.1301,
+          "home_avg_starter_probability": 0.1507,
+          "away_avg_starter_probability": 0.1883,
+          "home_lineup_quality": 0.2252,
+          "away_lineup_quality": 0.3116,
+          "home_top_goals_per_90": 0.0453,
+          "away_top_goals_per_90": 0.0591,
+          "home_top_xg_per_90": 0.1089,
+          "away_top_xg_per_90": 0.1392,
+          "home_top_recent_form": 0.2053,
+          "away_top_recent_form": 0.0532,
+          "goalscorer_intel_gap": 0.0759,
+          "fts_implied_home": 0.2382,
+          "fts_implied_away": 0.2098,
+          "mw_implied_home": 0.2382,
+          "mw_implied_away": 0.2098,
+          "mw_implied_draw": 0.0822,
+          "odds_movement_home": 0.0,
+          "odds_movement_away": 0.0,
+          "home_recent_xg": 0.0054,
+          "away_recent_xg": 0.1376,
+          "xg_difference": 0.1061,
+          "rolling_xg_5_home": 0.0054,
+          "rolling_xg_5_away": 0.1376
+        }
+      }
+    },
+    "baselines": {
+      "phase54f7_xg": 0.5833,
+      "phase51h_production": 0.5076,
+      "goalscorer_heuristic": {
+        "status": "ok",
+        "accuracy": 0.5524,
+        "n": 143
+      }
+    },
+    "best_group": "baseline_goalscorer",
+    "best_accuracy": 0.5455
+  },
+  "feature_families": {
+    "baseline_accuracy": 0.5175,
+    "family_deltas": {
+      "lineups": -0.007000000000000006,
+      "goalscorer": 0.028000000000000025,
+      "fts_odds": 0.0,
+      "full_blend": 0.007000000000000006
+    },
+    "ranked": [
+      [
+        "goalscorer",
+        0.028000000000000025
+      ],
+      [
+        "full_blend",
+        0.007000000000000006
+      ],
+      [
+        "fts_odds",
+        0.0
+      ],
+      [
+        "lineups",
+        -0.007000000000000006
+      ]
+    ]
+  },
+  "decision": {
+    "recommendation": "FIRST_GOAL_TEAM_HIGH_VALUE",
+    "best_group": "baseline_goalscorer",
+    "best_accuracy": 0.5455,
+    "baseline_accuracy": 0.5175,
+    "lift_vs_baseline_pp": 0.028,
+    "beats_54f7": false,
+    "beats_goalscorer_heuristic": false
+  },
+  "recommendation": "FIRST_GOAL_TEAM_HIGH_VALUE",
+  "production_changes": false,
+  "api_calls_used": 0
+}

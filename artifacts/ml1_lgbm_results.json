@@ -1,0 +1,108 @@
+{
+  "generated_at": "2026-06-23T10:37:18.009337Z",
+  "model_backend": "lightgbm",
+  "train_size": 1293,
+  "test_size": 324,
+  "feature_columns": [
+    "home_gf_l5",
+    "home_ga_l5",
+    "away_gf_l5",
+    "away_ga_l5",
+    "home_btts_l5",
+    "away_btts_l5",
+    "home_points_l5",
+    "away_points_l5",
+    "odds_mw_home",
+    "odds_mw_draw",
+    "odds_mw_away",
+    "odds_btts_yes",
+    "odds_btts_no",
+    "odds_over_25",
+    "odds_under_25",
+    "sm_consensus_implied_home",
+    "sm_consensus_implied_draw",
+    "sm_consensus_implied_away",
+    "sm_closing_implied_home",
+    "sm_closing_implied_draw",
+    "sm_closing_implied_away",
+    "sm_sharp_implied_home",
+    "sm_sharp_implied_away",
+    "sm_first_team_score_home",
+    "sm_first_team_score_away",
+    "sm_odds_movement_home",
+    "sm_odds_movement_away"
+  ],
+  "models": {
+    "MW_Model": {
+      "status": "trained",
+      "accuracy": 0.4012,
+      "log_loss": 1.312,
+      "brier_score": null,
+      "calibration_ece": null,
+      "roi_proxy": -0.5988,
+      "majority_baseline_accuracy": 0.392,
+      "delta_vs_majority": 0.0092,
+      "classes": [
+        "away_win",
+        "draw",
+        "home_win"
+      ]
+    },
+    "BTTS_Model": {
+      "status": "trained",
+      "accuracy": 0.5525,
+      "log_loss": 0.7611,
+      "brier_score": 0.2693,
+      "calibration_ece": 0.1471,
+      "roi_proxy": -0.4475,
+      "majority_baseline_accuracy": 0.5772,
+      "delta_vs_majority": -0.0247,
+      "classes": [
+        0,
+        1
+      ]
+    },
+    "OU15_Model": {
+      "status": "trained",
+      "accuracy": 0.8056,
+      "log_loss": 0.5884,
+      "brier_score": 0.1662,
+      "calibration_ece": 0.1276,
+      "roi_proxy": -0.1944,
+      "majority_baseline_accuracy": 0.8179,
+      "delta_vs_majority": -0.0123,
+      "classes": [
+        0,
+        1
+      ]
+    },
+    "OU25_Model": {
+      "status": "trained",
+      "accuracy": 0.5463,
+      "log_loss": 0.7481,
+      "brier_score": 0.2676,
+      "calibration_ece": 0.1608,
+      "roi_proxy": -0.4537,
+      "majority_baseline_accuracy": 0.608,
+      "delta_vs_majority": -0.0617,
+      "classes": [
+        0,
+        1
+      ]
+    },
+    "OU35_Model": {
+      "status": "trained",
+      "accuracy": 0.5556,
+      "log_loss": 0.7511,
+      "brier_score": 0.2704,
+      "calibration_ece": 0.1367,
+      "roi_proxy": -0.4444,
+      "majority_baseline_accuracy": 0.5772,
+      "delta_vs_majority": -0.0216,
+      "classes": [
+        0,
+        1
+      ]
+    }
+  }
+}

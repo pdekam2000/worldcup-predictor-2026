@@ -1,0 +1,178 @@
+{
+  "sportmonks_fixture_id": 1059924,
+  "fetched_at": "2026-06-23T08:47:17.375706+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059924,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25134,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": 5863,
+      "name": "MYPA vs Grasshopper",
+      "starting_at": "2005-09-28 22:00:00",
+      "result_info": "Grasshopper won after full-time.",
+      "leg": "2/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1127944800,
+      "participants": [
+        {
+          "id": 8996,
+          "sport_id": 1,
+          "country_id": 1233,
+          "venue_id": 5863,
+          "gender": "male",
+          "name": "MYPA",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/4/8996.png",
+          "founded": 1947,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-06-13 14:00:00",
+          "meta": {
+            "location": "home",
+            "winner": false,
+            "position": null
+          }
+        },
+        {
+          "id": 2866,
+          "sport_id": 1,
+          "country_id": 62,
+          "venue_id": 1688,
+          "gender": "male",
+          "name": "Grasshopper",
+          "short_code": "GRA",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/18/2866.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-21 18:15:00",
+          "meta": {
+            "location": "away",
+            "winner": true,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5661858,
+          "fixture_id": 1059924,
+          "type_id": 1,
+          "participant_id": 8996,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661859,
+          "fixture_id": 1059924,
+          "type_id": 1,
+          "participant_id": 2866,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661860,
+          "fixture_id": 1059924,
+          "type_id": 2,
+          "participant_id": 8996,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661861,
+          "fixture_id": 1059924,
+          "type_id": 2,
+          "participant_id": 2866,
+          "score": {
+            "goals": 3,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661862,
+          "fixture_id": 1059924,
+          "type_id": 1525,
+          "participant_id": 8996,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661863,
+          "fixture_id": 1059924,
+          "type_id": 1525,
+          "participant_id": 2866,
+          "score": {
+            "goals": 3,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782204437,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 1375,
+      "remaining": 2409,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  },
+  "reingest": "phase_api_j_targeted"
+}

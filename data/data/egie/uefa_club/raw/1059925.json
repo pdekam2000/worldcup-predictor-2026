@@ -1,0 +1,177 @@
+{
+  "sportmonks_fixture_id": 1059925,
+  "fetched_at": "2026-06-23T07:01:21.010727+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059925,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25135,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": 1590,
+      "name": "Crvena Zvezda vs Sporting Braga",
+      "starting_at": "2005-09-14 22:00:00",
+      "result_info": "Game ended in draw.",
+      "leg": "1/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1126735200,
+      "participants": [
+        {
+          "id": 884,
+          "sport_id": 1,
+          "country_id": 20,
+          "venue_id": 313,
+          "gender": "male",
+          "name": "Sporting Braga",
+          "short_code": "SCB",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/20/884.png",
+          "founded": 1921,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-16 17:00:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        },
+        {
+          "id": 2673,
+          "sport_id": 1,
+          "country_id": 296,
+          "venue_id": 1590,
+          "gender": "male",
+          "name": "Crvena Zvezda",
+          "short_code": "CRV",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/17/2673.png",
+          "founded": 1945,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-22 18:00:00",
+          "meta": {
+            "location": "home",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5661864,
+          "fixture_id": 1059925,
+          "type_id": 1,
+          "participant_id": 2673,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661865,
+          "fixture_id": 1059925,
+          "type_id": 1,
+          "participant_id": 884,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661866,
+          "fixture_id": 1059925,
+          "type_id": 2,
+          "participant_id": 2673,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661867,
+          "fixture_id": 1059925,
+          "type_id": 2,
+          "participant_id": 884,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661868,
+          "fixture_id": 1059925,
+          "type_id": 1525,
+          "participant_id": 2673,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661869,
+          "fixture_id": 1059925,
+          "type_id": 1525,
+          "participant_id": 884,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782198081,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 3599,
+      "remaining": 2497,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  }
+}

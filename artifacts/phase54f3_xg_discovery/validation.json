@@ -1,0 +1,57 @@
+{
+  "passed": 10,
+  "total": 10,
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "target_leagues_audited",
+      "pass": true,
+      "detail": "[2, 5, 8, 732, 1325, 1326, 1538, 2286]"
+    },
+    {
+      "name": "seasons_audited",
+      "pass": true,
+      "detail": "count=24"
+    },
+    {
+      "name": "coverage_matrix_created",
+      "pass": true,
+      "detail": "rows=24"
+    },
+    {
+      "name": "endpoint_audit_completed",
+      "pass": true,
+      "detail": "fixtures=1"
+    },
+    {
+      "name": "root_cause_analysis_completed",
+      "pass": true,
+      "detail": "['A', 'B', 'E']"
+    },
+    {
+      "name": "no_production_prediction_changes",
+      "pass": true,
+      "detail": "discovery-only"
+    },
+    {
+      "name": "no_wde_changes",
+      "pass": true,
+      "detail": "discovery-only"
+    },
+    {
+      "name": "no_saas_changes",
+      "pass": true,
+      "detail": "discovery-only"
+    },
+    {
+      "name": "no_deploy",
+      "pass": true,
+      "detail": "no deploy"
+    },
+    {
+      "name": "no_token_leaked",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "ranked": [
+    {
+      "signal": "best_fts_book",
+      "label": "FTS @ bwin",
+      "fg_hit_rate": 0.9231,
+      "coverage": 13,
+      "source": "per_bookmaker",
+      "tier": "S"
+    },
+    {
+      "signal": "C",
+      "label": "sharp_match_winner",
+      "fg_hit_rate": 0.7872,
+      "egie_fg_hit_rate": 0.7872,
+      "coverage": 104,
+      "pending_rate": 0.0309,
+      "source": "k2_backtest",
+      "tier": "S"
+    },
+    {
+      "signal": "F",
+      "label": "combined_fg_consensus",
+      "fg_hit_rate": 0.7849,
+      "egie_fg_hit_rate": 0.7849,
+      "coverage": 104,
+      "pending_rate": 0.0412,
+      "source": "k2_backtest",
+      "tier": "S"
+    },
+    {
+      "signal": "B",
+      "label": "closing_match_winner",
+      "fg_hit_rate": 0.7826,
+      "egie_fg_hit_rate": 0.7826,
+      "coverage": 104,
+      "pending_rate": 0.0515,
+      "source": "k2_backtest",
+      "tier": "S"
+    },
+    {
+      "signal": "A",
+      "label": "consensus_match_winner",
+      "fg_hit_rate": 0.7766,
+      "egie_fg_hit_rate": 0.7766,
+      "coverage": 104,
+      "pending_rate": 0.0309,
+      "source": "k2_backtest",
+      "tier": "A"
+    },
+    {
+      "signal": "D",
+      "label": "direct_first_team_to_score",
+      "fg_hit_rate": 0.7742,
+      "egie_fg_hit_rate": 0.7742,
+      "coverage": 104,
+      "pending_rate": 0.0412,
+      "source": "k2_backtest",
+      "tier": "A"
+    },
+    {
+      "signal": "E",
+      "label": "sharp_first_team_to_score",
+      "fg_hit_rate": null,
+      "egie_fg_hit_rate": null,
+      "coverage": 0,
+      "pending_rate": null,
+      "source": "k2_backtest",
+      "tier": "C"
+    }
+  ],
+  "strongest_signal": {
+    "signal": "C",
+    "label": "sharp_match_winner",
+    "fg_hit_rate": 0.7872,
+    "egie_fg_hit_rate": 0.7872,
+    "coverage": 104,
+    "pending_rate": 0.0309,
+    "source": "k2_backtest",
+    "tier": "S"
+  },
+  "strongest_signal_robust": {
+    "signal": "C",
+    "label": "sharp_match_winner",
+    "fg_hit_rate": 0.7872,
+    "egie_fg_hit_rate": 0.7872,
+    "coverage": 104,
+    "pending_rate": 0.0309,
+    "source": "k2_backtest",
+    "tier": "S"
+  },
+  "strongest_signal_peak": {
+    "signal": "best_fts_book",
+    "label": "FTS @ bwin",
+    "fg_hit_rate": 0.9231,
+    "coverage": 13,
+    "source": "per_bookmaker",
+    "tier": "S"
+  },
+  "min_coverage_for_robust": 50
+}

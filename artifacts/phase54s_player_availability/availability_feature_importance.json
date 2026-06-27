@@ -1,0 +1,92 @@
+{
+  "baseline_top3": 0.672,
+  "feature_impacts": {
+    "lineup_confirmed": 0.0,
+    "starter_probability": 0.0,
+    "minutes_last_3": 0.0,
+    "minutes_last_5": 0.0053,
+    "minutes_trend": 0.0053,
+    "bench_probability": 0.0,
+    "captain": 0.0,
+    "suspended_flag": 0.0,
+    "injury_flag": -0.0052,
+    "returned_recently": -0.0052,
+    "availability_score": -0.0052
+  },
+  "verdicts": {
+    "lineup_confirmed": "neutral",
+    "starter_probability": "neutral",
+    "minutes_last_3": "neutral",
+    "minutes_last_5": "positive",
+    "minutes_trend": "positive",
+    "bench_probability": "neutral",
+    "captain": "neutral",
+    "suspended_flag": "neutral",
+    "injury_flag": "harmful",
+    "returned_recently": "harmful",
+    "availability_score": "harmful"
+  },
+  "positive": [
+    "minutes_last_5",
+    "minutes_trend"
+  ],
+  "neutral": [
+    "lineup_confirmed",
+    "starter_probability",
+    "minutes_last_3",
+    "bench_probability",
+    "captain",
+    "suspended_flag"
+  ],
+  "harmful": [
+    "injury_flag",
+    "returned_recently",
+    "availability_score"
+  ],
+  "ranked": [
+    [
+      "minutes_last_5",
+      0.0053
+    ],
+    [
+      "minutes_trend",
+      0.0053
+    ],
+    [
+      "lineup_confirmed",
+      0.0
+    ],
+    [
+      "starter_probability",
+      0.0
+    ],
+    [
+      "minutes_last_3",
+      0.0
+    ],
+    [
+      "bench_probability",
+      0.0
+    ],
+    [
+      "captain",
+      0.0
+    ],
+    [
+      "suspended_flag",
+      0.0
+    ],
+    [
+      "injury_flag",
+      -0.0052
+    ],
+    [
+      "returned_recently",
+      -0.0052
+    ],
+    [
+      "availability_score",
+      -0.0052
+    ]
+  ]
+}

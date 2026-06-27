@@ -1,0 +1,99 @@
+{
+  "status": "ok",
+  "markets": {
+    "anytime": {
+      "composite_scorer": {
+        "market": "target_anytime",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.5143,
+        "top3_hit": 0.7714,
+        "top5_hit": 0.8857,
+        "mrr": 0.6719
+      },
+      "ml_only": {
+        "market": "target_anytime",
+        "signal": "ml_score",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.4571,
+        "top3_hit": 0.7143,
+        "top5_hit": 0.8,
+        "mrr": 0.6188
+      },
+      "odds_only": {
+        "market": "target_anytime",
+        "signal": "odds_implied_anytime",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.6286,
+        "top3_hit": 0.7429,
+        "top5_hit": 0.8571,
+        "mrr": 0.715
+      },
+      "ml_odds_blend": {
+        "market": "target_anytime",
+        "signal": "ml_odds_blend",
+        "fixtures_evaluated": 35,
+        "top1_hit": 0.5429,
+        "top3_hit": 0.8,
+        "top5_hit": 0.8571,
+        "mrr": 0.6829
+      }
+    },
+    "first_goal": {
+      "composite_scorer": {
+        "market": "target_first_goal",
+        "signal": "composite_scorer_score",
+        "fixtures_evaluated": 30,
+        "top1_hit": 0.2,
+        "top3_hit": 0.4667,
+        "top5_hit": 0.5333,
+        "mrr": 0.3769
+      },
+      "ml_only": {
+        "market": "target_first_goal",
+        "signal": "ml_score",
+        "fixtures_evaluated": 30,
+        "top1_hit": 0.2333,
+        "top3_hit": 0.4333,
+        "top5_hit": 0.5333,
+        "mrr": 0.393
+      },
+      "odds_only": {
+        "market": "target_first_goal",
+        "signal": "odds_implied_anytime",
+        "fixtures_evaluated": 30,
+        "top1_hit": 0.3,
+        "top3_hit": 0.4,
+        "top5_hit": 0.4667,
+        "mrr": 0.3894
+      },
+      "ml_odds_blend": {
+        "market": "target_first_goal",
+        "signal": "ml_odds_blend",
+        "fixtures_evaluated": 30,
+        "top1_hit": 0.2667,
+        "top3_hit": 0.4333,
+        "top5_hit": 0.5667,
+        "mrr": 0.4168
+      }
+    }
+  },
+  "value_picks": {
+    "status": "ok",
+    "value_pick_count": 539,
+    "value_pick_hit_rate": 0.0334,
+    "random_disagreement_hit_rate": 0.0463,
+    "outperforms_random": false,
+    "by_confidence_tier": {
+      "C": {
+        "picks": 199,
+        "hit_rate": 0.0553
+      },
+      "D": {
+        "picks": 340,
+        "hit_rate": 0.0206
+      }
+    },
+    "fixtures_with_value_picks": 44
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "tier_metrics": {
+    "A": {
+      "market": "target_anytime",
+      "signal": "composite_scorer_score",
+      "fixtures_evaluated": 17,
+      "top1_hit": 0.8824,
+      "top3_hit": 1.0,
+      "top5_hit": 1.0,
+      "mrr": 0.9412
+    },
+    "B": {
+      "market": "target_anytime",
+      "signal": "composite_scorer_score",
+      "fixtures_evaluated": 20,
+      "top1_hit": 0.5,
+      "top3_hit": 0.85,
+      "top5_hit": 1.0,
+      "mrr": 0.6992
+    },
+    "C": {
+      "market": "target_anytime",
+      "signal": "composite_scorer_score",
+      "fixtures_evaluated": 1080,
+      "top1_hit": 0.3537,
+      "top3_hit": 0.688,
+      "top5_hit": 0.8444,
+      "mrr": 0.5569
+    },
+    "D": {
+      "market": "target_anytime",
+      "signal": "composite_scorer_score",
+      "fixtures_evaluated": 947,
+      "top1_hit": 0.1225,
+      "top3_hit": 0.3062,
+      "top5_hit": 0.4414,
+      "mrr": 0.2892
+    }
+  },
+  "top3_by_tier": {
+    "A": 1.0,
+    "B": 0.85,
+    "C": 0.688,
+    "D": 0.3062
+  },
+  "monotonic_ordering": true,
+  "tier_a_superior": true
+}

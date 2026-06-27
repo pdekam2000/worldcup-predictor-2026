@@ -156,6 +156,17 @@ def _evaluate_one_fixture(
         }
     )
 
+    try:
+        from worldcup_predictor.lifecycle.hooks import hook_after_worldcup_evaluation
+
+        hook_after_worldcup_evaluation(
+            fixture_id,
+            payload=stored,
+            competition_key=stored.get("competition_key"),
+        )
+    except Exception:
+        pass
+
 
 def run_evaluate_worldcup_results(
     *,

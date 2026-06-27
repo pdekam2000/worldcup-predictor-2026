@@ -1,0 +1,15 @@
+# Phase A19B — AI Assistant alert scan every 15 minutes
+#
+# NOT enabled by default — run install_phase_a19b_assistant_alert_timer.sh after deploy.
+
+[Unit]
+Description=AI Assistant alert scan timer (every 15 minutes)
+
+[Timer]
+OnCalendar=*-*-* *:00/15:00
+Persistent=true
+RandomizedDelaySec=30
+Unit=worldcup-assistant-alert-scan.service
+
+[Install]
+WantedBy=timers.target

@@ -215,6 +215,32 @@ PHASE46C1_DDL: tuple[str, ...] = (
     """,
 )
 
+# Phase 62B — World Cup fixture competition_type + Sportmonks mapping
+PHASE62B_COLUMNS: tuple[tuple[str, str, str], ...] = (
+    ("fixtures", "competition_type", "TEXT NOT NULL DEFAULT 'world_cup_finals'"),
+)
+
+PHASE62B_DDL: tuple[str, ...] = (
+    """
+    CREATE TABLE IF NOT EXISTS wc_fixture_mapping (
+        api_football_fixture_id INTEGER PRIMARY KEY,
+        sportmonks_fixture_id INTEGER,
+        mapping_confidence REAL,
+        mapping_source TEXT,
+        date_match INTEGER NOT NULL DEFAULT 0,
+        team_match INTEGER NOT NULL DEFAULT 0,
+        blocked INTEGER NOT NULL DEFAULT 0,
+        block_reason TEXT,
+        mapped_at TEXT NOT NULL,
+        FOREIGN KEY (api_football_fixture_id) REFERENCES fixtures(fixture_id)
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_wc_fixture_mapping_sm
+    ON wc_fixture_mapping(sportmonks_fixture_id)
+    """,
+)
+
 # Phase 61 — autonomous prediction snapshots (immutable append-only)
 PHASE61_DDL: tuple[str, ...] = (
     """
@@ -402,6 +428,235 @@ PHASE43_DDL: tuple[str, ...] = (
     """,
 )
 
+# Phase A15 — PredOps queue + immutable prediction snapshots
+PHASE_A15_DDL: tuple[str, ...] = (
+    """
+    CREATE TABLE IF NOT EXISTS predops_queue (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        job_key TEXT NOT NULL UNIQUE,
+        fixture_id INTEGER NOT NULL,
+        competition_key TEXT NOT NULL,
+        kickoff_utc TEXT,
+        priority_band INTEGER NOT NULL DEFAULT 5,
+        status TEXT NOT NULL DEFAULT 'queued',
+        attempts INTEGER NOT NULL DEFAULT 0,
+        max_attempts INTEGER NOT NULL DEFAULT 3,
+        failure_reason TEXT,
+        trigger_reason TEXT,
+        next_retry_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        started_at TEXT,
+        finished_at TEXT
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_predops_queue_status_prio
+    ON predops_queue(status, priority_band, kickoff_utc)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS predops_snapshots (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        snapshot_id TEXT NOT NULL UNIQUE,
+        fixture_id INTEGER NOT NULL,
+        competition_key TEXT NOT NULL,
+        kickoff_utc TEXT,
+        generated_at TEXT NOT NULL,
+        trigger_reason TEXT,
+        previous_snapshot_id TEXT,
+        payload_json TEXT NOT NULL,
+        markets_json TEXT NOT NULL,
+        egie_json TEXT,
+        deltas_json TEXT,
+        coverage_state TEXT NOT NULL DEFAULT 'completed',
+        engine_version TEXT,
+        is_latest INTEGER NOT NULL DEFAULT 1
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_predops_snap_fixture_time
+    ON predops_snapshots(fixture_id, generated_at DESC)
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_predops_snap_latest
+    ON predops_snapshots(fixture_id, is_latest)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS predops_scheduler_runs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        started_at TEXT NOT NULL,
+        finished_at TEXT,
+        status TEXT NOT NULL,
+        report_json TEXT
+    )
+    """,
+)
+
+# Phase A18 — Paper betting simulator (virtual only)
+PHASE_A18_DDL: tuple[str, ...] = (
+    """
+    CREATE TABLE IF NOT EXISTS paper_betting_accounts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        starting_bankroll REAL NOT NULL,
+        current_bankroll REAL NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'EUR',
+        risk_profile TEXT NOT NULL DEFAULT 'balanced',
+        month TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        UNIQUE(user_id, month)
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_paper_accounts_user
+    ON paper_betting_accounts(user_id, month DESC)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS paper_betting_bets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        account_id INTEGER NOT NULL,
+        fixture_id INTEGER NOT NULL,
+        competition_key TEXT,
+        home_team TEXT,
+        away_team TEXT,
+        market TEXT NOT NULL,
+        prediction TEXT NOT NULL,
+        stake REAL NOT NULL,
+        odds_decimal REAL,
+        odds_estimated INTEGER NOT NULL DEFAULT 0,
+        bet_quality_score REAL,
+        combo_type TEXT,
+        combo_group_id TEXT,
+        source_page TEXT,
+        snapshot_id TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        settlement_reason TEXT,
+        profit_loss REAL,
+        settled_at TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(account_id) REFERENCES paper_betting_accounts(id)
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_paper_bets_user_status
+    ON paper_betting_bets(user_id, status, created_at DESC)
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_paper_bets_fixture
+    ON paper_betting_bets(fixture_id)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS paper_betting_settlements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        bet_id INTEGER NOT NULL,
+        user_id TEXT NOT NULL,
+        status TEXT NOT NULL,
+        profit_loss REAL,
+        payout REAL,
+        odds_used REAL,
+        evaluation_source TEXT,
+        settled_at TEXT NOT NULL,
+        reason TEXT,
+        FOREIGN KEY(bet_id) REFERENCES paper_betting_bets(id)
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_paper_settlements_bet
+    ON paper_betting_settlements(bet_id)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS paper_betting_monthly_reports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        month TEXT NOT NULL,
+        report_json TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        UNIQUE(user_id, month)
+    )
+    """,
+)
+
+PHASE_A19_DDL: tuple[str, ...] = (
+    """
+    CREATE TABLE IF NOT EXISTS assistant_watchlist (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        item_type TEXT NOT NULL,
+        item_id TEXT NOT NULL,
+        item_name TEXT,
+        item_meta TEXT,
+        created_at TEXT NOT NULL,
+        UNIQUE(user_id, item_type, item_id)
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_assistant_watchlist_user
+    ON assistant_watchlist(user_id, created_at DESC)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS assistant_notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        category TEXT NOT NULL,
+        alert_type TEXT NOT NULL,
+        fixture_id INTEGER,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        old_value TEXT,
+        new_value TEXT,
+        reason TEXT,
+        link TEXT,
+        is_read INTEGER NOT NULL DEFAULT 0,
+        dedup_key TEXT,
+        created_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_assistant_notif_user
+    ON assistant_notifications(user_id, is_read, created_at DESC)
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS assistant_preferences (
+        user_id TEXT PRIMARY KEY,
+        prefs_json TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS assistant_alert_state (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        scope_key TEXT NOT NULL UNIQUE,
+        last_value TEXT,
+        last_snapshot_id TEXT,
+        updated_at TEXT NOT NULL
+    )
+    """,
+)
+
+PHASE_A20_DDL: tuple[str, ...] = (
+    """
+    CREATE TABLE IF NOT EXISTS social_share_links (
+        share_id TEXT PRIMARY KEY,
+        user_id TEXT,
+        share_type TEXT NOT NULL,
+        payload_json TEXT NOT NULL,
+        og_title TEXT,
+        og_description TEXT,
+        is_public INTEGER NOT NULL DEFAULT 1,
+        opt_in INTEGER NOT NULL DEFAULT 0,
+        expires_at TEXT,
+        created_at TEXT NOT NULL,
+        view_count INTEGER NOT NULL DEFAULT 0
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_social_share_type
+    ON social_share_links(share_type, created_at DESC)
+    """,
+)
+
 
 def _table_exists(conn: sqlite3.Connection, table: str) -> bool:
     row = conn.execute(
@@ -479,6 +734,13 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
         if _table_exists(conn, table):
             _add_column_if_missing(conn, table, column, typedef)
 
+    for table, column, typedef in PHASE62B_COLUMNS:
+        if _table_exists(conn, table):
+            _add_column_if_missing(conn, table, column, typedef)
+
+    for ddl in PHASE62B_DDL:
+        conn.execute(ddl)
+
     for ddl in PHASE48A_DDL:
         conn.execute(ddl)
 
@@ -493,6 +755,26 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
 
     for ddl in PHASE45_DDL:
         conn.execute(ddl)
+
+    for ddl in PHASE_A15_DDL:
+        conn.execute(ddl)
+
+    for ddl in PHASE_A18_DDL:
+        conn.execute(ddl)
+
+    for ddl in PHASE_A19_DDL:
+        conn.execute(ddl)
+
+    for ddl in PHASE_A20_DDL:
+        conn.execute(ddl)
+
+    try:
+        from worldcup_predictor.lifecycle.ddl import PHASE_A23_DDL
+
+        for ddl in PHASE_A23_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
 
     try:
         from worldcup_predictor.providers.oddalerts_historical_odds import PHASE_OA2_DDL

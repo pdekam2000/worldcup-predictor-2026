@@ -1,0 +1,114 @@
+{
+  "plans": [
+    {
+      "strategy": "A_existing_api_football_snapshots",
+      "candidate_fixtures": 72,
+      "expected_api_calls": 0,
+      "expected_odds_fixtures": 72,
+      "expected_player_selections": 132224,
+      "quota_impact": "None \u2014 data already in odds_snapshots + .cache/api_football",
+      "steps": [
+        "Parse 72 WC 2026 fixtures from odds_snapshots (API-Football IDs)",
+        "Split player vs team-scoped markets via market_classifier",
+        "Bridge API-Football fixture_id \u2192 lineup source (API-Football lineups cache or Sportmonks ID lookup)",
+        "Feed player selections into 54M mapper with lineup context"
+      ],
+      "risks": [
+        "API-Football fixture IDs differ from Sportmonks IDs used by ML shadow engine",
+        "Lineup bridge not yet built \u2014 mapping may stall without lineups"
+      ]
+    },
+    {
+      "strategy": "B_sportmonks_uefa_deep_fetch_50",
+      "candidate_fixtures": 50,
+      "expected_api_calls": 50,
+      "expected_odds_fixtures": 2,
+      "expected_player_selections": 278,
+      "quota_impact": "~50 Sportmonks API calls (1 fixture deep pull each); ~2 expected GS fixtures at 4.3% hit rate",
+      "steps": [
+        "Select top-50 UEFA backfill candidates by priority_score",
+        "GET /fixtures/{id}?include=participants;league;season;state;lineups.player;lineups.details.type;odds.bookmaker;odds.market",
+        "Cache raw JSON under data/egie/uefa_club/raw/",
+        "Re-run 54M strict audit on expanded cache"
+      ],
+      "risks": [
+        "Low historical GS yield on UEFA (~4% of odds-rich fixtures in cache)",
+        "bet365 GS markets sparse outside specific match types",
+        "Local Sportmonks token may be invalid \u2014 use server token for live pull"
+      ]
+    },
+    {
+      "strategy": "B_sportmonks_uefa_deep_fetch_100",
+      "candidate_fixtures": 100,
+      "expected_api_calls": 100,
+      "expected_odds_fixtures": 4,
+      "expected_player_selections": 556,
+      "quota_impact": "~100 Sportmonks API calls (1 fixture deep pull each); ~4 expected GS fixtures at 4.3% hit rate",
+      "steps": [
+        "Select top-100 UEFA backfill candidates by priority_score",
+        "GET /fixtures/{id}?include=participants;league;season;state;lineups.player;lineups.details.type;odds.bookmaker;odds.market",
+        "Cache raw JSON under data/egie/uefa_club/raw/",
+        "Re-run 54M strict audit on expanded cache"
+      ],
+      "risks": [
+        "Low historical GS yield on UEFA (~4% of odds-rich fixtures in cache)",
+        "bet365 GS markets sparse outside specific match types",
+        "Local Sportmonks token may be invalid \u2014 use server token for live pull"
+      ]
+    },
+    {
+      "strategy": "B_sportmonks_uefa_deep_fetch_200",
+      "candidate_fixtures": 102,
+      "expected_api_calls": 102,
+      "expected_odds_fixtures": 4,
+      "expected_player_selections": 556,
+      "quota_impact": "~102 Sportmonks API calls (1 fixture deep pull each); ~4 expected GS fixtures at 4.3% hit rate",
+      "steps": [
+        "Select top-102 UEFA backfill candidates by priority_score",
+        "GET /fixtures/{id}?include=participants;league;season;state;lineups.player;lineups.details.type;odds.bookmaker;odds.market",
+        "Cache raw JSON under data/egie/uefa_club/raw/",
+        "Re-run 54M strict audit on expanded cache"
+      ],
+      "risks": [
+        "Low historical GS yield on UEFA (~4% of odds-rich fixtures in cache)",
+        "bet365 GS markets sparse outside specific match types",
+        "Local Sportmonks token may be invalid \u2014 use server token for live pull"
+      ]
+    },
+    {
+      "strategy": "C_api_football_odds_endpoint",
+      "candidate_fixtures": 200,
+      "expected_api_calls": 200,
+      "expected_odds_fixtures": 40,
+      "expected_player_selections": 140000,
+      "quota_impact": "~200 API-Football calls (odds endpoint); estimated 20% GS market availability on top leagues",
+      "steps": [
+        "Target finished PL + UCL fixtures 2023-2025 from fixtures table",
+        "GET /odds?fixture={id} per fixture (cache-first via ApiCache)",
+        "Insert into odds_snapshots if GS markets present"
+      ],
+      "risks": [
+        "API-Football GS coverage varies by league/bookmaker",
+        "Requires API-Football quota separate from Sportmonks",
+        "Still needs lineup bridge for mapping"
+      ]
+    }
+  ],
+  "recommended_sequence": [
+    "A_existing_api_football_snapshots",
+    "B_sportmonks_uefa_deep_fetch_100",
+    "C_api_football_odds_endpoint"
+  ],
+  "reach_50_with_plan_a_only": true,
+  "reach_100_with_plan_a_only": false,
+  "notes": [
+    "Plan A alone satisfies 50+ fixture minimum (72 API-Football fixtures on disk)",
+    "100+ target requires Plan B (~28 additional Sportmonks GS fixtures) or Plan C"
+  ],
+  "assumptions": {
+    "sportmonks_gs_hit_rate": 0.0429,
+    "avg_selections_per_sportmonks_gs_fixture": 234.3,
+    "avg_selections_per_api_gs_fixture": 5247,
+    "player_market_share_sportmonks": 0.5932
+  }
+}

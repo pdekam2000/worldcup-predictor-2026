@@ -1,0 +1,149 @@
+{
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 732,
+      "sport_id": 1,
+      "country_id": 99474,
+      "name": "World Cup",
+      "active": true,
+      "short_code": "FIFA WC",
+      "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/28/732.png",
+      "type": "league",
+      "sub_type": "cup_international",
+      "last_played_at": "2026-06-23 17:00:00",
+      "category": 1,
+      "has_jerseys": true,
+      "seasons": [
+        {
+          "id": 5796,
+          "sport_id": 1,
+          "league_id": 732,
+          "tie_breaker_rule_id": 169,
+          "name": "2014",
+          "finished": true,
+          "pending": false,
+          "is_current": false,
+          "starting_at": "2014-06-12",
+          "ending_at": "2014-07-13",
+          "standings_recalculated_at": "2023-11-30 14:34:29",
+          "games_in_current_week": false
+        },
+        {
+          "id": 892,
+          "sport_id": 1,
+          "league_id": 732,
+          "tie_breaker_rule_id": 169,
+          "name": "2018",
+          "finished": true,
+          "pending": false,
+          "is_current": false,
+          "starting_at": "2018-06-14",
+          "ending_at": "2018-07-15",
+          "standings_recalculated_at": "2023-11-30 14:42:51",
+          "games_in_current_week": false
+        },
+        {
+          "id": 5795,
+          "sport_id": 1,
+          "league_id": 732,
+          "tie_breaker_rule_id": 169,
+          "name": "2010",
+          "finished": true,
+          "pending": false,
+          "is_current": false,
+          "starting_at": "2010-06-11",
+          "ending_at": "2010-07-11",
+          "standings_recalculated_at": "2026-03-19 19:39:09",
+          "games_in_current_week": false
+        },
+        {
+          "id": 18017,
+          "sport_id": 1,
+          "league_id": 732,
+          "tie_breaker_rule_id": 170,
+          "name": "2022",
+          "finished": true,
+          "pending": false,
+          "is_current": false,
+          "starting_at": "2022-11-20",
+          "ending_at": "2022-12-18",
+          "standings_recalculated_at": "2025-12-25 09:09:05",
+          "games_in_current_week": false
+        },
+        {
+          "id": 5794,
+          "sport_id": 1,
+          "league_id": 732,
+          "tie_breaker_rule_id": 169,
+          "name": "2006",
+          "finished": true,
+          "pending": false,
+          "is_current": false,
+          "starting_at": "2006-06-09",
+          "ending_at": "2006-07-09",
+          "standings_recalculated_at": "2023-11-30 14:34:28",
+          "games_in_current_week": false
+        },
+        {
+          "id": 26618,
+          "sport_id": 1,
+          "league_id": 732,
+          "tie_breaker_rule_id": 138867,
+          "name": "2026",
+          "finished": false,
+          "pending": false,
+          "is_current": true,
+          "starting_at": "2026-06-11",
+          "ending_at": "2026-07-19",
+          "standings_recalculated_at": "2026-06-23 20:58:12",
+          "games_in_current_week": true
+        }
+      ],
+      "currentseason": {
+        "id": 26618,
+        "sport_id": 1,
+        "league_id": 732,
+        "tie_breaker_rule_id": 138867,
+        "name": "2026",
+        "finished": false,
+        "pending": false,
+        "is_current": true,
+        "starting_at": "2026-06-11",
+        "ending_at": "2026-07-19",
+        "standings_recalculated_at": "2026-06-23 20:58:12",
+        "games_in_current_week": true
+      }
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782248304,
+          "next_billing_cycle": "2026-07-23T19:06:09 UTC"
+        },
+        "plans": [
+          {
+            "plan": "World Cup 2026",
+            "sport": "Football",
+            "category": "All-in"
+          },
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 3600,
+      "remaining": 2499,
+      "requested_entity": "League"
+    },
+    "timezone": "UTC"
+  },
+  "error": null
+}

@@ -1,0 +1,87 @@
+{
+  "phase": "54F-2",
+  "prior_54f": {
+    "fixtures_with_xg": 6,
+    "xg_coverage_pct": 7.5
+  },
+  "cache_audit": {
+    "cache_present": true,
+    "totals": {
+      "fixtures_scanned": 80,
+      "fixtures_no_xg_data": 72,
+      "fixtures_with_team_xg": 8,
+      "fixtures_with_any_xg_rows": 8
+    },
+    "by_league_id": {
+      "2": {
+        "scanned": 30,
+        "team_xg": 0,
+        "xgot_only": 0,
+        "no_xg": 30
+      },
+      "5": {
+        "scanned": 30,
+        "team_xg": 8,
+        "xgot_only": 0,
+        "no_xg": 22
+      },
+      "2286": {
+        "scanned": 20,
+        "team_xg": 0,
+        "xgot_only": 0,
+        "no_xg": 20
+      }
+    }
+  },
+  "db_coverage": {
+    "uefa_cache_fixtures": 80,
+    "summaries_with_team_xg": 8,
+    "fixtures_with_player_xg": 0,
+    "fixtures_xgot_only_no_team_xg": 0,
+    "rolling_xg_available": 4,
+    "rolling_xg_3_fixtures": 4,
+    "rolling_xg_5_fixtures": 4,
+    "rolling_xg_10_fixtures": 4,
+    "usable_rolling_xg_coverage_pct": 5.0,
+    "coverage_pass_30pct": false,
+    "coverage_pass_40pct": false,
+    "by_league": {
+      "europa_league": {
+        "league_id": 5,
+        "summaries": 8,
+        "with_team_xg": 8,
+        "metrics": {
+          "team_metric:xg_corners": 16,
+          "team_metric:xg_open_play": 16,
+          "team_xg:xg_free_kicks": 6,
+          "team_metric:npxg": 16,
+          "team_metric:xg_free_kicks": 6,
+          "team_xg:xg_corners": 16,
+          "team_metric:xpts": 16,
+          "team_metric:xg_prevented": 4,
+          "team_xg:xg_set_play": 16,
+          "team_metric:xg_set_play": 16,
+          "team_metric:xga": 16,
+          "team_metric:xgot": 16,
+          "team_metric:xg": 16,
+          "team_xg:xg_prevented": 4,
+          "team_xg:xgot": 16,
+          "team_xg:xg": 16,
+          "team_xg:xg_penalties": 4,
+          "team_xg:npxg": 16,
+          "team_xg:xpts": 16,
+          "team_xg:xga": 16,
+          "team_metric:shooting_performance": 16,
+          "team_metric:xg_penalties": 4,
+          "team_xg:xg_open_play": 16,
+          "team_xg:shooting_performance": 16
+        }
+      }
+    },
+    "skipped_by_manifest": {
+      "empty:no_true_xg_metrics": 72
+    }
+  },
+  "threshold_met": false,
+  "recommendation": "NEED_MORE_HISTORICAL_XG"
+}

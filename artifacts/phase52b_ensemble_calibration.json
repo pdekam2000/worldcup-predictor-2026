@@ -1,0 +1,782 @@
+{
+  "phase": "52B",
+  "mode": "read_only_shadow_audit",
+  "source": "data\\egie\\survival\\survival_shadow_predictions.jsonl",
+  "fixtures_total": 359,
+  "fixtures_published": 349,
+  "part_1_ensemble_audit": {
+    "A_baseline": {
+      "strategy": "A_baseline",
+      "first_goal_team": {
+        "correct": 100,
+        "wrong": 97,
+        "partial": 0,
+        "pending": 152,
+        "denominator": 197,
+        "winrate": 0.5076,
+        "soft_winrate": 0.5076,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 97,
+        "wrong": 252,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2779,
+        "soft_winrate": 0.2779,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 8,
+        "wrong": 231,
+        "partial": 110,
+        "pending": 0,
+        "denominator": 239,
+        "winrate": 0.0335,
+        "soft_winrate": 0.3381,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996
+    },
+    "B_survival": {
+      "strategy": "B_survival",
+      "first_goal_team": {
+        "correct": 105,
+        "wrong": 108,
+        "partial": 0,
+        "pending": 136,
+        "denominator": 213,
+        "winrate": 0.493,
+        "soft_winrate": 0.493,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 108,
+        "wrong": 241,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.3095,
+        "soft_winrate": 0.3095,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 8,
+        "wrong": 215,
+        "partial": 126,
+        "pending": 0,
+        "denominator": 223,
+        "winrate": 0.0359,
+        "soft_winrate": 0.384,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996
+    },
+    "C_hybrid_team_base_timing_surv": {
+      "strategy": "C_hybrid_team_base_timing_surv",
+      "first_goal_team": {
+        "correct": 100,
+        "wrong": 97,
+        "partial": 0,
+        "pending": 152,
+        "denominator": 197,
+        "winrate": 0.5076,
+        "soft_winrate": 0.5076,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 108,
+        "wrong": 241,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.3095,
+        "soft_winrate": 0.3095,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 8,
+        "wrong": 215,
+        "partial": 126,
+        "pending": 0,
+        "denominator": 223,
+        "winrate": 0.0359,
+        "soft_winrate": 0.384,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996
+    },
+    "D_weighted": {
+      "strategy": "D_weighted",
+      "first_goal_team": {
+        "correct": 105,
+        "wrong": 108,
+        "partial": 0,
+        "pending": 136,
+        "denominator": 213,
+        "winrate": 0.493,
+        "soft_winrate": 0.493,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 97,
+        "wrong": 252,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2779,
+        "soft_winrate": 0.2779,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 8,
+        "wrong": 231,
+        "partial": 110,
+        "pending": 0,
+        "denominator": 239,
+        "winrate": 0.0335,
+        "soft_winrate": 0.3381,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996
+    },
+    "E_conditional_best": {
+      "strategy": "E_conditional(th=0.05)",
+      "first_goal_team": {
+        "correct": 103,
+        "wrong": 106,
+        "partial": 0,
+        "pending": 140,
+        "denominator": 209,
+        "winrate": 0.4928,
+        "soft_winrate": 0.4928,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 100,
+        "wrong": 249,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2865,
+        "soft_winrate": 0.2865,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 6,
+        "wrong": 222,
+        "partial": 121,
+        "pending": 0,
+        "denominator": 228,
+        "winrate": 0.0263,
+        "soft_winrate": 0.3639,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.05
+    }
+  },
+  "part_1_conditional_sweep": [
+    {
+      "strategy": "E_conditional",
+      "first_goal_team": {
+        "correct": 103,
+        "wrong": 106,
+        "partial": 0,
+        "pending": 140,
+        "denominator": 209,
+        "winrate": 0.4928,
+        "soft_winrate": 0.4928,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 100,
+        "wrong": 249,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2865,
+        "soft_winrate": 0.2865,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 6,
+        "wrong": 222,
+        "partial": 121,
+        "pending": 0,
+        "denominator": 228,
+        "winrate": 0.0263,
+        "soft_winrate": 0.3639,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.05
+    },
+    {
+      "strategy": "E_conditional",
+      "first_goal_team": {
+        "correct": 102,
+        "wrong": 104,
+        "partial": 0,
+        "pending": 143,
+        "denominator": 206,
+        "winrate": 0.4951,
+        "soft_winrate": 0.4951,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 96,
+        "wrong": 253,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2751,
+        "soft_winrate": 0.2751,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 6,
+        "wrong": 228,
+        "partial": 115,
+        "pending": 0,
+        "denominator": 234,
+        "winrate": 0.0256,
+        "soft_winrate": 0.3467,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.08
+    },
+    {
+      "strategy": "E_conditional",
+      "first_goal_team": {
+        "correct": 102,
+        "wrong": 103,
+        "partial": 0,
+        "pending": 144,
+        "denominator": 205,
+        "winrate": 0.4976,
+        "soft_winrate": 0.4976,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 93,
+        "wrong": 256,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2665,
+        "soft_winrate": 0.2665,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 6,
+        "wrong": 231,
+        "partial": 112,
+        "pending": 0,
+        "denominator": 237,
+        "winrate": 0.0253,
+        "soft_winrate": 0.3381,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.1
+    },
+    {
+      "strategy": "E_conditional",
+      "first_goal_team": {
+        "correct": 102,
+        "wrong": 103,
+        "partial": 0,
+        "pending": 144,
+        "denominator": 205,
+        "winrate": 0.4976,
+        "soft_winrate": 0.4976,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 96,
+        "wrong": 253,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2751,
+        "soft_winrate": 0.2751,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 6,
+        "wrong": 228,
+        "partial": 115,
+        "pending": 0,
+        "denominator": 234,
+        "winrate": 0.0256,
+        "soft_winrate": 0.3467,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.12
+    },
+    {
+      "strategy": "E_conditional",
+      "first_goal_team": {
+        "correct": 100,
+        "wrong": 102,
+        "partial": 0,
+        "pending": 147,
+        "denominator": 202,
+        "winrate": 0.495,
+        "soft_winrate": 0.495,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 96,
+        "wrong": 253,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2751,
+        "soft_winrate": 0.2751,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 8,
+        "wrong": 229,
+        "partial": 112,
+        "pending": 0,
+        "denominator": 237,
+        "winrate": 0.0338,
+        "soft_winrate": 0.3438,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.15
+    },
+    {
+      "strategy": "E_conditional",
+      "first_goal_team": {
+        "correct": 100,
+        "wrong": 101,
+        "partial": 0,
+        "pending": 148,
+        "denominator": 201,
+        "winrate": 0.4975,
+        "soft_winrate": 0.4975,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 95,
+        "wrong": 254,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2722,
+        "soft_winrate": 0.2722,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 8,
+        "wrong": 231,
+        "partial": 110,
+        "pending": 0,
+        "denominator": 239,
+        "winrate": 0.0335,
+        "soft_winrate": 0.3381,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.18
+    },
+    {
+      "strategy": "E_conditional",
+      "first_goal_team": {
+        "correct": 100,
+        "wrong": 100,
+        "partial": 0,
+        "pending": 149,
+        "denominator": 200,
+        "winrate": 0.5,
+        "soft_winrate": 0.5,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 93,
+        "wrong": 256,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2665,
+        "soft_winrate": 0.2665,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 8,
+        "wrong": 233,
+        "partial": 108,
+        "pending": 0,
+        "denominator": 241,
+        "winrate": 0.0332,
+        "soft_winrate": 0.3324,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.2
+    },
+    {
+      "strategy": "E_conditional",
+      "first_goal_team": {
+        "correct": 100,
+        "wrong": 98,
+        "partial": 0,
+        "pending": 151,
+        "denominator": 198,
+        "winrate": 0.5051,
+        "soft_winrate": 0.5051,
+        "coverage_published": 349
+      },
+      "goal_range": {
+        "correct": 95,
+        "wrong": 254,
+        "partial": 0,
+        "pending": 0,
+        "denominator": 349,
+        "winrate": 0.2722,
+        "soft_winrate": 0.2722,
+        "coverage_published": 349
+      },
+      "goal_minute": {
+        "correct": 8,
+        "wrong": 233,
+        "partial": 108,
+        "pending": 0,
+        "denominator": 241,
+        "winrate": 0.0332,
+        "soft_winrate": 0.3324,
+        "coverage_published": 349
+      },
+      "brier_team_mean": 0.5035,
+      "brier_range_mean": 0.7996,
+      "cond_threshold": 0.25
+    }
+  ],
+  "part_1_best_ensemble": {
+    "strategy": "C_hybrid_team_base_timing_surv",
+    "first_goal_team": {
+      "correct": 100,
+      "wrong": 97,
+      "partial": 0,
+      "pending": 152,
+      "denominator": 197,
+      "winrate": 0.5076,
+      "soft_winrate": 0.5076,
+      "coverage_published": 349
+    },
+    "goal_range": {
+      "correct": 108,
+      "wrong": 241,
+      "partial": 0,
+      "pending": 0,
+      "denominator": 349,
+      "winrate": 0.3095,
+      "soft_winrate": 0.3095,
+      "coverage_published": 349
+    },
+    "goal_minute": {
+      "correct": 8,
+      "wrong": 215,
+      "partial": 126,
+      "pending": 0,
+      "denominator": 223,
+      "winrate": 0.0359,
+      "soft_winrate": 0.384,
+      "coverage_published": 349
+    },
+    "brier_team_mean": 0.5035,
+    "brier_range_mean": 0.7996
+  },
+  "part_2_confidence_calibration": {
+    "team": {
+      "raw_pairs_n": 197,
+      "bucket_baseline": {
+        "0.50-0.55": {
+          "count": 0
+        },
+        "0.55-0.60": {
+          "count": 11,
+          "team_accuracy": 0.75,
+          "range_accuracy": 0.1818,
+          "minute_soft_accuracy": 0.2727
+        },
+        "0.60-0.65": {
+          "count": 18,
+          "team_accuracy": 0.7778,
+          "range_accuracy": 0.1111,
+          "minute_soft_accuracy": 0.1667
+        },
+        "0.65-0.70": {
+          "count": 320,
+          "team_accuracy": 0.4891,
+          "range_accuracy": 0.2906,
+          "minute_soft_accuracy": 0.35
+        },
+        "0.70+": {
+          "count": 0
+        }
+      },
+      "isotonic": {
+        "status": "ok",
+        "n": 197,
+        "mean_confidence_before": 0.6473,
+        "mean_hit_rate": 0.5076,
+        "expected_calibration_error": 0.4999
+      },
+      "logistic": {
+        "status": "ok",
+        "n": 197,
+        "coef": -0.1783,
+        "intercept": 0.1459,
+        "expected_calibration_error": 0.4998
+      }
+    },
+    "range": {
+      "raw_pairs_n": 349,
+      "bucket_baseline": {
+        "0.50-0.55": {
+          "count": 0
+        },
+        "0.55-0.60": {
+          "count": 11,
+          "team_accuracy": 0.75,
+          "range_accuracy": 0.1818,
+          "minute_soft_accuracy": 0.2727
+        },
+        "0.60-0.65": {
+          "count": 18,
+          "team_accuracy": 0.7778,
+          "range_accuracy": 0.1111,
+          "minute_soft_accuracy": 0.1667
+        },
+        "0.65-0.70": {
+          "count": 320,
+          "team_accuracy": 0.4891,
+          "range_accuracy": 0.2906,
+          "minute_soft_accuracy": 0.35
+        },
+        "0.70+": {
+          "count": 0
+        }
+      },
+      "isotonic": {
+        "status": "ok",
+        "n": 349,
+        "mean_confidence_before": 0.6461,
+        "mean_hit_rate": 0.2779,
+        "expected_calibration_error": 0.3965
+      },
+      "logistic": {
+        "status": "ok",
+        "n": 349,
+        "coef": 0.2005,
+        "intercept": -1.0843,
+        "expected_calibration_error": 0.4013
+      }
+    },
+    "minute_soft": {
+      "raw_pairs_n": 349,
+      "bucket_baseline": {
+        "0.50-0.55": {
+          "count": 0
+        },
+        "0.55-0.60": {
+          "count": 11,
+          "team_accuracy": 0.75,
+          "range_accuracy": 0.1818,
+          "minute_soft_accuracy": 0.2727
+        },
+        "0.60-0.65": {
+          "count": 18,
+          "team_accuracy": 0.7778,
+          "range_accuracy": 0.1111,
+          "minute_soft_accuracy": 0.1667
+        },
+        "0.65-0.70": {
+          "count": 320,
+          "team_accuracy": 0.4891,
+          "range_accuracy": 0.2906,
+          "minute_soft_accuracy": 0.35
+        },
+        "0.70+": {
+          "count": 0
+        }
+      },
+      "isotonic": {
+        "status": "ok",
+        "n": 349,
+        "mean_confidence_before": 0.6461,
+        "mean_hit_rate": 0.3381,
+        "expected_calibration_error": 0.4426
+      },
+      "logistic": {
+        "status": "ok",
+        "n": 349,
+        "coef": 0.165,
+        "intercept": -0.7788,
+        "expected_calibration_error": 0.4475
+      }
+    }
+  },
+  "part_2_baseline_confidence_inversion": {
+    "note": "Phase 51I: 0.65-0.70 bucket underperforms 0.55-0.65 on team market",
+    "baseline_buckets": {
+      "0.50-0.55": {
+        "count": 0
+      },
+      "0.55-0.60": {
+        "count": 11,
+        "team_accuracy": 0.75,
+        "range_accuracy": 0.1818,
+        "minute_soft_accuracy": 0.2727
+      },
+      "0.60-0.65": {
+        "count": 18,
+        "team_accuracy": 0.7778,
+        "range_accuracy": 0.1111,
+        "minute_soft_accuracy": 0.1667
+      },
+      "0.65-0.70": {
+        "count": 320,
+        "team_accuracy": 0.4891,
+        "range_accuracy": 0.2906,
+        "minute_soft_accuracy": 0.35
+      },
+      "0.70+": {
+        "count": 0
+      }
+    },
+    "survival_buckets": {
+      "0.50-0.55": {
+        "count": 0
+      },
+      "0.55-0.60": {
+        "count": 11,
+        "team_accuracy": 0.5,
+        "range_accuracy": 0.5455,
+        "minute_soft_accuracy": 0.6364
+      },
+      "0.60-0.65": {
+        "count": 18,
+        "team_accuracy": 0.7273,
+        "range_accuracy": 0.2778,
+        "minute_soft_accuracy": 0.4444
+      },
+      "0.65-0.70": {
+        "count": 320,
+        "team_accuracy": 0.4796,
+        "range_accuracy": 0.3031,
+        "minute_soft_accuracy": 0.3719
+      },
+      "0.70+": {
+        "count": 0
+      }
+    }
+  },
+  "part_3_proposed_confidence_formula": {
+    "formula": "0.30*DQ + 0.20*survival_range_margin + 0.15*team_agreement + 0.15*range_agreement + 0.20*hist_bucket_proxy",
+    "components": [
+      "model_agreement (baseline vs survival)",
+      "range_probability_margin (survival)",
+      "data_quality (production engine)",
+      "historical_bucket_performance (backtest prior)",
+      "survival_agreement"
+    ],
+    "evaluation": {
+      "bucket_stats": {
+        "b1": {
+          "count": 66,
+          "team_accuracy": 0.5152
+        },
+        "b2": {
+          "count": 72,
+          "team_accuracy": 0.5139
+        },
+        "b3": {
+          "count": 58,
+          "team_accuracy": 0.5
+        },
+        "b4": {
+          "count": 1,
+          "team_accuracy": 0.0
+        }
+      },
+      "monotonic_team": false
+    }
+  },
+  "part_4_backtest_summary": {
+    "A_baseline": {
+      "team": 0.5076,
+      "range": 0.2779,
+      "minute_soft": 0.3381,
+      "brier_team": 0.5035,
+      "brier_range": 0.7996
+    },
+    "B_survival": {
+      "team": 0.493,
+      "range": 0.3095,
+      "minute_soft": 0.384,
+      "brier_team": 0.5035,
+      "brier_range": 0.7996
+    },
+    "C_hybrid_team_base_timing_surv": {
+      "team": 0.5076,
+      "range": 0.3095,
+      "minute_soft": 0.384,
+      "brier_team": 0.5035,
+      "brier_range": 0.7996
+    },
+    "D_weighted": {
+      "team": 0.493,
+      "range": 0.2779,
+      "minute_soft": 0.3381,
+      "brier_team": 0.5035,
+      "brier_range": 0.7996
+    },
+    "E_conditional(th=0.05)": {
+      "team": 0.4928,
+      "range": 0.2865,
+      "minute_soft": 0.3639,
+      "brier_team": 0.5035,
+      "brier_range": 0.7996
+    }
+  },
+  "part_5_activation_recommendation": {
+    "criteria": {
+      "first_goal_team_min": 0.508,
+      "goal_range_min": 0.35,
+      "goal_minute_soft_min": 0.4
+    },
+    "best_strategy": "C_hybrid_team_base_timing_surv",
+    "meets_criteria": {
+      "first_goal_team": false,
+      "goal_range": false,
+      "goal_minute_soft": false,
+      "all_met": false,
+      "confidence_monotonic": false
+    },
+    "deploy_allowed": false,
+    "shadow_promotion_recommended": false,
+    "verdict": "Continue shadow \u2014 ensemble improves timing markets but does not clear promotion gates"
+  }
+}

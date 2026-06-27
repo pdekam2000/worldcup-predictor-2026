@@ -1,0 +1,639 @@
+{
+  "generated_at": "2026-06-24T05:08:12.027398+00:00",
+  "phase": "54H-1",
+  "backtest_only": true,
+  "production_changes": false,
+  "wde_changes": false,
+  "saas_changes": false,
+  "coverage": {
+    "generated_at": "2026-06-24T05:08:10.150723+00:00",
+    "phase": "54H-1",
+    "backtest_only": true,
+    "fixtures_with_pressure": 65,
+    "prematch_rows": 65,
+    "inplay_rows": 177,
+    "prematch_pressure_available": 31,
+    "inplay_pressure_available": 177,
+    "leagues": [
+      "champions_league",
+      "conference_league",
+      "europa_league"
+    ],
+    "labels": {
+      "prematch_first_goal_team": 60,
+      "prematch_goal_range": 60,
+      "inplay_next_goal_team": 177,
+      "inplay_goal_minute_bucket": 177
+    },
+    "unusable_fixtures": 0
+  },
+  "prematch_train_size": 44,
+  "prematch_test_size": 21,
+  "inplay_train_size": 118,
+  "inplay_test_size": 58,
+  "markets": {
+    "prematch": {
+      "first_goal_team": {
+        "arm_a_baseline": {
+          "status": "ok",
+          "train_n": 20,
+          "test_n": 10,
+          "accuracy": 0.6,
+          "log_loss": 2.1028,
+          "brier_score": 0.4267,
+          "precision": 1.0,
+          "recall": 0.3333,
+          "calibration_ece": 0.4766,
+          "feature_importance": {
+            "home_goal_rate_proxy": 0.0,
+            "away_goal_rate_proxy": 0.0,
+            "data_quality_score": 0.8876772299280646,
+            "home_history_samples": 0.01634622783288413,
+            "away_history_samples": 0.0959765422390512
+          }
+        },
+        "arm_b_baseline_plus_pressure": {
+          "status": "ok",
+          "train_n": 20,
+          "test_n": 10,
+          "accuracy": 0.5,
+          "log_loss": 5.1053,
+          "brier_score": 0.5004,
+          "precision": 0.6,
+          "recall": 0.5,
+          "calibration_ece": 0.4932,
+          "feature_importance": {
+            "home_goal_rate_proxy": 0.0,
+            "away_goal_rate_proxy": 0.0,
+            "data_quality_score": 0.0,
+            "home_history_samples": 4.2768271938989296e-07,
+            "away_history_samples": 0.005094213116459367,
+            "home_avg_pressure": 0.024674427698758904,
+            "away_avg_pressure": 0.033353681902480795,
+            "pressure_difference": 0.058326833663354234,
+            "pressure_first_15_home": 0.13324537781489834,
+            "pressure_first_15_away": 0.022628826135741142,
+            "pressure_first_30_home": 6.128953686407501e-05,
+            "pressure_first_30_away": 0.02537786435568941,
+            "pressure_spike_count_home": 0.0,
+            "pressure_spike_count_away": 0.0,
+            "pressure_dominance": 8.214818220636865e-05,
+            "pressure_momentum": 0.10817947057780647,
+            "pressure_swing": 0.06563319274290602,
+            "pressure_before_first_goal_home": 0.1807750809245579,
+            "pressure_before_first_goal_away": 0.3287952661631811,
+            "pressure_last_5_home": 0.007277931052965573,
+            "pressure_last_5_away": 1.4265682382139437e-07,
+            "pressure_last_10_home": 0.006478921502653655,
+            "pressure_last_10_away": 1.4904289933443568e-05
+          }
+        },
+        "arm_c_pressure_only": {
+          "status": "ok",
+          "train_n": 20,
+          "test_n": 10,
+          "accuracy": 0.5,
+          "log_loss": 5.0786,
+          "brier_score": 0.5,
+          "precision": 0.6,
+          "recall": 0.5,
+          "calibration_ece": 0.4997,
+          "feature_importance": {
+            "home_avg_pressure": 0.005828599047169347,
+            "away_avg_pressure": 0.020396928794798964,
+            "pressure_difference": 0.05227350558898574,
+            "pressure_first_15_home": 0.12084823075495149,
+            "pressure_first_15_away": 0.03515634558984211,
+            "pressure_first_30_home": 9.582742029676748e-05,
+            "pressure_first_30_away": 0.025334951958823376,
+            "pressure_spike_count_home": 0.0,
+            "pressure_spike_count_away": 0.0,
+            "pressure_dominance": 6.363795939228879e-05,
+            "pressure_momentum": 0.10925833637966716,
+            "pressure_swing": 0.07743389012506013,
+            "pressure_before_first_goal_home": 0.18692051028456655,
+            "pressure_before_first_goal_away": 0.32104198722137073,
+            "pressure_last_5_home": 0.006274894977492333,
+            "pressure_last_5_away": 0.00014046549240918408,
+            "pressure_last_10_home": 0.03893183347245793,
+            "pressure_last_10_away": 5.493271591653418e-08
+          }
+        },
+        "arm_d_pressure_lite": {
+          "status": "ok",
+          "train_n": 20,
+          "test_n": 10,
+          "accuracy": 0.2,
+          "log_loss": 3.9586,
+          "brier_score": 0.7219,
+          "precision": 0.3333,
+          "recall": 0.3333,
+          "calibration_ece": 0.7514,
+          "feature_importance": {
+            "pressure_first_15_home": 0.21499139274739862,
+            "pressure_first_15_away": 0.24424934231224618,
+            "pressure_dominance": 0.0836446220036802,
+            "pressure_momentum": 0.23595489929181465,
+            "pressure_swing": 0.22115974364486035
+          }
+        },
+        "delta_b_vs_a": {
+          "accuracy": -0.1,
+          "log_loss": 3.0025,
+          "brier_score": 0.0737,
+          "calibration_ece": 0.0166
+        },
+        "delta_c_vs_a": {
+          "accuracy": -0.1,
+          "log_loss": 2.9758,
+          "brier_score": 0.0733,
+          "calibration_ece": 0.0231
+        },
+        "delta_d_vs_a": {
+          "accuracy": -0.4,
+          "log_loss": 1.8558,
+          "brier_score": 0.2952,
+          "calibration_ece": 0.2748
+        }
+      },
+      "goal_range": {
+        "arm_a_baseline": {
+          "status": "ok",
+          "train_n": 20,
+          "test_n": 10,
+          "accuracy": 0.3,
+          "log_loss": 5.7517,
+          "brier_score": null,
+          "precision": 0.5125,
+          "recall": 0.3,
+          "calibration_ece": null,
+          "feature_importance": {
+            "home_goal_rate_proxy": 0.0,
+            "away_goal_rate_proxy": 0.0,
+            "data_quality_score": 0.6991257313703281,
+            "home_history_samples": 0.15819382619446556,
+            "away_history_samples": 0.14268044243520622
+          }
+        },
+        "arm_b_baseline_plus_pressure": {
+          "status": "ok",
+          "train_n": 20,
+          "test_n": 10,
+          "accuracy": 0.3,
+          "log_loss": 5.2799,
+          "brier_score": null,
+          "precision": 0.3,
+          "recall": 0.3,
+          "calibration_ece": null,
+          "feature_importance": {
+            "home_goal_rate_proxy": 0.0,
+            "away_goal_rate_proxy": 0.0,
+            "data_quality_score": 0.11733620443154243,
+            "home_history_samples": 0.005216955911058719,
+            "away_history_samples": 0.026900629186436934,
+            "home_avg_pressure": 0.07221241437566442,
+            "away_avg_pressure": 0.00013321837104255963,
+            "pressure_difference": 0.02392957233590273,
+            "pressure_first_15_home": 0.12481316642084303,
+            "pressure_first_15_away": 0.020290255144068875,
+            "pressure_first_30_home": 0.02288538936016987,
+            "pressure_first_30_away": 0.22496155081362534,
+            "pressure_spike_count_home": 9.983312764514019e-05,
+            "pressure_spike_count_away": 1.9144490652912778e-07,
+            "pressure_dominance": 0.0009451467838442052,
+            "pressure_momentum": 0.0004442231091244289,
+            "pressure_swing": 0.034531272196300165,
+            "pressure_before_first_goal_home": 0.09870197577820554,
+            "pressure_before_first_goal_away": 0.2068542756108865,
+            "pressure_last_5_home": 0.004691244574521998,
+            "pressure_last_5_away": 0.004108073115067278,
+            "pressure_last_10_home": 0.0026902778277935416,
+            "pressure_last_10_away": 0.00825413008134961
+          }
+        },
+        "arm_c_pressure_only": {
+          "status": "ok",
+          "train_n": 20,
+          "test_n": 10,
+          "accuracy": 0.3,
+          "log_loss": 5.2198,
+          "brier_score": null,
+          "precision": 0.3,
+          "recall": 0.3,
+          "calibration_ece": null,
+          "feature_importance": {
+            "home_avg_pressure": 0.10155026967091886,
+            "away_avg_pressure": 0.0006195451964207594,
+            "pressure_difference": 0.022901218450425868,
+            "pressure_first_15_home": 0.058777718348424615,
+            "pressure_first_15_away": 0.1330865572976359,
+            "pressure_first_30_home": 3.403785923921844e-05,
+            "pressure_first_30_away": 0.17547628389112066,
+            "pressure_spike_count_home": 4.559502517102547e-06,
+            "pressure_spike_count_away": 3.7738804211543215e-09,
+            "pressure_dominance": 0.018416277406580247,
+            "pressure_momentum": 5.113640692134988e-05,
+            "pressure_swing": 0.011165464389399322,
+            "pressure_before_first_goal_home": 0.09774001151071697,
+            "pressure_before_first_goal_away": 0.35509273163221394,
+            "pressure_last_5_home": 0.014217850049924567,
+            "pressure_last_5_away": 0.005456668707687639,
+            "pressure_last_10_home": 0.0023739316654389597,
+            "pressure_last_10_away": 0.0030357342405334547
+          }
+        },
+        "arm_d_pressure_lite": {
+          "status": "ok",
+          "train_n": 20,
+          "test_n": 10,
+          "accuracy": 0.3,
+          "log_loss": 3.9795,
+          "brier_score": null,
+          "precision": 0.3,
+          "recall": 0.3,
+          "calibration_ece": null,
+          "feature_importance": {
+            "pressure_first_15_home": 0.18999363336614475,
+            "pressure_first_15_away": 0.26517387926482594,
+            "pressure_dominance": 0.1519289368382311,
+            "pressure_momentum": 0.21501997318571267,
+            "pressure_swing": 0.1778835773450854
+          }
+        },
+        "delta_b_vs_a": {
+          "accuracy": 0.0,
+          "log_loss": -0.4718,
+          "brier_score": null,
+          "calibration_ece": null
+        },
+        "delta_c_vs_a": {
+          "accuracy": 0.0,
+          "log_loss": -0.5319,
+          "brier_score": null,
+          "calibration_ece": null
+        },
+        "delta_d_vs_a": {
+          "accuracy": 0.0,
+          "log_loss": -1.7722,
+          "brier_score": null,
+          "calibration_ece": null
+        }
+      }
+    },
+    "inplay": {
+      "next_goal_team": {
+        "arm_a_baseline": {
+          "status": "ok",
+          "train_n": 118,
+          "test_n": 58,
+          "accuracy": 0.6379,
+          "log_loss": 0.7558,
+          "brier_score": 0.2454,
+          "precision": 0.6216,
+          "recall": 0.7667,
+          "calibration_ece": 0.1935,
+          "feature_importance": {
+            "home_goal_rate_proxy": 0.0,
+            "away_goal_rate_proxy": 0.0,
+            "data_quality_score": 0.9201534575659734,
+            "home_history_samples": 0.04542055165570824,
+            "away_history_samples": 0.03442599077831845
+          }
+        },
+        "arm_b_baseline_plus_pressure": {
+          "status": "ok",
+          "train_n": 118,
+          "test_n": 58,
+          "accuracy": 0.6552,
+          "log_loss": 1.1078,
+          "brier_score": 0.286,
+          "precision": 0.6389,
+          "recall": 0.7667,
+          "calibration_ece": 0.2676,
+          "feature_importance": {
+            "home_goal_rate_proxy": 0.0,
+            "away_goal_rate_proxy": 0.0,
+            "data_quality_score": 0.02414701032846142,
+            "home_history_samples": 0.000613867121916471,
+            "away_history_samples": 0.009716551102751094,
+            "home_avg_pressure": 0.01829402311805871,
+            "away_avg_pressure": 0.011531904336868282,
+            "pressure_difference": 0.019553978905095633,
+            "pressure_first_15_home": 0.06397847281509694,
+            "pressure_first_15_away": 0.020422853941126157,
+            "pressure_first_30_home": 0.020974276812973154,
+            "pressure_first_30_away": 0.011615175572466368,
+            "pressure_spike_count_home": 0.0187176381715225,
+            "pressure_spike_count_away": 0.03786214359797343,
+            "pressure_dominance": 0.025126760417544348,
+            "pressure_momentum": 0.17841278203309843,
+            "pressure_swing": 0.06929218223378264,
+            "pressure_before_first_goal_home": 0.03375917059008751,
+            "pressure_before_first_goal_away": 0.005451862554296706,
+            "pressure_last_5_home": 0.12111458030594455,
+            "pressure_last_5_away": 0.2682670866973001,
+            "pressure_last_10_home": 0.02310282610862563,
+            "pressure_last_10_away": 0.018044853235009855
+          }
+        },
+        "arm_c_pressure_only": {
+          "status": "ok",
+          "train_n": 118,
+          "test_n": 58,
+          "accuracy": 0.6379,
+          "log_loss": 1.1363,
+          "brier_score": 0.2941,
+          "precision": 0.6216,
+          "recall": 0.7667,
+          "calibration_ece": 0.2823,
+          "feature_importance": {
+            "home_avg_pressure": 0.028789420896553876,
+            "away_avg_pressure": 0.017025149675799208,
+            "pressure_difference": 0.021605916925949414,
+            "pressure_first_15_home": 0.07456050968597733,
+            "pressure_first_15_away": 0.04045333742397006,
+            "pressure_first_30_home": 0.01942073400705554,
+            "pressure_first_30_away": 0.01335105662809872,
+            "pressure_spike_count_home": 0.015299615013316581,
+            "pressure_spike_count_away": 0.03658627846253693,
+            "pressure_dominance": 0.01087273725824172,
+            "pressure_momentum": 0.17566801789397177,
+            "pressure_swing": 0.07432609759313087,
+            "pressure_before_first_goal_home": 0.02275524311647557,
+            "pressure_before_first_goal_away": 0.005831419530014419,
+            "pressure_last_5_home": 0.12467445844133036,
+            "pressure_last_5_away": 0.27604123076417986,
+            "pressure_last_10_home": 0.02518898046779305,
+            "pressure_last_10_away": 0.017549796215604825
+          }
+        },
+        "arm_d_pressure_lite": {
+          "status": "ok",
+          "train_n": 118,
+          "test_n": 58,
+          "accuracy": 0.6379,
+          "log_loss": 1.1229,
+          "brier_score": 0.2991,
+          "precision": 0.6364,
+          "recall": 0.7,
+          "calibration_ece": 0.2511,
+          "feature_importance": {
+            "pressure_first_15_home": 0.14584432762421587,
+            "pressure_first_15_away": 0.04123444948953262,
+            "pressure_dominance": 0.36694890122150864,
+            "pressure_momentum": 0.35565809011323674,
+            "pressure_swing": 0.0903142315515062
+          }
+        },
+        "delta_b_vs_a": {
+          "accuracy": 0.0173,
+          "log_loss": 0.352,
+          "brier_score": 0.0406,
+          "calibration_ece": 0.0741
+        },
+        "delta_c_vs_a": {
+          "accuracy": 0.0,
+          "log_loss": 0.3805,
+          "brier_score": 0.0487,
+          "calibration_ece": 0.0888
+        },
+        "delta_d_vs_a": {
+          "accuracy": 0.0,
+          "log_loss": 0.3671,
+          "brier_score": 0.0537,
+          "calibration_ece": 0.0576
+        }
+      },
+      "goal_minute_bucket": {
+        "arm_a_baseline": {
+          "status": "ok",
+          "train_n": 118,
+          "test_n": 58,
+          "accuracy": 0.6724,
+          "log_loss": 1.0951,
+          "brier_score": null,
+          "precision": 0.628,
+          "recall": 0.6724,
+          "calibration_ece": null,
+          "feature_importance": {
+            "home_goal_rate_proxy": 0.0,
+            "away_goal_rate_proxy": 0.0,
+            "data_quality_score": 0.7928134347710846,
+            "home_history_samples": 0.06522309698214111,
+            "away_history_samples": 0.14196346824677433
+          }
+        },
+        "arm_b_baseline_plus_pressure": {
+          "status": "ok",
+          "train_n": 118,
+          "test_n": 58,
+          "accuracy": 0.9483,
+          "log_loss": 0.3447,
+          "brier_score": null,
+          "precision": 0.9677,
+          "recall": 0.9483,
+          "calibration_ece": null,
+          "feature_importance": {
+            "home_goal_rate_proxy": 0.0,
+            "away_goal_rate_proxy": 0.0,
+            "data_quality_score": 0.00025536339314256444,
+            "home_history_samples": 5.364362710657233e-05,
+            "away_history_samples": 0.0045202782918263105,
+            "home_avg_pressure": 0.0006524621197268492,
+            "away_avg_pressure": 5.149129932568711e-06,
+            "pressure_difference": 0.0017718979769721125,
+            "pressure_first_15_home": 1.7700169046200632e-06,
+            "pressure_first_15_away": 1.1647882852347957e-05,
+            "pressure_first_30_home": 0.0002632933264217505,
+            "pressure_first_30_away": 0.0011609692228972508,
+            "pressure_spike_count_home": 0.26923196394365373,
+            "pressure_spike_count_away": 0.6230908913375199,
+            "pressure_dominance": 0.0002172929864242093,
+            "pressure_momentum": 0.04679569064355921,
+            "pressure_swing": 0.0011120420629733758,
+            "pressure_before_first_goal_home": 7.965087619386437e-05,
+            "pressure_before_first_goal_away": 0.0014879979587669584,
+            "pressure_last_5_home": 0.03311511466548401,
+            "pressure_last_5_away": 0.0011512350516128987,
+            "pressure_last_10_home": 0.0023118216950732628,
+            "pressure_last_10_away": 0.012709823790955442
+          }
+        },
+        "arm_c_pressure_only": {
+          "status": "ok",
+          "train_n": 118,
+          "test_n": 58,
+          "accuracy": 0.9483,
+          "log_loss": 0.3523,
+          "brier_score": null,
+          "precision": 0.9677,
+          "recall": 0.9483,
+          "calibration_ece": null,
+          "feature_importance": {
+            "home_avg_pressure": 0.00166843005161031,
+            "away_avg_pressure": 0.00010891150970797816,
+            "pressure_difference": 0.0038564239974335627,
+            "pressure_first_15_home": 8.842243303887123e-08,
+            "pressure_first_15_away": 1.0144845752955278e-05,
+            "pressure_first_30_home": 0.000648567074474041,
+            "pressure_first_30_away": 0.0016136163724739237,
+            "pressure_spike_count_home": 0.2699666912416174,
+            "pressure_spike_count_away": 0.6218278034730735,
+            "pressure_dominance": 0.00016381629982262236,
+            "pressure_momentum": 0.04698527912564735,
+            "pressure_swing": 0.0007433649559710528,
+            "pressure_before_first_goal_home": 4.264263620941451e-05,
+            "pressure_before_first_goal_away": 0.0010376564620877182,
+            "pressure_last_5_home": 0.036510463813975554,
+            "pressure_last_5_away": 0.0007419380141119246,
+            "pressure_last_10_home": 0.0012808944237744167,
+            "pressure_last_10_away": 0.012793267279823281
+          }
+        },
+        "arm_d_pressure_lite": {
+          "status": "ok",
+          "train_n": 118,
+          "test_n": 58,
+          "accuracy": 0.6552,
+          "log_loss": 0.9801,
+          "brier_score": null,
+          "precision": 0.7504,
+          "recall": 0.6552,
+          "calibration_ece": null,
+          "feature_importance": {
+            "pressure_first_15_home": 0.1106144270407784,
+            "pressure_first_15_away": 0.08098023754828026,
+            "pressure_dominance": 0.2154426995309162,
+            "pressure_momentum": 0.4883042344994287,
+            "pressure_swing": 0.10465840138059639
+          }
+        },
+        "delta_b_vs_a": {
+          "accuracy": 0.2759,
+          "log_loss": -0.7504,
+          "brier_score": null,
+          "calibration_ece": null
+        },
+        "delta_c_vs_a": {
+          "accuracy": 0.2759,
+          "log_loss": -0.7428,
+          "brier_score": null,
+          "calibration_ece": null
+        },
+        "delta_d_vs_a": {
+          "accuracy": -0.0172,
+          "log_loss": -0.115,
+          "brier_score": null,
+          "calibration_ece": null
+        }
+      }
+    }
+  },
+  "feature_importance": {
+    "ranked": [
+      {
+        "feature": "pressure_spike_count_away",
+        "importance_sum": 0.660953,
+        "bucket": "strongest_positive"
+      },
+      {
+        "feature": "pressure_before_first_goal_away",
+        "importance_sum": 0.542589,
+        "bucket": "strongest_positive"
+      },
+      {
+        "feature": "pressure_momentum",
+        "importance_sum": 0.333832,
+        "bucket": "weak_positive"
+      },
+      {
+        "feature": "pressure_first_15_home",
+        "importance_sum": 0.322039,
+        "bucket": "weak_positive"
+      },
+      {
+        "feature": "pressure_before_first_goal_home",
+        "importance_sum": 0.313316,
+        "bucket": "weak_positive"
+      },
+      {
+        "feature": "pressure_spike_count_home",
+        "importance_sum": 0.288049,
+        "bucket": "weak_positive"
+      },
+      {
+        "feature": "pressure_last_5_away",
+        "importance_sum": 0.273527,
+        "bucket": "weak_positive"
+      },
+      {
+        "feature": "pressure_first_30_away",
+        "importance_sum": 0.263116,
+        "bucket": "weak_positive"
+      },
+      {
+        "feature": "pressure_swing",
+        "importance_sum": 0.170569,
+        "bucket": "weak_positive"
+      },
+      {
+        "feature": "pressure_last_5_home",
+        "importance_sum": 0.166199,
+        "bucket": "weak_positive"
+      },
+      {
+        "feature": "home_avg_pressure",
+        "importance_sum": 0.115833,
+        "bucket": "neutral"
+      },
+      {
+        "feature": "pressure_difference",
+        "importance_sum": 0.103582,
+        "bucket": "neutral"
+      },
+      {
+        "feature": "pressure_first_15_away",
+        "importance_sum": 0.063354,
+        "bucket": "neutral"
+      },
+      {
+        "feature": "away_avg_pressure",
+        "importance_sum": 0.045024,
+        "bucket": "harmful"
+      },
+      {
+        "feature": "pressure_first_30_home",
+        "importance_sum": 0.044184,
+        "bucket": "harmful"
+      },
+      {
+        "feature": "pressure_last_10_away",
+        "importance_sum": 0.039024,
+        "bucket": "harmful"
+      },
+      {
+        "feature": "pressure_last_10_home",
+        "importance_sum": 0.034584,
+        "bucket": "harmful"
+      },
+      {
+        "feature": "pressure_dominance",
+        "importance_sum": 0.026371,
+        "bucket": "harmful"
+      }
+    ],
+    "special_attention": {
+      "pressure_first_15_home": 0.3220387870677429,
+      "pressure_first_15_away": 0.06335358310378852,
+      "pressure_first_30_home": 0.04418424903642885,
+      "pressure_first_30_away": 0.2631155599646784,
+      "pressure_spike_count_home": 0.2880494352428214,
+      "pressure_spike_count_away": 0.6609532263803999,
+      "pressure_dominance": 0.026371348370019133,
+      "pressure_swing": 0.17056868923596222,
+      "pressure_before_first_goal_home": 0.3133158781690448,
+      "pressure_before_first_goal_away": 0.5425894022871314
+    }
+  },
+  "recommendation": "PRESSURE_MEDIUM_VALUE"
+}

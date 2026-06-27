@@ -1,0 +1,19 @@
+{
+  "fixtures_skipped_missing_events": 1181,
+  "fixtures_score_event_inconsistent": 0,
+  "events_missing_minute": 0,
+  "duplicate_events_deduped": 0,
+  "sources_used": [
+    "sqlite",
+    "api_response_cache",
+    "egie_backtest_jsonl",
+    "uefa_survival_parquet"
+  ],
+  "source_reliability_ranking": [
+    "sqlite_goal_events (highest \u2014 per-event minute, sort_index)",
+    "egie_backtest_jsonl (premier_league validated replay)",
+    "uefa_survival_parquet (Sportmonks UEFA club subset)",
+    "sqlite_results_only / data_missing (score only, no timing)"
+  ],
+  "api_calls_used": 0
+}

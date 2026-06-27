@@ -6,50 +6,58 @@
 
 @layer base {
   :root {
-    --terminal-bg: 220 43% 4%;
-    --terminal-card: 222 38% 11%;
-    --terminal-green: 151 100% 45%;
-    --terminal-gold: 43 100% 70%;
-    --terminal-red: 0 100% 65%;
-    --terminal-blue: 217 91% 60%;
+    /* Phase 63B — premium World Cup brand palette */
+    --wc-gold: 43 96% 56%;
+    --wc-gold-soft: 45 93% 68%;
+    --wc-yellow: 48 100% 72%;
+    --wc-warm-white: 40 33% 97%;
+    --wc-charcoal: 220 18% 14%;
+    --wc-soft-black: 222 24% 8%;
 
-    --background: 220 43% 4%;
-    --foreground: 210 40% 98%;
-    --card: 222 38% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 38% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 151 100% 45%;
-    --primary-foreground: 220 43% 4%;
-    --secondary: 222 32% 16%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 28% 14%;
-    --muted-foreground: 215 16% 65%;
-    --accent: 43 100% 70%;
-    --accent-foreground: 220 43% 4%;
-    --destructive: 0 100% 65%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 222 24% 18%;
-    --input: 222 24% 18%;
-    --ring: 151 100% 45%;
-    --chart-1: 151 100% 45%;
-    --chart-2: 217 91% 60%;
-    --chart-3: 43 100% 70%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 0 100% 65%;
+    --terminal-bg: 222 24% 8%;
+    --terminal-card: 220 18% 14%;
+    --terminal-green: 142 55% 42%;
+    --terminal-gold: 43 96% 56%;
+    --terminal-red: 0 72% 55%;
+    --terminal-blue: 217 70% 55%;
+
+    --background: 40 33% 97%;
+    --foreground: 222 24% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 24% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 24% 12%;
+    --primary: 43 96% 56%;
+    --primary-foreground: 222 24% 8%;
+    --secondary: 40 25% 94%;
+    --secondary-foreground: 222 24% 12%;
+    --muted: 40 20% 92%;
+    --muted-foreground: 220 10% 40%;
+    --accent: 48 100% 72%;
+    --accent-foreground: 222 24% 8%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 18% 88%;
+    --input: 40 18% 88%;
+    --ring: 43 96% 56%;
+    --chart-1: 43 96% 56%;
+    --chart-2: 142 55% 42%;
+    --chart-3: 48 100% 72%;
+    --chart-4: 217 70% 55%;
+    --chart-5: 0 72% 55%;
     --radius: 0.875rem;
     --font-heading: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-    --sidebar-background: 222 38% 8%;
-    --sidebar-foreground: 210 40% 92%;
-    --sidebar-primary: 151 100% 45%;
-    --sidebar-primary-foreground: 220 43% 4%;
-    --sidebar-accent: 222 32% 14%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 24% 16%;
-    --sidebar-ring: 151 100% 45%;
+    --sidebar-background: 222 24% 8%;
+    --sidebar-foreground: 40 33% 96%;
+    --sidebar-primary: 43 96% 56%;
+    --sidebar-primary-foreground: 222 24% 8%;
+    --sidebar-accent: 220 18% 14%;
+    --sidebar-accent-foreground: 40 33% 96%;
+    --sidebar-border: 220 14% 18%;
+    --sidebar-ring: 43 96% 56%;
   }
 }
 
@@ -58,38 +66,47 @@
     @apply border-border outline-ring/50;
   }
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-color: #070b14;
+    background-color: #faf8f4;
     background-image:
-      radial-gradient(ellipse 90% 60% at 50% -30%, rgba(0, 230, 118, 0.07), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 100% 0%, rgba(59, 130, 246, 0.06), transparent 50%),
-      radial-gradient(ellipse 40% 30% at 0% 100%, rgba(255, 209, 102, 0.04), transparent 45%);
+      radial-gradient(ellipse 90% 60% at 50% -20%, rgba(212, 168, 67, 0.12), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 0%, rgba(255, 214, 102, 0.08), transparent 50%),
+      radial-gradient(ellipse 40% 30% at 0% 100%, rgba(250, 248, 244, 0.9), transparent 45%);
     background-attachment: fixed;
   }
 }
 
 @layer components {
   .terminal-card {
-    @apply rounded-2xl border border-white/[0.06] bg-[#101827] shadow-[0_8px_32px_rgba(0,0,0,0.35)];
+    @apply rounded-2xl border border-amber-200/60 bg-white shadow-[0_8px_32px_rgba(26,26,26,0.08)];
   }
   .terminal-card-glow {
     @apply terminal-card;
     box-shadow:
-      0 0 0 1px rgba(0, 230, 118, 0.08),
-      0 8px 40px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      0 0 0 1px rgba(212, 168, 67, 0.15),
+      0 8px 40px rgba(26, 26, 26, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
   }
   .terminal-chip {
     @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide;
   }
   .terminal-section-title {
-    @apply text-xs font-semibold uppercase tracking-[0.14em] text-[#94A3B8];
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-amber-800/70;
   }
   .terminal-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#00E676] to-[#3B82F6];
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-amber-600 to-yellow-500;
+  }
+  .wc-premium-card {
+    @apply rounded-2xl border border-amber-200/70 bg-white shadow-sm;
+  }
+  .wc-tier-gold {
+    @apply terminal-chip border-amber-400/40 bg-amber-50 text-amber-900;
+  }
+  .wc-tier-premium {
+    @apply terminal-chip border-yellow-400/50 bg-yellow-50 text-yellow-900;
   }
 }
 
@@ -101,10 +118,10 @@
     @apply terminal-card-glow backdrop-blur-2xl;
   }
   .glow-green {
-    box-shadow: 0 0 24px rgba(0, 230, 118, 0.15), 0 0 0 1px rgba(0, 230, 118, 0.12);
+    box-shadow: 0 0 24px rgba(34, 139, 84, 0.12), 0 0 0 1px rgba(34, 139, 84, 0.1);
   }
   .glow-gold {
-    box-shadow: 0 0 24px rgba(255, 209, 102, 0.12), 0 0 0 1px rgba(255, 209, 102, 0.1);
+    box-shadow: 0 0 24px rgba(212, 168, 67, 0.18), 0 0 0 1px rgba(212, 168, 67, 0.15);
   }
   .animate-live-pulse {
     animation: live-pulse 2s ease-in-out infinite;
@@ -127,12 +144,52 @@
     @apply rounded-lg bg-gradient-to-r from-white/[0.04] via-white/[0.08] to-white/[0.04] bg-[length:200%_100%] animate-pulse;
   }
   .intel-page-hero {
-    @apply rounded-2xl border border-white/[0.06] bg-gradient-to-br from-[#101827] via-[#0a0f1a] to-[#070B14] p-6 sm:p-8;
+    @apply rounded-2xl border border-amber-200/60 bg-gradient-to-br from-white via-amber-50/40 to-[#faf8f4] p-6 sm:p-8;
   }
   .intel-badge-gold {
-    @apply terminal-chip border-[#FFD166]/30 bg-[#FFD166]/10 text-[#FFD166];
+    @apply terminal-chip border-amber-400/40 bg-amber-50 text-amber-900;
   }
   .intel-badge-cyan {
-    @apply terminal-chip border-[#22D3EE]/30 bg-[#22D3EE]/10 text-[#67E8F9];
+    @apply terminal-chip border-amber-300/40 bg-yellow-50 text-amber-800;
+  }
+
+  /* Phase 63B — premium World Cup product theme */
+  .theme-wc-premium {
+    --saas-bg: 40 33% 97%;
+    --saas-card: 0 0% 100%;
+    --saas-accent: 43 96% 56%;
+    --saas-text: 222 24% 12%;
+    color-scheme: light;
+  }
+  .theme-wc-premium .terminal-card,
+  .theme-wc-premium .glass,
+  .theme-wc-premium .wc-premium-card {
+    @apply rounded-2xl border border-amber-200/70 bg-white shadow-sm text-slate-800;
+  }
+  .theme-wc-premium .saas-match-card {
+    @apply rounded-2xl border border-amber-200/60 bg-white shadow-sm hover:shadow-md hover:border-amber-300 transition-all;
+  }
+
+  /* Phase 60A — light SaaS theme scoped to dashboard shell */
+  .theme-saas {
+    --saas-bg: 210 20% 98%;
+    --saas-card: 0 0% 100%;
+    --saas-accent: 43 96% 56%;
+    --saas-text: 222 47% 11%;
+    color-scheme: light;
+  }
+  .theme-saas .terminal-card,
+  .theme-saas .glass {
+    @apply rounded-xl border border-slate-200 bg-white shadow-sm text-slate-800;
+  }
+  .theme-saas .saas-match-card {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md hover:border-amber-200 transition-all;
+  }
+  .theme-pro-analytics .saas-match-card,
+  .theme-pro-analytics .terminal-card {
+    @apply rounded-xl border border-amber-200/50 bg-white shadow-md text-slate-800;
+  }
+  .theme-pro-analytics {
+    @apply bg-[#faf8f4];
   }
 }

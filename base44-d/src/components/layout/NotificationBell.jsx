@@ -2,23 +2,26 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import { fetchNotifications } from "@/api/saasApi";
+import { fetchAssistantNotifications } from "@/api/assistantApi";
 
 export default function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    fetchNotifications()
-      .then((data) => {
-        if (!cancelled) {
-          const count = Number(data.unread_count);
-          if (!Number.isNaN(count)) {
-            setUnreadCount(count);
-          } else {
-            const items = data.notifications || [];
-            setUnreadCount(items.filter((n) => !n.is_read).length);
-          }
-        }
+    Promise.all([
+      fetchNotifications().catch(() => ({ notifications: [], unread_count: 0 })),
+      fetchAssistantNotifications().catch(() => ({ notifications: [], unread_count: 0 })),
+    ])
+      .then(([legacy, assistant]) => {
+        if (cancelled) return;
+        const legacyUnread =
+          Number(legacy.unread_count) ||
+          (legacy.notifications || []).filter((n) => !n.is_read).length;
+        const assistantUnread =
+          Number(assistant.unread_count) ||
+          (assistant.notifications || []).filter((n) => !n.is_read).length;
+        setUnreadCount(legacyUnread + assistantUnread);
       })
       .catch(() => {
         if (!cancelled) setUnreadCount(0);

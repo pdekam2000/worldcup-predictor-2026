@@ -10,6 +10,8 @@ from worldcup_predictor.admin.elite_shadow_comparison import EliteShadowComparis
 from worldcup_predictor.admin.elite_shadow_preview import EliteShadowPreviewService
 from worldcup_predictor.api.deps import require_super_admin_user
 from worldcup_predictor.api.web_auth import WebAuthUser
+from worldcup_predictor.elite_orchestrator.shadow_admin import handle_admin_action
+from worldcup_predictor.elite_orchestrator.shadow_health import health_for_api
 
 router = APIRouter(prefix="/admin/elite-shadow", tags=["admin-elite-shadow"])
 _service = EliteShadowPreviewService()
@@ -66,7 +68,31 @@ def admin_elite_shadow_summary(
     _owner: WebAuthUser = Depends(require_super_admin_user),
 ) -> dict[str, Any]:
     """Internal summary for admin dashboard / validation."""
-    return _service.preview_summary()
+    base = _service.preview_summary()
+    health = health_for_api()
+    base["health"] = health.get("scheduler")
+    base["jsonl_counts"] = health.get("jsonl_counts")
+    return base
+
+
+@router.get("/health")
+def admin_elite_shadow_health(
+    _owner: WebAuthUser = Depends(require_super_admin_user),
+) -> dict[str, Any]:
+    return health_for_api()
+
+
+@router.post("/actions/{action}")
+def admin_elite_shadow_action(
+    action: str,
+    force: bool = Query(default=False),
+    dry_run: bool = Query(default=False),
+    _owner: WebAuthUser = Depends(require_super_admin_user),
+) -> dict[str, Any]:
+    allowed = {"run_now", "rebuild_jsonl", "recalculate_root_cause", "re_evaluate", "vacuum", "export"}
+    if action not in allowed:
+        raise HTTPException(status_code=400, detail=f"Unknown action: {action}")
+    return handle_admin_action(action, force=force, dry_run=dry_run)
 
 
 @router.get("/comparison")

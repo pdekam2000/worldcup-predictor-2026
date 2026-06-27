@@ -215,14 +215,18 @@ def _compare_row(
     root_cause: list[dict[str, Any]],
     fixture_meta: dict[str, Any],
 ) -> dict[str, Any]:
+    from worldcup_predictor.admin.disagreement_quality_analysis import semantic_pick
+
     shadow_pick = _normalize_pick(shadow.get("prediction"), market_id)
     production_pick = _normalize_pick(production.get("prediction"), market_id)
     has_shadow = shadow.get("available", True) and shadow_pick is not None
     has_production = production.get("available") and production_pick is not None
     comparable = has_shadow and has_production
     disagreement = None
+    semantic_shadow = semantic_pick(shadow_pick, fixture_meta) if shadow_pick else None
+    semantic_production = semantic_pick(production_pick, fixture_meta) if production_pick else None
     if comparable:
-        disagreement = shadow_pick != production_pick
+        disagreement = semantic_shadow != semantic_production
 
     shadow_conf = shadow.get("confidence")
     strong_disagreement = bool(
@@ -242,10 +246,12 @@ def _compare_row(
             "shadow": {
                 **shadow,
                 "normalized_pick": shadow_pick,
+                "semantic_pick": semantic_shadow,
             },
             "production": {
                 **production,
                 "normalized_pick": production_pick,
+                "semantic_pick": semantic_production,
                 "source": production_source,
             },
             "has_shadow": has_shadow,

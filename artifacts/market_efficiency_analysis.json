@@ -1,0 +1,33 @@
+{
+  "markets": {
+    "match_winner_favorite": {
+      "correct": 75,
+      "total": 97,
+      "hit_rate": 0.7732
+    },
+    "first_team_to_score": {
+      "correct": 76,
+      "total": 97,
+      "hit_rate": 0.7835
+    },
+    "over_25_favorite": {
+      "correct": 55,
+      "total": 105,
+      "hit_rate": 0.5238
+    }
+  },
+  "line_stability": {
+    "mean_abs_open_close_home_move": 0.0669,
+    "samples": 105
+  },
+  "favorite_reliability": {
+    "favorite_wins_fg": 75,
+    "underdog_wins_fg": 22,
+    "total": 97,
+    "favorite_fg_rate": 0.7732
+  },
+  "highly_predictive_markets": [
+    "first_team_to_score",
+    "match_winner_favorite"
+  ]
+}

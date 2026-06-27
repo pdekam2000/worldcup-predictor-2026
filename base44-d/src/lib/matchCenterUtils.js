@@ -53,16 +53,54 @@ export function applyClientFilters(matches, filters) {
         String(m.competition_name || "").toLowerCase().includes(q)
     );
   }
+  if (filters.competitionKey && filters.competitionKey !== "all") {
+    rows = rows.filter((m) => m.competition_key === filters.competitionKey);
+  }
   if (filters.datePreset === "today") rows = rows.filter((m) => isToday(m.match_date));
   if (filters.datePreset === "tomorrow") rows = rows.filter((m) => isTomorrow(m.match_date));
   if (filters.datePreset === "weekend") rows = rows.filter((m) => isWeekend(m.match_date));
   if (filters.highConfidence) {
     rows = rows.filter((m) => (m.prediction_summary?.confidence || 0) >= 70);
   }
+  if (filters.bestValue) {
+    rows = rows.filter((m) => {
+      const v = String(m.prediction_summary?.value_rating || "").toUpperCase();
+      return ["A", "B", "ELITE", "STRONG"].includes(v);
+    });
+  }
   if (filters.eliteOnly) {
     rows = rows.filter((m) => m.prediction_summary?.is_elite_pick);
   }
   if (filters.liveOnly) rows = rows.filter((m) => m.bucket === "live");
   if (filters.upcomingOnly) rows = rows.filter((m) => m.bucket === "upcoming");
+  if (filters.liveSoon) {
+    const now = Date.now();
+    const twoHours = 2 * 60 * 60 * 1000;
+    rows = rows.filter((m) => {
+      if (!m.match_date || m.bucket !== "upcoming") return false;
+      const t = new Date(m.match_date).getTime();
+      return t >= now && t <= now + twoHours;
+    });
+  }
+  if (filters.favoriteTeams?.length) {
+    const fav = new Set(filters.favoriteTeams.map((t) => String(t).toLowerCase()));
+    rows = rows.filter(
+      (m) => fav.has(String(m.home_team || "").toLowerCase()) || fav.has(String(m.away_team || "").toLowerCase())
+    );
+  }
+  if (filters.minAiScore) {
+    rows = rows.filter((m) => (m.ai_match_score?.score || 0) >= filters.minAiScore);
+  }
   return rows;
+}
+
+export function fixtureStatusTone(label) {
+  const l = String(label || "").toLowerCase();
+  if (l === "live") return "text-red-400 bg-red-500/10";
+  if (l === "prediction ready") return "text-[#00E676] bg-[#00E676]/10";
+  if (l === "prediction updating") return "text-[#FFD166] bg-[#FFD166]/10";
+  if (l === "waiting for lineups") return "text-[#94A3B8] bg-white/5";
+  if (l === "evaluated") return "text-[#7DD3FC] bg-[#7DD3FC]/10";
+  if (l === "finished") return "text-[#64748B] bg-white/5";
+  return "text-[#94A3B8] bg-white/5";
 }

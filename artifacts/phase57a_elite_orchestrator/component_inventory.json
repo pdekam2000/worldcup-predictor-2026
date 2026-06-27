@@ -1,0 +1,177 @@
+[
+  {
+    "component_id": "lineup_intelligence",
+    "name": "Lineup Intelligence",
+    "purpose": "Expected/confirmed lineups, starter probability, lineup quality per team",
+    "confidence": "HIGH_VALUE",
+    "supported_markets": [
+      "first_goal_team",
+      "team_to_score_first",
+      "anytime_goalscorer",
+      "first_goalscorer"
+    ],
+    "data_dependencies": [
+      "sportmonks_lineups_cache",
+      "fs_player_rolling_features",
+      "expected_lineup_store"
+    ],
+    "latency_ms": 120,
+    "readiness": "READY",
+    "status": "validated",
+    "phase_source": "54J / 54S / 24A",
+    "package_path": "worldcup_predictor/feature_store/player_store",
+    "notes": "Lineup-only beats lineup+availability on UEFA (54S). Core eligibility gate for goalscorer."
+  },
+  {
+    "component_id": "player_form_store",
+    "name": "Player Form Store",
+    "purpose": "Rolling goals/xG/form, minutes, starter history at kickoff",
+    "confidence": "HIGH_VALUE",
+    "supported_markets": [
+      "anytime_goalscorer",
+      "first_goalscorer",
+      "first_goal_team"
+    ],
+    "data_dependencies": [
+      "fs_player_match_stats",
+      "fs_player_rolling_features",
+      "player_store_cache"
+    ],
+    "latency_ms": 80,
+    "readiness": "READY",
+    "status": "validated",
+    "phase_source": "54J / 54L",
+    "package_path": "worldcup_predictor/feature_store/player_store",
+    "notes": "Form + goals_per_90 primary signal. 57.1% composite top-3 anytime (54Q)."
+  },
+  {
+    "component_id": "goalscorer_intelligence",
+    "name": "Goalscorer Intelligence Engine",
+    "purpose": "Per-fixture player ranking for anytime/first goalscorer markets",
+    "confidence": "HIGH_VALUE",
+    "supported_markets": [
+      "anytime_goalscorer",
+      "first_goalscorer",
+      "first_goal_team"
+    ],
+    "data_dependencies": [
+      "player_form_store",
+      "lineup_intelligence",
+      "goalscorer_dataset_v3"
+    ],
+    "latency_ms": 200,
+    "readiness": "PARTIAL",
+    "status": "validated",
+    "phase_source": "54K / 54L / 54Q",
+    "package_path": "worldcup_predictor/egie/goalscorer_shadow",
+    "notes": "Top-3 anytime 57.1% overall; WC 77.1%. UEFA odds coverage 3% blocks elite path."
+  },
+  {
+    "component_id": "first_goal_team_v2",
+    "name": "First Goal Team Engine V2",
+    "purpose": "Team-level first-goal prediction using goalscorer intel + baseline proxies",
+    "confidence": "HIGH_VALUE",
+    "supported_markets": [
+      "first_goal_team",
+      "team_to_score_first"
+    ],
+    "data_dependencies": [
+      "expanded_egie_dataset",
+      "goalscorer_dataset_v3",
+      "sportmonks_odds_cache"
+    ],
+    "latency_ms": 150,
+    "readiness": "READY",
+    "status": "validated",
+    "phase_source": "55C",
+    "package_path": "worldcup_predictor/egie/first_goal_team_v2",
+    "notes": "Best group baseline_goalscorer 54.6%. Beats 51H production 50.8%. Below 54F-7 xG 58.3%."
+  },
+  {
+    "component_id": "market_behavior_intelligence",
+    "name": "Market Behavior Intelligence (MBI)",
+    "purpose": "Historical odds-bucket calibration priors for MW and O/U",
+    "confidence": "MEDIUM_VALUE",
+    "supported_markets": [
+      "1x2",
+      "first_goal_team",
+      "team_to_score_first"
+    ],
+    "data_dependencies": [
+      "odds_snapshots",
+      "sportmonks_odds_cache",
+      "oddalerts_odds_history"
+    ],
+    "latency_ms": 60,
+    "readiness": "PARTIAL",
+    "status": "validated",
+    "phase_source": "56A",
+    "package_path": "worldcup_predictor/mbi",
+    "notes": "10% prior blend +0.0025 Brier on MW/O/U. Shadow prior only \u2014 not standalone edge."
+  },
+  {
+    "component_id": "odds_intelligence",
+    "name": "Odds Intelligence",
+    "purpose": "Match winner, FTS, O/U implied probs, movement, sharp/soft consensus",
+    "confidence": "BASELINE",
+    "supported_markets": [
+      "1x2",
+      "first_goal_team",
+      "team_to_score_first",
+      "anytime_goalscorer"
+    ],
+    "data_dependencies": [
+      "sportmonks_odds_cache",
+      "odds_snapshots",
+      "api_football_odds"
+    ],
+    "latency_ms": 90,
+    "readiness": "PARTIAL",
+    "status": "validated",
+    "phase_source": "API-K / 54C2",
+    "package_path": "worldcup_predictor/egie/uefa_club/odds_intelligence.py",
+    "notes": "UEFA MW coverage ~57%. WC goalscorer odds 100%. FTS sparse in strict UEFA cache."
+  },
+  {
+    "component_id": "egie_historical_baseline",
+    "name": "EGIE Historical Baseline",
+    "purpose": "Production goal-timing engine \u2014 first goal team, range, minute",
+    "confidence": "BASELINE",
+    "supported_markets": [
+      "first_goal_team",
+      "team_to_score_first",
+      "goal_timing"
+    ],
+    "data_dependencies": [
+      "egie_postgres_raw",
+      "sqlite_fixtures",
+      "goal_events"
+    ],
+    "latency_ms": 250,
+    "readiness": "READY",
+    "status": "baseline",
+    "phase_source": "51H",
+    "package_path": "worldcup_predictor/egie",
+    "notes": "PL backtest FGT 50.8%. Production anchor \u2014 elite layer wraps, does not replace."
+  },
+  {
+    "component_id": "hybrid_confidence_engine",
+    "name": "Hybrid Confidence Engine",
+    "purpose": "Per-market Tier A\u2013D confidence from survival + DQ + reliability priors",
+    "confidence": "PRODUCTION_ACTIVE",
+    "supported_markets": [
+      "first_goal_team",
+      "goal_timing"
+    ],
+    "data_dependencies": [
+      "egie_survival_outputs",
+      "reliability_prior_store"
+    ],
+    "latency_ms": 40,
+    "readiness": "READY",
+    "status": "baseline",
+    "phase_source": "52D",
+    "package_path": "worldcup_predictor/egie/confidence",
+    "notes": "Tier A\u2013D mapping exists. Extend to goalscorer + 1X2 in shadow fusion."
+  }
+]

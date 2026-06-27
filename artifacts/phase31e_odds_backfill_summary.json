@@ -1,0 +1,281 @@
+{
+  "phase": "31E",
+  "team_id_backfill": {
+    "rows_scanned": 1616,
+    "rows_updated": 0,
+    "updates_by_source": {},
+    "remaining_nulls": {
+      "home_team_id": 85,
+      "away_team_id": 85,
+      "league_id": 4,
+      "season": 4
+    }
+  },
+  "odds_inventory_before": {
+    "total_odds_records": 85,
+    "unique_fixtures": 85,
+    "sqlite_api_cache_odds_rows": 90,
+    "odds_snapshots_rows": 986,
+    "odds_snapshots_unique_fixtures": 85,
+    "fixture_enrichment_odds_rows": 72,
+    "disk_cache_files": 7909,
+    "disk_cache_odds_files": 1528,
+    "disk_cache_odds_nonempty": 68,
+    "fixture_coverage": {
+      "total_with_odds": 85,
+      "finished_with_odds": 4,
+      "upcoming_with_odds": 81
+    },
+    "league_coverage": {
+      "world_cup_2026": 72
+    },
+    "season_coverage": {},
+    "wc_coverage": 72,
+    "markets_available": {
+      "1x2": 72,
+      "over_under_2_5": 72,
+      "btts": 72,
+      "double_chance": 72
+    },
+    "fixture_ids_sample": [
+      900001,
+      900002,
+      900003,
+      900004,
+      900005,
+      900006,
+      900007,
+      900008,
+      900009,
+      900010,
+      900011,
+      900012,
+      1489369,
+      1489370,
+      1489371,
+      1489372,
+      1489373,
+      1489374,
+      1489375,
+      1489376
+    ]
+  },
+  "odds_backfill": {
+    "fixtures_with_cached_odds": 85,
+    "odds_snapshots_created": 0,
+    "odds_snapshots_skipped_existing": 85,
+    "fixture_enrichment_odds_updated": 13,
+    "by_source": {
+      "api_response_cache": 66,
+      "disk_cache": 2,
+      "odds_snapshots": 17
+    }
+  },
+  "odds_inventory_after": {
+    "total_odds_records": 85,
+    "unique_fixtures": 85,
+    "sqlite_api_cache_odds_rows": 90,
+    "odds_snapshots_rows": 986,
+    "odds_snapshots_unique_fixtures": 85,
+    "fixture_enrichment_odds_rows": 72,
+    "disk_cache_files": 7909,
+    "disk_cache_odds_files": 1528,
+    "disk_cache_odds_nonempty": 68,
+    "fixture_coverage": {
+      "total_with_odds": 85,
+      "finished_with_odds": 4,
+      "upcoming_with_odds": 81
+    },
+    "league_coverage": {
+      "world_cup_2026": 72
+    },
+    "season_coverage": {},
+    "wc_coverage": 72,
+    "markets_available": {
+      "1x2": 72,
+      "over_under_2_5": 72,
+      "btts": 72,
+      "double_chance": 72
+    },
+    "fixture_ids_sample": [
+      900001,
+      900002,
+      900003,
+      900004,
+      900005,
+      900006,
+      900007,
+      900008,
+      900009,
+      900010,
+      900011,
+      900012,
+      1489369,
+      1489370,
+      1489371,
+      1489372,
+      1489373,
+      1489374,
+      1489375,
+      1489376
+    ]
+  },
+  "replay": {
+    "wc_subset": {
+      "fixture_count": 72,
+      "fixture_ids": [
+        1489369,
+        1489370,
+        1489371,
+        1489372,
+        1489373,
+        1489374,
+        1489375,
+        1489376,
+        1489377,
+        1489378,
+        1489379,
+        1489380,
+        1489381,
+        1489382,
+        1489383,
+        1489384,
+        1489385,
+        1489386,
+        1489387,
+        1489388,
+        1489389,
+        1489390,
+        1489391,
+        1489392,
+        1489393,
+        1489394,
+        1489395,
+        1489396,
+        1489397,
+        1489398,
+        1489399,
+        1489400,
+        1489401,
+        1489402,
+        1489403,
+        1489404,
+        1489405,
+        1489406,
+        1489407,
+        1489408,
+        1489409,
+        1489410,
+        1489411,
+        1489412,
+        1489413,
+        1489414,
+        1489415,
+        1489416,
+        1489417,
+        1489418,
+        1489419,
+        1489420,
+        1489421,
+        1489422,
+        1538999,
+        1539000,
+        1539001,
+        1539002,
+        1539003,
+        1539004,
+        1539005,
+        1539006,
+        1539007,
+        1539008,
+        1539009,
+        1539010,
+        1539011,
+        1539012,
+        1539013,
+        1539016,
+        1539017,
+        1539074
+      ],
+      "hybrid_replay": {
+        "replayed_ok": 72,
+        "count": 72,
+        "average_confidence": 36.45,
+        "max_confidence": 39.2,
+        "average_data_quality": 35.42,
+        "no_bet_rate_60": 1.0,
+        "recommendation_rate_60": 0.0,
+        "ranked_pick_coverage_60": 0.0,
+        "safe_value_aggressive_at_60": {
+          "safe": 0,
+          "value": 0,
+          "aggressive": 0
+        },
+        "external_api_calls": 0
+      }
+    },
+    "finished_odds_subset": {
+      "fixture_count": 4,
+      "total_finished_with_odds": 4,
+      "hybrid_replay_31e": {
+        "replayed_ok": 4,
+        "count": 4,
+        "average_confidence": 39.1,
+        "max_confidence": 39.2,
+        "average_data_quality": 30.0,
+        "no_bet_rate_60": 1.0,
+        "recommendation_rate_60": 0.0,
+        "ranked_pick_coverage_60": 0.0,
+        "safe_value_aggressive_at_60": {
+          "safe": 0,
+          "value": 0,
+          "aggressive": 0
+        },
+        "external_api_calls": 0
+      },
+      "baseline_31b": {
+        "count": 4,
+        "average_confidence": 32.1,
+        "max_confidence": 32.2,
+        "average_data_quality": 20.0,
+        "no_bet_rate_60": 1.0,
+        "recommendation_rate_60": 0.0,
+        "ranked_pick_coverage_60": 0.0,
+        "safe_value_aggressive_at_60": {
+          "safe": 0,
+          "value": 0,
+          "aggressive": 0
+        }
+      },
+      "comparison_vs_31b": {
+        "average_confidence": 7.0,
+        "max_confidence": 7.0,
+        "average_data_quality": 10.0,
+        "no_bet_rate_60": 0.0,
+        "recommendation_rate_60": 0.0
+      },
+      "comparison_vs_31d": {
+        "note": "31D sample was BL without odds; 31E finished subset has backfilled disk odds",
+        "delta_vs_31d_avg_confidence": 7.0
+      }
+    }
+  },
+  "api_cost_estimate": {
+    "assumption": "1 API-Football odds call per fixture (GET /odds?fixture=)",
+    "estimates": {
+      "100_fixtures": {
+        "api_football_calls": 100
+      },
+      "500_fixtures": {
+        "api_football_calls": 500
+      },
+      "1616_fixtures": {
+        "api_football_calls": 1616
+      }
+    },
+    "note": "Does not include optional lineups/stats/injuries refresh; odds-only estimate."
+  },
+  "validation": {
+    "external_api_calls": 0
+  }
+}

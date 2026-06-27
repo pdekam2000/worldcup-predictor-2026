@@ -1,0 +1,92 @@
+{
+  "passed": 17,
+  "total": 17,
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "pressure_store_module_imports",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "migration_file_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "pressure_normalized",
+      "pass": true,
+      "detail": "fixtures=25 rows=5116"
+    },
+    {
+      "name": "aggregations_work",
+      "pass": true,
+      "detail": "keys=['average_pressure', 'max_pressure', 'pressure_first_15', 'pressure_first_30', 'pressure_before_first_goal']..."
+    },
+    {
+      "name": "postgres_configured",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "tables_ready",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "pressure_records_imported",
+      "pass": true,
+      "detail": "records=12676"
+    },
+    {
+      "name": "minute_level_rows_stored",
+      "pass": true,
+      "detail": "rows=12676"
+    },
+    {
+      "name": "fixture_summaries_created",
+      "pass": true,
+      "detail": "summaries=65"
+    },
+    {
+      "name": "duplicate_protection",
+      "pass": true,
+      "detail": "dup_groups=0"
+    },
+    {
+      "name": "aggregation_in_summary",
+      "pass": true,
+      "detail": "home_avg=1.9176"
+    },
+    {
+      "name": "report_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_production_prediction_changes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_wde_changes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_saas_changes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_deploy",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_token_leaked",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

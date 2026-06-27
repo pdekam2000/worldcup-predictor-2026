@@ -2,10 +2,18 @@
 
 export const STATUS_FILTERS = [
   { id: "all", label: "All" },
+  { id: "evaluated", label: "Evaluated" },
   { id: "correct", label: "Correct" },
   { id: "wrong", label: "Wrong" },
-  { id: "pending", label: "Pending" },
   { id: "partial", label: "Partial" },
+  { id: "pending", label: "Pending" },
+];
+
+export const DATE_QUICK_FILTERS = [
+  { id: "all", label: "All dates" },
+  { id: "yesterday", label: "Yesterday" },
+  { id: "7d", label: "Last 7 days" },
+  { id: "30d", label: "Last 30 days" },
 ];
 
 export const SCOPE_TABS = [
@@ -15,13 +23,18 @@ export const SCOPE_TABS = [
 ];
 
 export const MARKET_FILTERS = [
-  { id: "all", label: "All markets" },
+  { id: "best_bets", label: "Best Bets Only" },
+  { id: "all", label: "All Markets" },
   { id: "1x2", label: "1X2" },
   { id: "btts", label: "BTTS" },
+  { id: "over_2_5", label: "Over 2.5" },
+  { id: "under_2_5", label: "Under 2.5" },
   { id: "over_under_2_5", label: "O/U 2.5" },
-  { id: "correct_score", label: "Correct score" },
-  { id: "first_goal_team", label: "First goal" },
-  { id: "goal_minute", label: "Goal minute" },
+  { id: "double_chance", label: "Double Chance" },
+  { id: "correct_score", label: "Correct Score" },
+  { id: "first_goal_team", label: "First Goal Team" },
+  { id: "goal_minute", label: "Goal Time Range" },
+  { id: "goalscorer", label: "Goalscorer" },
 ];
 
 export const SORT_OPTIONS = [
@@ -73,12 +86,25 @@ export function matchesTeamSearch(item, query) {
 
 export function matchesMarketFilter(item, marketId) {
   if (!marketId || marketId === "all") return true;
-  const predicted = item?.predicted_market_keys;
-  if (Array.isArray(predicted) && predicted.length > 0) {
-    return predicted.includes(marketId);
+  if (marketId === "best_bets") {
+    if (item?.has_best_bet) return true;
+    const rows = item?.market_breakdown || [];
+    return rows.some((r) => r.was_best_bet && r.was_user_visible);
   }
+  const rows = item?.market_breakdown || [];
+  const keys = new Set(rows.map((r) => r.market_key));
+  if (marketId === "over_2_5" || marketId === "under_2_5") {
+    if (!keys.has("over_under_2_5")) return false;
+    const row = rows.find((r) => r.market_key === "over_under_2_5");
+    const pick = String(row?.predicted_pick || "").toLowerCase();
+    if (marketId === "over_2_5") return pick.includes("over");
+    return pick.includes("under");
+  }
+  if (keys.has(marketId)) return true;
+  const predicted = item?.predicted_market_keys;
+  if (Array.isArray(predicted) && predicted.includes(marketId)) return true;
   if (marketId === "1x2") return true;
-  return (item?.markets_count ?? 1) > 1;
+  return false;
 }
 
 export function filterArchiveItems(items, { search, marketFilter }) {
@@ -87,8 +113,22 @@ export function filterArchiveItems(items, { search, marketFilter }) {
   );
 }
 
+export function marketViewForItem(item, marketId) {
+  if (!item || !marketId || marketId === "all") return null;
+  const rows = item.market_breakdown || [];
+  if (marketId === "best_bets") {
+    return rows.find((r) => r.was_best_bet) || null;
+  }
+  const key = marketId === "over_2_5" || marketId === "under_2_5" ? "over_under_2_5" : marketId;
+  const row = rows.find((r) => r.market_key === key);
+  if (!row) return null;
+  if (marketId === "over_2_5" && !String(row.predicted_pick || "").toLowerCase().includes("over")) return null;
+  if (marketId === "under_2_5" && !String(row.predicted_pick || "").toLowerCase().includes("under")) return null;
+  return row;
+}
+
 export function needsClientFiltering({ search, marketFilter }) {
   const hasSearch = Boolean(String(search || "").trim());
-  const hasMarket = marketFilter && marketFilter !== "all";
+  const hasMarket = marketFilter && marketFilter !== "all" && marketFilter !== "best_bets";
   return hasSearch || hasMarket;
 }

@@ -20,6 +20,14 @@ def performance_monitoring(
     return build_monitoring_bundle(competition_key=competition)
 
 
+@router.get("/performance/details")
+def performance_details(
+    competition: str = Query(default="world_cup_2026"),
+) -> dict[str, Any]:
+    """Phase A12B — extended performance details (monitoring bundle)."""
+    return build_monitoring_bundle(competition_key=competition)
+
+
 @router.get("/performance/summary")
 def performance_summary(
     competition: str = Query(default="world_cup_2026"),

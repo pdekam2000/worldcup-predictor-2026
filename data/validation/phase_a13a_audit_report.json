@@ -1,0 +1,166 @@
+{
+  "base": "https://footballpredictor.it.com",
+  "parts": {
+    "league_coverage": [
+      {
+        "competition_id": "premier_league",
+        "provider_id": 39,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 200,
+        "enabled": true,
+        "zero_reason": null
+      },
+      {
+        "competition_id": "world_cup_2026",
+        "provider_id": 1,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 18,
+        "enabled": true,
+        "zero_reason": null
+      },
+      {
+        "competition_id": "bundesliga",
+        "provider_id": 78,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 0,
+        "enabled": true,
+        "zero_reason": "no_upcoming_in_window"
+      },
+      {
+        "competition_id": "la_liga",
+        "provider_id": 140,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 0,
+        "enabled": true,
+        "zero_reason": "no_upcoming_in_window"
+      },
+      {
+        "competition_id": "ligue_1",
+        "provider_id": 61,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 0,
+        "enabled": true,
+        "zero_reason": "no_upcoming_in_window"
+      },
+      {
+        "competition_id": "serie_a",
+        "provider_id": 135,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 0,
+        "enabled": true,
+        "zero_reason": "no_upcoming_in_window"
+      },
+      {
+        "competition_id": "champions_league",
+        "provider_id": 2,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 0,
+        "enabled": true,
+        "zero_reason": "no_upcoming_in_window"
+      },
+      {
+        "competition_id": "conference_league",
+        "provider_id": 848,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 0,
+        "enabled": true,
+        "zero_reason": "no_upcoming_in_window"
+      },
+      {
+        "competition_id": "europa_league",
+        "provider_id": 3,
+        "resolved_season": 2026,
+        "upcoming_fixtures": 0,
+        "enabled": true,
+        "zero_reason": "no_upcoming_in_window"
+      }
+    ],
+    "prediction_coverage": {
+      "total_fixtures": 218,
+      "with_cached_prediction": 18,
+      "with_best_pick": 0,
+      "no_bet_summaries": 18,
+      "without_best_pick": 18,
+      "per_competition": [
+        {
+          "competition_id": "premier_league",
+          "fixture_count": 200,
+          "prediction_count": 0,
+          "coverage_pct": 0.0,
+          "ui_fixture_count": 200
+        },
+        {
+          "competition_id": "world_cup_2026",
+          "fixture_count": 18,
+          "prediction_count": 18,
+          "coverage_pct": 100.0,
+          "ui_fixture_count": 18
+        },
+        {
+          "competition_id": "bundesliga",
+          "fixture_count": 0,
+          "prediction_count": 0,
+          "coverage_pct": 0.0,
+          "ui_fixture_count": 0
+        },
+        {
+          "competition_id": "la_liga",
+          "fixture_count": 0,
+          "prediction_count": 0,
+          "coverage_pct": 0.0,
+          "ui_fixture_count": 0
+        },
+        {
+          "competition_id": "ligue_1",
+          "fixture_count": 0,
+          "prediction_count": 0,
+          "coverage_pct": 0.0,
+          "ui_fixture_count": 0
+        },
+        {
+          "competition_id": "serie_a",
+          "fixture_count": 0,
+          "prediction_count": 0,
+          "coverage_pct": 0.0,
+          "ui_fixture_count": 0
+        },
+        {
+          "competition_id": "champions_league",
+          "fixture_count": 0,
+          "prediction_count": 0,
+          "coverage_pct": 0.0,
+          "ui_fixture_count": 0
+        },
+        {
+          "competition_id": "conference_league",
+          "fixture_count": 0,
+          "prediction_count": 0,
+          "coverage_pct": 0.0,
+          "ui_fixture_count": 0
+        },
+        {
+          "competition_id": "europa_league",
+          "fixture_count": 0,
+          "prediction_count": 0,
+          "coverage_pct": 0.0,
+          "ui_fixture_count": 0
+        }
+      ]
+    },
+    "draw_distribution": {
+      "counts": {},
+      "draw_samples": [],
+      "draw_total": 0,
+      "visible_1x2_total": 0
+    },
+    "combo_audit": {
+      "fixtures_considered": 18,
+      "predictions_available": 18,
+      "candidates_accepted": 0,
+      "candidates_rejected": 18,
+      "rejection_reasons": {
+        "missing_best_pick": 18
+      }
+    }
+  }
+}

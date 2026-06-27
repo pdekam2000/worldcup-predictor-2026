@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "rows": 47029,
+  "fixtures": 1541,
+  "availability_columns": [
+    "lineup_confirmed",
+    "starter_probability",
+    "minutes_last_3",
+    "minutes_last_5",
+    "minutes_trend",
+    "bench_probability",
+    "captain",
+    "suspended_flag",
+    "injury_flag",
+    "returned_recently",
+    "availability_score"
+  ],
+  "non_zero_coverage": {
+    "lineup_confirmed": 47029,
+    "starter_probability": 38629,
+    "minutes_last_3": 36876,
+    "minutes_last_5": 46862,
+    "minutes_trend": 46584,
+    "bench_probability": 30773,
+    "captain": 5359,
+    "suspended_flag": 8,
+    "injury_flag": 520,
+    "returned_recently": 11911,
+    "availability_score": 47029
+  },
+  "source": "artifacts\\phase54r_team_context_goalscorer\\goalscorer_dataset_v4.parquet"
+}

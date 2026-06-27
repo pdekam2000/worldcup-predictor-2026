@@ -12,7 +12,7 @@ import {
   Database,
 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
-import { isAdminUser } from "@/lib/roles";
+import { isAdminUser, isOwnerUser } from "@/lib/roles";
 import { fetchPredictionHistoryEntry } from "@/api/saasApi";
 import { Button } from "@/components/ui/button";
 import { getArchiveStatusConfig, resolveArchiveStatus } from "@/lib/archiveStatus";
@@ -143,19 +143,22 @@ function ExplanationBlock({ explanation }) {
 }
 
 export default function PredictionHistoryDetailPage() {
-  const { entryId } = useParams();
+  const { entryId, predictionId } = useParams();
+  const id = entryId || predictionId;
   const { user } = useAuth();
   const isAdmin = isAdminUser(user);
+  const isOwner = isOwnerUser(user);
+  const showDebug = isAdmin || isOwner;
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const load = useCallback(async () => {
-    if (!entryId) return;
+    if (!id) return;
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchPredictionHistoryEntry(entryId);
+      const data = await fetchPredictionHistoryEntry(id);
       setDetail(data);
     } catch (err) {
       setDetail(null);
@@ -163,7 +166,7 @@ export default function PredictionHistoryDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [entryId]);
+  }, [id]);
 
   useEffect(() => {
     load();
@@ -186,7 +189,7 @@ export default function PredictionHistoryDetailPage() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Link
-          to="/history"
+          to="/archive"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Archive
@@ -302,7 +305,7 @@ export default function PredictionHistoryDetailPage() {
                   <div className="font-medium mt-1 text-muted-foreground">{evalSource.row_status_reason}</div>
                 </div>
               )}
-              {evalSource.is_quarantined && (
+              {showDebug && evalSource.is_quarantined && (
                 <div className="sm:col-span-2 text-xs text-yellow-200/90">
                   This evaluation row is quarantined and excluded from public accuracy metrics.
                 </div>
@@ -374,8 +377,8 @@ export default function PredictionHistoryDetailPage() {
             </ArchiveSection>
           )}
 
-          {isAdmin && (
-            <ArchiveSection title="Technical details" description="Admin debug view" defaultOpen={false}>
+          {showDebug && (
+            <ArchiveSection title="Owner / Admin debug" description="Engine trace — hidden from public users" defaultOpen={false}>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm mb-3">
                 <div>
                   <div className="text-xs text-muted-foreground">Engine version</div>

@@ -1,0 +1,334 @@
+{
+  "passed": 29,
+  "total": 29,
+  "all_pass": true,
+  "recommendation": "COMPARISON_READY",
+  "checks": [
+    {
+      "name": "imports_ok",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "comparison_route_registered",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "super_admin_only_api",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "dashboard_comparison_section",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "comparison_filters_ui",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "saas_comparison_helper",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "saas_super_admin_gate",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "nav_super_admin_only",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "super_admin_route_ui",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_public_elite_shadow_route",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "wde_unchanged",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "comparison_status_ok",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "comparison_shadow_flags",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "comparison_summary_present",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "comparison_rows_list",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "shadow_data_available",
+      "pass": true,
+      "detail": "108"
+    },
+    {
+      "name": "missing_production_safe",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "missing_production_row_safe",
+      "pass": true,
+      "detail": "no missing-production rows in current data"
+    },
+    {
+      "name": "missing_fixture_production_safe",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "disagreement_filter_safe",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "disagreement_filter_honored",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_public_comparison_api",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "unauthenticated_401",
+      "pass": true,
+      "detail": "401"
+    },
+    {
+      "name": "non_super_admin_403",
+      "pass": true,
+      "detail": "403"
+    },
+    {
+      "name": "super_admin_can_access",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "endpoint_has_summary",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "row_has_shadow_production",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "public_api_unchanged",
+      "pass": true,
+      "detail": "200"
+    },
+    {
+      "name": "saas_plans_unchanged",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "sample_summary": {
+    "total_rows": 108,
+    "total_comparable": 72,
+    "same_pick_count": 16,
+    "disagreement_count": 56,
+    "agreement_rate": 0.2222,
+    "average_production_confidence": 0.5843,
+    "average_shadow_confidence": 0.653,
+    "markets_with_most_disagreement": [
+      {
+        "market_id": "1x2",
+        "disagreement_count": 18
+      },
+      {
+        "market_id": "first_goal_team",
+        "disagreement_count": 18
+      },
+      {
+        "market_id": "team_to_score_first",
+        "disagreement_count": 18
+      },
+      {
+        "market_id": "goal_timing",
+        "disagreement_count": 2
+      }
+    ],
+    "strong_disagreements": [
+      {
+        "fixture_id": 1489409,
+        "market_id": "first_goal_team",
+        "match": "Cura\u00e7ao vs Ivory Coast",
+        "shadow_pick": "away",
+        "production_pick": "ivory coast",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489409,
+        "market_id": "team_to_score_first",
+        "match": "Cura\u00e7ao vs Ivory Coast",
+        "shadow_pick": "away",
+        "production_pick": "ivory coast",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489412,
+        "market_id": "first_goal_team",
+        "match": "Tunisia vs Netherlands",
+        "shadow_pick": "away",
+        "production_pick": "netherlands",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489412,
+        "market_id": "team_to_score_first",
+        "match": "Tunisia vs Netherlands",
+        "shadow_pick": "away",
+        "production_pick": "netherlands",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489415,
+        "market_id": "first_goal_team",
+        "match": "New Zealand vs Belgium",
+        "shadow_pick": "away",
+        "production_pick": "belgium",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489415,
+        "market_id": "team_to_score_first",
+        "match": "New Zealand vs Belgium",
+        "shadow_pick": "away",
+        "production_pick": "belgium",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489417,
+        "market_id": "first_goal_team",
+        "match": "Uruguay vs Spain",
+        "shadow_pick": "away",
+        "production_pick": "spain",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489417,
+        "market_id": "team_to_score_first",
+        "match": "Uruguay vs Spain",
+        "shadow_pick": "away",
+        "production_pick": "spain",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489420,
+        "market_id": "first_goal_team",
+        "match": "Croatia vs Ghana",
+        "shadow_pick": "home",
+        "production_pick": "ghana",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489420,
+        "market_id": "team_to_score_first",
+        "match": "Croatia vs Ghana",
+        "shadow_pick": "home",
+        "production_pick": "ghana",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489421,
+        "market_id": "first_goal_team",
+        "match": "Jordan vs Argentina",
+        "shadow_pick": "away",
+        "production_pick": "argentina",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489421,
+        "market_id": "team_to_score_first",
+        "match": "Jordan vs Argentina",
+        "shadow_pick": "away",
+        "production_pick": "argentina",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489422,
+        "market_id": "first_goal_team",
+        "match": "Panama vs England",
+        "shadow_pick": "away",
+        "production_pick": "england",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1489422,
+        "market_id": "team_to_score_first",
+        "match": "Panama vs England",
+        "shadow_pick": "away",
+        "production_pick": "england",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      },
+      {
+        "fixture_id": 1539074,
+        "market_id": "first_goal_team",
+        "match": "Senegal vs Iraq",
+        "shadow_pick": "home",
+        "production_pick": "senegal",
+        "shadow_confidence": 0.8696,
+        "shadow_tier": "A",
+        "production_confidence": null
+      }
+    ],
+    "missing_production_count": 0,
+    "missing_shadow_count": 36
+  }
+}

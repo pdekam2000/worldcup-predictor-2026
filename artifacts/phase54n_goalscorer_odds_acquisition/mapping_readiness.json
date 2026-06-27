@@ -1,0 +1,45 @@
+{
+  "projections": [
+    {
+      "fixture_count": 50,
+      "expected_selections": 19010,
+      "expected_mapped_player_rows": 7301,
+      "expected_mapping_rate": 0.3841,
+      "assumptions": "avg 380 sel/fixture; 99.0% player-market share; 38.8% player mapping rate (54M)"
+    },
+    {
+      "fixture_count": 100,
+      "expected_selections": 38021,
+      "expected_mapped_player_rows": 14603,
+      "expected_mapping_rate": 0.3841,
+      "assumptions": "avg 380 sel/fixture; 99.0% player-market share; 38.8% player mapping rate (54M)"
+    },
+    {
+      "fixture_count": 200,
+      "expected_selections": 76042,
+      "expected_mapped_player_rows": 29208,
+      "expected_mapping_rate": 0.3841,
+      "assumptions": "avg 380 sel/fixture; 99.0% player-market share; 38.8% player mapping rate (54M)"
+    }
+  ],
+  "empirical_baseline": {
+    "overall_mapping_rate_54m": 0.384,
+    "player_market_mapping_rate_54m": 0.388,
+    "avg_selections_per_fixture_observed": 380.2,
+    "player_market_share_observed": 0.99,
+    "effective_player_mapping_rate": 0.3841
+  },
+  "architecture": {
+    "current_mapper_scales_to_50": true,
+    "current_mapper_scales_to_100": true,
+    "current_mapper_scales_to_200": true,
+    "bottleneck": "fixture_id namespace (API-Football vs Sportmonks) not mapping algorithm",
+    "architecture_notes": [
+      "54M mapper is O(selections \u00d7 lineup_players) per fixture \u2014 linear and fine at 200+ fixtures",
+      "Name normalizer handles accents/initials \u2014 no change needed for scale",
+      "Team Goalscorer rows should be filtered pre-map (raises effective rate from 38% to ~65% on player rows)",
+      "API-Football selections use player names \u2014 expected similar or better mapping vs Sportmonks",
+      "Blocker: need lineup source keyed to same fixture_id as odds source"
+    ]
+  }
+}

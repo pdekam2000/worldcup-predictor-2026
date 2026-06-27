@@ -1,0 +1,161 @@
+{
+  "passed": 31,
+  "total": 31,
+  "checks": [
+    {
+      "name": "file:worldcup_predictor/api/market_level_evaluation.py",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "name": "file:worldcup_predictor/api/archive_evaluation_join.py",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "name": "file:worldcup_predictor/automation/worldcup_background/pick_evaluator.py",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "name": "file:worldcup_predictor/api/evaluated_results.py",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "name": "file:base44-d/src/pages/PredictionResultsPage.jsx",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "name": "file:base44-d/src/components/archive/MarketBreakdownPanel.jsx",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "name": "file:base44-d/src/lib/archiveFilters.js",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "name": "evaluator:canonical_1x2",
+      "ok": true,
+      "detail": "unified 1x2 source"
+    },
+    {
+      "name": "evaluator:detailed_markets_ou",
+      "ok": true,
+      "detail": "OU from detailed_markets"
+    },
+    {
+      "name": "evaluator:market_evaluations",
+      "ok": true,
+      "detail": "per-market rows"
+    },
+    {
+      "name": "mle:best_bet_winrate",
+      "ok": true,
+      "detail": "best bet only winrate"
+    },
+    {
+      "name": "mle:aggregate_partial",
+      "ok": true,
+      "detail": "partial aggregate"
+    },
+    {
+      "name": "mle:limited_payload",
+      "ok": true,
+      "detail": "backward compat flag"
+    },
+    {
+      "name": "join:no_main_1x2_only",
+      "ok": true,
+      "detail": "removed 1x2-only row collapse"
+    },
+    {
+      "name": "join:unavailable_status",
+      "ok": true,
+      "detail": "unavailable preserved"
+    },
+    {
+      "name": "ui:market_filter",
+      "ok": true,
+      "detail": "market dropdown default best bets"
+    },
+    {
+      "name": "ui:market_breakdown",
+      "ok": true,
+      "detail": "expandable breakdown"
+    },
+    {
+      "name": "ui:yellow_white",
+      "ok": true,
+      "detail": "yellow/white theme"
+    },
+    {
+      "name": "filters:best_bets",
+      "ok": true,
+      "detail": "best bets filter option"
+    },
+    {
+      "name": "runtime:multi_market_eval",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "name": "runtime:canonical_1x2",
+      "ok": true,
+      "detail": "home"
+    },
+    {
+      "name": "runtime:partial_possible",
+      "ok": true,
+      "detail": "correct/all_evaluated_markets_correct"
+    },
+    {
+      "name": "runtime:aggregate_partial",
+      "ok": true,
+      "detail": "partial"
+    },
+    {
+      "name": "runtime:no_bet_not_visible",
+      "ok": true,
+      "detail": "no_bet excluded"
+    },
+    {
+      "name": "runtime:research_not_visible",
+      "ok": true,
+      "detail": "research excluded"
+    },
+    {
+      "name": "runtime:best_bet_winrate",
+      "ok": true,
+      "detail": "{'total': 1, 'correct': 1, 'accuracy': 100.0}"
+    },
+    {
+      "name": "runtime:limited_historical",
+      "ok": true,
+      "detail": "1x2 only old row"
+    },
+    {
+      "name": "runtime:old_keys_only_1x2",
+      "ok": true,
+      "detail": "no fake markets"
+    },
+    {
+      "name": "filter:over_2_5",
+      "ok": true,
+      "detail": "OU filter"
+    },
+    {
+      "name": "filter:best_bets",
+      "ok": true,
+      "detail": "best bets filter"
+    },
+    {
+      "name": "flags:unchanged",
+      "ok": true,
+      "detail": "settings intact"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-06-25T03:26:15.348642+00:00",
+  "phase": "58C",
+  "model_version": "elite_orchestrator_shadow_v1.0.58c",
+  "fixtures_selected": 18,
+  "predictions_generated": 108,
+  "markets_covered": [
+    "1x2",
+    "anytime_goalscorer",
+    "first_goal_team",
+    "first_goalscorer",
+    "goal_timing",
+    "team_to_score_first"
+  ],
+  "write_result": {
+    "written": 0,
+    "skipped_duplicates": 108,
+    "path": "data\\shadow\\elite_orchestrator_predictions.jsonl"
+  },
+  "pair_result": {
+    "predictions_read": 108,
+    "evaluations_written": 0,
+    "paired_with_result": 0,
+    "pending": 108,
+    "path": "data\\shadow\\elite_orchestrator_evaluations.jsonl",
+    "evaluations_on_disk": 108
+  },
+  "dry_run": false,
+  "force": false,
+  "recommendation": "SHADOW_RUNTIME_READY",
+  "production_changes": false,
+  "api_calls_used": 0
+}

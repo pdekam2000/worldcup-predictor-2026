@@ -1,0 +1,46 @@
+{
+  "backfill": {
+    "job_key": "phase54h6_cl_priorseason",
+    "fixtures_processed": 40,
+    "fixtures_imported": 40,
+    "fixtures_skipped": 239,
+    "fixtures_empty": 0,
+    "fixtures_error": 0,
+    "records_written": 7636,
+    "api_calls_live": 40,
+    "api_calls_cached": 0,
+    "errors": []
+  },
+  "audit": {
+    "configured": true,
+    "tables_ready": true,
+    "records": {
+      "record_count": 30102,
+      "fixture_count": 153,
+      "league_count": 4,
+      "season_count": 4,
+      "team_count": 137,
+      "avg_minute": "49.7151684273470201",
+      "max_minute": 125
+    },
+    "summaries": {
+      "summary_count": 153,
+      "avg_rows_per_fixture": "196.7450980392156863",
+      "avg_minutes_per_fixture": "98.3725490196078431"
+    },
+    "duplicate_groups_sample": []
+  },
+  "postgres_configured": true,
+  "league_id": 2,
+  "season_id": 23619,
+  "cache_only": false,
+  "dry_run": false,
+  "options": {
+    "cache_first": true,
+    "skip_existing": true,
+    "save_raw": true,
+    "include": "participants;pressure;events.type",
+    "job_key": "phase54h6_cl_priorseason",
+    "resume": false
+  }
+}

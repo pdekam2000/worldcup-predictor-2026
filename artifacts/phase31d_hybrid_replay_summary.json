@@ -1,0 +1,319 @@
+{
+  "meta": {
+    "phase": "31D",
+    "sample_size": 100,
+    "replayed_ok": 100,
+    "errors": 0,
+    "run_specialists": true,
+    "fixture_ids": [
+      719349,
+      719351,
+      719352,
+      719353,
+      719355,
+      719356,
+      719350,
+      719354,
+      719357,
+      719359,
+      719360,
+      719362,
+      719364,
+      719365,
+      719366,
+      719361,
+      719363,
+      719358,
+      719368,
+      719371,
+      719372,
+      719373,
+      719374,
+      719375,
+      719367,
+      719370,
+      719369,
+      719378,
+      719379,
+      719381,
+      719382,
+      719384,
+      719376,
+      719377,
+      719383,
+      719380,
+      719391,
+      719385,
+      719389,
+      719390,
+      719392,
+      719393,
+      719388,
+      719386,
+      719387,
+      719402,
+      719394,
+      719395,
+      719396,
+      719397,
+      719400,
+      719398,
+      719401,
+      719399,
+      719411,
+      719405,
+      719406,
+      719407,
+      719409,
+      719404,
+      719408,
+      719403,
+      719410,
+      719418,
+      719412,
+      719413,
+      719415,
+      719417,
+      719420,
+      719416,
+      719414,
+      719419,
+      719425,
+      719421,
+      719422,
+      719423,
+      719427,
+      719426,
+      719428,
+      719424,
+      719429,
+      719436,
+      719430,
+      719432,
+      719433,
+      719435,
+      719438,
+      719431,
+      719437,
+      719434,
+      719443,
+      719439,
+      719441,
+      719442,
+      719446,
+      719440,
+      719444,
+      719445,
+      719447,
+      719455
+    ],
+    "external_api_calls": 0,
+    "api_football_blocked": 0,
+    "http_blocked": 0,
+    "quota_tracker_live": 0,
+    "validation": {
+      "live_fetch_attempts": 0,
+      "http_calls": 0,
+      "api_football_live": 0,
+      "sportmonks_live": 0,
+      "openai_live": 0,
+      "total_external_calls": 0
+    }
+  },
+  "summary": {
+    "threshold_matrix": {
+      "50": {
+        "total_matches": 100,
+        "no_bet_count": 100,
+        "no_bet_rate": 1.0,
+        "recommendation_rate": 0.0,
+        "average_confidence": 28.07,
+        "max_confidence": 28.2
+      },
+      "55": {
+        "total_matches": 100,
+        "no_bet_count": 100,
+        "no_bet_rate": 1.0,
+        "recommendation_rate": 0.0,
+        "average_confidence": 28.07,
+        "max_confidence": 28.2
+      },
+      "60": {
+        "total_matches": 100,
+        "no_bet_count": 100,
+        "no_bet_rate": 1.0,
+        "recommendation_rate": 0.0,
+        "average_confidence": 28.07,
+        "max_confidence": 28.2
+      }
+    },
+    "confidence_bucket_analysis": {
+      "0-40": {
+        "count": 100
+      },
+      "40-50": {
+        "count": 0
+      },
+      "50-55": {
+        "count": 0
+      },
+      "55-60": {
+        "count": 0
+      },
+      "60-65": {
+        "count": 0
+      },
+      "65-70": {
+        "count": 0
+      },
+      "70-75": {
+        "count": 0
+      },
+      "75+": {
+        "count": 0
+      }
+    },
+    "average_confidence": 28.07,
+    "max_confidence": 28.2,
+    "average_data_quality": 63.65
+  },
+  "missing_enrichment": {
+    "top_missing": [
+      {
+        "field": "odds_json_enrichment",
+        "count": 100,
+        "pct": 1.0
+      },
+      {
+        "field": "cached_odds",
+        "count": 100,
+        "pct": 1.0
+      }
+    ],
+    "total_fixtures": 100
+  },
+  "comparison": {
+    "baseline_31b": {
+      "threshold_matrix": {
+        "50": {
+          "total_matches": 100,
+          "no_bet_count": 100,
+          "no_bet_rate": 1.0,
+          "recommendation_rate": 0.0,
+          "average_confidence": 37.65,
+          "max_confidence": 42.6
+        },
+        "55": {
+          "total_matches": 100,
+          "no_bet_count": 100,
+          "no_bet_rate": 1.0,
+          "recommendation_rate": 0.0,
+          "average_confidence": 37.65,
+          "max_confidence": 42.6
+        },
+        "60": {
+          "total_matches": 100,
+          "no_bet_count": 100,
+          "no_bet_rate": 1.0,
+          "recommendation_rate": 0.0,
+          "average_confidence": 37.65,
+          "max_confidence": 42.6
+        }
+      },
+      "confidence_bucket_analysis": {
+        "0-40": {
+          "count": 71
+        },
+        "40-50": {
+          "count": 29
+        },
+        "50-55": {
+          "count": 0
+        },
+        "55-60": {
+          "count": 0
+        },
+        "60-65": {
+          "count": 0
+        },
+        "65-70": {
+          "count": 0
+        },
+        "70-75": {
+          "count": 0
+        },
+        "75+": {
+          "count": 0
+        }
+      },
+      "average_confidence": 37.65,
+      "max_confidence": 42.6,
+      "average_data_quality": 38.2
+    },
+    "hybrid_31d": {
+      "threshold_matrix": {
+        "50": {
+          "total_matches": 100,
+          "no_bet_count": 100,
+          "no_bet_rate": 1.0,
+          "recommendation_rate": 0.0,
+          "average_confidence": 28.07,
+          "max_confidence": 28.2
+        },
+        "55": {
+          "total_matches": 100,
+          "no_bet_count": 100,
+          "no_bet_rate": 1.0,
+          "recommendation_rate": 0.0,
+          "average_confidence": 28.07,
+          "max_confidence": 28.2
+        },
+        "60": {
+          "total_matches": 100,
+          "no_bet_count": 100,
+          "no_bet_rate": 1.0,
+          "recommendation_rate": 0.0,
+          "average_confidence": 28.07,
+          "max_confidence": 28.2
+        }
+      },
+      "confidence_bucket_analysis": {
+        "0-40": {
+          "count": 100
+        },
+        "40-50": {
+          "count": 0
+        },
+        "50-55": {
+          "count": 0
+        },
+        "55-60": {
+          "count": 0
+        },
+        "60-65": {
+          "count": 0
+        },
+        "65-70": {
+          "count": 0
+        },
+        "70-75": {
+          "count": 0
+        },
+        "75+": {
+          "count": 0
+        }
+      },
+      "average_confidence": 28.07,
+      "max_confidence": 28.2,
+      "average_data_quality": 63.65
+    },
+    "delta": {
+      "average_confidence": -9.58,
+      "max_confidence": -14.4,
+      "average_data_quality": 25.45,
+      "no_bet_rate_60": 0.0,
+      "recommendation_rate_60": 0.0
+    },
+    "baseline_cores_count": 100
+  }
+}

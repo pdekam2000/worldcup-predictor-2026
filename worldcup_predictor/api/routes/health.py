@@ -6,6 +6,7 @@ from typing import Any
 
 from fastapi import APIRouter
 
+from worldcup_predictor.config.app_version import build_version_payload
 from worldcup_predictor.config.provider_readiness import provider_diagnostic, weather_provider_status
 
 router = APIRouter(tags=["health"])
@@ -34,5 +35,11 @@ def health_providers() -> dict[str, Any]:
 
 
 @router.get("/version")
-def version() -> dict[str, str]:
-    return {"project": PROJECT_NAME, "version": API_VERSION}
+def version() -> dict[str, Any]:
+    """Application deploy version — used by global UI badge (Hotfix Pack 4)."""
+    payload = build_version_payload()
+    return {
+        **payload,
+        "project": PROJECT_NAME,
+        "api_version": API_VERSION,
+    }

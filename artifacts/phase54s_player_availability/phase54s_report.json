@@ -1,0 +1,316 @@
+{
+  "generated_at": "2026-06-24T13:48:34.992958+00:00",
+  "phase": "54S",
+  "dataset_v5": {
+    "status": "ok",
+    "rows": 47029,
+    "fixtures": 1541,
+    "availability_columns": [
+      "lineup_confirmed",
+      "starter_probability",
+      "minutes_last_3",
+      "minutes_last_5",
+      "minutes_trend",
+      "bench_probability",
+      "captain",
+      "suspended_flag",
+      "injury_flag",
+      "returned_recently",
+      "availability_score"
+    ],
+    "non_zero_coverage": {
+      "lineup_confirmed": 47029,
+      "starter_probability": 38629,
+      "minutes_last_3": 36876,
+      "minutes_last_5": 46862,
+      "minutes_trend": 46584,
+      "bench_probability": 30773,
+      "captain": 5359,
+      "suspended_flag": 8,
+      "injury_flag": 520,
+      "returned_recently": 11911,
+      "availability_score": 47029
+    },
+    "source": "artifacts\\phase54r_team_context_goalscorer\\goalscorer_dataset_v4.parquet"
+  },
+  "feature_groups": {
+    "player": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.3175,
+      "top3_hit": 0.6296,
+      "top5_hit": 0.7619,
+      "mrr": 0.5106,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "group",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.2871,
+        "top3_hit": 0.5694,
+        "top5_hit": 0.689,
+        "mrr": null,
+        "recall_at_3": 0.5694,
+        "recall_at_5": 0.689,
+        "precision_at_1": 0.2871,
+        "precision_at_3": 0.236,
+        "precision_at_5": 0.2077
+      }
+    },
+    "player_lineup": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.3386,
+      "top3_hit": 0.672,
+      "top5_hit": 0.7884,
+      "mrr": 0.5381,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "group",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.3062,
+        "top3_hit": 0.6077,
+        "top5_hit": 0.7129,
+        "mrr": null,
+        "recall_at_3": 0.6077,
+        "recall_at_5": 0.7129,
+        "precision_at_1": 0.3062,
+        "precision_at_3": 0.26,
+        "precision_at_5": 0.2211
+      }
+    },
+    "player_availability": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.328,
+      "top3_hit": 0.6402,
+      "top5_hit": 0.7513,
+      "mrr": 0.5181,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "group",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.2967,
+        "top3_hit": 0.5789,
+        "top5_hit": 0.6794,
+        "mrr": null,
+        "recall_at_3": 0.5789,
+        "recall_at_5": 0.6794,
+        "precision_at_1": 0.2967,
+        "precision_at_3": 0.2456,
+        "precision_at_5": 0.2029
+      }
+    },
+    "player_lineup_availability": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.3333,
+      "top3_hit": 0.672,
+      "top5_hit": 0.7989,
+      "mrr": 0.5369,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "group",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.3014,
+        "top3_hit": 0.6077,
+        "top5_hit": 0.7225,
+        "mrr": null,
+        "recall_at_3": 0.6077,
+        "recall_at_5": 0.7225,
+        "precision_at_1": 0.3014,
+        "precision_at_3": 0.2616,
+        "precision_at_5": 0.2239
+      }
+    },
+    "player_lineup_availability_odds": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.3333,
+      "top3_hit": 0.672,
+      "top5_hit": 0.7989,
+      "mrr": 0.5369,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "group",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.3014,
+        "top3_hit": 0.6077,
+        "top5_hit": 0.7225,
+        "mrr": null,
+        "recall_at_3": 0.6077,
+        "recall_at_5": 0.7225,
+        "precision_at_1": 0.3014,
+        "precision_at_3": 0.2616,
+        "precision_at_5": 0.2239
+      }
+    }
+  },
+  "availability_feature_importance": {
+    "baseline_top3": 0.672,
+    "feature_impacts": {
+      "lineup_confirmed": 0.0,
+      "starter_probability": 0.0,
+      "minutes_last_3": 0.0,
+      "minutes_last_5": 0.0053,
+      "minutes_trend": 0.0053,
+      "bench_probability": 0.0,
+      "captain": 0.0,
+      "suspended_flag": 0.0,
+      "injury_flag": -0.0052,
+      "returned_recently": -0.0052,
+      "availability_score": -0.0052
+    },
+    "verdicts": {
+      "lineup_confirmed": "neutral",
+      "starter_probability": "neutral",
+      "minutes_last_3": "neutral",
+      "minutes_last_5": "positive",
+      "minutes_trend": "positive",
+      "bench_probability": "neutral",
+      "captain": "neutral",
+      "suspended_flag": "neutral",
+      "injury_flag": "harmful",
+      "returned_recently": "harmful",
+      "availability_score": "harmful"
+    },
+    "positive": [
+      "minutes_last_5",
+      "minutes_trend"
+    ],
+    "neutral": [
+      "lineup_confirmed",
+      "starter_probability",
+      "minutes_last_3",
+      "bench_probability",
+      "captain",
+      "suspended_flag"
+    ],
+    "harmful": [
+      "injury_flag",
+      "returned_recently",
+      "availability_score"
+    ],
+    "ranked": [
+      [
+        "minutes_last_5",
+        0.0053
+      ],
+      [
+        "minutes_trend",
+        0.0053
+      ],
+      [
+        "lineup_confirmed",
+        0.0
+      ],
+      [
+        "starter_probability",
+        0.0
+      ],
+      [
+        "minutes_last_3",
+        0.0
+      ],
+      [
+        "bench_probability",
+        0.0
+      ],
+      [
+        "captain",
+        0.0
+      ],
+      [
+        "suspended_flag",
+        0.0
+      ],
+      [
+        "injury_flag",
+        -0.0052
+      ],
+      [
+        "returned_recently",
+        -0.0052
+      ],
+      [
+        "availability_score",
+        -0.0052
+      ]
+    ]
+  },
+  "uefa_analysis": {
+    "overall": {
+      "fixtures_evaluated": 154,
+      "top1_hit": 0.3117,
+      "top3_hit": 0.6623,
+      "top5_hit": 0.7922,
+      "mrr": 0.5218,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "group",
+        "fixtures_evaluated": 162,
+        "top1_hit": 0.2963,
+        "top3_hit": 0.6296,
+        "top5_hit": 0.7531,
+        "mrr": null,
+        "recall_at_3": 0.6296,
+        "recall_at_5": 0.7531,
+        "precision_at_1": 0.2963,
+        "precision_at_3": 0.2675,
+        "precision_at_5": 0.2395
+      },
+      "player_lineup_top3": 0.6623,
+      "player_lineup_availability_top3": 0.6623,
+      "improvement_pp": 0.0
+    },
+    "by_league": {
+      "champions_league": {
+        "league_id": 2,
+        "fixtures_evaluated": 50,
+        "player_lineup_top3": 0.78,
+        "player_lineup_availability_top3": 0.8,
+        "improvement_pp": 0.02,
+        "top1_hit": 0.4,
+        "top5_hit": 0.84,
+        "mrr": 0.6127
+      },
+      "europa_league": {
+        "league_id": 5,
+        "fixtures_evaluated": 61,
+        "player_lineup_top3": 0.623,
+        "player_lineup_availability_top3": 0.6066,
+        "improvement_pp": -0.0164,
+        "top1_hit": 0.2459,
+        "top5_hit": 0.7705,
+        "mrr": 0.473
+      },
+      "conference_league": {
+        "league_id": 2286,
+        "fixtures_evaluated": 43,
+        "player_lineup_top3": 0.5814,
+        "player_lineup_availability_top3": 0.5814,
+        "improvement_pp": 0.0,
+        "top1_hit": 0.3023,
+        "top5_hit": 0.7674,
+        "mrr": 0.4853
+      }
+    },
+    "baselines": {
+      "54q_uefa_composite": 0.5658,
+      "54r_uefa_test": 0.6429
+    }
+  },
+  "elite_path_test": {
+    "uefa_lineup_availability_top3": 0.6623,
+    "elite_path_threshold": 0.67,
+    "closes_uefa_gap": false,
+    "architecture_near_ceiling": true,
+    "best_test_group": "player_lineup",
+    "best_test_top3": 0.672,
+    "recommendation": "GOALSCORER_HIGH_VALUE"
+  },
+  "decision": {
+    "availability_helps": true,
+    "test_lift_lineup_to_full_pp": 0.0,
+    "uefa_improvement_pp": 0.0,
+    "positive_availability_features": 2,
+    "recommendation": "GOALSCORER_HIGH_VALUE"
+  },
+  "recommendation": "GOALSCORER_HIGH_VALUE",
+  "production_changes": false,
+  "api_calls_used": 0
+}

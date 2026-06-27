@@ -2,16 +2,19 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Layers, Plus, RefreshCw, Sparkles } from "lucide-react";
 import { fetchMatches } from "@/api/worldcupApi";
-import { buildCombos, formatStars } from "@/lib/comboGenerator";
+import { buildCombos, formatStars, comboReadiness, comboEmptyReason } from "@/lib/comboGenerator";
+import { isComboEligible, COMBO_QUALITY_THRESHOLDS } from "@/lib/betQualityOverlay";
 import { useBetSlip } from "@/context/BetSlipContext";
 import { Button } from "@/components/ui/button";
-import { SectionHeader, TerminalCard } from "@/components/terminal";
+import SaasPageHeader, { SaasCard } from "@/components/saas/SaasPageHeader";
 import BetSlipDrawer from "@/components/match-center/BetSlipDrawer";
+import AddToPaperBetButton from "@/components/paper-betting/AddToPaperBetButton";
+import ShareButton from "@/components/social/ShareButton";
 
 const RISK_COLORS = {
-  Low: "border-[#00E676]/30 bg-[#00E676]/5",
-  Medium: "border-[#FFD166]/30 bg-[#FFD166]/5",
-  High: "border-[#FF6B6B]/30 bg-[#FF6B6B]/5",
+  Low: "border-emerald-200 bg-emerald-50",
+  Medium: "border-amber-200 bg-amber-50",
+  High: "border-red-200 bg-red-50",
 };
 
 export default function ComboTipsPage() {
@@ -28,7 +31,7 @@ export default function ComboTipsPage() {
         competition: "all",
         status: "upcoming",
         page: 1,
-        page_size: 100,
+        page_size: 200,
         has_prediction: true,
         include_summary: true,
       });
@@ -46,6 +49,11 @@ export default function ComboTipsPage() {
   }, [load]);
 
   const combos = useMemo(() => buildCombos(matches), [matches]);
+  const candidateCount = useMemo(
+    () => matches.filter((m) => isComboEligible(m.prediction_summary, COMBO_QUALITY_THRESHOLDS.high_odds)).length,
+    [matches]
+  );
+  const emptyReason = useMemo(() => comboEmptyReason(matches), [matches]);
 
   const addComboToSlip = (combo) => {
     clearSlip();
@@ -54,53 +62,65 @@ export default function ComboTipsPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-24">
-      <SectionHeader
-        eyebrow="🎯 Accumulators"
-        title="Combo Tips"
-        subtitle="Auto-built combos from high-quality cached predictions. Research only — not betting advice."
+      <SaasPageHeader
+        eyebrow="Accumulator builder"
+        title="Combo Builder"
+        subtitle="Suggested 2–6 leg combos from strong individual picks. Combined bets are higher risk — research only, not betting advice."
       />
 
-      <TerminalCard className="border-[#FFD166]/20">
-        <p className="text-sm text-[#FFD166]">Research only — not betting advice. Uses existing cached predictions only.</p>
-      </TerminalCard>
+      <SaasCard className="p-4 border-amber-200 bg-amber-50/80">
+        <p className="text-sm text-amber-900">
+          We do not guarantee profit. Combined probability is an estimate only. Higher leg counts increase risk.
+        </p>
+      </SaasCard>
 
       <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={load} disabled={loading} className="border-white/10">
+        <Button variant="outline" size="sm" onClick={load} disabled={loading} className="border-slate-200">
           <RefreshCw className={`w-4 h-4 mr-1 ${loading ? "animate-spin" : ""}`} /> Refresh
         </Button>
       </div>
 
-      {error && <TerminalCard className="text-red-300 border-red-500/30">{error}</TerminalCard>}
+      {error && <SaasCard className="p-4 text-red-600 border-red-200">{error}</SaasCard>}
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-2 border-[#00E676]/20 border-t-[#00E676] rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-amber-200 border-t-amber-500 rounded-full animate-spin" />
         </div>
       ) : (
         <div className="space-y-4">
           {combos.length === 0 && (
-            <TerminalCard className="text-center py-12 text-[#94A3B8]">
+            <SaasCard className="text-center py-12 p-6 text-slate-500">
               <Sparkles className="w-10 h-10 mx-auto mb-3 opacity-40" />
-              Not enough predicted fixtures to build combos yet.
-            </TerminalCard>
+              {emptyReason || (matches.length === 0
+                ? "No upcoming fixtures with cached predictions."
+                : `Not enough qualifying legs from ${candidateCount} quality-eligible predictions.`)}
+            </SaasCard>
           )}
           {combos.map((combo) => (
             <div
               key={combo.id}
-              className={`rounded-2xl border p-5 backdrop-blur-md ${RISK_COLORS[combo.risk] || RISK_COLORS.Medium}`}
+              className={`rounded-2xl border p-5 bg-white shadow-sm ${RISK_COLORS[combo.risk] || RISK_COLORS.Medium}`}
             >
               <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
                 <div>
-                  <h2 className="text-xl font-bold text-[#F8FAFC] flex items-center gap-2">
-                    <Layers className="w-5 h-5 text-[#FFD166]" /> {combo.label}
+                  <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-amber-600" /> {combo.label}
                   </h2>
-                  <p className="text-sm text-[#94A3B8] mt-1">{combo.leg_count} matches · Risk {combo.risk}</p>
+                  <p className="text-sm text-slate-500 mt-1">
+                    {combo.leg_count} matches · Risk {combo.risk}
+                    {combo.combined_quality != null ? ` · Avg quality ${combo.combined_quality}` : ""}
+                  </p>
+                  {combo.caution_warning && (
+                    <p className="text-xs text-[#FF9F43] mt-1">{combo.caution_warning}</p>
+                  )}
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-bold text-[#FFD166]">
                     {combo.combined_odds ? combo.combined_odds.toFixed(2) : "—"}
                   </p>
-                  <p className="text-xs text-[#94A3B8]">Combined odds</p>
+                  <p className="text-xs text-[#94A3B8]">
+                    Combined odds{combo.legs.some((l) => l.odds_estimated) ? " (est.)" : ""}
+                  </p>
                   {combo.combined_confidence != null && (
                     <p className="text-sm text-[#00E676] mt-1">Confidence {combo.combined_confidence}%</p>
                   )}
@@ -114,6 +134,16 @@ export default function ComboTipsPage() {
                     <p className="text-[#F8FAFC] font-medium">{leg.label}</p>
                     <p className="text-[11px] text-[#94A3B8] mt-0.5">
                       {formatStars(leg.stars)} {leg.confidence ? `· ${Math.round(leg.confidence)}%` : ""}
+                      {" · "}
+                      <span className={
+                        leg.readiness?.status === "ready"
+                          ? "text-[#00E676]"
+                          : leg.readiness?.status === "caution"
+                            ? "text-[#FF9F43]"
+                            : "text-[#64748B]"
+                      }>
+                        {leg.readiness?.label || "—"}
+                      </span>
                     </p>
                   </div>
                 ))}
@@ -126,6 +156,33 @@ export default function ComboTipsPage() {
               >
                 <Plus className="w-4 h-4 mr-1" /> Add combo to bet slip
               </Button>
+              <AddToPaperBetButton
+                label="Track This Combo"
+                combo={{
+                  legs: combo.legs,
+                  combo_type: combo.id,
+                  source_page: "combo-tips",
+                }}
+              />
+              <ShareButton
+                type="combo"
+                label="Share combo"
+                payload={{
+                  combo_type: combo.id,
+                  label: combo.label,
+                  combined_odds: combo.combinedOdds,
+                  legs: (combo.legs || []).map((leg) => ({
+                    fixture_id: leg.fixture_id,
+                    home_team: leg.home,
+                    away_team: leg.away,
+                    market: leg.marketKey,
+                    market_label: leg.marketLabel,
+                    prediction: leg.pick,
+                    bet_quality_score: leg.betQualityScore,
+                    odds_decimal: leg.odds,
+                  })),
+                }}
+              />
             </div>
           ))}
         </div>

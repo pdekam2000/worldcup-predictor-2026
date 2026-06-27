@@ -1,5 +1,6 @@
 import React from "react";
-import { Search, Filter, Calendar, Sparkles, Radio, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Search, Filter, Calendar, Sparkles, Radio, Clock, Trophy, Star, TrendingUp, Layers, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
@@ -10,9 +11,9 @@ function Chip({ active, onClick, children, icon: Icon }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border",
+        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 border",
         active
-          ? "bg-[#3B82F6] text-white border-[#3B82F6]"
+          ? "bg-[#3B82F6] text-white border-[#3B82F6] shadow-sm"
           : "bg-white/[0.04] text-[#94A3B8] border-white/[0.06] hover:bg-white/[0.08]"
       )}
     >
@@ -33,10 +34,18 @@ export default function MatchCenterFilters({
   onHighConfidenceChange,
   eliteOnly,
   onEliteOnlyChange,
+  bestValue,
+  onBestValueChange,
   liveOnly,
   onLiveOnlyChange,
   upcomingOnly,
   onUpcomingOnlyChange,
+  liveSoon,
+  onLiveSoonChange,
+  favoritesOnly,
+  onFavoritesOnlyChange,
+  competitionKey,
+  onCompetitionKeyChange,
   country,
   onCountryChange,
   countries,
@@ -86,11 +95,20 @@ export default function MatchCenterFilters({
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <Chip active={eliteOnly} icon={Sparkles} onClick={() => onEliteOnlyChange(!eliteOnly)}>Elite Picks</Chip>
+        <Chip active={highConfidence} icon={Star} onClick={() => onHighConfidenceChange(!highConfidence)}>High Confidence</Chip>
+        <Chip active={bestValue} icon={TrendingUp} onClick={() => onBestValueChange(!bestValue)}>Best Value</Chip>
+        <Link
+          to="/combo-tips"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 border bg-white/[0.04] text-[#94A3B8] border-white/[0.06] hover:bg-white/[0.08]"
+        >
+          <Layers className="w-3.5 h-3.5" /> Today&apos;s Combos
+        </Link>
+        <Chip active={competitionKey === "world_cup_2026"} icon={Trophy} onClick={() => onCompetitionKeyChange(competitionKey === "world_cup_2026" ? "all" : "world_cup_2026")}>World Cup</Chip>
+        <Chip active={competitionKey === "champions_league"} onClick={() => onCompetitionKeyChange(competitionKey === "champions_league" ? "all" : "champions_league")}>Champions League</Chip>
+        <Chip active={favoritesOnly} icon={Heart} onClick={() => onFavoritesOnlyChange(!favoritesOnly)}>Favorites</Chip>
+        <Chip active={liveSoon} icon={Clock} onClick={() => onLiveSoonChange(!liveSoon)}>Live Soon</Chip>
         <Chip active={datePreset === "today"} onClick={() => onDatePresetChange(datePreset === "today" ? "" : "today")}>Today</Chip>
-        <Chip active={datePreset === "tomorrow"} onClick={() => onDatePresetChange(datePreset === "tomorrow" ? "" : "tomorrow")}>Tomorrow</Chip>
-        <Chip active={datePreset === "weekend"} onClick={() => onDatePresetChange(datePreset === "weekend" ? "" : "weekend")}>Weekend</Chip>
-        <Chip active={highConfidence} onClick={() => onHighConfidenceChange(!highConfidence)}>High Confidence</Chip>
-        <Chip active={eliteOnly} onClick={() => onEliteOnlyChange(!eliteOnly)}>Elite Picks</Chip>
         <Chip active={liveOnly} onClick={() => onLiveOnlyChange(!liveOnly)}>Live only</Chip>
         <Chip active={upcomingOnly} onClick={() => onUpcomingOnlyChange(!upcomingOnly)}>Upcoming only</Chip>
       </div>

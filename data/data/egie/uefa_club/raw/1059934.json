@@ -1,0 +1,178 @@
+{
+  "sportmonks_fixture_id": 1059934,
+  "fetched_at": "2026-06-23T08:47:20.976140+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059934,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25139,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": null,
+      "name": "Sampdoria vs Vit\u00f3ria FC",
+      "starting_at": "2005-09-28 22:00:00",
+      "result_info": "Sampdoria won after full-time.",
+      "leg": "2/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1127944800,
+      "participants": [
+        {
+          "id": 3708,
+          "sport_id": 1,
+          "country_id": 20,
+          "venue_id": 2175,
+          "gender": "male",
+          "name": "Vit\u00f3ria FC",
+          "short_code": "VSC",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/28/3708.png",
+          "founded": 1910,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2016-07-14 19:30:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        },
+        {
+          "id": 522,
+          "sport_id": 1,
+          "country_id": 251,
+          "venue_id": 86,
+          "gender": "male",
+          "name": "Sampdoria",
+          "short_code": "SAM",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/10/522.png",
+          "founded": 1946,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-08 18:30:00",
+          "meta": {
+            "location": "home",
+            "winner": true,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5661919,
+          "fixture_id": 1059934,
+          "type_id": 1,
+          "participant_id": 3708,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661922,
+          "fixture_id": 1059934,
+          "type_id": 1525,
+          "participant_id": 522,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661918,
+          "fixture_id": 1059934,
+          "type_id": 1,
+          "participant_id": 522,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661921,
+          "fixture_id": 1059934,
+          "type_id": 2,
+          "participant_id": 3708,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661923,
+          "fixture_id": 1059934,
+          "type_id": 1525,
+          "participant_id": 3708,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661920,
+          "fixture_id": 1059934,
+          "type_id": 2,
+          "participant_id": 522,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782204441,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 1371,
+      "remaining": 2402,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  },
+  "reingest": "phase_api_j_targeted"
+}

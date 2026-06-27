@@ -185,7 +185,7 @@ class GoalEventBackfillRunner:
         try:
             rows = self.repo._conn.execute(
                 """
-                SELECT fixture_id, raw_json FROM sportmonks_fixture_enrichment
+                SELECT fixture_id_api_football, raw_json FROM sportmonks_fixture_enrichment
                 WHERE raw_json IS NOT NULL AND raw_json != ''
                 """
             ).fetchall()
@@ -267,7 +267,7 @@ class GoalEventBackfillRunner:
             except json.JSONDecodeError:
                 pass
         row = self.repo._conn.execute(
-            "SELECT raw_json FROM sportmonks_fixture_enrichment WHERE fixture_id = ? LIMIT 1",
+            "SELECT raw_json FROM sportmonks_fixture_enrichment WHERE fixture_id_api_football = ? LIMIT 1",
             (fixture_id,),
         ).fetchone()
         if row and row[0]:

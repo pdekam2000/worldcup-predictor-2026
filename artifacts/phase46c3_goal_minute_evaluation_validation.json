@@ -1,0 +1,122 @@
+{
+  "phase": "46C-3",
+  "passed": 23,
+  "total": 23,
+  "checks": [
+    {
+      "name": "band_31_45_actual_38_correct",
+      "ok": true,
+      "detail": "correct"
+    },
+    {
+      "name": "band_16_30_actual_38_wrong",
+      "ok": true,
+      "detail": "wrong"
+    },
+    {
+      "name": "exact_38_actual_40_correct_pm5",
+      "ok": true,
+      "detail": "exact_tolerance_pm5"
+    },
+    {
+      "name": "exact_38_actual_51_wrong",
+      "ok": true,
+      "detail": "wrong"
+    },
+    {
+      "name": "zero_zero_unavailable",
+      "ok": true,
+      "detail": "zero_zero_no_goal"
+    },
+    {
+      "name": "missing_first_goal_minute_unavailable",
+      "ok": true,
+      "detail": "first_goal_minute_missing"
+    },
+    {
+      "name": "stoppage_45_plus_in_31_45_band",
+      "ok": true,
+      "detail": "45+2 (eval=45)"
+    },
+    {
+      "name": "stoppage_90_plus_in_76_90_band",
+      "ok": true,
+      "detail": "90+3 (eval=90)"
+    },
+    {
+      "name": "band_helper",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exact_helper",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "ht_evaluator_unchanged",
+      "ok": true,
+      "detail": "correct"
+    },
+    {
+      "name": "advanced_includes_goal_minute",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "advanced_ht_still_works",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "core_1x2_unchanged",
+      "ok": true,
+      "detail": "correct"
+    },
+    {
+      "name": "core_markets_count_stable",
+      "ok": true,
+      "detail": "unavailable"
+    },
+    {
+      "name": "no_scoring_engine",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no_wde",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "uses_timing_helpers",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "migration_goal_minute_columns",
+      "ok": true,
+      "detail": "schema ok"
+    },
+    {
+      "name": "db_goal_minute_status_persisted",
+      "ok": true,
+      "detail": "correct"
+    },
+    {
+      "name": "db_goal_minute_actual_predicted",
+      "ok": true,
+      "detail": "31-45 vs 38"
+    },
+    {
+      "name": "performance_goal_minute_only_real_samples",
+      "ok": true,
+      "detail": "[{'market_name': 'Goal Minute', 'total': 1, 'correct': 1, 'wrong': 0, 'pending': 0, 'accuracy': 1.0, 'sample_size': 1, 'reliability_level': 'low'}]"
+    },
+    {
+      "name": "pending_not_wrong",
+      "ok": true,
+      "detail": "pending"
+    }
+  ]
+}

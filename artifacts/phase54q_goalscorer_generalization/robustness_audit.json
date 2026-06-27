@@ -1,0 +1,60 @@
+{
+  "baseline_top3": 0.5712,
+  "scenarios": [
+    {
+      "scenario": "baseline",
+      "top3_hit": 0.5712,
+      "top3_drop": 0.0,
+      "fixtures_evaluated": 1327
+    },
+    {
+      "scenario": "no_odds",
+      "top3_hit": 0.569,
+      "top3_drop": 0.0022,
+      "fixtures_evaluated": 1327
+    },
+    {
+      "scenario": "no_xg",
+      "top3_hit": 0.5659,
+      "top3_drop": 0.0053,
+      "fixtures_evaluated": 1327
+    },
+    {
+      "scenario": "no_lineup",
+      "top3_hit": 0.578,
+      "top3_drop": -0.0068,
+      "fixtures_evaluated": 1327
+    },
+    {
+      "scenario": "no_form",
+      "top3_hit": 0.587,
+      "top3_drop": -0.0158,
+      "fixtures_evaluated": 1327
+    },
+    {
+      "scenario": "ml_only",
+      "top3_hit": 0.587,
+      "top3_drop": -0.0158,
+      "fixtures_evaluated": 1327
+    }
+  ],
+  "feature_impact_ranking": [
+    [
+      "xg",
+      0.0053
+    ],
+    [
+      "odds",
+      0.0022
+    ],
+    [
+      "lineup",
+      -0.0068
+    ],
+    [
+      "form",
+      -0.0158
+    ]
+  ],
+  "primary_carrier": "xg"
+}

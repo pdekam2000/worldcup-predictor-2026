@@ -6,7 +6,10 @@ import {
   fetchAdminEliteShadowFixture,
   fetchAdminEliteShadowSummary,
   fetchAdminEliteShadowComparison,
+  fetchAdminEliteShadowHealth,
+  postAdminEliteShadowAction,
 } from "@/api/saasApi";
+import { formatPickWithProb, formatPercent } from "@/lib/formatPercent";
 
 const TIER_COLORS = {
   A: "bg-green-500/15 text-green-400 border-green-500/30",
@@ -36,21 +39,11 @@ function StatCard({ label, value, sub }) {
 }
 
 function formatPick(pred) {
-  if (pred == null) return "—";
-  if (typeof pred === "object" && !Array.isArray(pred)) {
-    const top = Object.entries(pred).sort((a, b) => b[1] - a[1])[0];
-    return top ? `${top[0]} (${(top[1] * 100).toFixed(1)}%)` : JSON.stringify(pred);
-  }
-  if (Array.isArray(pred)) return pred.length ? pred.join(", ") : "—";
-  return String(pred);
+  return formatPickWithProb(pred);
 }
 
 function formatConfidence(value) {
-  if (value == null) return "—";
-  const n = Number(value);
-  if (Number.isNaN(n)) return "—";
-  const pct = n <= 1 ? n * 100 : n;
-  return `${pct.toFixed(1)}%`;
+  return formatPercent(value);
 }
 
 export default function EliteShadowPreview() {
@@ -67,13 +60,15 @@ export default function EliteShadowPreview() {
   const [fixtureFilter, setFixtureFilter] = useState("");
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [health, setHealth] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     const fixtureId = fixtureFilter.trim() ? Number(fixtureFilter.trim()) : undefined;
     try {
-      const [sum, data, comp] = await Promise.all([
+      const [sum, data, comp, healthData] = await Promise.all([
         fetchAdminEliteShadowSummary(),
         fetchAdminEliteShadowPredictions({
           market: marketFilter,
@@ -89,11 +84,13 @@ export default function EliteShadowPreview() {
           fixture_id: fixtureId,
           limit: 100,
         }),
+        fetchAdminEliteShadowHealth(),
       ]);
       setSummary(sum);
       setFixtures(data.fixtures || []);
       setComparison(comp.summary || null);
       setComparisonRows(comp.rows || []);
+      setHealth(healthData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load elite shadow preview");
     } finally {
@@ -117,6 +114,21 @@ export default function EliteShadowPreview() {
     }
   };
 
+  const runAction = async (action) => {
+    setActionLoading(action);
+    setError(null);
+    try {
+      await postAdminEliteShadowAction(action);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : `Action ${action} failed`);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const scheduler = health?.scheduler || summary?.health || null;
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -139,17 +151,84 @@ export default function EliteShadowPreview() {
         Shadow research path only — does not affect live WDE or user-facing predictions.
       </div>
 
+      {scheduler && (
+        <div className="glass rounded-xl p-4 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-sm font-semibold">Shadow Scheduler (Phase A22)</h2>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full border ${
+                scheduler.last_status === "ok"
+                  ? "border-green-500/40 text-green-400"
+                  : scheduler.last_status === "running"
+                    ? "border-blue-500/40 text-blue-400"
+                    : "border-white/20 text-muted-foreground"
+              }`}
+            >
+              {scheduler.last_status || "never_run"}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <StatCard label="Last run" value={scheduler.last_run_at ? scheduler.last_run_at.slice(0, 19) : "—"} />
+            <StatCard label="Next run" value={scheduler.next_run_estimate ? scheduler.next_run_estimate.slice(0, 19) : "—"} />
+            <StatCard
+              label="Last duration"
+              value={scheduler.last_duration_seconds != null ? `${scheduler.last_duration_seconds}s` : "—"}
+            />
+            <StatCard label="Rows last run" value={scheduler.rows_generated_last_run ?? 0} />
+            <StatCard label="Evaluations" value={scheduler.evaluations_written ?? 0} sub="last cycle" />
+            <StatCard label="Root cause added" value={scheduler.root_cause_records_added ?? 0} sub="last cycle" />
+            <StatCard label="Queue pending" value={scheduler.queue_pending ?? 0} />
+            <StatCard label="Last error" value={scheduler.last_error ? "yes" : "none"} sub={scheduler.last_error?.slice(0, 40)} />
+          </div>
+          <div className="flex flex-wrap gap-2 pt-1">
+            {[
+              ["run_now", "Run Shadow Now"],
+              ["rebuild_jsonl", "Rebuild JSONL"],
+              ["recalculate_root_cause", "Recalculate Root Cause"],
+              ["re_evaluate", "Re-evaluate Finished"],
+              ["vacuum", "Vacuum Store"],
+              ["export", "Export JSONL"],
+            ].map(([action, label]) => (
+              <Button
+                key={action}
+                variant="outline"
+                size="sm"
+                disabled={!!actionLoading}
+                onClick={() => runAction(action)}
+              >
+                {actionLoading === action ? "…" : label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {error && (
         <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">{error}</div>
       )}
 
       {summary && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <StatCard label="Fixtures" value={summary.fixtures_with_predictions} />
-          <StatCard label="Prediction rows" value={summary.prediction_rows} />
-          <StatCard label="Pending evals" value={summary.evaluations_pending} />
-          <StatCard label="Root-cause records" value={summary.root_cause_records} />
-        </div>
+        <>
+          {summary.sources?.predictions?.exists === false ? (
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-6 text-center">
+              <p className="text-base font-medium text-[#F8FAFC]">No shadow predictions have been generated yet.</p>
+              <p className="text-sm text-muted-foreground mt-2 max-w-xl mx-auto">
+                Elite Shadow reads Phase 58C JSONL stores on the API server. Run the shadow runtime or redeploy shadow data
+                if historical predictions should appear here.
+              </p>
+              {summary.sources?.predictions?.path && (
+                <p className="text-xs text-muted-foreground mt-3 font-mono break-all">{summary.sources.predictions.path}</p>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <StatCard label="Fixtures" value={summary.fixtures_with_predictions} />
+              <StatCard label="Prediction rows" value={summary.prediction_rows} />
+              <StatCard label="Pending evals" value={summary.evaluations_pending} />
+              <StatCard label="Root-cause records" value={summary.root_cause_records} />
+            </div>
+          )}
+        </>
       )}
 
       <div className="glass rounded-xl p-4 flex flex-wrap gap-3 items-end">
@@ -420,7 +499,7 @@ export default function EliteShadowPreview() {
                       Pick: <span className="text-foreground">{formatPick(m.prediction)}</span>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      Confidence: {m.confidence != null ? `${(m.confidence * 100).toFixed(1)}%` : "—"} · Status:{" "}
+                      Confidence: {formatConfidence(m.confidence)} · Status:{" "}
                       {m.status}
                     </div>
                     {m.evaluation && (

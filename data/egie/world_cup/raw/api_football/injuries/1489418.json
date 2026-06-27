@@ -1,0 +1,43 @@
+{
+  "provider": "api_football",
+  "resource_type": "injuries",
+  "fixture_id": 1489418,
+  "saved_at": "2026-06-26T14:43:39.511702+00:00",
+  "payload": [
+    {
+      "player": {
+        "id": 200139,
+        "name": "M. Amoura",
+        "photo": "https://media.api-sports.io/football/players/200139.png",
+        "type": "Missing Fixture",
+        "reason": "Hamstring muscle injury"
+      },
+      "team": {
+        "id": 1532,
+        "name": "Algeria",
+        "logo": "https://media.api-sports.io/football/teams/1532.png"
+      },
+      "fixture": {
+        "id": 1489418,
+        "timezone": "UTC",
+        "date": "2026-06-28T02:00:00+00:00",
+        "timestamp": 1782612000
+      },
+      "league": {
+        "id": 1,
+        "season": 2026,
+        "name": "World Cup",
+        "country": "World",
+        "logo": "https://media.api-sports.io/football/leagues/1.png",
+        "flag": null
+      }
+    }
+  ],
+  "meta": {
+    "request_endpoint": "/fixtures/injuries",
+    "source": "cache",
+    "competition_key": "world_cup_2026",
+    "season": 2026,
+    "league_id": 1
+  }
+}

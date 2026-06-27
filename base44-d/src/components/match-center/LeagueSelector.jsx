@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import SafeImage from "@/components/ui/SafeImage";
+import { competitionBadgeLabel, resolveCompetitionLogo } from "@/lib/imageResolver";
 export default function LeagueSelector({ competitions, selectedKey, onSelect, totalUpcoming }) {
   const scrollRef = useRef(null);
 
@@ -50,13 +51,27 @@ export default function LeagueSelector({ competitions, selectedKey, onSelect, to
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl leading-none">{comp.emoji || "⚽"}</span>
-                {comp.logo_url ? (
-                  <img src={comp.logo_url} alt="" className="w-6 h-6 object-contain" />
-                ) : null}
-              </div>
-              <p className="text-sm font-semibold text-[#F8FAFC] leading-tight line-clamp-2">{comp.name}</p>
+                {resolveCompetitionLogo(comp) ? (
+                  <SafeImage
+                    src={resolveCompetitionLogo(comp)}
+                    alt={comp.name || "League"}
+                    fallbackText={competitionBadgeLabel(comp)}
+                    className="w-6 h-6 rounded"
+                    fallbackClassName="text-[9px]"
+                  />
+                ) : (
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/5 text-[#94A3B8]">
+                    {competitionBadgeLabel(comp)}
+                  </span>
+                )}
+              </div>              <p className="text-sm font-semibold text-[#F8FAFC] leading-tight line-clamp-2">{comp.name}</p>
               <p className="text-[11px] text-[#94A3B8] mt-1">
                 {comp.upcoming_count ?? 0} upcoming
+                {comp.upcoming_count === 0 && comp.zero_fixture_reason && (
+                  <span className="block text-[10px] text-[#64748B] capitalize">
+                    {String(comp.zero_fixture_reason).replace(/_/g, " ")}
+                  </span>
+                )}
               </p>
             </button>
           );

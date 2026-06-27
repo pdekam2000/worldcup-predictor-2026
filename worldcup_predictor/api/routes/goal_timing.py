@@ -50,7 +50,16 @@ def goal_timing_picks(limit: int = 20) -> dict[str, Any]:
     """Premier League goal-timing picks for upcoming fixtures (Phase 51D)."""
     from worldcup_predictor.goal_timing.prediction_service import GoalTimingPredictionService
 
-    return GoalTimingPredictionService().list_today_picks(limit=min(max(limit, 1), 50))
+    try:
+        return GoalTimingPredictionService().list_today_picks(limit=min(max(limit, 1), 50))
+    except Exception as exc:
+        return {
+            "competition_keys": [],
+            "picks": [],
+            "count": 0,
+            "errors": [{"error": str(exc)}],
+            "status": "partial",
+        }
 
 
 @router.post("/predictions/{fixture_id}")

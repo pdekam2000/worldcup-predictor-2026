@@ -1,0 +1,47 @@
+{
+  "phase": "54H-4",
+  "pre_run_fixture_count": 0,
+  "checks": [
+    {
+      "name": "database_url_present",
+      "pass": true,
+      "detail": "worldcup_predictor"
+    },
+    {
+      "name": "database_name_ok",
+      "pass": true,
+      "detail": "worldcup_predictor"
+    },
+    {
+      "name": "sportmonks_token_present",
+      "pass": true,
+      "detail": "length=60"
+    },
+    {
+      "name": "pressure_tables_ready",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "pressure_fixture_count_readable",
+      "pass": true,
+      "detail": "count=0"
+    },
+    {
+      "name": "cache_dir_writable",
+      "pass": true,
+      "detail": "/opt/worldcup-predictor/data/feature_store/sportmonks_pressure/raw"
+    },
+    {
+      "name": "no_token_in_probe_output",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "pressure_include_probe",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "all_pass": true
+}

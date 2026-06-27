@@ -1,0 +1,2894 @@
+{
+  "sportmonks_fixture_id": 207684,
+  "fetched_at": "2026-06-23T07:00:55.861598+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 207684,
+      "sport_id": 1,
+      "league_id": 2,
+      "season_id": 5322,
+      "stage_id": 10021,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": null,
+      "name": "FC Santa Coloma vs Urartu",
+      "starting_at": "2014-07-01 18:00:00",
+      "result_info": "FC Santa Coloma won after full-time.",
+      "leg": "1/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1404237600,
+      "participants": [
+        {
+          "id": 7058,
+          "sport_id": 1,
+          "country_id": 2931,
+          "venue_id": 45040,
+          "gender": "male",
+          "name": "FC Santa Coloma",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/18/7058.png",
+          "founded": 1986,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-23 10:00:00",
+          "meta": {
+            "location": "home",
+            "winner": true,
+            "position": null
+          }
+        },
+        {
+          "id": 5487,
+          "sport_id": 1,
+          "country_id": 919,
+          "venue_id": 3620,
+          "gender": "male",
+          "name": "Urartu",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/15/5487.png",
+          "founded": 1992,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-27 15:00:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 1039682,
+          "fixture_id": 207684,
+          "type_id": 2,
+          "participant_id": 7058,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 1039680,
+          "fixture_id": 207684,
+          "type_id": 1,
+          "participant_id": 7058,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 1039681,
+          "fixture_id": 207684,
+          "type_id": 1,
+          "participant_id": 5487,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 1039683,
+          "fixture_id": 207684,
+          "type_id": 2,
+          "participant_id": 5487,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 1039684,
+          "fixture_id": 207684,
+          "type_id": 1525,
+          "participant_id": 7058,
+          "score": {
+            "goals": 1,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 1039685,
+          "fixture_id": 207684,
+          "type_id": 1525,
+          "participant_id": 5487,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [
+        {
+          "id": 30840918,
+          "fixture_id": 207684,
+          "period_id": 1011349,
+          "participant_id": 7058,
+          "type_id": 14,
+          "section": "event",
+          "player_id": 329323,
+          "related_player_id": null,
+          "player_name": "Marc Pujol",
+          "related_player_name": null,
+          "result": "1-0",
+          "info": null,
+          "addition": null,
+          "minute": 5,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 1,
+          "type": {
+            "id": 14,
+            "name": "Goal",
+            "code": "goal",
+            "developer_name": "GOAL",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 1011349,
+            "fixture_id": 207684,
+            "type_id": 1,
+            "started": 1404237600,
+            "ended": 1404240300,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30840927,
+          "fixture_id": 207684,
+          "period_id": 324021,
+          "participant_id": 7058,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 336160,
+          "related_player_id": 336168,
+          "player_name": "Joel Martinez",
+          "related_player_name": "Marc Reb\u00e9s",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 58,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 1,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 324021,
+            "fixture_id": 207684,
+            "type_id": 2,
+            "started": 1404241200,
+            "ended": 1404243900,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30840942,
+          "fixture_id": 207684,
+          "period_id": 324021,
+          "participant_id": 5487,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 49816,
+          "related_player_id": 50134,
+          "player_name": "Valter Poghosyan",
+          "related_player_name": "Areg Azatyan",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 59,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 2,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 324021,
+            "fixture_id": 207684,
+            "type_id": 2,
+            "started": 1404241200,
+            "ended": 1404243900,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30840956,
+          "fixture_id": 207684,
+          "period_id": 324021,
+          "participant_id": 7058,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 336044,
+          "related_player_id": 336159,
+          "player_name": "Albert Mercade Mellinas",
+          "related_player_name": "Juan Fernando Lain Gonzales",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 63,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 3,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 324021,
+            "fixture_id": 207684,
+            "type_id": 2,
+            "started": 1404241200,
+            "ended": 1404243900,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30840967,
+          "fixture_id": 207684,
+          "period_id": 324021,
+          "participant_id": 5487,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 49803,
+          "related_player_id": 137362,
+          "player_name": "Vahagn Ayvazyan",
+          "related_player_name": "M. Usanov",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 73,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 4,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 324021,
+            "fixture_id": 207684,
+            "type_id": 2,
+            "started": 1404241200,
+            "ended": 1404243900,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30840974,
+          "fixture_id": 207684,
+          "period_id": 324021,
+          "participant_id": 5487,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 50073,
+          "related_player_id": 49802,
+          "player_name": "Karen Muradyan",
+          "related_player_name": "Gevorg Karapetyan",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 78,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 5,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 324021,
+            "fixture_id": 207684,
+            "type_id": 2,
+            "started": 1404241200,
+            "ended": 1404243900,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30840983,
+          "fixture_id": 207684,
+          "period_id": 324021,
+          "participant_id": 7058,
+          "type_id": 18,
+          "section": "event",
+          "player_id": 335914,
+          "related_player_id": 336169,
+          "player_name": "Alejandro Romero Rectte",
+          "related_player_name": "Iban Parra",
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 81,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": null,
+          "sort_order": 6,
+          "type": {
+            "id": 18,
+            "name": "Substitution",
+            "code": "substitution",
+            "developer_name": "SUBSTITUTION",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 324021,
+            "fixture_id": 207684,
+            "type_id": 2,
+            "started": 1404241200,
+            "ended": 1404243900,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30841002,
+          "fixture_id": 207684,
+          "period_id": 1011349,
+          "participant_id": 7058,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 131568,
+          "related_player_id": null,
+          "player_name": "Ildefons Lima",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 13,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 1,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 1011349,
+            "fixture_id": 207684,
+            "type_id": 1,
+            "started": 1404237600,
+            "ended": 1404240300,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30841024,
+          "fixture_id": 207684,
+          "period_id": 1011349,
+          "participant_id": 5487,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 50272,
+          "related_player_id": null,
+          "player_name": "Mamadou Fofana",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 16,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 2,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 1011349,
+            "fixture_id": 207684,
+            "type_id": 1,
+            "started": 1404237600,
+            "ended": 1404240300,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30841033,
+          "fixture_id": 207684,
+          "period_id": 1011349,
+          "participant_id": 5487,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 137362,
+          "related_player_id": null,
+          "player_name": "M. Usanov",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 42,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 3,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 1011349,
+            "fixture_id": 207684,
+            "type_id": 1,
+            "started": 1404237600,
+            "ended": 1404240300,
+            "counts_from": 0,
+            "ticking": false,
+            "sort_order": 1,
+            "description": "1st-half",
+            "time_added": 0,
+            "period_length": 45,
+            "minutes": 45,
+            "seconds": 0,
+            "has_timer": false
+          }
+        },
+        {
+          "id": 30841050,
+          "fixture_id": 207684,
+          "period_id": 324021,
+          "participant_id": 7058,
+          "type_id": 19,
+          "section": "event",
+          "player_id": 328482,
+          "related_player_id": null,
+          "player_name": "Cristian Mart\u00ednez",
+          "related_player_name": null,
+          "result": null,
+          "info": null,
+          "addition": null,
+          "minute": 48,
+          "extra_minute": null,
+          "injured": null,
+          "on_bench": false,
+          "coach_id": null,
+          "sub_type_id": null,
+          "detailed_period_id": null,
+          "rescinded": false,
+          "sort_order": 4,
+          "type": {
+            "id": 19,
+            "name": "Yellowcard",
+            "code": "yellowcard",
+            "developer_name": "YELLOWCARD",
+            "model_type": "event",
+            "stat_group": null
+          },
+          "period": {
+            "id": 324021,
+            "fixture_id": 207684,
+            "type_id": 2,
+            "started": 1404241200,
+            "ended": 1404243900,
+            "counts_from": 45,
+            "ticking": false,
+            "sort_order": 2,
+            "description": "2nd-half",
+            "time_added": null,
+            "period_length": 45,
+            "minutes": 90,
+            "seconds": 0,
+            "has_timer": false
+          }
+        }
+      ],
+      "statistics": [],
+      "lineups": [
+        {
+          "id": 2263490,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49842,
+          "team_id": 5487,
+          "position_id": 24,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "A. Toroyan",
+          "jersey_number": 1,
+          "player": {
+            "id": 49842,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": 100923,
+            "position_id": 24,
+            "detailed_position_id": null,
+            "type_id": 24,
+            "common_name": "A. Toroyan",
+            "firstname": "Artur",
+            "lastname": "Toroyan",
+            "name": "Artur Toroyan",
+            "display_name": "Artur Toroyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 186,
+            "weight": 82,
+            "date_of_birth": "1992-02-01",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920162,
+              "fixture_id": 207684,
+              "player_id": 49842,
+              "team_id": 5487,
+              "lineup_id": 2263490,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 763084553,
+              "fixture_id": 207684,
+              "player_id": 49842,
+              "team_id": 5487,
+              "lineup_id": 2263490,
+              "type_id": 1535,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 1535,
+                "name": "Goalkeeper Goals Conceded",
+                "code": "goalkeeper-goals-conceded",
+                "developer_name": "GOALKEEPER_GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 178919865,
+              "fixture_id": 207684,
+              "player_id": 49842,
+              "team_id": 5487,
+              "lineup_id": 2263490,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263505,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49810,
+          "team_id": 5487,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "G. Daghbashyan",
+          "jersey_number": 3,
+          "player": {
+            "id": 49810,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": 100923,
+            "position_id": null,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "G. Daghbashyan",
+            "firstname": "Gagik",
+            "lastname": "Daghbashyan",
+            "name": "Gagik Daghbashyan",
+            "display_name": "Gagik Daghbashyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 182,
+            "weight": 70,
+            "date_of_birth": "1990-10-19",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920006,
+              "fixture_id": 207684,
+              "player_id": 49810,
+              "team_id": 5487,
+              "lineup_id": 2263505,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 178920087,
+              "fixture_id": 207684,
+              "player_id": 49810,
+              "team_id": 5487,
+              "lineup_id": 2263505,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263523,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49811,
+          "team_id": 5487,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Aram Shakhnazaryan",
+          "jersey_number": 4,
+          "player": {
+            "id": 49811,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": 100923,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "A. Shakhnazaryan",
+            "firstname": "Aram",
+            "lastname": "Shakhnazaryan",
+            "name": "Aram Shakhnazaryan",
+            "display_name": "Aram Shakhnazaryan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 186,
+            "weight": null,
+            "date_of_birth": "1994-04-21",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920173,
+              "fixture_id": 207684,
+              "player_id": 49811,
+              "team_id": 5487,
+              "lineup_id": 2263523,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 178920110,
+              "fixture_id": 207684,
+              "player_id": 49811,
+              "team_id": 5487,
+              "lineup_id": 2263523,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263545,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49848,
+          "team_id": 5487,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Artashes Arakelyan",
+          "jersey_number": 5,
+          "player": {
+            "id": 49848,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": 100923,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "A. Arakelyan",
+            "firstname": "Artashes",
+            "lastname": "Arakelyan",
+            "name": "Artashes Arakelyan",
+            "display_name": "Artashes Arakelyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 181,
+            "weight": 71,
+            "date_of_birth": "1989-06-10",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920114,
+              "fixture_id": 207684,
+              "player_id": 49848,
+              "team_id": 5487,
+              "lineup_id": 2263545,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 178919667,
+              "fixture_id": 207684,
+              "player_id": 49848,
+              "team_id": 5487,
+              "lineup_id": 2263545,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263910,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 50602,
+          "team_id": 5487,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "G. Maghaqyan",
+          "jersey_number": 6,
+          "player": {
+            "id": 50602,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "G. Maghaqyan",
+            "firstname": "Gagik",
+            "lastname": "Maghaqyan",
+            "name": "Gagik Maghaqyan",
+            "display_name": "Gagik Maghaqyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 175,
+            "weight": 71,
+            "date_of_birth": "1996-02-07",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920183,
+              "fixture_id": 207684,
+              "player_id": 50602,
+              "team_id": 5487,
+              "lineup_id": 2263910,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263559,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49808,
+          "team_id": 5487,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "A. Loretsyan",
+          "jersey_number": 7,
+          "player": {
+            "id": 49808,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": 100923,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "A. Loretsyan",
+            "firstname": "Aram",
+            "lastname": "Loretsyan",
+            "name": "Aram Loretsyan",
+            "display_name": "Aram Loretsyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 168,
+            "weight": 63,
+            "date_of_birth": "1993-03-07",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920123,
+              "fixture_id": 207684,
+              "player_id": 49808,
+              "team_id": 5487,
+              "lineup_id": 2263559,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 178920188,
+              "fixture_id": 207684,
+              "player_id": 49808,
+              "team_id": 5487,
+              "lineup_id": 2263559,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263931,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49816,
+          "team_id": 5487,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Valter Poghosyan",
+          "jersey_number": 8,
+          "player": {
+            "id": 49816,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": 100923,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "V. Poghosyan",
+            "firstname": "Valter",
+            "lastname": "Poghosyan",
+            "name": "Valter Poghosyan",
+            "display_name": "Valter Poghosyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 180,
+            "weight": 71,
+            "date_of_birth": "1992-05-16",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920125,
+              "fixture_id": 207684,
+              "player_id": 49816,
+              "team_id": 5487,
+              "lineup_id": 2263931,
+              "type_id": 119,
+              "data": {
+                "value": 31
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263572,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49802,
+          "team_id": 5487,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Gevorg Karapetyan",
+          "jersey_number": 9,
+          "player": {
+            "id": 49802,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": null,
+            "type_id": 27,
+            "common_name": "G. Karapetyan",
+            "firstname": "Gevorg",
+            "lastname": "Karapetyan",
+            "name": "Gevorg Karapetyan",
+            "display_name": "Gevorg Karapetyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "1990-06-10",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178919659,
+              "fixture_id": 207684,
+              "player_id": 49802,
+              "team_id": 5487,
+              "lineup_id": 2263572,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 178920199,
+              "fixture_id": 207684,
+              "player_id": 49802,
+              "team_id": 5487,
+              "lineup_id": 2263572,
+              "type_id": 119,
+              "data": {
+                "value": 78
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263587,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 50134,
+          "team_id": 5487,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Areg Azatyan",
+          "jersey_number": 10,
+          "player": {
+            "id": 50134,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": null,
+            "type_id": 27,
+            "common_name": "A. Azatyan",
+            "firstname": "Areg",
+            "lastname": "Azatyan",
+            "name": "Areg Azatyan",
+            "display_name": "Areg Azatyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 168,
+            "weight": null,
+            "date_of_birth": "1990-06-29",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920131,
+              "fixture_id": 207684,
+              "player_id": 50134,
+              "team_id": 5487,
+              "lineup_id": 2263587,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            },
+            {
+              "id": 178920025,
+              "fixture_id": 207684,
+              "player_id": 50134,
+              "team_id": 5487,
+              "lineup_id": 2263587,
+              "type_id": 119,
+              "data": {
+                "value": 59
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263619,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49804,
+          "team_id": 5487,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Rumyan Hovsepyan",
+          "jersey_number": 13,
+          "player": {
+            "id": 49804,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": 100923,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "R. Hovsepyan",
+            "firstname": "Rumyan",
+            "lastname": "Hovsepyan",
+            "name": "Rumyan Hovsepyan",
+            "display_name": "Rumyan Hovsepyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/12/49804.png",
+            "height": 186,
+            "weight": 80,
+            "date_of_birth": "1991-11-13",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920210,
+              "fixture_id": 207684,
+              "player_id": 49804,
+              "team_id": 5487,
+              "lineup_id": 2263619,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 178920136,
+              "fixture_id": 207684,
+              "player_id": 49804,
+              "team_id": 5487,
+              "lineup_id": 2263619,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263954,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 50073,
+          "team_id": 5487,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Karen Muradyan",
+          "jersey_number": 14,
+          "player": {
+            "id": 50073,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "S. Muradyan",
+            "firstname": "Semyon",
+            "lastname": "Muradyan",
+            "name": "Semyon Muradyan",
+            "display_name": "Karen Muradyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 182,
+            "weight": 73,
+            "date_of_birth": "1988-03-21",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920138,
+              "fixture_id": 207684,
+              "player_id": 50073,
+              "team_id": 5487,
+              "lineup_id": 2263954,
+              "type_id": 119,
+              "data": {
+                "value": 12
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263637,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 50249,
+          "team_id": 5487,
+          "position_id": null,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Gevorg Nranyan",
+          "jersey_number": 15,
+          "player": {
+            "id": 50249,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": null,
+            "position_id": null,
+            "detailed_position_id": null,
+            "type_id": 221,
+            "common_name": "G. Nranyan",
+            "firstname": "Gevorg",
+            "lastname": "Nranyan",
+            "name": "Gevorg Nranyan",
+            "display_name": "Gevorg Nranyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "1986-03-09",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920221,
+              "fixture_id": 207684,
+              "player_id": 50249,
+              "team_id": 5487,
+              "lineup_id": 2263637,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 178920053,
+              "fixture_id": 207684,
+              "player_id": 50249,
+              "team_id": 5487,
+              "lineup_id": 2263637,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263976,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 49803,
+          "team_id": 5487,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Vahagn Ayvazyan",
+          "jersey_number": 18,
+          "player": {
+            "id": 49803,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": 100923,
+            "position_id": 25,
+            "detailed_position_id": 154,
+            "type_id": 25,
+            "common_name": "V. Ayvazyan",
+            "firstname": "Vahagn",
+            "lastname": "Ayvazyan",
+            "name": "Vahagn Ayvazyan",
+            "display_name": "Vahagn Ayvazyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/11/49803.png",
+            "height": 181,
+            "weight": 77,
+            "date_of_birth": "1992-04-16",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178919604,
+              "fixture_id": 207684,
+              "player_id": 49803,
+              "team_id": 5487,
+              "lineup_id": 2263976,
+              "type_id": 119,
+              "data": {
+                "value": 17
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2264007,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 50460,
+          "team_id": 5487,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Karen Harutyunyan",
+          "jersey_number": 20,
+          "player": {
+            "id": 50460,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "K. Harutyunyan",
+            "firstname": "Karen",
+            "lastname": "Harutyunyan",
+            "name": "Karen Harutyunyan",
+            "display_name": "Karen Harutyunyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "1995-07-06",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920231,
+              "fixture_id": 207684,
+              "player_id": 50460,
+              "team_id": 5487,
+              "lineup_id": 2264007,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263656,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 137362,
+          "team_id": 5487,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "M. Usanov",
+          "jersey_number": 21,
+          "player": {
+            "id": 137362,
+            "sport_id": 1,
+            "country_id": 227,
+            "nationality_id": 227,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "M. Usanov",
+            "firstname": "Maksim",
+            "lastname": "Usanov",
+            "name": "Maksim Usanov",
+            "display_name": "Maksim Usanov",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 182,
+            "weight": 75,
+            "date_of_birth": "1985-03-05",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920151,
+              "fixture_id": 207684,
+              "player_id": 137362,
+              "team_id": 5487,
+              "lineup_id": 2263656,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            },
+            {
+              "id": 178920237,
+              "fixture_id": 207684,
+              "player_id": 137362,
+              "team_id": 5487,
+              "lineup_id": 2263656,
+              "type_id": 119,
+              "data": {
+                "value": 73
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 178919628,
+              "fixture_id": 207684,
+              "player_id": 137362,
+              "team_id": 5487,
+              "lineup_id": 2263656,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2264026,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 50469,
+          "team_id": 5487,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Garegin Mashumyan",
+          "jersey_number": 22,
+          "player": {
+            "id": 50469,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "G. Mashumyan",
+            "firstname": "Garegin",
+            "lastname": "Mashumyan",
+            "name": "Garegin Mashumyan",
+            "display_name": "Garegin Mashumyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "1989-09-01",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920242,
+              "fixture_id": 207684,
+              "player_id": 50469,
+              "team_id": 5487,
+              "lineup_id": 2264026,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263675,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 50272,
+          "team_id": 5487,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Mamadou Fofana",
+          "jersey_number": 25,
+          "player": {
+            "id": 50272,
+            "sport_id": 1,
+            "country_id": 1703,
+            "nationality_id": 26,
+            "city_id": 19785,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "M. Fofana",
+            "firstname": "Mamadou S\u00e9kou",
+            "lastname": "Fofana",
+            "name": "Mamadou S\u00e9kou Fofana",
+            "display_name": "Mamadou Fofana",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "1989-09-26",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920157,
+              "fixture_id": 207684,
+              "player_id": 50272,
+              "team_id": 5487,
+              "lineup_id": 2263675,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 178920249,
+              "fixture_id": 207684,
+              "player_id": 50272,
+              "team_id": 5487,
+              "lineup_id": 2263675,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            },
+            {
+              "id": 178920000,
+              "fixture_id": 207684,
+              "player_id": 50272,
+              "team_id": 5487,
+              "lineup_id": 2263675,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2264071,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 50312,
+          "team_id": 5487,
+          "position_id": 24,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "P. Tevosyan",
+          "jersey_number": 88,
+          "player": {
+            "id": 50312,
+            "sport_id": 1,
+            "country_id": 919,
+            "nationality_id": 919,
+            "city_id": null,
+            "position_id": 24,
+            "detailed_position_id": null,
+            "type_id": 24,
+            "common_name": "P. Tevosyan",
+            "firstname": "Papin",
+            "lastname": "Tevosyan",
+            "name": "Papin Tevosyan",
+            "display_name": "Papin Tevosyan",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 180,
+            "weight": 75,
+            "date_of_birth": "1992-03-22",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178919577,
+              "fixture_id": 207684,
+              "player_id": 50312,
+              "team_id": 5487,
+              "lineup_id": 2264071,
+              "type_id": 88,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 88,
+                "name": "Goals Conceded",
+                "code": "goals-conceded",
+                "developer_name": "GOALS_CONCEDED",
+                "model_type": "statistic",
+                "stat_group": "defensive"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263253,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336156,
+          "team_id": 7058,
+          "position_id": null,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Eloy Casals",
+          "jersey_number": 1,
+          "player": {
+            "id": 336156,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 32,
+            "city_id": 51344,
+            "position_id": 221,
+            "detailed_position_id": null,
+            "type_id": 221,
+            "common_name": "E. Casals Rubio",
+            "firstname": "Eloy",
+            "lastname": "Casals Rubio",
+            "name": "Eloy Casals Rubio",
+            "display_name": "Eloy Casals",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 178,
+            "weight": 76,
+            "date_of_birth": "1982-10-22",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178919858,
+              "fixture_id": 207684,
+              "player_id": 336156,
+              "team_id": 7058,
+              "lineup_id": 2263253,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263267,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 335928,
+          "team_id": 7058,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Walter Wagner",
+          "jersey_number": 2,
+          "player": {
+            "id": 335928,
+            "sport_id": 1,
+            "country_id": 44,
+            "nationality_id": 44,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "W. Wagner",
+            "firstname": "Walter Esteban",
+            "lastname": "Wagner",
+            "name": "Walter Esteban Wagner",
+            "display_name": "Walter Wagner",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 175,
+            "weight": 70,
+            "date_of_birth": "1981-01-12",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178919907,
+              "fixture_id": 207684,
+              "player_id": 335928,
+              "team_id": 7058,
+              "lineup_id": 2263267,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263284,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 314108,
+          "team_id": 7058,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Andreu Ramos",
+          "jersey_number": 4,
+          "player": {
+            "id": 314108,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 32,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "A. Ramos Isus",
+            "firstname": "Andreu",
+            "lastname": "Ramos Isus",
+            "name": "Andreu Ramos Isus",
+            "display_name": "Andreu Ramos",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 180,
+            "weight": 79,
+            "date_of_birth": "1989-01-19",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920005,
+              "fixture_id": 207684,
+              "player_id": 314108,
+              "team_id": 7058,
+              "lineup_id": 2263284,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263293,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336168,
+          "team_id": 7058,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Marc Reb\u00e9s",
+          "jersey_number": 5,
+          "player": {
+            "id": 336168,
+            "sport_id": 1,
+            "country_id": 2931,
+            "nationality_id": 2931,
+            "city_id": 79826,
+            "position_id": 26,
+            "detailed_position_id": 149,
+            "type_id": 25,
+            "common_name": "M. Reb\u00e9s Ruiz",
+            "firstname": "Marc",
+            "lastname": "Reb\u00e9s Ruiz",
+            "name": "Marc Reb\u00e9s Ruiz",
+            "display_name": "Marc Reb\u00e9s",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/8/336168.png",
+            "height": 175,
+            "weight": 72,
+            "date_of_birth": "1994-07-03",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920044,
+              "fixture_id": 207684,
+              "player_id": 336168,
+              "team_id": 7058,
+              "lineup_id": 2263293,
+              "type_id": 119,
+              "data": {
+                "value": 58
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263307,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 131568,
+          "team_id": 7058,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Ildefons Lima",
+          "jersey_number": 6,
+          "player": {
+            "id": 131568,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 2931,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "I. Lima Sol\u00e1",
+            "firstname": "Ildefons",
+            "lastname": "Lima Sol\u00e1",
+            "name": "Ildefons Lima Sol\u00e1",
+            "display_name": "Ildefons Lima",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/16/131568.png",
+            "height": 190,
+            "weight": 87,
+            "date_of_birth": "1979-12-10",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920081,
+              "fixture_id": 207684,
+              "player_id": 131568,
+              "team_id": 7058,
+              "lineup_id": 2263307,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            },
+            {
+              "id": 178920076,
+              "fixture_id": 207684,
+              "player_id": 131568,
+              "team_id": 7058,
+              "lineup_id": 2263307,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263323,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 329323,
+          "team_id": 7058,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Marc Pujol",
+          "jersey_number": 7,
+          "player": {
+            "id": 329323,
+            "sport_id": 1,
+            "country_id": 2931,
+            "nationality_id": 2931,
+            "city_id": 2748,
+            "position_id": 26,
+            "detailed_position_id": 150,
+            "type_id": 26,
+            "common_name": "M. Pujol Pons",
+            "firstname": "Marc",
+            "lastname": "Pujol Pons",
+            "name": "Marc Pujol Pons",
+            "display_name": "Marc Pujol",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/11/329323.png",
+            "height": 168,
+            "weight": 68,
+            "date_of_birth": "1982-08-21",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 260236932,
+              "fixture_id": 207684,
+              "player_id": 329323,
+              "team_id": 7058,
+              "lineup_id": 2263323,
+              "type_id": 52,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 52,
+                "name": "Goals",
+                "code": "goals",
+                "developer_name": "GOALS",
+                "model_type": "statistic",
+                "stat_group": "offensive"
+              }
+            },
+            {
+              "id": 178920116,
+              "fixture_id": 207684,
+              "player_id": 329323,
+              "team_id": 7058,
+              "lineup_id": 2263323,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263709,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336160,
+          "team_id": 7058,
+          "position_id": null,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Joel Martinez",
+          "jersey_number": 8,
+          "player": {
+            "id": 336160,
+            "sport_id": 1,
+            "country_id": 2931,
+            "nationality_id": 2931,
+            "city_id": null,
+            "position_id": null,
+            "detailed_position_id": null,
+            "type_id": 221,
+            "common_name": "J. Mart\u00ednez Vilar",
+            "firstname": "Joel",
+            "lastname": "Mart\u00ednez Vilar",
+            "name": "Joel Mart\u00ednez Vilar",
+            "display_name": "Joel Martinez",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 177,
+            "weight": 77,
+            "date_of_birth": "1988-12-31",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920130,
+              "fixture_id": 207684,
+              "player_id": 336160,
+              "team_id": 7058,
+              "lineup_id": 2263709,
+              "type_id": 119,
+              "data": {
+                "value": 32
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263740,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 335914,
+          "team_id": 7058,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Alejandro Romero Rectte",
+          "jersey_number": 9,
+          "player": {
+            "id": 335914,
+            "sport_id": 1,
+            "country_id": 44,
+            "nationality_id": 44,
+            "city_id": 79214,
+            "position_id": 27,
+            "detailed_position_id": null,
+            "type_id": 27,
+            "common_name": "A. Romero Rectte",
+            "firstname": "Alejandro Fabi\u00e1n",
+            "lastname": "Romero Rectte",
+            "name": "Alejandro Fabi\u00e1n Romero Rectte",
+            "display_name": "Alejandro Romero Rectte",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "1976-09-22",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920143,
+              "fixture_id": 207684,
+              "player_id": 335914,
+              "team_id": 7058,
+              "lineup_id": 2263740,
+              "type_id": 119,
+              "data": {
+                "value": 9
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263759,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336157,
+          "team_id": 7058,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Lluis Blanco",
+          "jersey_number": 10,
+          "player": {
+            "id": 336157,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 2931,
+            "city_id": null,
+            "position_id": 26,
+            "detailed_position_id": 153,
+            "type_id": 26,
+            "common_name": "L. Blanco Coto",
+            "firstname": "Luis",
+            "lastname": "Blanco Coto",
+            "name": "Luis Blanco Coto",
+            "display_name": "Lluis Blanco",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/29/336157.png",
+            "height": 183,
+            "weight": null,
+            "date_of_birth": "1990-01-15",
+            "gender": "male"
+          },
+          "details": []
+        },
+        {
+          "id": 2263787,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336044,
+          "team_id": 7058,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Albert Mercade Mellinas",
+          "jersey_number": 11,
+          "player": {
+            "id": 336044,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 32,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "A. Mercad\u00e9",
+            "firstname": "Albert",
+            "lastname": "Mercad\u00e9",
+            "name": "Albert Mercad\u00e9",
+            "display_name": "Albert Mercade Mellinas",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 177,
+            "weight": 76,
+            "date_of_birth": "1985-01-23",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920165,
+              "fixture_id": 207684,
+              "player_id": 336044,
+              "team_id": 7058,
+              "lineup_id": 2263787,
+              "type_id": 119,
+              "data": {
+                "value": 27
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263811,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336170,
+          "team_id": 7058,
+          "position_id": 24,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Ivan Monteagudo",
+          "jersey_number": 12,
+          "player": {
+            "id": 336170,
+            "sport_id": 1,
+            "country_id": 2931,
+            "nationality_id": 2931,
+            "city_id": null,
+            "position_id": 24,
+            "detailed_position_id": null,
+            "type_id": 24,
+            "common_name": "I. Monteagudo",
+            "firstname": "Ivan",
+            "lastname": "Monteagudo",
+            "name": "Ivan Monteagudo",
+            "display_name": "Ivan Monteagudo",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": null,
+            "weight": null,
+            "date_of_birth": "1985-02-03",
+            "gender": "male"
+          },
+          "details": []
+        },
+        {
+          "id": 2263846,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 329519,
+          "team_id": 7058,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "David Ribolleda",
+          "jersey_number": 13,
+          "player": {
+            "id": 329519,
+            "sport_id": 1,
+            "country_id": 2931,
+            "nationality_id": 2931,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "D. Ribolleda Bernat",
+            "firstname": "David",
+            "lastname": "Ribolleda Bernat",
+            "name": "David Ribolleda Bernat",
+            "display_name": "David Ribolleda",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 175,
+            "weight": null,
+            "date_of_birth": "1985-02-13",
+            "gender": "male"
+          },
+          "details": []
+        },
+        {
+          "id": 2263343,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 328482,
+          "team_id": 7058,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Cristian Mart\u00ednez",
+          "jersey_number": 16,
+          "player": {
+            "id": 328482,
+            "sport_id": 1,
+            "country_id": 2931,
+            "nationality_id": 2931,
+            "city_id": 2748,
+            "position_id": 27,
+            "detailed_position_id": 156,
+            "type_id": 26,
+            "common_name": "C. Mart\u00ednez Alejo",
+            "firstname": "Cristian",
+            "lastname": "Mart\u00ednez Alejo",
+            "name": "Cristian Mart\u00ednez Alejo",
+            "display_name": "Cristian Mart\u00ednez",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/2/328482.png",
+            "height": 173,
+            "weight": 70,
+            "date_of_birth": "1989-10-16",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920197,
+              "fixture_id": 207684,
+              "player_id": 328482,
+              "team_id": 7058,
+              "lineup_id": 2263343,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            },
+            {
+              "id": 178920198,
+              "fixture_id": 207684,
+              "player_id": 328482,
+              "team_id": 7058,
+              "lineup_id": 2263343,
+              "type_id": 84,
+              "data": {
+                "value": 1
+              },
+              "type": {
+                "id": 84,
+                "name": "Yellowcards",
+                "code": "yellowcards",
+                "developer_name": "YELLOWCARDS",
+                "model_type": "statistic",
+                "stat_group": "overall"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263364,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336169,
+          "team_id": 7058,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Iban Parra",
+          "jersey_number": 19,
+          "player": {
+            "id": 336169,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 32,
+            "city_id": 51344,
+            "position_id": 27,
+            "detailed_position_id": null,
+            "type_id": 27,
+            "common_name": "I. Parra L\u00f3pez",
+            "firstname": "Ib\u00e1n",
+            "lastname": "Parra L\u00f3pez",
+            "name": "Ib\u00e1n Parra L\u00f3pez",
+            "display_name": "Iban Parra",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 187,
+            "weight": 84,
+            "date_of_birth": "1977-10-18",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920206,
+              "fixture_id": 207684,
+              "player_id": 336169,
+              "team_id": 7058,
+              "lineup_id": 2263364,
+              "type_id": 119,
+              "data": {
+                "value": 81
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263876,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336158,
+          "team_id": 7058,
+          "position_id": 27,
+          "formation_field": null,
+          "type_id": 12,
+          "formation_position": null,
+          "player_name": "Joan Toscano",
+          "jersey_number": 20,
+          "player": {
+            "id": 336158,
+            "sport_id": 1,
+            "country_id": 2931,
+            "nationality_id": 2931,
+            "city_id": null,
+            "position_id": 27,
+            "detailed_position_id": null,
+            "type_id": 27,
+            "common_name": "J. Toscano Beltr\u00e1n",
+            "firstname": "Joan Carles",
+            "lastname": "Toscano Beltr\u00e1n",
+            "name": "Joan Carles Toscano Beltr\u00e1n",
+            "display_name": "Joan Toscano",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/players/30/336158.png",
+            "height": 174,
+            "weight": 70,
+            "date_of_birth": "1984-08-14",
+            "gender": "male"
+          },
+          "details": []
+        },
+        {
+          "id": 2263388,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 188161,
+          "team_id": 7058,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Juvenal",
+          "jersey_number": 21,
+          "player": {
+            "id": 188161,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 211975,
+            "city_id": 76499,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "J. Edjogo-Owono Montalb\u00e1n",
+            "firstname": "Juvenal",
+            "lastname": "Edjogo-Owono Montalb\u00e1n",
+            "name": "Juvenal Edjogo-Owono Montalb\u00e1n",
+            "display_name": "Juvenal",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 177,
+            "weight": 73,
+            "date_of_birth": "1979-04-03",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920226,
+              "fixture_id": 207684,
+              "player_id": 188161,
+              "team_id": 7058,
+              "lineup_id": 2263388,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263412,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336159,
+          "team_id": 7058,
+          "position_id": 26,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Juan Fernando Lain Gonzales",
+          "jersey_number": 23,
+          "player": {
+            "id": 336159,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 32,
+            "city_id": 6590,
+            "position_id": 26,
+            "detailed_position_id": null,
+            "type_id": 26,
+            "common_name": "J. L\u00e1in Gonz\u00e1lez",
+            "firstname": "Juan Fernando",
+            "lastname": "L\u00e1in Gonz\u00e1lez",
+            "name": "Juan Fernando L\u00e1in Gonz\u00e1lez",
+            "display_name": "Juan Fernando Lain Gonzales",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 178,
+            "weight": 73,
+            "date_of_birth": "1983-05-05",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920236,
+              "fixture_id": 207684,
+              "player_id": 336159,
+              "team_id": 7058,
+              "lineup_id": 2263412,
+              "type_id": 119,
+              "data": {
+                "value": 63
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        },
+        {
+          "id": 2263433,
+          "sport_id": 1,
+          "fixture_id": 207684,
+          "player_id": 336167,
+          "team_id": 7058,
+          "position_id": 25,
+          "formation_field": null,
+          "type_id": 11,
+          "formation_position": null,
+          "player_name": "Robert Ramos",
+          "jersey_number": 24,
+          "player": {
+            "id": 336167,
+            "sport_id": 1,
+            "country_id": 32,
+            "nationality_id": 32,
+            "city_id": null,
+            "position_id": 25,
+            "detailed_position_id": null,
+            "type_id": 25,
+            "common_name": "R. Ramos Isus",
+            "firstname": "Robert",
+            "lastname": "Ramos Isus",
+            "name": "Robert Ramos Isus",
+            "display_name": "Robert Ramos Isus",
+            "image_path": "https://cdn.sportmonks.com/images/soccer/placeholder.png",
+            "height": 182,
+            "weight": 88,
+            "date_of_birth": "1992-12-11",
+            "gender": "male"
+          },
+          "details": [
+            {
+              "id": 178920248,
+              "fixture_id": 207684,
+              "player_id": 336167,
+              "team_id": 7058,
+              "lineup_id": 2263433,
+              "type_id": 119,
+              "data": {
+                "value": 90
+              },
+              "type": {
+                "id": 119,
+                "name": "Minutes Played",
+                "code": "minutes-played",
+                "developer_name": "MINUTES_PLAYED",
+                "model_type": "statistic",
+                "stat_group": "NULL"
+              }
+            }
+          ]
+        }
+      ],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782198056,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 24,
+      "remaining": 2404,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  }
+}

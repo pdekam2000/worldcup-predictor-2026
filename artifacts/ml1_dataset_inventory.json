@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-06-23T10:37:17.985096Z",
+  "total_rows": 1617,
+  "markets": {
+    "match_winner": {
+      "row_count": 1617,
+      "label_column": "label_mw",
+      "positive_or_class_counts": {
+        "home_win": 720,
+        "away_win": 506,
+        "draw": 391
+      }
+    },
+    "btts": {
+      "row_count": 1617,
+      "label_column": "label_btts",
+      "positive_or_class_counts": {
+        "positive": 972,
+        "negative": 645
+      }
+    },
+    "over_1_5": {
+      "row_count": 1617,
+      "label_column": "label_over_15",
+      "positive_or_class_counts": {
+        "positive": 1361,
+        "negative": 256
+      }
+    },
+    "over_2_5": {
+      "row_count": 1617,
+      "label_column": "label_over_25",
+      "positive_or_class_counts": {
+        "positive": 993,
+        "negative": 624
+      }
+    },
+    "over_3_5": {
+      "row_count": 1617,
+      "label_column": "label_over_35",
+      "positive_or_class_counts": {
+        "positive": 662,
+        "negative": 955
+      }
+    },
+    "first_goal_team": {
+      "row_count": 359,
+      "label_column": "label_fg_team",
+      "positive_or_class_counts": {
+        "home": 199,
+        "away": 160
+      }
+    },
+    "goal_range": {
+      "row_count": 359,
+      "label_column": "label_goal_range",
+      "positive_or_class_counts": {
+        "0-15": 121,
+        "16-30": 98,
+        "46-60": 51,
+        "31-45+": 48,
+        "61-75": 25,
+        "76-90+": 16
+      }
+    }
+  },
+  "sources": {
+    "api_football_fixtures": 1617,
+    "rolling_form": 1617,
+    "api_odds_snapshots": 4,
+    "uefa_sportmonks_odds": 97,
+    "goal_event_labels": 359
+  },
+  "league_coverage": {
+    "bundesliga": 1232,
+    "premier_league": 380,
+    "world_cup_2026": 5
+  }
+}

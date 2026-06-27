@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "rows": 47029,
+  "fixtures": 1541,
+  "team_context_columns": [
+    "team_attack_strength",
+    "team_defensive_weakness",
+    "team_recent_goals_scored",
+    "team_recent_goals_conceded",
+    "team_rolling_xg",
+    "team_rolling_xga",
+    "team_league_position",
+    "team_elo_strength",
+    "team_home_attack",
+    "team_away_attack",
+    "is_home",
+    "is_favorite",
+    "is_underdog",
+    "team_attacking_share"
+  ],
+  "non_zero_coverage": {
+    "team_attack_strength": 40827,
+    "team_defensive_weakness": 40698,
+    "team_recent_goals_scored": 40164,
+    "team_recent_goals_conceded": 39553,
+    "team_rolling_xg": 35471,
+    "team_rolling_xga": 35223,
+    "team_league_position": 47029,
+    "team_elo_strength": 47029,
+    "team_home_attack": 38943,
+    "team_away_attack": 37644,
+    "is_home": 23659,
+    "is_favorite": 24780,
+    "is_underdog": 21545,
+    "team_attacking_share": 21840
+  },
+  "source": "artifacts\\phase54q_goalscorer_generalization\\goalscorer_dataset_v3.parquet"
+}

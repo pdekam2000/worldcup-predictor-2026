@@ -1,0 +1,125 @@
+{
+  "generated_at": "2026-06-25T03:19:55.531190+00:00",
+  "phase": "58B",
+  "fixtures_total": 1004,
+  "snapshots": 8,
+  "comparisons": [
+    {
+      "window": 100,
+      "market_id": "first_goal_team",
+      "old": {
+        "window": 100,
+        "market_id": "first_goal_team",
+        "weight_label": "old_weights",
+        "n": 100,
+        "accuracy": 0.51,
+        "brier": 0.3342,
+        "ece": 0.2428,
+        "roi_proxy": 0.0009,
+        "mean_confidence": 0.7528
+      },
+      "new": {
+        "window": 100,
+        "market_id": "first_goal_team",
+        "weight_label": "new_weights",
+        "n": 100,
+        "accuracy": 0.51,
+        "brier": 0.3338,
+        "ece": 0.2415,
+        "roi_proxy": 0.0008,
+        "mean_confidence": 0.7515
+      },
+      "delta_accuracy": 0.0,
+      "delta_brier": -0.0004,
+      "delta_ece": -0.0013,
+      "delta_roi_proxy": -0.0001,
+      "picks_changed": 0,
+      "bootstrap_p_improve": 1.0
+    },
+    {
+      "window": 500,
+      "market_id": "first_goal_team",
+      "old": {
+        "window": 500,
+        "market_id": "first_goal_team",
+        "weight_label": "old_weights",
+        "n": 500,
+        "accuracy": 0.526,
+        "brier": 0.2943,
+        "ece": 0.211,
+        "roi_proxy": 0.0251,
+        "mean_confidence": 0.737
+      },
+      "new": {
+        "window": 500,
+        "market_id": "first_goal_team",
+        "weight_label": "new_weights",
+        "n": 500,
+        "accuracy": 0.526,
+        "brier": 0.2939,
+        "ece": 0.2096,
+        "roi_proxy": 0.0251,
+        "mean_confidence": 0.7356
+      },
+      "delta_accuracy": 0.0,
+      "delta_brier": -0.0004,
+      "delta_ece": -0.0014,
+      "delta_roi_proxy": 0.0,
+      "picks_changed": 0,
+      "bootstrap_p_improve": 1.0
+    },
+    {
+      "window": 1000,
+      "market_id": "first_goal_team",
+      "old": {
+        "window": 1000,
+        "market_id": "first_goal_team",
+        "weight_label": "old_weights",
+        "n": 1000,
+        "accuracy": 0.525,
+        "brier": 0.2947,
+        "ece": 0.2115,
+        "roi_proxy": 0.0244,
+        "mean_confidence": 0.7365
+      },
+      "new": {
+        "window": 1000,
+        "market_id": "first_goal_team",
+        "weight_label": "new_weights",
+        "n": 1000,
+        "accuracy": 0.525,
+        "brier": 0.2942,
+        "ece": 0.2101,
+        "roi_proxy": 0.0244,
+        "mean_confidence": 0.7351
+      },
+      "delta_accuracy": 0.0,
+      "delta_brier": -0.0005,
+      "delta_ece": -0.0014,
+      "delta_roi_proxy": 0.0,
+      "picks_changed": 0,
+      "bootstrap_p_improve": 1.0
+    }
+  ],
+  "decision": {
+    "market_acceptance": "ACCEPT",
+    "accepted_components": 12,
+    "rejected_components": 0,
+    "held_components": 11,
+    "long_term_gain": {
+      "accuracy_per_1000": 0.0,
+      "brier_improvement": -0.0004,
+      "annual_fixtures_proxy": 2000,
+      "estimated_correct_gains_per_year": 0.0
+    },
+    "safety": {
+      "production_write": false,
+      "weight_overwrite": false,
+      "shadow_only": true
+    },
+    "recommendation": "LEARNING_SIMULATION_READY"
+  },
+  "recommendation": "LEARNING_SIMULATION_READY",
+  "production_changes": false,
+  "api_calls_used": 0
+}

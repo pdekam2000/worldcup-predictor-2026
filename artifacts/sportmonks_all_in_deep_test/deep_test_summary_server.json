@@ -1,0 +1,488 @@
+{
+  "generated_at": "2026-06-23T19:36:01.409441+00:00",
+  "dry_run": false,
+  "max_calls": 80,
+  "api_calls_live": 11,
+  "api_calls_cached": 0,
+  "configured": false,
+  "live_auth_ok": true,
+  "cache_analysis_used": false,
+  "auth_note": "Live API reachable with valid token.",
+  "leagues_tested": {
+    "world_cup": {
+      "league_id": 732,
+      "league_key": "world_cup",
+      "season_id": null,
+      "season_name": null,
+      "completed_fixture_id": null,
+      "upcoming_fixture_id": null,
+      "team_id": null,
+      "player_id": null,
+      "fixture_count": 0
+    },
+    "european_championship": {
+      "league_id": 1326,
+      "league_key": "european_championship",
+      "season_id": null,
+      "season_name": null,
+      "completed_fixture_id": null,
+      "upcoming_fixture_id": null,
+      "team_id": null,
+      "player_id": null,
+      "fixture_count": 0
+    },
+    "champions_league": {
+      "league_id": 2,
+      "league_key": "champions_league",
+      "season_id": null,
+      "season_name": null,
+      "completed_fixture_id": null,
+      "upcoming_fixture_id": null,
+      "team_id": null,
+      "player_id": null,
+      "fixture_count": 0
+    },
+    "europa_league": {
+      "league_id": 5,
+      "league_key": "europa_league",
+      "season_id": null,
+      "season_name": null,
+      "completed_fixture_id": null,
+      "upcoming_fixture_id": null,
+      "team_id": null,
+      "player_id": null,
+      "fixture_count": 0
+    },
+    "premier_league": {
+      "league_id": 8,
+      "league_key": "premier_league",
+      "season_id": null,
+      "season_name": null,
+      "completed_fixture_id": null,
+      "upcoming_fixture_id": null,
+      "team_id": null,
+      "player_id": null,
+      "fixture_count": 0
+    }
+  },
+  "fixture_deep_results": [],
+  "capability_matrix": {
+    "livescores:livescores_inplay": "error",
+    "livescores:livescores_latest": "error",
+    "xg:expected_fixtures_list": "error",
+    "news:news_news": "error",
+    "news:news_news_pre-match": "error",
+    "news:news_pre-match-news": "error",
+    "xg_expected_endpoint": "error",
+    "pressure_endpoint": "unknown",
+    "news_endpoint": "error",
+    "standings_endpoint": "unknown",
+    "player_endpoint": "unknown",
+    "topscorers_endpoint": "unknown",
+    "h2h_endpoint": "unknown",
+    "livescores_endpoint": "error",
+    "cache_supplement": {
+      "available": false,
+      "file_count": 0
+    }
+  },
+  "all_in_subscription_checklist": {
+    "livescores": false,
+    "lineups_events": false,
+    "statistics": false,
+    "xg_pressure": false,
+    "odds_predictions": false,
+    "news": false
+  },
+  "all_in_subscription_checklist_live_only": {
+    "livescores": false,
+    "lineups_events": false,
+    "statistics": false,
+    "xg_pressure": false,
+    "odds_predictions": false,
+    "news": false
+  },
+  "cache_analysis": {
+    "available": false,
+    "file_count": 0
+  },
+  "field_availability": {
+    "fixture_xg": "not_available",
+    "team_xg": "not_available",
+    "player_xg": "unknown",
+    "pressure_index": "not_available",
+    "pressure_timeline": "unknown",
+    "1x2_odds": "not_available",
+    "btts_odds": "partially_available",
+    "over_under_2_5_odds": "partially_available",
+    "lineups": "not_available",
+    "injuries_sidelined": "not_available",
+    "match_statistics": "not_available",
+    "dangerous_attacks": "partially_available",
+    "events_timeline": "not_available",
+    "player_stats": "unknown",
+    "team_news": "unknown",
+    "sportmonks_predictions": "not_available",
+    "standings": "not_available",
+    "h2h": "not_available",
+    "recent_form": "partially_available"
+  },
+  "egie_feature_value_matrix": [
+    {
+      "feature": "xG",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "VERY HIGH",
+      "best_use": "First Goal Team, Goal Range, Team Goals",
+      "recommended_phase": "54E",
+      "capability_status": "unknown",
+      "field_classification": "unknown"
+    },
+    {
+      "feature": "Player xG",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "Goalscorer, First Goalscorer",
+      "recommended_phase": "54H",
+      "capability_status": "unknown",
+      "field_classification": "unknown"
+    },
+    {
+      "feature": "Pressure Index",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "VERY HIGH",
+      "best_use": "Next Goal Team, Live Goal Probability",
+      "recommended_phase": "54G",
+      "capability_status": "unknown",
+      "field_classification": "not_available"
+    },
+    {
+      "feature": "Minute-level pressure",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "Goal Minute, In-play warning",
+      "recommended_phase": "54G",
+      "capability_status": "unknown",
+      "field_classification": "unknown"
+    },
+    {
+      "feature": "Odds 1X2",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "First Goal Team, Confidence",
+      "recommended_phase": "54J",
+      "capability_status": "unknown",
+      "field_classification": "unknown"
+    },
+    {
+      "feature": "Odds O/U 2.5",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "Goal Range",
+      "recommended_phase": "54J",
+      "capability_status": "unknown",
+      "field_classification": "unknown"
+    },
+    {
+      "feature": "BTTS odds",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "MEDIUM",
+      "best_use": "Goal Range",
+      "recommended_phase": "54J",
+      "capability_status": "unknown",
+      "field_classification": "partially_available"
+    },
+    {
+      "feature": "Goalscorer odds",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "VERY HIGH",
+      "best_use": "Goalscorer Engine",
+      "recommended_phase": "54H",
+      "capability_status": "unknown",
+      "field_classification": "unknown"
+    },
+    {
+      "feature": "Lineups",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "Lineup strength, Goalscorer",
+      "recommended_phase": "54E",
+      "capability_status": "unknown",
+      "field_classification": "not_available"
+    },
+    {
+      "feature": "Injuries/Sidelined",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "Lineup risk",
+      "recommended_phase": "54E",
+      "capability_status": "unknown",
+      "field_classification": "not_available"
+    },
+    {
+      "feature": "Match statistics",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "Pressure proxy, attacking form",
+      "recommended_phase": "54E",
+      "capability_status": "unknown",
+      "field_classification": "not_available"
+    },
+    {
+      "feature": "Dangerous attacks",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "MEDIUM",
+      "best_use": "Pressure proxy",
+      "recommended_phase": "54E",
+      "capability_status": "unknown",
+      "field_classification": "partially_available"
+    },
+    {
+      "feature": "Events timeline",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "VERY HIGH",
+      "best_use": "Goal timing, First goal team",
+      "recommended_phase": "54E",
+      "capability_status": "unknown",
+      "field_classification": "not_available"
+    },
+    {
+      "feature": "Player stats",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "VERY HIGH",
+      "best_use": "Goalscorer Engine",
+      "recommended_phase": "54H",
+      "capability_status": "unknown",
+      "field_classification": "unknown"
+    },
+    {
+      "feature": "News",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "MEDIUM",
+      "best_use": "Motivation Agent",
+      "recommended_phase": "54I",
+      "capability_status": "error",
+      "field_classification": "unknown"
+    },
+    {
+      "feature": "Sportmonks Predictions",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "MEDIUM",
+      "best_use": "Benchmark only \u2014 not direct target",
+      "recommended_phase": "54J",
+      "capability_status": "unknown",
+      "field_classification": "not_available"
+    },
+    {
+      "feature": "Standings",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "Motivation Agent, Must-win",
+      "recommended_phase": "54I",
+      "capability_status": "unknown",
+      "field_classification": "not_available"
+    },
+    {
+      "feature": "H2H",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "First Goal Team, Goal Range",
+      "recommended_phase": "54E",
+      "capability_status": "unknown",
+      "field_classification": "not_available"
+    },
+    {
+      "feature": "Recent Form",
+      "available": false,
+      "coverage": "none",
+      "egie_value": "HIGH",
+      "best_use": "First Goal Team",
+      "recommended_phase": "54E",
+      "capability_status": "unknown",
+      "field_classification": "partially_available"
+    }
+  ],
+  "endpoint_results": [
+    {
+      "ts": "2026-06-23T19:36:01.407346+00:00",
+      "group": "discovery",
+      "league_key": "world_cup",
+      "path": "/leagues/732",
+      "params": {
+        "include": "seasons;currentSeason"
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "league_metadata",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.407561+00:00",
+      "group": "discovery",
+      "league_key": "european_championship",
+      "path": "/leagues/1326",
+      "params": {
+        "include": "seasons;currentSeason"
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "league_metadata",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.407717+00:00",
+      "group": "discovery",
+      "league_key": "champions_league",
+      "path": "/leagues/2",
+      "params": {
+        "include": "seasons;currentSeason"
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "league_metadata",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.407990+00:00",
+      "group": "discovery",
+      "league_key": "europa_league",
+      "path": "/leagues/5",
+      "params": {
+        "include": "seasons;currentSeason"
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "league_metadata",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.408161+00:00",
+      "group": "discovery",
+      "league_key": "premier_league",
+      "path": "/leagues/8",
+      "params": {
+        "include": "seasons;currentSeason"
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "league_metadata",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.408389+00:00",
+      "group": "livescores",
+      "league_key": null,
+      "path": "/livescores/inplay",
+      "params": {},
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "livescores_inplay",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.408541+00:00",
+      "group": "livescores",
+      "league_key": null,
+      "path": "/livescores",
+      "params": {
+        "include": "fixtures"
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "livescores_latest",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.408688+00:00",
+      "group": "xg",
+      "league_key": null,
+      "path": "/expected/fixtures",
+      "params": {
+        "per_page": 5
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "expected_fixtures_list",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.408857+00:00",
+      "group": "news",
+      "league_key": null,
+      "path": "/news",
+      "params": {
+        "per_page": 5
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "news_news",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.409000+00:00",
+      "group": "news",
+      "league_key": null,
+      "path": "/news/pre-match",
+      "params": {
+        "per_page": 5
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "news_news_pre-match",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    },
+    {
+      "ts": "2026-06-23T19:36:01.409135+00:00",
+      "group": "news",
+      "league_key": null,
+      "path": "/pre-match-news",
+      "params": {
+        "per_page": 5
+      },
+      "status_code": null,
+      "classification": "error",
+      "record_count": 0,
+      "from_cache": false,
+      "note": "news_pre-match-news",
+      "error": "SPORTMONKS_API_TOKEN not configured"
+    }
+  ],
+  "json_key_inventory": {}
+}

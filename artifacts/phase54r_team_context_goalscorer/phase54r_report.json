@@ -1,0 +1,295 @@
+{
+  "generated_at": "2026-06-24T13:28:09.765626+00:00",
+  "phase": "54R",
+  "dataset_v4": {
+    "status": "ok",
+    "rows": 47029,
+    "fixtures": 1541,
+    "team_context_columns": [
+      "team_attack_strength",
+      "team_defensive_weakness",
+      "team_recent_goals_scored",
+      "team_recent_goals_conceded",
+      "team_rolling_xg",
+      "team_rolling_xga",
+      "team_league_position",
+      "team_elo_strength",
+      "team_home_attack",
+      "team_away_attack",
+      "is_home",
+      "is_favorite",
+      "is_underdog",
+      "team_attacking_share"
+    ],
+    "non_zero_coverage": {
+      "team_attack_strength": 40827,
+      "team_defensive_weakness": 40698,
+      "team_recent_goals_scored": 40164,
+      "team_recent_goals_conceded": 39553,
+      "team_rolling_xg": 35471,
+      "team_rolling_xga": 35223,
+      "team_league_position": 47029,
+      "team_elo_strength": 47029,
+      "team_home_attack": 38943,
+      "team_away_attack": 37644,
+      "is_home": 23659,
+      "is_favorite": 24780,
+      "is_underdog": 21545,
+      "team_attacking_share": 21840
+    },
+    "source": "artifacts\\phase54q_goalscorer_generalization\\goalscorer_dataset_v3.parquet"
+  },
+  "feature_groups": {
+    "player_only": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.3175,
+      "top3_hit": 0.6296,
+      "top5_hit": 0.7619,
+      "mrr": 0.5106,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "player_only",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.2871,
+        "top3_hit": 0.5694,
+        "top5_hit": 0.689,
+        "mrr": null,
+        "recall_at_3": 0.5694,
+        "recall_at_5": 0.689,
+        "precision_at_1": 0.2871,
+        "precision_at_3": 0.236,
+        "precision_at_5": 0.2077
+      }
+    },
+    "player_lineup": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.3386,
+      "top3_hit": 0.672,
+      "top5_hit": 0.7884,
+      "mrr": 0.5381,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "player_lineup",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.3062,
+        "top3_hit": 0.6077,
+        "top5_hit": 0.7129,
+        "mrr": null,
+        "recall_at_3": 0.6077,
+        "recall_at_5": 0.7129,
+        "precision_at_1": 0.3062,
+        "precision_at_3": 0.26,
+        "precision_at_5": 0.2211
+      }
+    },
+    "player_team": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.3386,
+      "top3_hit": 0.6667,
+      "top5_hit": 0.8042,
+      "mrr": 0.5392,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "player_team",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.3062,
+        "top3_hit": 0.6029,
+        "top5_hit": 0.7273,
+        "mrr": null,
+        "recall_at_3": 0.6029,
+        "recall_at_5": 0.7273,
+        "precision_at_1": 0.3062,
+        "precision_at_3": 0.2648,
+        "precision_at_5": 0.2258
+      }
+    },
+    "player_team_odds": {
+      "fixtures_evaluated": 189,
+      "top1_hit": 0.3386,
+      "top3_hit": 0.6667,
+      "top5_hit": 0.8042,
+      "mrr": 0.5392,
+      "ranking_metrics": {
+        "market": "anytime",
+        "model": "player_team_odds",
+        "fixtures_evaluated": 209,
+        "top1_hit": 0.3062,
+        "top3_hit": 0.6029,
+        "top5_hit": 0.7273,
+        "mrr": null,
+        "recall_at_3": 0.6029,
+        "recall_at_5": 0.7273,
+        "precision_at_1": 0.3062,
+        "precision_at_3": 0.2648,
+        "precision_at_5": 0.2258
+      }
+    }
+  },
+  "team_feature_importance": {
+    "baseline_top3": 0.6667,
+    "feature_impacts": {
+      "team_attack_strength": -0.0053,
+      "team_defensive_weakness": 0.0,
+      "team_recent_goals_scored": 0.0,
+      "team_recent_goals_conceded": -0.0053,
+      "team_rolling_xg": -0.0053,
+      "team_rolling_xga": -0.0053,
+      "team_league_position": -0.0053,
+      "team_elo_strength": 0.0,
+      "team_home_attack": 0.0,
+      "team_away_attack": 0.0,
+      "is_home": 0.0053,
+      "is_favorite": -0.0105,
+      "is_underdog": -0.0053,
+      "team_attacking_share": -0.0053
+    },
+    "verdicts": {
+      "team_attack_strength": "harmful",
+      "team_defensive_weakness": "neutral",
+      "team_recent_goals_scored": "neutral",
+      "team_recent_goals_conceded": "harmful",
+      "team_rolling_xg": "harmful",
+      "team_rolling_xga": "harmful",
+      "team_league_position": "harmful",
+      "team_elo_strength": "neutral",
+      "team_home_attack": "neutral",
+      "team_away_attack": "neutral",
+      "is_home": "positive",
+      "is_favorite": "harmful",
+      "is_underdog": "harmful",
+      "team_attacking_share": "harmful"
+    },
+    "positive": [
+      "is_home"
+    ],
+    "neutral": [
+      "team_defensive_weakness",
+      "team_recent_goals_scored",
+      "team_elo_strength",
+      "team_home_attack",
+      "team_away_attack"
+    ],
+    "harmful": [
+      "team_attack_strength",
+      "team_recent_goals_conceded",
+      "team_rolling_xg",
+      "team_rolling_xga",
+      "team_league_position",
+      "is_favorite",
+      "is_underdog",
+      "team_attacking_share"
+    ],
+    "ranked": [
+      [
+        "is_home",
+        0.0053
+      ],
+      [
+        "team_defensive_weakness",
+        0.0
+      ],
+      [
+        "team_recent_goals_scored",
+        0.0
+      ],
+      [
+        "team_elo_strength",
+        0.0
+      ],
+      [
+        "team_home_attack",
+        0.0
+      ],
+      [
+        "team_away_attack",
+        0.0
+      ],
+      [
+        "team_attack_strength",
+        -0.0053
+      ],
+      [
+        "team_recent_goals_conceded",
+        -0.0053
+      ],
+      [
+        "team_rolling_xg",
+        -0.0053
+      ],
+      [
+        "team_rolling_xga",
+        -0.0053
+      ],
+      [
+        "team_league_position",
+        -0.0053
+      ],
+      [
+        "is_underdog",
+        -0.0053
+      ],
+      [
+        "team_attacking_share",
+        -0.0053
+      ],
+      [
+        "is_favorite",
+        -0.0105
+      ]
+    ]
+  },
+  "uefa_impact": {
+    "overall": {
+      "baseline_54q_proxy_top3": 0.5658,
+      "player_lineup_top3": 0.6623,
+      "player_team_top3": 0.6429,
+      "improvement_pp": -0.0194,
+      "fixtures_evaluated": 154
+    },
+    "by_league": {
+      "champions_league": {
+        "league_id": 2,
+        "fixtures_evaluated": 50,
+        "player_lineup_top3": 0.78,
+        "player_team_top3": 0.76,
+        "improvement_pp": -0.02
+      },
+      "europa_league": {
+        "league_id": 5,
+        "fixtures_evaluated": 61,
+        "player_lineup_top3": 0.623,
+        "player_team_top3": 0.623,
+        "improvement_pp": 0.0
+      },
+      "conference_league": {
+        "league_id": 2286,
+        "fixtures_evaluated": 43,
+        "player_lineup_top3": 0.5814,
+        "player_team_top3": 0.5349,
+        "improvement_pp": -0.0465
+      }
+    }
+  },
+  "elite_recheck": {
+    "uefa_player_team_top3": 0.6429,
+    "elite_threshold": 0.65,
+    "reaches_elite": false,
+    "best_test_group": "player_lineup",
+    "best_test_top3": 0.672,
+    "recommendation": "GOALSCORER_HIGH_VALUE"
+  },
+  "decision": {
+    "team_context_helps": true,
+    "team_lift_test_top3_pp": 0.0371,
+    "uefa_improvement_pp": -0.0194,
+    "positive_team_features": 1,
+    "recommendation": "GOALSCORER_HIGH_VALUE"
+  },
+  "recommendation": "GOALSCORER_HIGH_VALUE",
+  "baseline_54q": {
+    "uefa_top3": 0.5658,
+    "overall_top3": 0.5712
+  },
+  "production_changes": false,
+  "api_calls_used": 0
+}

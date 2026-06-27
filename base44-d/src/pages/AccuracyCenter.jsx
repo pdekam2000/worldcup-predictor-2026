@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import TrustWidgets from "@/components/social/TrustWidgets";
 import { motion } from "framer-motion";
-import { BarChart3, Target, CheckCircle, XCircle, Clock, RefreshCw, AlertCircle, History } from "lucide-react";
+import { BarChart3, Target, CheckCircle, XCircle, Clock, RefreshCw, AlertCircle, Archive, TrendingUp, TrendingDown } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { fetchPerformanceSummary, fetchBestTips } from "@/api/saasApi";
-import { DEV_ACCURACY_DEMO } from "@/lib/accuracyDemoData";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/AuthContext";
+import { isAdminUser, isOwnerUser } from "@/lib/roles";
 
 const chartTooltipStyle = {
   contentStyle: { background: "hsl(222, 47%, 9%)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", fontSize: "12px" },
@@ -59,11 +61,14 @@ function mapPerformancePayload(perf) {
     pending_predictions: perf.pending_count,
     accuracy_by_market: (perf.markets || []).map((m) => ({
       market: m.market_name,
+      predictions: m.predictions ?? m.total,
       total: m.total,
+      evaluated: m.evaluated ?? m.total,
       correct: m.correct,
       wrong: m.wrong,
       pending: m.pending,
-      accuracy: m.accuracy,
+      accuracy: m.accuracy ?? m.winrate,
+      average_confidence: m.average_confidence,
       sample_size: m.sample_size,
       reliability_level: m.reliability_level,
     })),
@@ -93,12 +98,12 @@ export default function AccuracyCenter() {
   const [bestTips, setBestTips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [usingDemo, setUsingDemo] = useState(false);
+  const { user } = useAuth();
+  const showOwnerDebug = isOwnerUser(user) || isAdminUser(user);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
-    setUsingDemo(false);
     try {
       const [perf, tipsPayload] = await Promise.all([
         fetchPerformanceSummary(),
@@ -106,20 +111,10 @@ export default function AccuracyCenter() {
       ]);
       const mapped = mapPerformancePayload(perf);
       setBestTips(tipsPayload?.tips || []);
-      if (isEmptySummary(mapped) && import.meta.env.DEV) {
-        setData(DEV_ACCURACY_DEMO);
-        setUsingDemo(true);
-      } else {
-        setData(mapped);
-      }
+      setData(mapped);
     } catch (err) {
-      if (import.meta.env.DEV) {
-        setData(DEV_ACCURACY_DEMO);
-        setUsingDemo(true);
-      } else {
-        setError(err instanceof Error ? err.message : "Failed to load accuracy data");
-        setData(null);
-      }
+      setError(err instanceof Error ? err.message : "Failed to load accuracy data");
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -138,10 +133,12 @@ export default function AccuracyCenter() {
     }));
 
   const stats = [
+    { label: "Total Evaluated", value: String(data?.total_predictions ?? 0), icon: BarChart3, color: "text-[#7DD3FC]", bg: "bg-[#7DD3FC]/10" },
     { label: "Overall Accuracy", value: pct(data?.overall_accuracy), icon: Target, color: "text-green-400", bg: "bg-green-500/10" },
-    { label: "Correct", value: String(data?.correct_predictions ?? 0), icon: CheckCircle, color: "text-green-400", bg: "bg-green-500/10" },
-    { label: "Wrong", value: String(data?.wrong_predictions ?? 0), icon: XCircle, color: "text-red-400", bg: "bg-red-500/10" },
+    { label: "Best Market", value: data?.best_performing_market || "—", icon: TrendingUp, color: "text-[#00E676]", bg: "bg-[#00E676]/10", small: true },
+    { label: "Worst Market", value: data?.worst_performing_market || "—", icon: TrendingDown, color: "text-red-400", bg: "bg-red-500/10", small: true },
     { label: "Pending", value: String(data?.pending_predictions ?? 0), icon: Clock, color: "text-yellow-400", bg: "bg-yellow-500/10" },
+    { label: "Last Updated", value: data?.updated_at ? new Date(data.updated_at).toLocaleDateString() : "—", icon: RefreshCw, color: "text-[#94A3B8]", bg: "bg-white/5", small: true },
   ];
 
   if (loading) {
@@ -156,24 +153,27 @@ export default function AccuracyCenter() {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold">Performance Center</h1>
+          <h1 className="text-2xl font-display font-bold">Accuracy Center</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Platform prediction performance on finished matches.
+            Real winrate by market from finished matches — quarantined test rows excluded.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
             Accuracy is calculated from finished matches only. Results are checked automatically every 30 minutes after matches finish.
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={load} className="border-white/10 rounded-lg">
-          <RefreshCw className="w-4 h-4 mr-2" /> Refresh
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Link to="/public/accuracy">
+            <Button variant="outline" size="sm" className="border-white/10 rounded-lg">
+              Public accuracy page
+            </Button>
+          </Link>
+          <Button variant="outline" size="sm" onClick={load} className="border-white/10 rounded-lg">
+            <RefreshCw className="w-4 h-4 mr-2" /> Refresh
+          </Button>
+        </div>
       </div>
 
-      {usingDemo && (
-        <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
-          Demo data — no evaluated predictions in backend yet (dev mode only).
-        </div>
-      )}
+      <TrustWidgets compact />
 
       {error && (
         <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive flex items-center gap-2">
@@ -182,22 +182,22 @@ export default function AccuracyCenter() {
         </div>
       )}
 
-      {!error && settled === 0 && !usingDemo && (
+      {!error && settled === 0 && (
         <div className="glass rounded-xl p-8 text-center">
           <BarChart3 className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-          <h2 className="font-display font-semibold text-lg">No completed prediction evaluations yet</h2>
+          <h2 className="font-display font-semibold text-lg">No evaluated predictions yet</h2>
           <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
-            Once finished matches are evaluated against stored predictions, platform accuracy will appear here.
+            Finished matches will appear here once scored. Predictions are stored in the archive as they are generated.
           </p>
-          <Link to="/history" className="inline-flex items-center gap-2 text-primary text-sm mt-4 hover:underline">
-            <History className="w-4 h-4" /> View your personal prediction history
+          <Link to="/archive" className="inline-flex items-center gap-2 text-primary text-sm mt-4 hover:underline">
+            <Archive className="w-4 h-4" /> View Prediction Archive
           </Link>
         </div>
       )}
 
-      {(settled > 0 || usingDemo) && data && (
+      {settled > 0 && data && (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             {stats.map((s, i) => (
               <motion.div key={s.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
@@ -206,7 +206,7 @@ export default function AccuracyCenter() {
                     <s.icon className={`w-4 h-4 ${s.color}`} />
                   </div>
                 </div>
-                <div className="text-2xl font-display font-bold">{s.value}</div>
+                <div className={`font-display font-bold ${s.small ? "text-sm" : "text-2xl"} truncate`}>{s.value}</div>
               </motion.div>
             ))}
           </div>
@@ -287,27 +287,35 @@ export default function AccuracyCenter() {
                   </BarChart>
                 </ResponsiveContainer>
               )}
-              <div className="mt-4 space-y-2">
-                {(data.accuracy_by_market || []).map((m) => (
-                  <div key={m.market} className="flex items-center justify-between text-sm border-b border-white/5 pb-2 gap-2">
-                    <span className="text-muted-foreground">{m.market}</span>
-                    <span className="text-right">
-                      {(m.sample_size ?? m.total ?? 0) >= 20 ? (
-                        pct(m.accuracy)
-                      ) : (
-                        <span className="text-yellow-300/90">Insufficient data</span>
-                      )}
-                      <span className="text-xs text-muted-foreground ml-2">
-                        from {m.sample_size ?? m.total ?? 0} evaluated
-                      </span>
-                      {m.reliability_level && (
-                        <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] border ${reliabilityBadge(m.reliability_level)}`}>
-                          {m.reliability_level}
-                        </span>
-                      )}
-                    </span>
-                  </div>
-                ))}
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full text-sm min-w-[640px]">
+                  <thead>
+                    <tr className="text-left text-muted-foreground text-xs border-b border-white/10">
+                      <th className="pb-2">Market</th>
+                      <th className="pb-2">Predictions</th>
+                      <th className="pb-2">Evaluated</th>
+                      <th className="pb-2">Correct</th>
+                      <th className="pb-2">Wrong</th>
+                      <th className="pb-2">Pending</th>
+                      <th className="pb-2">Winrate</th>
+                      <th className="pb-2">Avg conf</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(data.accuracy_by_market || []).map((m) => (
+                      <tr key={m.market} className="border-b border-white/5">
+                        <td className="py-2">{m.market}</td>
+                        <td className="py-2 tabular-nums">{m.predictions ?? m.total ?? 0}</td>
+                        <td className="py-2 tabular-nums">{m.evaluated ?? m.total ?? 0}</td>
+                        <td className="py-2 tabular-nums text-green-400">{m.correct ?? 0}</td>
+                        <td className="py-2 tabular-nums text-red-400">{m.wrong ?? 0}</td>
+                        <td className="py-2 tabular-nums text-yellow-300">{m.pending ?? 0}</td>
+                        <td className="py-2 tabular-nums">{(m.sample_size ?? 0) >= 1 ? pct(m.accuracy) : "—"}</td>
+                        <td className="py-2 tabular-nums">{m.average_confidence != null ? `${m.average_confidence}%` : "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -342,11 +350,23 @@ export default function AccuracyCenter() {
               <p className="text-xs text-muted-foreground mt-4 pt-4 border-t border-white/10">
                 {data.disclaimer || "Accuracy is calculated from finished matches only."}
               </p>
-              <Link to="/history" className="inline-flex items-center gap-2 text-primary text-sm mt-4 hover:underline">
-                <History className="w-4 h-4" /> Your personal history
+              <Link to="/archive" className="inline-flex items-center gap-2 text-primary text-sm mt-4 hover:underline">
+                <Archive className="w-4 h-4" /> Prediction Archive
               </Link>
             </div>
           </div>
+
+          {showOwnerDebug && (
+            <div className="glass rounded-xl p-5 border border-amber-500/20">
+              <h2 className="font-display font-semibold mb-3 text-amber-200">Owner debug</h2>
+              <dl className="grid sm:grid-cols-2 gap-3 text-sm">
+                <div><dt className="text-muted-foreground text-xs">Data source</dt><dd>{data.data_source || "—"}</dd></div>
+                <div><dt className="text-muted-foreground text-xs">API version</dt><dd>{data.version || "—"}</dd></div>
+                <div><dt className="text-muted-foreground text-xs">Evaluation source</dt><dd>worldcup_prediction_evaluations (quarantined excluded)</dd></div>
+                <div><dt className="text-muted-foreground text-xs">Snapshots</dt><dd>{data.snapshot_count ?? 0}</dd></div>
+              </dl>
+            </div>
+          )}
 
           <div className="glass rounded-xl p-5">
             <h2 className="font-display font-semibold mb-4">Best Tips</h2>

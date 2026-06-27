@@ -1,0 +1,41 @@
+# Phase A19B — AI Assistant alert scan (production)
+#
+# Install:
+#   sudo bash scripts/install_phase_a19b_assistant_alert_timer.sh
+#
+# Manual run:
+#   sudo -u www-data bash -lc 'cd /opt/worldcup-predictor && .venv/bin/python main.py assistant-alert-scan'
+#
+# Rollback:
+#   sudo systemctl disable --now worldcup-assistant-alert-scan.timer
+#   sudo rm /etc/systemd/system/worldcup-assistant-alert-scan.service
+#   sudo rm /etc/systemd/system/worldcup-assistant-alert-scan.timer
+#   sudo systemctl daemon-reload
+
+[Unit]
+Description=AI Assistant watchlist alert scan (Phase A19B)
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/opt/worldcup-predictor/main.py
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=-/opt/worldcup-predictor/.env.production
+Environment=APP_ENV=production
+Environment=PYTHONUNBUFFERED=1
+RuntimeDirectory=worldcup
+RuntimeDirectoryMode=0755
+Environment=ASSISTANT_ALERT_SCAN_LOCK=/run/worldcup/assistant-alert-scan.lock
+# Overlap guard: Python scan_job uses flock on ASSISTANT_ALERT_SCAN_LOCK
+ExecStart=/opt/worldcup-predictor/.venv/bin/python main.py assistant-alert-scan
+Nice=10
+TimeoutStartSec=600
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-assistant-alert-scan
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,39 @@
+{
+  "$schema": "elite_shadow_prediction_v1",
+  "required": [
+    "fixture_id",
+    "competition_key",
+    "generated_at",
+    "markets",
+    "fusion"
+  ],
+  "market_fields": {
+    "prediction": "Market-specific pick or ranked list",
+    "confidence": "Fused scalar 0\u20131",
+    "tier": "A | B | C | D",
+    "evidence": "Structured facts supporting the pick",
+    "reasoning": "Human-readable bullet strings",
+    "component_contributions": [
+      {
+        "component_id": "str",
+        "weight": "float 0\u20131",
+        "prediction": "component-level pick",
+        "confidence": "float",
+        "evidence": "dict"
+      }
+    ]
+  },
+  "fusion_block": {
+    "model_agreement": "float",
+    "market_agreement": "float",
+    "mbi_prior_applied": "bool",
+    "mbi_blend_weight": "float",
+    "odds_confidence": "float",
+    "data_quality": "float",
+    "overall_tier": "A-D"
+  },
+  "storage": {
+    "path": "data/shadow/elite_orchestrator_predictions.jsonl",
+    "format": "one JSON object per fixture per run"
+  }
+}

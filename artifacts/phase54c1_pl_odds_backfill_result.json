@@ -1,0 +1,114 @@
+{
+  "started_at": "2026-06-23T18:10:54.850141+00:00",
+  "finished_at": "2026-06-23T18:17:17.632168+00:00",
+  "args": {
+    "league_id": 39,
+    "season": null,
+    "limit_fixtures": 380,
+    "max_api_calls": 400,
+    "fixture_ids": null
+  },
+  "backfill": {
+    "phase": "54C-1",
+    "mode": "odds_only",
+    "competition_key": "premier_league",
+    "league_id": 39,
+    "season": null,
+    "targets": 380,
+    "pl_odds_fixtures_before": 0,
+    "pl_odds_fixtures_after": 0,
+    "pl_odds_snapshot_fixtures": 0,
+    "odds_snapshots_created": 0,
+    "odds_snapshots_skipped_existing": 0,
+    "odds_snapshots_empty": 380,
+    "odds_snapshots_error": 0,
+    "skipped_api_cap": 0,
+    "api_calls_live": 380,
+    "api_calls_cache": 0,
+    "pl_odds_cache_backfill": {
+      "pl_fixtures_with_cached_odds": 0,
+      "odds_snapshots_created": 0,
+      "odds_snapshots_skipped_existing": 0
+    },
+    "manifest_path": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\phase54c1_pl_odds_backfill_manifest.jsonl",
+    "finished_at": "2026-06-23T18:17:17.632168+00:00"
+  },
+  "utilization_before": {
+    "competition_key": "premier_league",
+    "fixtures_audited": 380,
+    "provider_feature_store": {
+      "fixtures": 380,
+      "coverage_pct": {
+        "xg": 0.0,
+        "pressure": 0.0,
+        "odds": 0.0,
+        "advanced_stats": 3.16,
+        "lineups": 3.16,
+        "injuries": 0.0,
+        "events": 94.47
+      },
+      "coverage_count": {
+        "xg": 0,
+        "pressure": 0,
+        "odds": 0,
+        "advanced_stats": 12,
+        "lineups": 12,
+        "injuries": 0,
+        "events": 359
+      }
+    },
+    "egie_feature_builder_sample_n": 50,
+    "egie_feature_builder_flags_pct": {
+      "has_reliable_goal_odds": 0.0,
+      "sportmonks_xg_in_sample": 0.0,
+      "stored_goal_events": 100.0,
+      "provider_features_attached": 100.0
+    },
+    "pipeline_gaps": [
+      "Sportmonks xG stored but not reaching EGIE features for most fixtures",
+      "Pressure Index not available in stored raw data",
+      "Lineups barely ingested into EGIE raw store",
+      "Injuries barely ingested into EGIE raw store",
+      "API-Football fixture statistics rarely in EGIE raw store"
+    ]
+  },
+  "utilization_after": {
+    "competition_key": "premier_league",
+    "fixtures_audited": 380,
+    "provider_feature_store": {
+      "fixtures": 380,
+      "coverage_pct": {
+        "xg": 0.0,
+        "pressure": 0.0,
+        "odds": 0.0,
+        "advanced_stats": 3.16,
+        "lineups": 3.16,
+        "injuries": 0.0,
+        "events": 94.47
+      },
+      "coverage_count": {
+        "xg": 0,
+        "pressure": 0,
+        "odds": 0,
+        "advanced_stats": 12,
+        "lineups": 12,
+        "injuries": 0,
+        "events": 359
+      }
+    },
+    "egie_feature_builder_sample_n": 50,
+    "egie_feature_builder_flags_pct": {
+      "has_reliable_goal_odds": 0.0,
+      "sportmonks_xg_in_sample": 0.0,
+      "stored_goal_events": 100.0,
+      "provider_features_attached": 100.0
+    },
+    "pipeline_gaps": [
+      "Sportmonks xG stored but not reaching EGIE features for most fixtures",
+      "Pressure Index not available in stored raw data",
+      "Lineups barely ingested into EGIE raw store",
+      "Injuries barely ingested into EGIE raw store",
+      "API-Football fixture statistics rarely in EGIE raw store"
+    ]
+  }
+}

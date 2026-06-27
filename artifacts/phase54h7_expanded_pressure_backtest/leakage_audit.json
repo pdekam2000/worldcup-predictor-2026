@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-06-24T07:40:58.130577+00:00",
+  "status": "PASS",
+  "all_pass": true,
+  "fixtures_audited": 153,
+  "checks": [
+    {
+      "name": "no_forbidden_keys_in_prematch_features",
+      "pass": true,
+      "detail": "forbidden_keys_found=[]"
+    },
+    {
+      "name": "prematch_first_fixture_no_pressure_history",
+      "pass": true,
+      "detail": "violations=0"
+    },
+    {
+      "name": "inplay_uses_pressure_before_target_only",
+      "pass": true,
+      "detail": "checked=139 violations=0"
+    },
+    {
+      "name": "no_final_score_in_feature_columns",
+      "pass": true,
+      "detail": "pressure_feature_names_clean"
+    },
+    {
+      "name": "no_future_fixture_leakage",
+      "pass": true,
+      "detail": "prematch_uses_strictly_prior_fixtures"
+    }
+  ]
+}

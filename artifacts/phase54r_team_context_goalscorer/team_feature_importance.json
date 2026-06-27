@@ -1,0 +1,113 @@
+{
+  "baseline_top3": 0.6667,
+  "feature_impacts": {
+    "team_attack_strength": -0.0053,
+    "team_defensive_weakness": 0.0,
+    "team_recent_goals_scored": 0.0,
+    "team_recent_goals_conceded": -0.0053,
+    "team_rolling_xg": -0.0053,
+    "team_rolling_xga": -0.0053,
+    "team_league_position": -0.0053,
+    "team_elo_strength": 0.0,
+    "team_home_attack": 0.0,
+    "team_away_attack": 0.0,
+    "is_home": 0.0053,
+    "is_favorite": -0.0105,
+    "is_underdog": -0.0053,
+    "team_attacking_share": -0.0053
+  },
+  "verdicts": {
+    "team_attack_strength": "harmful",
+    "team_defensive_weakness": "neutral",
+    "team_recent_goals_scored": "neutral",
+    "team_recent_goals_conceded": "harmful",
+    "team_rolling_xg": "harmful",
+    "team_rolling_xga": "harmful",
+    "team_league_position": "harmful",
+    "team_elo_strength": "neutral",
+    "team_home_attack": "neutral",
+    "team_away_attack": "neutral",
+    "is_home": "positive",
+    "is_favorite": "harmful",
+    "is_underdog": "harmful",
+    "team_attacking_share": "harmful"
+  },
+  "positive": [
+    "is_home"
+  ],
+  "neutral": [
+    "team_defensive_weakness",
+    "team_recent_goals_scored",
+    "team_elo_strength",
+    "team_home_attack",
+    "team_away_attack"
+  ],
+  "harmful": [
+    "team_attack_strength",
+    "team_recent_goals_conceded",
+    "team_rolling_xg",
+    "team_rolling_xga",
+    "team_league_position",
+    "is_favorite",
+    "is_underdog",
+    "team_attacking_share"
+  ],
+  "ranked": [
+    [
+      "is_home",
+      0.0053
+    ],
+    [
+      "team_defensive_weakness",
+      0.0
+    ],
+    [
+      "team_recent_goals_scored",
+      0.0
+    ],
+    [
+      "team_elo_strength",
+      0.0
+    ],
+    [
+      "team_home_attack",
+      0.0
+    ],
+    [
+      "team_away_attack",
+      0.0
+    ],
+    [
+      "team_attack_strength",
+      -0.0053
+    ],
+    [
+      "team_recent_goals_conceded",
+      -0.0053
+    ],
+    [
+      "team_rolling_xg",
+      -0.0053
+    ],
+    [
+      "team_rolling_xga",
+      -0.0053
+    ],
+    [
+      "team_league_position",
+      -0.0053
+    ],
+    [
+      "is_underdog",
+      -0.0053
+    ],
+    [
+      "team_attacking_share",
+      -0.0053
+    ],
+    [
+      "is_favorite",
+      -0.0105
+    ]
+  ]
+}

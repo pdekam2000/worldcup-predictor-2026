@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-06-23T10:18:50.533084+00:00",
+  "features": {
+    "odds": {
+      "coverage_pct": 4.28,
+      "missing_pct": 95.72,
+      "usable_pct": 84.09,
+      "notes": "API-Football enrichment odds 4.3%; UEFA Sportmonks cache strong"
+    },
+    "closing_odds": {
+      "coverage_pct": 56.76,
+      "missing_pct": 43.24,
+      "usable_pct": 56.76,
+      "notes": "UEFA K2 closing MW coverage on mapped fixtures"
+    },
+    "sharp_odds": {
+      "coverage_pct": 56.76,
+      "missing_pct": 43.24,
+      "usable_pct": 56.76,
+      "notes": "Sharp MW 78.7% FG accuracy; primary signal"
+    },
+    "events": {
+      "coverage_pct": 90.97,
+      "missing_pct": 9.03,
+      "usable_pct": 94.47,
+      "notes": "fixture_goal_events + enrichment events"
+    },
+    "lineups": {
+      "coverage_pct": 90.91,
+      "missing_pct": 9.09,
+      "usable_pct": 3.16,
+      "notes": "Enrichment lineups high; EGIE provider lineups 3.16%"
+    },
+    "injuries": {
+      "coverage_pct": 0.0,
+      "missing_pct": 100.0,
+      "usable_pct": 0.0
+    },
+    "statistics": {
+      "coverage_pct": 90.91,
+      "missing_pct": 9.09,
+      "usable_pct": 90.9
+    },
+    "xg": {
+      "coverage_pct": 0.0,
+      "missing_pct": 96.4,
+      "usable_pct": 3.6,
+      "notes": "Primary bottleneck per API-J"
+    },
+    "pressure": {
+      "coverage_pct": 0.0,
+      "missing_pct": 100.0,
+      "usable_pct": 0.0
+    },
+    "predictions": {
+      "coverage_pct": 6.41,
+      "missing_pct": 95.0,
+      "usable_pct": 4.16,
+      "notes": "Live WC predictions; limited verified outcomes"
+    }
+  },
+  "enrichment_denominator": 1684
+}

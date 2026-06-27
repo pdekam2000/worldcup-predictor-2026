@@ -1,0 +1,293 @@
+{
+  "generated_at": "2026-06-22T12:40:00.961145+00:00",
+  "mode": "read_only_no_api",
+  "production_commit": "a6053cda09439b24cc7554f47f74cc85d849ec74",
+  "premier_league_fixtures": {
+    "total_fixtures": 380,
+    "finished_fixtures": 380,
+    "upcoming_fixtures": 0,
+    "live_fixtures": 0,
+    "finished_with_goal_events": 0,
+    "finished_missing_goal_events": 380,
+    "goal_event_coverage_pct": 0.0,
+    "with_first_goal_minute": 0,
+    "by_season_status": [
+      {
+        "season": 2023,
+        "status": "FT",
+        "count": 380
+      }
+    ],
+    "kickoff_range": {
+      "min_kickoff": "2023-08-11T19:00:00",
+      "max_kickoff": "2024-05-19T15:00:00"
+    },
+    "audit_time_utc": "2026-06-22T12:40:00.407075"
+  },
+  "egie_postgres": {
+    "configured": true,
+    "ingest_runs": 1,
+    "raw_rows_total": 482,
+    "pl_by_resource_type": {
+      "events": 25,
+      "fixtures": 381,
+      "fixture_statistics": 25,
+      "injuries": 25,
+      "lineups": 25,
+      "standings": 1
+    },
+    "pl_fixtures_with_events": 25,
+    "last_ingest_run": {
+      "status": "completed",
+      "stats": {
+        "rows_saved": 482,
+        "api_calls_live": 102,
+        "resource_counts": {
+          "events": 25,
+          "lineups": 25,
+          "fixtures": 381,
+          "injuries": 25,
+          "standings": 1,
+          "fixture_statistics": 25
+        },
+        "fixtures_processed": 25,
+        "rows_skipped_duplicate": 0
+      },
+      "started_at": "2026-06-22 12:28:48.559736+00:00"
+    }
+  },
+  "stored_vs_api_fill": {
+    "finished_missing_goal_events_sqlite": 380,
+    "fillable_from_egie_postgres": 0,
+    "would_require_api_football": 380,
+    "egie_event_fixture_ids": 25
+  },
+  "data_quality_sample": {
+    "sample_size": 40,
+    "min_data_quality_threshold": 0.45,
+    "average_data_quality_score": 0.4929,
+    "median_data_quality_score": 0.4929,
+    "best_fixtures": [
+      {
+        "fixture_id": 1035523,
+        "home_team": "Wolves",
+        "away_team": "Luton",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      },
+      {
+        "fixture_id": 1035516,
+        "home_team": "Everton",
+        "away_team": "Brentford",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      },
+      {
+        "fixture_id": 1035515,
+        "home_team": "Aston Villa",
+        "away_team": "Chelsea",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      },
+      {
+        "fixture_id": 1035514,
+        "home_team": "Bournemouth",
+        "away_team": "Brighton",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      },
+      {
+        "fixture_id": 1035521,
+        "home_team": "Tottenham",
+        "away_team": "Arsenal",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      }
+    ],
+    "worst_fixtures": [
+      {
+        "fixture_id": 1035553,
+        "home_team": "Sheffield Utd",
+        "away_team": "Tottenham",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      },
+      {
+        "fixture_id": 1035552,
+        "home_team": "Manchester City",
+        "away_team": "West Ham",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      },
+      {
+        "fixture_id": 1035551,
+        "home_team": "Luton",
+        "away_team": "Fulham",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      },
+      {
+        "fixture_id": 1035550,
+        "home_team": "Liverpool",
+        "away_team": "Wolves",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      },
+      {
+        "fixture_id": 1035549,
+        "home_team": "Crystal Palace",
+        "away_team": "Aston Villa",
+        "data_quality_score": 0.4929,
+        "would_publish": true
+      }
+    ],
+    "would_publish_count": 40,
+    "no_pick_count": 0,
+    "common_missing_manifest_fields": {
+      "stored_goal_events": 40,
+      "api_football_fallback_used": 40,
+      "sportmonks_xg_in_sample": 40
+    },
+    "no_pick_reason_counts": {
+      "missing_stored_goal_events": 40,
+      "home_no_goal_minute_history": 40,
+      "away_no_goal_minute_history": 40
+    }
+  },
+  "upcoming_picks_readiness": {
+    "audit_time_utc": "2026-06-22T12:40:09.404334",
+    "upcoming_in_sqlite": 0,
+    "upcoming_sample": [],
+    "would_publish_from_upcoming": 0,
+    "no_pick_from_upcoming": 0,
+    "live_api_picks_count": 0
+  },
+  "api_usage_estimates": {
+    "base_calls_standings_and_fixture_list": 2,
+    "per_finished_fixture_max_detail_calls": 4,
+    "incremental_batches_max_live_calls": {
+      "10": 42,
+      "25": 102,
+      "50": 202,
+      "100": 402
+    },
+    "full_pl_missing_events_max_calls": 1522,
+    "safe_first_batch_recommendation": {
+      "batch_size": 25,
+      "max_live_api_calls": 102,
+      "note": "Target late-season / team-relevant fixtures; first-25 API order had zero overlap with probe teams in pilot."
+    }
+  },
+  "goal_timing_coverage_api": {
+    "phase": "51C",
+    "allowed_leagues": [
+      "premier_league",
+      "la_liga",
+      "bundesliga",
+      "serie_a",
+      "ligue_1",
+      "eredivisie",
+      "liga_portugal",
+      "champions_league",
+      "europa_league"
+    ],
+    "totals": {
+      "finished_matches": 1612,
+      "with_goal_events": 0,
+      "with_first_goal_minute": 0,
+      "goal_event_coverage_pct": 0.0
+    },
+    "leagues": [
+      {
+        "competition_key": "premier_league",
+        "name": "Premier League",
+        "finished_matches": 380,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "la_liga",
+        "name": "La Liga",
+        "finished_matches": 0,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "bundesliga",
+        "name": "Bundesliga",
+        "finished_matches": 1232,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "serie_a",
+        "name": "Serie A",
+        "finished_matches": 0,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "ligue_1",
+        "name": "Ligue 1",
+        "finished_matches": 0,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "eredivisie",
+        "name": "Eredivisie",
+        "finished_matches": 0,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "liga_portugal",
+        "name": "Liga Portugal",
+        "finished_matches": 0,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "champions_league",
+        "name": "UEFA Champions League",
+        "finished_matches": 0,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      },
+      {
+        "competition_key": "europa_league",
+        "name": "UEFA Europa League",
+        "finished_matches": 0,
+        "with_goal_events": 0,
+        "with_first_goal_minute": 0,
+        "goal_event_coverage_pct": 0.0
+      }
+    ],
+    "missing_data_gaps": [
+      "Low goal-event coverage for premier_league (0.0%)",
+      "No finished matches stored for la_liga",
+      "Low goal-event coverage for bundesliga (0.0%)",
+      "No finished matches stored for serie_a",
+      "No finished matches stored for ligue_1",
+      "No finished matches stored for eredivisie",
+      "No finished matches stored for liga_portugal",
+      "No finished matches stored for champions_league",
+      "No finished matches stored for europa_league"
+    ],
+    "sportmonks": {
+      "sportmonks_configured": true,
+      "mass_import_enabled": false,
+      "xg_snapshots_in_sample": 0,
+      "sample_size": 0,
+      "note": "Sportmonks goal-timing enrichment is probe-only in Phase 51C. Enable targeted fetch in a later phase after coverage is confirmed."
+    }
+  }
+}

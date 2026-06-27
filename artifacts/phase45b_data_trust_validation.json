@@ -1,0 +1,112 @@
+{
+  "phase": "45B",
+  "passed": 21,
+  "total": 21,
+  "checks": [
+    {
+      "name": "bogus_row_detected",
+      "ok": true,
+      "detail": "known_validation_fixture"
+    },
+    {
+      "name": "quarantine_pass_runs",
+      "ok": true,
+      "detail": "quarantined=1"
+    },
+    {
+      "name": "bogus_row_quarantined_flag",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public_list_excludes_quarantined",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "summary_no_fake_100",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "summary_winrate_null",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "performance_no_fake_accuracy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "performance_empty_message",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public_accuracy_empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "public_empty_message",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "learning_insufficient_data",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "learning_trust_message",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "result_refresh_dry_run",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "evaluation_idempotent",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "real_eval_not_quarantined",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "dashboard_translate_no",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "dashboard_empty_trend_text",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "accuracy_empty_state",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "accuracy_30min_note",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "learning_ui_insufficient_guard",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "stripe_live_key_present",
+      "ok": true,
+      "detail": "no local .env.production \u2014 skipped"
+    }
+  ]
+}

@@ -33,12 +33,12 @@ export default function QuotaChip() {
   return (
     <Link
       to="/subscription"
-      className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-xs"
-      title="View subscription"
+      className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg border border-amber-200/80 bg-amber-50/80 hover:bg-amber-100/80 transition-colors text-xs"
+      title="View subscription and quota"
     >
-      <Zap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-      <span className="text-muted-foreground">{planLabel}</span>
-      <span className="text-foreground font-medium tabular-nums">
+      <Zap className="w-3.5 h-3.5 text-amber-700 flex-shrink-0" />
+      <span className="text-slate-600 hidden xs:inline">{planLabel}</span>
+      <span className="text-slate-900 font-medium tabular-nums">
         {remaining}/{limit}
       </span>
     </Link>

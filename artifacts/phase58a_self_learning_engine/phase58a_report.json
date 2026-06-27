@@ -1,0 +1,48 @@
+{
+  "generated_at": "2026-06-25T03:12:40.045968+00:00",
+  "phase": "58A",
+  "fixtures_evaluated": 1004,
+  "component_scores": 180,
+  "weight_recommendations": 23,
+  "decision": {
+    "can_become_self_learning": true,
+    "components_to_adapt": [
+      "first_goal_team_v2",
+      "egie_historical_baseline",
+      "goalscorer_intelligence",
+      "odds_intelligence",
+      "market_behavior_intelligence",
+      "lineup_intelligence",
+      "first_goal_team_v2",
+      "egie_historical_baseline",
+      "goalscorer_intelligence",
+      "odds_intelligence",
+      "market_behavior_intelligence",
+      "lineup_intelligence"
+    ],
+    "components_to_reduce": [],
+    "weight_evolution": "Slow shadow-only EMA (lr=0.02, max_delta=5%) with renormalization",
+    "safeguards": [
+      "shadow_only_gate",
+      "max_delta_cap",
+      "min_sample_floor",
+      "weight_bounds",
+      "tier_calibration_check",
+      "league_isolation",
+      "human_approval_gate",
+      "no_model_retrain"
+    ],
+    "recommendation": "SELF_LEARNING_READY"
+  },
+  "recommendation": "SELF_LEARNING_READY",
+  "store_paths": {
+    "patterns": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\elite_learning_store\\patterns.json",
+    "component_health": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\elite_learning_store\\component_health.json",
+    "market_health": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\elite_learning_store\\market_health.json",
+    "league_health": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\elite_learning_store\\league_health.json",
+    "calibration": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\elite_learning_store\\confidence_calibration.json",
+    "weights": "C:\\Users\\kaman\\Desktop\\Footbal\\data\\shadow\\elite_learning_store\\adaptive_weight_recommendations.json"
+  },
+  "production_changes": false,
+  "api_calls_used": 0
+}

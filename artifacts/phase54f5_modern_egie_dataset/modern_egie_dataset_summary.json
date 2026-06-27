@@ -1,0 +1,62 @@
+{
+  "phase": "54F-5",
+  "candidate_fixtures": 238,
+  "usable_fixtures": 126,
+  "unusable_fixtures": 112,
+  "rolling_xg_coverage_pct": 52.94,
+  "by_league": {
+    "champions_league": {
+      "usable": 46,
+      "rolling_xg": 46
+    },
+    "conference_league": {
+      "usable": 5,
+      "rolling_xg": 5
+    },
+    "europa_league": {
+      "usable": 54,
+      "rolling_xg": 54
+    },
+    "world_cup": {
+      "usable": 21,
+      "rolling_xg": 21
+    }
+  },
+  "by_season": {
+    "23619": {
+      "usable": 14,
+      "rolling_xg": 14
+    },
+    "23620": {
+      "usable": 16,
+      "rolling_xg": 16
+    },
+    "25580": {
+      "usable": 32,
+      "rolling_xg": 32
+    },
+    "25581": {
+      "usable": 5,
+      "rolling_xg": 5
+    },
+    "25582": {
+      "usable": 38,
+      "rolling_xg": 38
+    },
+    "26618": {
+      "usable": 21,
+      "rolling_xg": 21
+    }
+  },
+  "first_goal_team_labeled": 115,
+  "goal_range_labeled": 115,
+  "team_goals_labeled": 126,
+  "leakage_safe_count": 126,
+  "threshold_30_met": true,
+  "threshold_50_preferred": true,
+  "paths": {
+    "parquet": "artifacts\\phase54f5_modern_egie_dataset\\modern_egie_dataset.parquet",
+    "csv": "artifacts\\phase54f5_modern_egie_dataset\\modern_egie_dataset.csv",
+    "unusable": "artifacts\\phase54f5_modern_egie_dataset\\modern_egie_unusable_fixtures.csv"
+  }
+}

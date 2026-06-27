@@ -30,6 +30,15 @@ TIMER_UNIT = "worldcup-autonomous.timer"
 SERVICE_UNIT = "worldcup-autonomous.service"
 
 
+def _safe_bucket_line(row: dict[str, Any]) -> str:
+    parts = []
+    for k in ("favorite_win_pct", "over_25_pct", "btts_yes_pct"):
+        v = row.get(k)
+        if v is not None:
+            parts.append(f"{k.replace('_', ' ')}: {v}%")
+    return " · ".join(parts[:3]) if parts else ""
+
+
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -307,6 +316,53 @@ class OwnerPlatformService:
 
         return build_promotion_status(settings=self.settings)
 
+    def performance_center(self) -> dict[str, Any]:
+        from worldcup_predictor.database.repository import FootballIntelligenceRepository
+        from worldcup_predictor.owner.dashboard_metrics import build_performance_center_payload
+
+        cert = self.performance.certification_summary()
+        repo = FootballIntelligenceRepository(self.settings.sqlite_path or None)
+        try:
+            payload = build_performance_center_payload(
+                store=self.store,
+                repo=repo,
+                cert_summary=cert,
+            )
+        finally:
+            repo.close()
+        payload["status"] = "ok"
+        payload["latest_evaluated"] = cert.get("latest_evaluated") or []
+        payload["generated_at"] = _utc_now()
+        payload["disclaimer"] = cert.get("disclaimer")
+        return payload
+
+    def health_dashboard(self) -> dict[str, Any]:
+        from worldcup_predictor.owner.dashboard_metrics import build_health_cards
+
+        monitoring = self.monitoring()
+        overview: dict[str, Any] = {"status": "ok", "health": {}, "autonomous": {}}
+        try:
+            overview = self.overview()
+        except Exception as exc:
+            overview["health"] = {
+                "postgres": "down",
+                "api": "operational",
+                "overview_error": str(exc),
+            }
+            overview["autonomous"] = self.autonomous_status()
+        cards = build_health_cards(
+            overview=overview,
+            monitoring=monitoring,
+            autonomous=overview.get("autonomous") or {},
+        )
+        return {
+            "status": "ok",
+            "cards": cards,
+            "overview": overview,
+            "monitoring": monitoring,
+            "generated_at": _utc_now(),
+        }
+
     def betting_intelligence(self) -> dict[str, Any]:
         from worldcup_predictor.research.betting_intelligence import build_betting_intelligence
 
@@ -398,10 +454,20 @@ class OwnerPlatformService:
         return {"status": "ok", "notifications": items}
 
     def model_center(self) -> dict[str, Any]:
+        from worldcup_predictor.owner.dashboard_metrics import (
+            build_market_row,
+            load_shadow_jsonl_stats,
+            load_store_totals,
+        )
+
         cert = self.performance.certification_summary()
         levels = cert.get("certification_levels") or {}
         markets = cert.get("markets") or {}
         engines = cert.get("engines") or {}
+        conn = self.store._conn  # noqa: SLF001
+        shadow_stats = load_shadow_jsonl_stats()
+        shadow_by_market = shadow_stats.get("predictions_by_market") or {}
+        store_totals = load_store_totals(conn)
 
         production_markets = [
             "1x2",
@@ -418,22 +484,17 @@ class OwnerPlatformService:
         ]
 
         def _market_rows(engine_key: str, market_list: list[str]) -> list[dict[str, Any]]:
-            rows = []
-            for m in market_list:
-                key = f"{engine_key}:{m}"
-                metrics = markets.get(key) or markets.get(m) or {}
-                rows.append(
-                    {
-                        "market": m,
-                        "predictions": metrics.get("total") or metrics.get("predictions") or 0,
-                        "evaluated": metrics.get("evaluated") or 0,
-                        "pending": metrics.get("pending") or 0,
-                        "winrate": metrics.get("winrate"),
-                        "roi": metrics.get("roi"),
-                        "certification": levels.get(key) or levels.get(m) or "BLOCKED",
-                    }
+            return [
+                build_market_row(
+                    markets=markets,
+                    levels=levels,
+                    engine=engine_key,
+                    market=m,
+                    conn=conn,
+                    shadow_by_market=shadow_by_market if engine_key == "elite_shadow" else None,
                 )
-            return rows
+                for m in market_list
+            ]
 
         trusted = []
         needs_data = []
@@ -468,10 +529,15 @@ class OwnerPlatformService:
                 "needs_more_results": needs_data[:20],
                 "no_bet_or_paper_only": no_bet[:20],
             },
+            "data_sources": {
+                **store_totals,
+                "shadow_jsonl": shadow_stats,
+            },
             "generated_at": _utc_now(),
         }
 
     def research_lab(self, *, refresh_value: bool = False) -> dict[str, Any]:
+        from worldcup_predictor.owner.dashboard_metrics import format_first_goal_timing_ui
         from worldcup_predictor.research.value_intelligence import load_value_summary, run_value_intelligence
 
         value_summary = load_value_summary()
@@ -508,14 +574,55 @@ class OwnerPlatformService:
         except Exception as exc:
             betting_summary = {"error": str(exc)}
 
+        timing_ui = format_first_goal_timing_ui(timing_summary if isinstance(timing_summary, dict) else None)
+        value_cards = []
+        if isinstance(value_summary, dict):
+            for key, val in (value_summary.get("overall") or {}).items():
+                try:
+                    n = float(val)
+                    display = f"{n:.1f}%" if not (n != n) else "N/A"
+                except (TypeError, ValueError):
+                    display = "N/A"
+                value_cards.append({"key": key, "label": key.replace("_", " "), "value": display})
+            for row in (value_summary.get("favorite_buckets") or [])[:12]:
+                value_cards.append(
+                    {
+                        "key": f"bucket_{row.get('bucket')}",
+                        "label": str(row.get("bucket") or "bucket"),
+                        "value": f"{row.get('match_count', 0)} matches",
+                        "sub": _safe_bucket_line(row),
+                    }
+                )
+
+        odds_cards = []
+        if isinstance(odds_summary, dict):
+            fav = odds_summary.get("favorite_bucket_stats") or odds_summary
+            if isinstance(fav, dict):
+                for label, stats in list(fav.items())[:10]:
+                    if not isinstance(stats, dict):
+                        continue
+                    odds_cards.append(
+                        {
+                            "label": str(label),
+                            "matches": stats.get("match_count", 0),
+                            "favorite_win_pct": stats.get("favorite_win_pct"),
+                            "over_25_pct": stats.get("over_25_pct"),
+                        }
+                    )
+
         return {
             "status": "ok",
             "disclaimer": "Research only — not betting advice.",
             "first_goal_timing": timing_summary,
+            "first_goal_timing_ui": timing_ui,
             "odds_buckets": odds_summary,
+            "odds_cards": odds_cards,
             "value_intelligence": value_summary,
+            "value_cards": value_cards,
             "betting_intelligence": betting_summary,
             "ev_bucket_summary": (betting_summary or {}).get("summary", {}).get("ev_buckets"),
+            "ev_pipeline_audit": (betting_summary or {}).get("ev_pipeline_audit"),
+            "betting_audit": (betting_summary or {}).get("audit"),
             "model_vs_market_edge": (betting_summary or {}).get("summary"),
             "warnings": warnings,
             "generated_at": _utc_now(),

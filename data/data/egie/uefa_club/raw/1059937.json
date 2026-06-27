@@ -1,0 +1,177 @@
+{
+  "sportmonks_fixture_id": 1059937,
+  "fetched_at": "2026-06-23T07:01:27.289987+00:00",
+  "status_code": 200,
+  "payload": {
+    "data": {
+      "id": 1059937,
+      "sport_id": 1,
+      "league_id": 5,
+      "season_id": 5326,
+      "stage_id": 9960,
+      "group_id": null,
+      "aggregate_id": 25141,
+      "round_id": null,
+      "state_id": 5,
+      "venue_id": null,
+      "name": "Basel vs Siroki Brijeg",
+      "starting_at": "2005-09-14 22:00:00",
+      "result_info": "Basel won after full-time.",
+      "leg": "1/2",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1126735200,
+      "participants": [
+        {
+          "id": 468,
+          "sport_id": 1,
+          "country_id": 62,
+          "venue_id": 9553,
+          "gender": "male",
+          "name": "Basel",
+          "short_code": "BAS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/20/468.png",
+          "founded": 1893,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-17 14:30:00",
+          "meta": {
+            "location": "home",
+            "winner": true,
+            "position": null
+          }
+        },
+        {
+          "id": 6885,
+          "sport_id": 1,
+          "country_id": 507,
+          "venue_id": 4505,
+          "gender": "male",
+          "name": "Siroki Brijeg",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/5/6885.png",
+          "founded": 1948,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2026-05-25 16:00:00",
+          "meta": {
+            "location": "away",
+            "winner": false,
+            "position": null
+          }
+        }
+      ],
+      "scores": [
+        {
+          "id": 5661936,
+          "fixture_id": 1059937,
+          "type_id": 1,
+          "participant_id": 468,
+          "score": {
+            "goals": 0,
+            "participant": "home"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661941,
+          "fixture_id": 1059937,
+          "type_id": 1525,
+          "participant_id": 6885,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661939,
+          "fixture_id": 1059937,
+          "type_id": 2,
+          "participant_id": 6885,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "2ND_HALF"
+        },
+        {
+          "id": 5661940,
+          "fixture_id": 1059937,
+          "type_id": 1525,
+          "participant_id": 468,
+          "score": {
+            "goals": 5,
+            "participant": "home"
+          },
+          "description": "CURRENT"
+        },
+        {
+          "id": 5661937,
+          "fixture_id": 1059937,
+          "type_id": 1,
+          "participant_id": 6885,
+          "score": {
+            "goals": 0,
+            "participant": "away"
+          },
+          "description": "1ST_HALF"
+        },
+        {
+          "id": 5661938,
+          "fixture_id": 1059937,
+          "type_id": 2,
+          "participant_id": 468,
+          "score": {
+            "goals": 5,
+            "participant": "home"
+          },
+          "description": "2ND_HALF"
+        }
+      ],
+      "state": {
+        "id": 5,
+        "state": "FT",
+        "name": "Full Time",
+        "short_name": "FT",
+        "developer_name": "FT"
+      },
+      "events": [],
+      "statistics": [],
+      "lineups": [],
+      "formations": [],
+      "xgfixture": [],
+      "pressure": [],
+      "odds": [],
+      "predictions": [],
+      "form": []
+    },
+    "subscription": [
+      {
+        "meta": {
+          "current_timestamp": 1782198087,
+          "next_billing_cycle": "2026-07-22T10:41:23 UTC"
+        },
+        "plans": [
+          {
+            "plan": "Euro Club Tournaments",
+            "sport": "Football",
+            "category": "All-in"
+          }
+        ],
+        "add_ons": [],
+        "widgets": [],
+        "bundles": []
+      }
+    ],
+    "rate_limit": {
+      "resets_in_seconds": 3593,
+      "remaining": 2485,
+      "requested_entity": "Fixture"
+    },
+    "timezone": "UTC"
+  }
+}

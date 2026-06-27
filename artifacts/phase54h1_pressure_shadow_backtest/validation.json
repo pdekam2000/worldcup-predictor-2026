@@ -1,0 +1,67 @@
+{
+  "passed": 12,
+  "total": 12,
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "pressure_backtest_module_imports",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "pressure_store_readable",
+      "pass": true,
+      "detail": "fixtures=65"
+    },
+    {
+      "name": "datasets_created",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "dataset_coverage_reported",
+      "pass": true,
+      "detail": "65"
+    },
+    {
+      "name": "leakage_audit_pass",
+      "pass": true,
+      "detail": "PASS"
+    },
+    {
+      "name": "backtest_completed_or_skipped",
+      "pass": true,
+      "detail": "statuses=['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']"
+    },
+    {
+      "name": "feature_importance_created",
+      "pass": true,
+      "detail": "ranked=18"
+    },
+    {
+      "name": "no_production_prediction_changes",
+      "pass": true,
+      "detail": "shadow package only"
+    },
+    {
+      "name": "no_wde_changes",
+      "pass": true,
+      "detail": "not imported by WDE"
+    },
+    {
+      "name": "no_saas_changes",
+      "pass": true,
+      "detail": "not imported by SaaS"
+    },
+    {
+      "name": "no_deploy",
+      "pass": true,
+      "detail": "artifacts only"
+    },
+    {
+      "name": "no_token_leaked",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

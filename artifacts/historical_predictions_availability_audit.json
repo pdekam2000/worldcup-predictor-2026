@@ -1,0 +1,198 @@
+{
+  "generated_at": "2026-06-23T08:47:10.502153+00:00",
+  "cache": {
+    "fixtures_checked": 105,
+    "predictions_nonempty": 0,
+    "coverage_pct": 0.0
+  },
+  "live_probes": {
+    "api_calls": 13,
+    "samples": [
+      {
+        "competition_key": "champions_league",
+        "fixture_id": 19427084,
+        "fixture_state_id": 5,
+        "fixture_status": "finished",
+        "predictions_array_len": 29,
+        "parser_home_win": 41.74,
+        "sample_prediction": {
+          "id": 21629204,
+          "fixture_id": 19427084,
+          "predictions": {
+            "yes": 45.39,
+            "no": 54.61
+          },
+          "type_id": 235,
+          "type": {
+            "id": 235,
+            "name": "Over/Under 2.5 Probability",
+            "code": "over-under-2_5-probability",
+            "developer_name": "OVER_UNDER_2_5_PROBABILITY",
+            "model_type": "prediction",
+            "stat_group": null
+          }
+        },
+        "endpoint": "/fixtures/19427084",
+        "include": "predictions.type"
+      },
+      {
+        "competition_key": "champions_league",
+        "fixture_id": 19427085,
+        "fixture_state_id": 5,
+        "fixture_status": "finished",
+        "predictions_array_len": 29,
+        "parser_home_win": 22.67,
+        "sample_prediction": {
+          "id": 21652845,
+          "fixture_id": 19427085,
+          "predictions": {
+            "bet": "1",
+            "bookmaker": "pncl",
+            "fair_odd": 6.37,
+            "odd": 7.02,
+            "stake": 0.37,
+            "is_value": false
+          },
+          "type_id": 33,
+          "type": {
+            "id": 33,
+            "name": "Valuebet",
+            "code": "valuebet",
+            "developer_name": "VALUEBET",
+            "model_type": "prediction",
+            "stat_group": null
+          }
+        },
+        "endpoint": "/fixtures/19427085",
+        "include": "predictions.type"
+      },
+      {
+        "competition_key": "europa_league",
+        "fixture_id": 19427135,
+        "fixture_state_id": 5,
+        "fixture_status": "finished",
+        "predictions_array_len": 29,
+        "parser_home_win": 49.02,
+        "sample_prediction": {
+          "id": 21636483,
+          "fixture_id": 19427135,
+          "predictions": {
+            "yes": 85.19,
+            "no": 8.03,
+            "equal": 6.78
+          },
+          "type_id": 1690,
+          "type": {
+            "id": 1690,
+            "name": "Corners Over/Under 4 Probability",
+            "code": "corners-over-under-4-probability",
+            "developer_name": "CORNERS_OVER_UNDER_4_PROBABILITY",
+            "model_type": "prediction",
+            "stat_group": null
+          }
+        },
+        "endpoint": "/fixtures/19427135",
+        "include": "predictions.type"
+      },
+      {
+        "competition_key": "europa_league",
+        "fixture_id": 19427136,
+        "fixture_state_id": 5,
+        "fixture_status": "finished",
+        "predictions_array_len": 29,
+        "parser_home_win": 33.63,
+        "sample_prediction": {
+          "id": 21659552,
+          "fixture_id": 19427136,
+          "predictions": {
+            "bet": "2",
+            "bookmaker": "188bet",
+            "fair_odd": 2.27,
+            "odd": 2.37,
+            "stake": 0.84,
+            "is_value": false
+          },
+          "type_id": 33,
+          "type": {
+            "id": 33,
+            "name": "Valuebet",
+            "code": "valuebet",
+            "developer_name": "VALUEBET",
+            "model_type": "prediction",
+            "stat_group": null
+          }
+        },
+        "endpoint": "/fixtures/19427136",
+        "include": "predictions.type"
+      },
+      {
+        "competition_key": "conference_league",
+        "fixture_id": 19427104,
+        "fixture_state_id": 5,
+        "fixture_status": "finished",
+        "predictions_array_len": 29,
+        "parser_home_win": 49.18,
+        "sample_prediction": {
+          "id": 21663998,
+          "fixture_id": 19427104,
+          "predictions": {
+            "bet": "1",
+            "bookmaker": "bwin",
+            "fair_odd": 2.61,
+            "odd": 2.75,
+            "stake": 0.67,
+            "is_value": false
+          },
+          "type_id": 33,
+          "type": {
+            "id": 33,
+            "name": "Valuebet",
+            "code": "valuebet",
+            "developer_name": "VALUEBET",
+            "model_type": "prediction",
+            "stat_group": null
+          }
+        },
+        "endpoint": "/fixtures/19427104",
+        "include": "predictions.type"
+      },
+      {
+        "competition_key": "conference_league",
+        "fixture_id": 19427105,
+        "fixture_state_id": 5,
+        "fixture_status": "finished",
+        "predictions_array_len": 29,
+        "parser_home_win": 28.63,
+        "sample_prediction": {
+          "id": 21663948,
+          "fixture_id": 19427105,
+          "predictions": {
+            "bet": "2",
+            "bookmaker": "1xbet",
+            "fair_odd": 2.3,
+            "odd": 2.4,
+            "stake": 0.76,
+            "is_value": false
+          },
+          "type_id": 33,
+          "type": {
+            "id": 33,
+            "name": "Valuebet",
+            "code": "valuebet",
+            "developer_name": "VALUEBET",
+            "model_type": "prediction",
+            "stat_group": null
+          }
+        },
+        "endpoint": "/fixtures/19427105",
+        "include": "predictions.type"
+      }
+    ]
+  },
+  "findings": {
+    "historical_available_on_finished": true,
+    "pre_match_only": false,
+    "expires_after_kickoff": false,
+    "recent_only": "No predictions on finished 2024/25 probes"
+  }
+}
