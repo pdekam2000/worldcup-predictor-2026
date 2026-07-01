@@ -98,6 +98,15 @@ class BacktestConfig:
     scalp_window_seconds: int = 30
     max_hold_seconds: int = 30
     min_seconds_after_close: int = 8
+    aggressive_burst_mode: bool = True
+    burst_max_trades: int = 10
+    burst_interval_min_seconds: int = 5
+    burst_interval_max_seconds: int = 10
+    max_concurrent_positions: int = 10
+    burst_stop_on_first_loss: bool = True
+    burst_cooldown_after_loss_seconds: int = 180
+    better_opportunity_adx_bonus: float = 8.0
+    better_opportunity_rsi_buffer: float = 4.0
     trend_fast_ema: int = 21
     trend_slow_ema: int = 55
     entry_ema: int = 9
@@ -299,7 +308,12 @@ class SmartScalperBacktest:
         self.loss_streak = 0
         self.last_close_time: dt.datetime | None = None
         self.next_cycle: dt.datetime | None = None
-        self.position: Position | None = None
+        self.positions: list[Position] = []
+        self.burst_active = False
+        self.burst_trades_opened = 0
+        self.burst_trend = 0
+        self.next_burst_trade_time: dt.datetime | None = None
+        self.burst_cooldown_until: dt.datetime | None = None
         self.trades: list[Trade] = []
         self.equity_curve: list[float] = [config.initial_equity]
 
@@ -325,17 +339,23 @@ class SmartScalperBacktest:
             self.trend_slow.update(closed_m5.close)
             self.adx.update(closed_m5)
 
-        self.manage_position(tick)
+        self.manage_positions(tick)
 
         if self.next_cycle is None:
-            self.next_cycle = floor_time(tick.at, self.config.scalp_window_seconds)
+            seconds = 1 if self.config.aggressive_burst_mode else self.config.scalp_window_seconds
+            self.next_cycle = floor_time(tick.at, seconds)
 
         while self.next_cycle is not None and tick.at >= self.next_cycle:
             self.evaluate_cycle(self.next_cycle, tick)
-            self.next_cycle += dt.timedelta(seconds=self.config.scalp_window_seconds)
+            seconds = 1 if self.config.aggressive_burst_mode else self.config.scalp_window_seconds
+            self.next_cycle += dt.timedelta(seconds=seconds)
 
     def evaluate_cycle(self, cycle_time: dt.datetime, tick: Tick) -> None:
-        if self.position is not None:
+        if self.config.aggressive_burst_mode:
+            self.evaluate_aggressive_burst(cycle_time, tick)
+            return
+
+        if self.positions:
             return
         if self.last_close_time and (cycle_time - self.last_close_time).total_seconds() < self.config.min_seconds_after_close:
             return
@@ -353,6 +373,50 @@ class SmartScalperBacktest:
             return
 
         self.open_position(trend, tick)
+
+    def evaluate_aggressive_burst(self, cycle_time: dt.datetime, tick: Tick) -> None:
+        if self.burst_cooldown_until and cycle_time < self.burst_cooldown_until:
+            return
+        if self.next_burst_trade_time and cycle_time < self.next_burst_trade_time:
+            return
+        if len(self.positions) >= self.config.max_concurrent_positions:
+            return
+        if self.last_close_time and (cycle_time - self.last_close_time).total_seconds() < self.config.min_seconds_after_close:
+            return
+        if not self.risk_guards_allow_entry(cycle_time):
+            return
+        if self.indicators_not_ready():
+            return
+        if self.spread_points(tick) > self.config.max_spread_points:
+            return
+
+        trend = self.detect_trend()
+        if trend == 0:
+            return
+
+        if self.loss_streak > 0:
+            if not self.better_opportunity_entry_allows(trend, tick):
+                return
+        elif not self.entry_filter_allows(trend, tick):
+            return
+
+        if not self.burst_active or self.burst_trades_opened >= self.config.burst_max_trades or self.burst_trend != trend:
+            self.start_burst(trend, cycle_time)
+
+        if self.burst_trades_opened >= self.config.burst_max_trades:
+            self.burst_active = False
+            self.next_burst_trade_time = cycle_time + dt.timedelta(seconds=self.config.scalp_window_seconds)
+            return
+
+        self.open_position(trend, tick)
+        self.burst_trades_opened += 1
+        self.next_burst_trade_time = cycle_time + dt.timedelta(seconds=self.next_burst_interval_seconds(cycle_time))
+
+    def start_burst(self, trend: int, cycle_time: dt.datetime) -> None:
+        self.burst_active = True
+        self.burst_trades_opened = 0
+        self.burst_trend = trend
+        self.next_burst_trade_time = cycle_time
 
     def risk_guards_allow_entry(self, cycle_time: dt.datetime) -> bool:
         day_code = cycle_time.date().isoformat()
@@ -405,6 +469,25 @@ class SmartScalperBacktest:
             return tick.ask > self.entry_ema.value and self.config.buy_rsi_min <= self.rsi.value <= self.config.buy_rsi_max
         return tick.bid < self.entry_ema.value and self.config.sell_rsi_min <= self.rsi.value <= self.config.sell_rsi_max
 
+    def better_opportunity_entry_allows(self, trend: int, tick: Tick) -> bool:
+        if not self.entry_filter_allows(trend, tick):
+            return False
+        assert self.adx.value is not None
+        assert self.rsi.value is not None
+        if self.adx.value < self.config.min_adx + self.config.better_opportunity_adx_bonus:
+            return False
+        if trend == 1:
+            return (
+                self.config.buy_rsi_min + self.config.better_opportunity_rsi_buffer
+                <= self.rsi.value
+                <= self.config.buy_rsi_max - self.config.better_opportunity_rsi_buffer
+            )
+        return (
+            self.config.sell_rsi_min + self.config.better_opportunity_rsi_buffer
+            <= self.rsi.value
+            <= self.config.sell_rsi_max - self.config.better_opportunity_rsi_buffer
+        )
+
     def open_position(self, trend: int, tick: Tick) -> None:
         assert self.atr.value is not None
         lot = self.next_lot()
@@ -413,55 +496,54 @@ class SmartScalperBacktest:
         price = tick.ask if trend == 1 else tick.bid
         sl = price - stop_distance if trend == 1 else price + stop_distance
         tp = price + tp_distance if trend == 1 else price - tp_distance
-        self.position = Position(trend, lot, price, tick.at, sl, tp, lot)
+        self.positions.append(Position(trend, lot, price, tick.at, sl, tp, lot))
 
-    def manage_position(self, tick: Tick) -> None:
-        pos = self.position
-        if pos is None or self.atr.value is None:
+    def manage_positions(self, tick: Tick) -> None:
+        if not self.positions or self.atr.value is None:
             return
 
+        for pos in list(self.positions):
+            self.manage_position(pos, tick)
+
+    def manage_position(self, pos: Position, tick: Tick) -> None:
         market = tick.bid if pos.side == 1 else tick.ask
         profit_distance = market - pos.open_price if pos.side == 1 else pos.open_price - market
 
         if pos.side == 1 and tick.bid <= pos.sl:
-            self.close_position(tick, pos.sl, "stop_loss")
+            self.close_position(pos, tick, pos.sl, "stop_loss")
             return
         if pos.side == -1 and tick.ask >= pos.sl:
-            self.close_position(tick, pos.sl, "stop_loss")
+            self.close_position(pos, tick, pos.sl, "stop_loss")
             return
         if pos.side == 1 and tick.bid >= pos.tp:
-            self.close_position(tick, pos.tp, "tp3")
+            self.close_position(pos, tick, pos.tp, "tp3")
             return
         if pos.side == -1 and tick.ask <= pos.tp:
-            self.close_position(tick, pos.tp, "tp3")
+            self.close_position(pos, tick, pos.tp, "tp3")
             return
 
+        assert self.atr.value is not None
         tp1_distance = self.atr.value * self.config.tp1_atr_multiplier
         tp2_distance = self.atr.value * self.config.tp2_atr_multiplier
 
         if pos.stage < 1 and profit_distance >= tp1_distance:
-            self.partial_close(tick, self.config.tp1_close_percent)
-            self.move_stop_to_breakeven()
-            if self.position:
-                self.position.stage = 1
+            self.partial_close(pos, tick, self.config.tp1_close_percent)
+            self.move_stop_to_breakeven(pos)
+            pos.stage = 1
 
-        if self.position and self.position.stage < 2 and profit_distance >= tp2_distance:
-            self.partial_close(tick, self.config.tp2_close_percent)
-            self.lock_profit_stop()
-            if self.position:
-                self.position.stage = 2
+        if pos in self.positions and pos.stage < 2 and profit_distance >= tp2_distance:
+            self.partial_close(pos, tick, self.config.tp2_close_percent)
+            self.lock_profit_stop(pos)
+            pos.stage = 2
 
-        if self.position and self.position.stage >= 2:
-            self.trail_stop(tick)
+        if pos in self.positions and pos.stage >= 2:
+            self.trail_stop(pos, tick)
 
-        if self.position and (tick.at - self.position.open_time).total_seconds() >= self.config.max_hold_seconds:
-            exit_price = tick.bid if self.position.side == 1 else tick.ask
-            self.close_position(tick, exit_price, "time_exit")
+        if pos in self.positions and (tick.at - pos.open_time).total_seconds() >= self.config.max_hold_seconds:
+            exit_price = tick.bid if pos.side == 1 else tick.ask
+            self.close_position(pos, tick, exit_price, "time_exit")
 
-    def partial_close(self, tick: Tick, percent: float) -> None:
-        pos = self.position
-        if pos is None:
-            return
+    def partial_close(self, pos: Position, tick: Tick, percent: float) -> None:
         close_volume = normalize_volume(pos.volume * percent / 100.0)
         if close_volume < 0.01 or (pos.volume - close_volume) < 0.01:
             return
@@ -471,42 +553,33 @@ class SmartScalperBacktest:
         pos.realized_pnl += pnl
         pos.volume = normalize_volume(pos.volume - close_volume)
 
-    def move_stop_to_breakeven(self) -> None:
-        pos = self.position
-        if pos is None:
-            return
+    def move_stop_to_breakeven(self, pos: Position) -> None:
         buffer = self.config.breakeven_buffer_points * self.spec.point
         new_sl = pos.open_price + buffer if pos.side == 1 else pos.open_price - buffer
-        self.modify_stop_if_better(new_sl)
+        self.modify_stop_if_better(pos, new_sl)
 
-    def lock_profit_stop(self) -> None:
-        pos = self.position
-        if pos is None or self.atr.value is None:
+    def lock_profit_stop(self, pos: Position) -> None:
+        if self.atr.value is None:
             return
         lock_distance = self.atr.value * max(self.config.tp1_atr_multiplier * 0.50, 0.20)
         new_sl = pos.open_price + lock_distance if pos.side == 1 else pos.open_price - lock_distance
-        self.modify_stop_if_better(new_sl)
+        self.modify_stop_if_better(pos, new_sl)
 
-    def trail_stop(self, tick: Tick) -> None:
-        pos = self.position
-        if pos is None or self.atr.value is None:
+    def trail_stop(self, pos: Position, tick: Tick) -> None:
+        if self.atr.value is None:
             return
         trail_distance = max(self.atr.value * self.config.trail_atr_multiplier, self.smart_stop_distance(tick) * 0.35)
         new_sl = tick.bid - trail_distance if pos.side == 1 else tick.ask + trail_distance
-        self.modify_stop_if_better(new_sl)
+        self.modify_stop_if_better(pos, new_sl)
 
-    def modify_stop_if_better(self, new_sl: float) -> None:
-        pos = self.position
-        if pos is None:
-            return
+    def modify_stop_if_better(self, pos: Position, new_sl: float) -> None:
         if pos.side == 1 and new_sl > pos.sl + self.spec.point:
             pos.sl = new_sl
         elif pos.side == -1 and new_sl < pos.sl - self.spec.point:
             pos.sl = new_sl
 
-    def close_position(self, tick: Tick, exit_price: float, reason: str) -> None:
-        pos = self.position
-        if pos is None:
+    def close_position(self, pos: Position, tick: Tick, exit_price: float, reason: str) -> None:
+        if pos not in self.positions:
             return
         pnl = pos.realized_pnl + self.pnl_usd(pos.side, pos.open_price, exit_price, pos.volume)
         pnl -= self.commission(pos.lot, half_turn=False)
@@ -520,6 +593,12 @@ class SmartScalperBacktest:
             self.loss_streak = 0
         elif pnl < 0.0:
             self.loss_streak = min(self.loss_streak + 1, self.config.max_recovery_steps)
+            if self.config.aggressive_burst_mode and self.config.burst_stop_on_first_loss:
+                self.burst_active = False
+                self.burst_trades_opened = 0
+                self.burst_trend = 0
+                self.burst_cooldown_until = tick.at + dt.timedelta(seconds=self.config.burst_cooldown_after_loss_seconds)
+                self.next_burst_trade_time = self.burst_cooldown_until
 
         self.trades.append(
             Trade(
@@ -534,7 +613,7 @@ class SmartScalperBacktest:
             )
         )
         self.last_close_time = tick.at
-        self.position = None
+        self.positions.remove(pos)
 
     def pnl_usd(self, side: int, open_price: float, exit_price: float, lot: float) -> float:
         quote_pnl = (exit_price - open_price) * lot * self.spec.contract_size
@@ -558,6 +637,14 @@ class SmartScalperBacktest:
         broker_min = ((self.spread_points(tick) + 3.0) * self.spec.point)
         atr_stop = self.atr.value * self.config.stop_atr_multiplier
         return max(atr_stop, broker_min)
+
+    def next_burst_interval_seconds(self, cycle_time: dt.datetime) -> int:
+        min_seconds = max(1, self.config.burst_interval_min_seconds)
+        max_seconds = max(min_seconds, self.config.burst_interval_max_seconds)
+        span = max_seconds - min_seconds + 1
+        if span <= 1:
+            return min_seconds
+        return min_seconds + (int(cycle_time.timestamp()) % span)
 
     def next_lot(self) -> float:
         step = min(max(self.loss_streak, 0), self.config.max_recovery_steps)
@@ -709,6 +796,8 @@ def write_outputs(output_dir: Path, results: list[dict[str, object]], trades: li
         f"- End: `{metadata['end']}`",
         f"- Initial equity: `{metadata['initial_equity']}` USD",
         f"- Commission model: `{metadata['commission_per_lot_round_turn']}` USD per lot round turn",
+        f"- Aggressive burst: `{metadata['aggressive_burst_mode']}`; max trades `{metadata['burst_max_trades']}`; interval `{metadata['burst_interval_seconds'][0]}-{metadata['burst_interval_seconds'][1]}` seconds",
+        f"- First-loss stop: `{metadata['burst_stop_on_first_loss']}`; cooldown `{metadata['burst_cooldown_after_loss_seconds']}` seconds; better-opportunity ADX bonus `{metadata['better_opportunity_adx_bonus']}`",
         f"- Note: portable Python approximation of the MT5 EA; MT5 Strategy Tester on BazarnForex remains the broker-accurate reference.",
         "",
         "| Symbol | Final equity | Net profit | Return % | Trades | Win rate % | Profit factor | Max DD % | Max recovery |",
@@ -773,6 +862,14 @@ def main() -> int:
         "symbols": symbols,
         "commission_per_lot_round_turn": args.commission_per_lot_round_turn,
         "jpy_per_usd": args.jpy_per_usd,
+        "aggressive_burst_mode": config.aggressive_burst_mode,
+        "burst_max_trades": config.burst_max_trades,
+        "burst_interval_seconds": [config.burst_interval_min_seconds, config.burst_interval_max_seconds],
+        "max_concurrent_positions": config.max_concurrent_positions,
+        "burst_stop_on_first_loss": config.burst_stop_on_first_loss,
+        "burst_cooldown_after_loss_seconds": config.burst_cooldown_after_loss_seconds,
+        "better_opportunity_adx_bonus": config.better_opportunity_adx_bonus,
+        "better_opportunity_rsi_buffer": config.better_opportunity_rsi_buffer,
     }
     write_outputs(args.output_dir, results, all_trades, metadata)
     return 0

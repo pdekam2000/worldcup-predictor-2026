@@ -32,6 +32,15 @@ input double          InpBaseLot                = 0.01;
 input double          InpMaxLot                 = 1.00;
 input double          InpRecoveryMultiplier     = 2.0;
 input int             InpMaxRecoverySteps       = 3;
+input bool            InpAggressiveBurstMode    = true;
+input int             InpBurstMaxTrades         = 10;
+input int             InpBurstIntervalMinSec    = 5;
+input int             InpBurstIntervalMaxSec    = 10;
+input int             InpMaxConcurrentPositions = 10;
+input bool            InpBurstStopOnFirstLoss   = true;
+input int             InpBurstCooldownAfterLoss = 180;
+input double          InpBetterOpportunityAdxBonus = 8.0;
+input double          InpBetterOpportunityRsiBuffer = 4.0;
 
 input ENUM_TIMEFRAMES InpTrendTimeframe         = PERIOD_M5;
 input ENUM_TIMEFRAMES InpEntryTimeframe         = PERIOD_M1;
@@ -84,6 +93,11 @@ int      lossStreak      = 0;
 double   peakEquity      = 0.0;
 double   dayStartEquity  = 0.0;
 int      dayCode         = 0;
+bool     burstActive     = false;
+int      burstTradesOpened = 0;
+int      burstTrend      = 0;
+datetime nextBurstTradeTime = 0;
+datetime burstCooldownUntil = 0;
 string   panelPrefix     = "PK30SS_";
 string   globalPrefix    = "";
 
@@ -95,6 +109,13 @@ int OnInit()
    if(InpScalpWindowSeconds <= 0)
    {
       ReportError("Invalid scalp window seconds; must be greater than zero.", 1001);
+      return INIT_PARAMETERS_INCORRECT;
+   }
+   if(InpAggressiveBurstMode &&
+      (InpBurstMaxTrades <= 0 || InpBurstIntervalMinSec <= 0 ||
+       InpBurstIntervalMaxSec < InpBurstIntervalMinSec || InpMaxConcurrentPositions <= 0))
+   {
+      ReportError("Invalid aggressive burst settings.", 1003);
       return INIT_PARAMETERS_INCORRECT;
    }
 
@@ -203,6 +224,16 @@ void OnTradeTransaction(const MqlTradeTransaction &trans,
    else if(netProfit < 0.0)
    {
       lossStreak = (lossStreak + 1 > InpMaxRecoverySteps) ? InpMaxRecoverySteps : lossStreak + 1;
+      if(InpAggressiveBurstMode && InpBurstStopOnFirstLoss)
+      {
+         burstActive = false;
+         burstTradesOpened = 0;
+         burstTrend = 0;
+         burstCooldownUntil = TimeCurrent() + InpBurstCooldownAfterLoss;
+         nextBurstTradeTime = burstCooldownUntil;
+         Print("First losing close stopped aggressive burst. Waiting for better opportunity until ",
+               TimeToString(burstCooldownUntil, TIME_DATE | TIME_SECONDS));
+      }
       SavePersistentState();
       Print("Losing trade closed. Next recovery step=", lossStreak,
             " next lot=", DoubleToString(NextLot(), 2));
@@ -212,6 +243,13 @@ void OnTradeTransaction(const MqlTradeTransaction &trans,
 void EvaluateThirtySecondCycle()
 {
    datetime now = TimeCurrent();
+
+   if(InpAggressiveBurstMode)
+   {
+      EvaluateAggressiveBurst(now);
+      return;
+   }
+
    long cycle = (long)(now / InpScalpWindowSeconds);
    if(cycle == lastSignalCycle)
       return;
@@ -250,6 +288,78 @@ void EvaluateThirtySecondCycle()
       return;
 
    OpenScalpTrade(trend);
+}
+
+void EvaluateAggressiveBurst(const datetime now)
+{
+   if(burstCooldownUntil > now)
+   {
+      UpdatePanel("Waiting better setup", InpPanelWarningColor);
+      return;
+   }
+
+   if(now < nextBurstTradeTime)
+      return;
+
+   if(CountOpenPositions() >= InpMaxConcurrentPositions)
+      return;
+
+   if((now - lastCloseTime) < InpMinSecondsAfterClose)
+      return;
+
+   if(!RiskGuardsAllowTrading())
+      return;
+
+   if(!IndicatorsReady())
+      return;
+
+   if(CurrentSpreadPoints() > InpMaxSpreadPoints)
+   {
+      UpdatePanel("Spread filter", InpPanelWarningColor);
+      return;
+   }
+
+   TrendDirection trend = DetectTrend();
+   if(trend == TREND_FLAT)
+      return;
+
+   bool requireBetterOpportunity = (lossStreak > 0);
+   if(requireBetterOpportunity)
+   {
+      if(!BetterOpportunityEntryAllows(trend))
+         return;
+   }
+   else if(!EntryFilterAllows(trend))
+   {
+      return;
+   }
+
+   if(!burstActive || burstTradesOpened >= InpBurstMaxTrades || burstTrend != (int)trend)
+      StartBurst(trend, now);
+
+   if(burstTradesOpened >= InpBurstMaxTrades)
+   {
+      burstActive = false;
+      nextBurstTradeTime = now + InpScalpWindowSeconds;
+      SavePersistentState();
+      return;
+   }
+
+   if(OpenScalpTrade(trend))
+   {
+      burstTradesOpened++;
+      nextBurstTradeTime = now + NextBurstIntervalSeconds();
+      SavePersistentState();
+   }
+}
+
+void StartBurst(const TrendDirection trend, const datetime now)
+{
+   burstActive = true;
+   burstTradesOpened = 0;
+   burstTrend = (int)trend;
+   nextBurstTradeTime = now;
+   SavePersistentState();
 }
 
 bool IndicatorsReady()
@@ -325,11 +435,44 @@ bool EntryFilterAllows(const TrendDirection trend)
    return false;
 }
 
-void OpenScalpTrade(const TrendDirection trend)
+bool BetterOpportunityEntryAllows(const TrendDirection trend)
+{
+   if(!EntryFilterAllows(trend))
+      return false;
+
+   double adx[];
+   double rsi[];
+   ArrayResize(adx, 1);
+   ArrayResize(rsi, 1);
+   ArraySetAsSeries(adx, true);
+   ArraySetAsSeries(rsi, true);
+
+   if(CopyBuffer(handleAdx, 0, 0, 1, adx) != 1 ||
+      CopyBuffer(handleRsi, 0, 0, 1, rsi) != 1)
+   {
+      ReportError("Failed to read better-opportunity buffers.", GetLastError());
+      return false;
+   }
+
+   if(adx[0] < InpMinAdx + InpBetterOpportunityAdxBonus)
+      return false;
+
+   if(trend == TREND_UP)
+      return rsi[0] >= InpBuyRsiMin + InpBetterOpportunityRsiBuffer &&
+             rsi[0] <= InpBuyRsiMax - InpBetterOpportunityRsiBuffer;
+
+   if(trend == TREND_DOWN)
+      return rsi[0] >= InpSellRsiMin + InpBetterOpportunityRsiBuffer &&
+             rsi[0] <= InpSellRsiMax - InpBetterOpportunityRsiBuffer;
+
+   return false;
+}
+
+bool OpenScalpTrade(const TrendDirection trend)
 {
    double atr = CurrentAtr();
    if(atr <= 0.0)
-      return;
+      return false;
 
    double lot = NextLot();
    double stopDistance = SmartStopDistance(atr);
@@ -354,14 +497,14 @@ void OpenScalpTrade(const TrendDirection trend)
    if(InpSignalOnlyMode || !InpEnableAutoTrading)
    {
       UpdatePanel("Signal only: " + side, InpPanelWarningColor);
-      return;
+      return false;
    }
 
    if(!TerminalTradeAllowed())
    {
       ReportError("Auto trading is disabled in terminal or EA settings.", 1002);
       UpdatePanel("Trading disabled", InpPanelErrorColor);
-      return;
+      return false;
    }
 
    bool ok = false;
@@ -375,11 +518,14 @@ void OpenScalpTrade(const TrendDirection trend)
       int code = (int)trade.ResultRetcode();
       ReportError("Order send failed: " + trade.ResultRetcodeDescription(), code);
       UpdatePanel("Order error", InpPanelErrorColor);
+      return false;
    }
    else
    {
       UpdatePanel("Opened " + side, InpPanelProfitColor);
    }
+
+   return true;
 }
 
 void ManageOpenPositions()
@@ -567,6 +713,17 @@ int CurrentSpreadPoints()
    return (int)SymbolInfoInteger(_Symbol, SYMBOL_SPREAD);
 }
 
+int NextBurstIntervalSeconds()
+{
+   int minSeconds = MathMax(1, InpBurstIntervalMinSec);
+   int maxSeconds = MathMax(minSeconds, InpBurstIntervalMaxSec);
+   int span = maxSeconds - minSeconds + 1;
+   if(span <= 1)
+      return minSeconds;
+
+   return minSeconds + (int)((long)TimeCurrent() % span);
+}
+
 double NextLot()
 {
    int cappedStep = lossStreak;
@@ -608,6 +765,12 @@ int VolumeDigits(const double step)
 
 bool HasOpenPosition()
 {
+   return CountOpenPositions() > 0;
+}
+
+int CountOpenPositions()
+{
+   int count = 0;
    for(int i = PositionsTotal() - 1; i >= 0; i--)
    {
       ulong ticket = PositionGetTicket(i);
@@ -617,10 +780,10 @@ bool HasOpenPosition()
       if(PositionGetString(POSITION_SYMBOL) == _Symbol &&
          (ulong)PositionGetInteger(POSITION_MAGIC) == InpMagicNumber)
       {
-         return true;
+         count++;
       }
    }
-   return false;
+   return count;
 }
 
 bool TerminalTradeAllowed()
@@ -702,6 +865,21 @@ void LoadPersistentState()
    if(GlobalVariableCheck(globalPrefix + "_day_start_equity"))
       dayStartEquity = GlobalVariableGet(globalPrefix + "_day_start_equity");
 
+   if(GlobalVariableCheck(globalPrefix + "_burst_active"))
+      burstActive = GlobalVariableGet(globalPrefix + "_burst_active") > 0.5;
+
+   if(GlobalVariableCheck(globalPrefix + "_burst_trades_opened"))
+      burstTradesOpened = (int)GlobalVariableGet(globalPrefix + "_burst_trades_opened");
+
+   if(GlobalVariableCheck(globalPrefix + "_burst_trend"))
+      burstTrend = (int)GlobalVariableGet(globalPrefix + "_burst_trend");
+
+   if(GlobalVariableCheck(globalPrefix + "_next_burst_trade_time"))
+      nextBurstTradeTime = (datetime)GlobalVariableGet(globalPrefix + "_next_burst_trade_time");
+
+   if(GlobalVariableCheck(globalPrefix + "_burst_cooldown_until"))
+      burstCooldownUntil = (datetime)GlobalVariableGet(globalPrefix + "_burst_cooldown_until");
+
    RefreshRiskBaselineIfNeeded();
 }
 
@@ -712,6 +890,11 @@ void SavePersistentState()
    GlobalVariableSet(globalPrefix + "_peak_equity", peakEquity);
    GlobalVariableSet(globalPrefix + "_day_code", dayCode);
    GlobalVariableSet(globalPrefix + "_day_start_equity", dayStartEquity);
+   GlobalVariableSet(globalPrefix + "_burst_active", burstActive ? 1.0 : 0.0);
+   GlobalVariableSet(globalPrefix + "_burst_trades_opened", burstTradesOpened);
+   GlobalVariableSet(globalPrefix + "_burst_trend", burstTrend);
+   GlobalVariableSet(globalPrefix + "_next_burst_trade_time", (double)nextBurstTradeTime);
+   GlobalVariableSet(globalPrefix + "_burst_cooldown_until", (double)burstCooldownUntil);
 }
 
 string BuildGlobalPrefix()
@@ -854,6 +1037,13 @@ void UpdatePanel(const string status, const color statusColor)
    string modeLine = "Mode: ";
    if(InpSignalOnlyMode || !InpEnableAutoTrading)
       modeLine += "semi-auto signal";
+   else if(InpAggressiveBurstMode)
+   {
+      modeLine += StringFormat("aggressive burst %d/%d open=%d",
+                               burstTradesOpened, InpBurstMaxTrades, CountOpenPositions());
+      if(burstCooldownUntil > TimeCurrent())
+         modeLine += " cooldown";
+   }
    else
       modeLine += "full-auto execution";
 

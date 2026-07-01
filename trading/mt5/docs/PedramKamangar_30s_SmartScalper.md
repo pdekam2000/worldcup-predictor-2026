@@ -20,27 +20,35 @@ Standalone MetaTrader 5 Expert Advisor for 30-second trend scalping on BazarnFor
    - Every `InpScalpWindowSeconds` seconds (default `30`), it checks for a fresh trend-aligned entry.
    - `InpMaxPositionHoldSeconds` defaults to `30`, so stale scalp positions are closed by time if TP/SL does not finish first.
 
-3. **Semi/full automatic mode**
+3. **Aggressive burst mode**
+   - Enabled by default with `InpAggressiveBurstMode=true`.
+   - When the EA finds a valid trend-aligned setup after activation, it can open up to `InpBurstMaxTrades=10` trades.
+   - Burst entries are spaced by `InpBurstIntervalMinSec=5` to `InpBurstIntervalMaxSec=10` seconds.
+   - `InpMaxConcurrentPositions=10` caps simultaneous positions for hedging accounts. On netting accounts, MT5 may merge same-symbol entries into one net position.
+   - With `InpBurstStopOnFirstLoss=true`, the first final losing close stops the burst immediately.
+   - After a burst loss, the EA waits `InpBurstCooldownAfterLoss=180` seconds and requires a stronger setup: ADX must exceed `InpMinAdx + InpBetterOpportunityAdxBonus`, and RSI must sit inside the tighter buffered range.
+
+4. **Semi/full automatic mode**
    - Full auto: `InpEnableAutoTrading=true` and `InpSignalOnlyMode=false`.
    - Semi-auto/signal mode: set `InpSignalOnlyMode=true`; the EA alerts and logs signals but does not place orders.
 
-4. **Recovery sizing**
+5. **Recovery sizing**
    - Base lot: `InpBaseLot`.
    - After a losing final close, next lot = `BaseLot * 2^lossStreak`.
    - After a winning final close, lot resets to base.
    - Safety caps: `InpMaxRecoverySteps` and `InpMaxLot`.
 
-5. **Smart three-step profit**
+6. **Smart three-step profit**
    - TP1: partial close and move SL to breakeven.
    - TP2: partial close and lock profit.
    - TP3: broker TP target, with smart ATR trailing after TP2.
 
-6. **Smart stop loss**
+7. **Smart stop loss**
    - Initial SL is ATR-based and also respects broker stop/freeze level plus spread.
    - Breakeven and trailing logic move SL only in the safer direction.
    - Guards stop new entries on high spread, daily loss limit, and max equity drawdown.
 
-7. **Owner/running panel**
+8. **Owner/running panel**
    - Draws a colored chart panel with:
      - `PK 30s Smart Scalper`
      - `Owner: Pedram Kamangar`
@@ -65,6 +73,11 @@ Standalone MetaTrader 5 Expert Advisor for 30-second trend scalping on BazarnFor
 | `InpBaseLot` | `0.01` |
 | `InpMaxLot` | account-dependent, start low |
 | `InpMaxRecoverySteps` | `2` or `3` |
+| `InpAggressiveBurstMode` | `true` only after demo testing |
+| `InpBurstMaxTrades` | `10` requested aggressive mode; reduce if drawdown is high |
+| `InpBurstIntervalMinSec` / `InpBurstIntervalMaxSec` | `5` / `10` |
+| `InpBurstStopOnFirstLoss` | `true` |
+| `InpBurstCooldownAfterLoss` | `180` or higher |
 | `InpMaxSpreadPoints` | pair-dependent; tighten for EURUSD |
 | `InpMaxDailyLossPercent` | `3` to `5` |
 | `InpMaxDrawdownPercent` | `8` to `12` |
