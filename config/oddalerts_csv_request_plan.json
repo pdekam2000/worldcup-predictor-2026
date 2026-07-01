@@ -1,0 +1,82 @@
+{
+  "version": "2026-06-30",
+  "phase": "ODDALERTS-CSV-COMPLETE-COVERAGE-1",
+  "dashboard_url": "https://oddalerts.com",
+  "export_path_hint": "/probability-exports",
+  "request_delay_seconds": 3.0,
+  "max_date_window_months": 6,
+  "default_probability": {
+    "min_pct": 0,
+    "min_pct_fallback": 1,
+    "max_pct": 100,
+    "legacy_partial_band": {
+      "min_pct": 50,
+      "max_pct": 100,
+      "issue": "Excludes complementary outcomes below 50% — caused ECSE READY_PARTIAL"
+    },
+    "paired_bands_if_min_50_required": [
+      { "min_pct": 0, "max_pct": 50, "label": "lower_band" },
+      { "min_pct": 50, "max_pct": 100, "label": "upper_band" }
+    ]
+  },
+  "bookmakers_all": [
+    "Pinnacle",
+    "Bet365",
+    "Betfair Exchange",
+    "WilliamHill",
+    "1xBet",
+    "Kambi Group",
+    "Betano",
+    "FanDuel"
+  ],
+  "bookmakers_ecse_default": [
+    "Pinnacle",
+    "Bet365",
+    "Betfair Exchange"
+  ],
+  "date_windows_historical": [
+    { "start": "2024-08-01", "end": "2025-01-31", "label": "2024H2" },
+    { "start": "2025-02-01", "end": "2025-07-31", "label": "2025H1" },
+    { "start": "2025-08-01", "end": "2026-01-31", "label": "2025H2" },
+    { "start": "2026-02-01", "end": "2026-06-30", "label": "2026H1" }
+  ],
+  "ecse_complete_coverage": {
+    "description": "Full probability range exports for ECSE-required markets only",
+    "probability_min": 0,
+    "probability_min_fallback": 1,
+    "probability_max": 100,
+    "coverage_tag": "ecse_complete",
+    "markets": [
+      {
+        "export_market": "Fulltime Result Probability",
+        "outcomes": [
+          { "export_outcome": "home", "normalized_key": "match_result_home" },
+          { "export_outcome": "draw", "normalized_key": "match_result_draw" },
+          { "export_outcome": "away", "normalized_key": "match_result_away" }
+        ]
+      },
+      {
+        "export_market": "Over/Under 2.5 Probability",
+        "outcomes": [
+          { "export_outcome": "over_25", "normalized_key": "goals_over_2_5" },
+          { "export_outcome": "under_25", "normalized_key": "goals_under_2_5" }
+        ]
+      },
+      {
+        "export_market": "Both Teams To Score Probability",
+        "outcomes": [
+          { "export_outcome": "yes", "normalized_key": "btts_yes" },
+          { "export_outcome": "no", "normalized_key": "btts_no" }
+        ]
+      }
+    ],
+    "bookmakers": ["Pinnacle", "Bet365", "Betfair Exchange"]
+  },
+  "probability_range_ui_tests": [
+    { "min_pct": 0, "max_pct": 100, "label": "0_to_100" },
+    { "min_pct": 1, "max_pct": 100, "label": "1_to_100" },
+    { "min_pct": 0, "max_pct": 50, "label": "0_to_50" },
+    { "min_pct": 1, "max_pct": 50, "label": "1_to_50" },
+    { "min_pct": 50, "max_pct": 100, "label": "50_to_100" }
+  ]
+}

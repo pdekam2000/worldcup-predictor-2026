@@ -1,0 +1,131 @@
+{
+  "version": "2026-06-30",
+  "phase": "ODDALERTS-CSV-MARKET-MAPPING-ALL",
+  "ecse_required_keys": [
+    "match_result_home",
+    "match_result_draw",
+    "match_result_away",
+    "goals_over_2_5",
+    "goals_under_2_5",
+    "btts_yes",
+    "btts_no"
+  ],
+  "market_families": {
+    "match_result": {
+      "export_market_patterns": ["fulltime result", "fulltime_result"],
+      "outcomes": {
+        "home": "match_result_home",
+        "draw": "match_result_draw",
+        "away": "match_result_away"
+      }
+    },
+    "btts": {
+      "export_market_patterns": ["both teams to score", "both_teams_to_score"],
+      "outcomes": {
+        "yes": "btts_yes",
+        "no": "btts_no"
+      }
+    },
+    "goals_over_under": {
+      "export_market_patterns": ["over/under 1.5", "over_under_1_5"],
+      "threshold": 1.5,
+      "outcomes": {
+        "over_15": "goals_over_1_5",
+        "under_15": "goals_under_1_5"
+      }
+    },
+    "goals_over_under_2_5": {
+      "export_market_patterns": ["over/under 2.5", "over_under_2_5"],
+      "threshold": 2.5,
+      "outcomes": {
+        "over_25": "goals_over_2_5",
+        "under_25": "goals_under_2_5"
+      }
+    },
+    "goals_over_under_3_5": {
+      "export_market_patterns": ["over/under 3.5", "over_under_3_5"],
+      "threshold": 3.5,
+      "outcomes": {
+        "over_35": "goals_over_3_5",
+        "under_35": "goals_under_3_5"
+      }
+    },
+    "goals_over_under_4_5": {
+      "export_market_patterns": ["over/under 4.5", "over_under_4_5"],
+      "threshold": 4.5,
+      "outcomes": {
+        "over_45": "goals_over_4_5",
+        "under_45": "goals_under_4_5"
+      }
+    },
+    "home_team_goals": {
+      "export_market_patterns": ["home over/under 0.5", "home_over_under_0_5"],
+      "threshold": 0.5,
+      "side": "home",
+      "outcomes": {
+        "over_05": "home_goals_over_0_5",
+        "under_05": "home_goals_under_0_5"
+      }
+    },
+    "home_team_goals_1_5": {
+      "export_market_patterns": ["home over/under 1.5", "home_over_under_1_5"],
+      "threshold": 1.5,
+      "side": "home",
+      "outcomes": {
+        "over_15": "home_goals_over_1_5",
+        "under_15": "home_goals_under_1_5"
+      }
+    },
+    "away_team_goals": {
+      "export_market_patterns": ["away over/under 0.5", "away_over_under_0_5"],
+      "threshold": 0.5,
+      "side": "away",
+      "outcomes": {
+        "over_05": "away_goals_over_0_5",
+        "under_05": "away_goals_under_0_5"
+      }
+    },
+    "away_team_goals_1_5": {
+      "export_market_patterns": ["away over/under 1.5", "away_over_under_1_5"],
+      "threshold": 1.5,
+      "side": "away",
+      "outcomes": {
+        "over_15": "away_goals_over_1_5",
+        "under_15": "away_goals_under_1_5"
+      }
+    },
+    "double_chance": {
+      "export_market_patterns": ["double chance", "double_chance"],
+      "outcomes": {
+        "home_draw": "double_chance_home_draw",
+        "home_away": "double_chance_home_away",
+        "draw_away": "double_chance_draw_away"
+      }
+    },
+    "first_half_result": {
+      "export_market_patterns": ["first half winner", "first_half_winner"],
+      "outcomes": {
+        "home": "first_half_home",
+        "draw": "first_half_draw",
+        "away": "first_half_away"
+      }
+    },
+    "corners_over_under": {
+      "export_market_patterns_prefix": "corners over/under",
+      "dynamic_threshold": true,
+      "outcome_template": {
+        "over": "corners_over_{threshold}",
+        "under": "corners_under_{threshold}"
+      }
+    }
+  },
+  "corners_threshold_map": {
+    "5": "5_5",
+    "6": "6_5",
+    "7": "7_5",
+    "8": "8_5",
+    "9": "9_5",
+    "10": "10_5",
+    "11": "11_5"
+  }
+}

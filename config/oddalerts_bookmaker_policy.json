@@ -1,0 +1,66 @@
+{
+  "version": "2026-06-30",
+  "phase": "ODDALERTS-BOOKMAKER-POLICY-1",
+  "bookmaker_priority": [
+    "Pinnacle",
+    "Bet365",
+    "Betfair Exchange",
+    "WilliamHill",
+    "1xBet",
+    "Kambi Group",
+    "Betano",
+    "FanDuel"
+  ],
+  "consensus_methods": [
+    "median_probability",
+    "average_probability",
+    "priority_bookmaker",
+    "liquidity_weighted"
+  ],
+  "default_disagreement_threshold_pct": 8.0,
+  "ecse_policy": {
+    "min_bookmakers_for_median": 3,
+    "method_when_gte_min": "median_probability",
+    "method_when_lt_min": "priority_bookmaker",
+    "reject_high_disagreement": true,
+    "disagreement_threshold_pct": 8.0,
+    "preserve_source_bookmaker_refs": true
+  },
+  "research_policy": {
+    "compute_median": true,
+    "compute_average": true,
+    "compute_min_max_spread": true,
+    "keep_bookmaker_count": true
+  },
+  "consistency_groups": {
+    "match_result_1x2": [
+      "match_result_home",
+      "match_result_draw",
+      "match_result_away"
+    ],
+    "goals_over_under_2_5": [
+      "goals_over_2_5",
+      "goals_under_2_5"
+    ],
+    "btts": [
+      "btts_yes",
+      "btts_no"
+    ]
+  },
+  "normalization": {
+    "enabled": true,
+    "target_sum_pct": 100.0,
+    "min_raw_sum_pct": 85.0,
+    "max_raw_sum_pct": 115.0,
+    "method": "proportional_scale"
+  },
+  "ecse_required_keys": [
+    "match_result_home",
+    "match_result_draw",
+    "match_result_away",
+    "goals_over_2_5",
+    "goals_under_2_5",
+    "btts_yes",
+    "btts_no"
+  ]
+}

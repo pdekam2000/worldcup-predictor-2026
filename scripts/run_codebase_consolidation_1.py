@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 FORBIDDEN_RE = re.compile(
-    r"(^|/)(credentials/|\.env$|\.env\.|data/|artifacts/|reports/|models/|\.cache/|backups/)|"
+    r"(^|/)(credentials/|\.env$|\.env\.|data/|artifacts/|reports/|models/|\.cache/|backups/|logs/)|"
     r"\.(db|sqlite|sqlite3|csv|jsonl|parquet|pkl|joblib|gz|zip)$|"
     r"gmail_token|gmail_oauth_client|\.gmail_token",
     re.I,
@@ -46,9 +46,11 @@ def is_safe_code(path: str) -> bool:
     if p.startswith("scripts/_audit") or p.startswith("scripts/_codebase_consolidation"):
         return False
     name = Path(p).name
-    if name in CODE_NAMES:
+    if name in CODE_NAMES or name == ".gitignore":
         return True
     ext = Path(p).suffix.lower()
+    if ext == ".json" and p.startswith("config/"):
+        return True
     if ext in CODE_EXT:
         if ext == ".json" and "package" not in name:
             return False
