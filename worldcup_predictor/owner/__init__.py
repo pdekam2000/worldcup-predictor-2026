@@ -1,1 +1,1 @@
-"""Owner platform package — Phase 63."""
+"""Owner package — internal tooling."""
