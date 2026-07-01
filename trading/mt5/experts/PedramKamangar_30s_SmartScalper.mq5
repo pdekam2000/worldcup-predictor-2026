@@ -18,21 +18,29 @@ enum TrendDirection
    TREND_UP = 1
 };
 
+enum TradingMode
+{
+   MODE_ADAPTIVE_MULTI = 0,
+   MODE_TREND_SCALP = 1,
+   MODE_AGGRESSIVE_BURST = 2
+};
+
 input string          InpOwnerName              = "Pedram Kamangar";
 input string          InpBrokerTag              = "BazarnForex";
 input ulong           InpMagicNumber            = 30072026;
 input bool            InpEnableAutoTrading      = true;
 input bool            InpSignalOnlyMode         = false;
 input bool            InpShowAlerts             = true;
+input TradingMode     InpTradingMode            = MODE_ADAPTIVE_MULTI;
 
-input int             InpScalpWindowSeconds     = 30;
-input int             InpMaxPositionHoldSeconds = 30;
+input int             InpScalpWindowSeconds     = 60;
+input int             InpMaxPositionHoldSeconds = 3600;
 input int             InpMinSecondsAfterClose   = 8;
 input double          InpBaseLot                = 0.01;
 input double          InpMaxLot                 = 1.00;
-input double          InpRecoveryMultiplier     = 2.0;
-input int             InpMaxRecoverySteps       = 3;
-input bool            InpAggressiveBurstMode    = true;
+input double          InpRecoveryMultiplier     = 1.0;
+input int             InpMaxRecoverySteps       = 0;
+input bool            InpAggressiveBurstMode    = false;
 input int             InpBurstMaxTrades         = 10;
 input int             InpBurstIntervalMinSec    = 5;
 input int             InpBurstIntervalMaxSec    = 10;
@@ -41,9 +49,16 @@ input bool            InpBurstStopOnFirstLoss   = true;
 input int             InpBurstCooldownAfterLoss = 180;
 input double          InpBetterOpportunityAdxBonus = 8.0;
 input double          InpBetterOpportunityRsiBuffer = 4.0;
+input int             InpAdaptiveSignalSeconds  = 60;
+input int             InpAdaptiveMaxHoldSeconds = 14400;
+input double          InpMinRiskReward          = 1.60;
+input int             InpBreakoutLookbackBars   = 16;
+input int             InpDonchianLookbackBars   = 20;
+input double          InpRangeZonePercent       = 20.0;
+input bool            InpUseEvaluatedSymbolProfile = true;
 
-input ENUM_TIMEFRAMES InpTrendTimeframe         = PERIOD_M5;
-input ENUM_TIMEFRAMES InpEntryTimeframe         = PERIOD_M1;
+input ENUM_TIMEFRAMES InpTrendTimeframe         = PERIOD_H1;
+input ENUM_TIMEFRAMES InpEntryTimeframe         = PERIOD_M15;
 input int             InpTrendFastEma           = 21;
 input int             InpTrendSlowEma           = 55;
 input int             InpEntryEma               = 9;
@@ -86,6 +101,12 @@ int      handleEntryEma  = INVALID_HANDLE;
 int      handleAdx       = INVALID_HANDLE;
 int      handleAtr       = INVALID_HANDLE;
 int      handleRsi       = INVALID_HANDLE;
+int      handleMacdH1    = INVALID_HANDLE;
+int      handleEma34H4   = INVALID_HANDLE;
+int      handleEma55H4   = INVALID_HANDLE;
+int      handleRsiH1     = INVALID_HANDLE;
+int      handleAdxH1     = INVALID_HANDLE;
+int      handleAtrH1     = INVALID_HANDLE;
 
 long     lastSignalCycle = -1;
 datetime lastCloseTime   = 0;
@@ -98,6 +119,11 @@ int      burstTradesOpened = 0;
 int      burstTrend      = 0;
 datetime nextBurstTradeTime = 0;
 datetime burstCooldownUntil = 0;
+long     lastAdaptiveSignalCycle = -1;
+string   activeStrategyTag = "TREND_SCALP";
+datetime activeStrategyTime = 0;
+datetime lastAdaptiveSetupTime = 0;
+string   lastAdaptiveSetupTag = "";
 string   panelPrefix     = "PK30SS_";
 string   globalPrefix    = "";
 
@@ -132,10 +158,19 @@ int OnInit()
    handleAdx       = iADX(_Symbol, InpTrendTimeframe, InpAdxPeriod);
    handleAtr       = iATR(_Symbol, InpEntryTimeframe, InpAtrPeriod);
    handleRsi       = iRSI(_Symbol, InpEntryTimeframe, InpRsiPeriod, PRICE_CLOSE);
+   handleMacdH1    = iMACD(_Symbol, PERIOD_H1, 12, 26, 9, PRICE_CLOSE);
+   handleEma34H4   = iMA(_Symbol, PERIOD_H4, 34, 0, MODE_EMA, PRICE_CLOSE);
+   handleEma55H4   = iMA(_Symbol, PERIOD_H4, 55, 0, MODE_EMA, PRICE_CLOSE);
+   handleRsiH1     = iRSI(_Symbol, PERIOD_H1, InpRsiPeriod, PRICE_CLOSE);
+   handleAdxH1     = iADX(_Symbol, PERIOD_H1, InpAdxPeriod);
+   handleAtrH1     = iATR(_Symbol, PERIOD_H1, InpAtrPeriod);
 
    if(handleTrendFast == INVALID_HANDLE || handleTrendSlow == INVALID_HANDLE ||
       handleEntryEma == INVALID_HANDLE || handleAdx == INVALID_HANDLE ||
-      handleAtr == INVALID_HANDLE || handleRsi == INVALID_HANDLE)
+      handleAtr == INVALID_HANDLE || handleRsi == INVALID_HANDLE ||
+      handleMacdH1 == INVALID_HANDLE || handleEma34H4 == INVALID_HANDLE ||
+      handleEma55H4 == INVALID_HANDLE || handleRsiH1 == INVALID_HANDLE ||
+      handleAdxH1 == INVALID_HANDLE || handleAtrH1 == INVALID_HANDLE)
    {
       ReportError("Failed to create one or more indicator handles.", GetLastError());
       return INIT_FAILED;
@@ -161,6 +196,12 @@ void OnDeinit(const int reason)
    ReleaseIndicator(handleAdx);
    ReleaseIndicator(handleAtr);
    ReleaseIndicator(handleRsi);
+   ReleaseIndicator(handleMacdH1);
+   ReleaseIndicator(handleEma34H4);
+   ReleaseIndicator(handleEma55H4);
+   ReleaseIndicator(handleRsiH1);
+   ReleaseIndicator(handleAdxH1);
+   ReleaseIndicator(handleAtrH1);
    SavePersistentState();
    DeletePanel();
 }
@@ -244,7 +285,13 @@ void EvaluateThirtySecondCycle()
 {
    datetime now = TimeCurrent();
 
-   if(InpAggressiveBurstMode)
+   if(InpTradingMode == MODE_ADAPTIVE_MULTI)
+   {
+      EvaluateAdaptiveMultiStrategy(now);
+      return;
+   }
+
+   if(InpTradingMode == MODE_AGGRESSIVE_BURST || InpAggressiveBurstMode)
    {
       EvaluateAggressiveBurst(now);
       return;
@@ -287,7 +334,47 @@ void EvaluateThirtySecondCycle()
    if(!EntryFilterAllows(trend))
       return;
 
+   activeStrategyTag = "TREND_SCALP";
    OpenScalpTrade(trend);
+}
+
+void EvaluateAdaptiveMultiStrategy(const datetime now)
+{
+   int signalSeconds = MathMax(15, InpAdaptiveSignalSeconds);
+   long cycle = (long)(now / signalSeconds);
+   if(cycle == lastAdaptiveSignalCycle)
+      return;
+
+   lastAdaptiveSignalCycle = cycle;
+
+   if(HasOpenPosition())
+      return;
+
+   if((now - lastCloseTime) < InpMinSecondsAfterClose)
+      return;
+
+   if(!RiskGuardsAllowTrading())
+      return;
+
+   if(!AdaptiveIndicatorsReady())
+      return;
+
+   if(CurrentSpreadPoints() > InpMaxSpreadPoints)
+   {
+      UpdatePanel("Spread filter", InpPanelWarningColor);
+      return;
+   }
+
+   TrendDirection signal = AdaptiveStrategySignal();
+   if(signal == TREND_FLAT)
+      return;
+
+   if(activeStrategyTime == lastAdaptiveSetupTime && activeStrategyTag == lastAdaptiveSetupTag)
+      return;
+
+   lastAdaptiveSetupTime = activeStrategyTime;
+   lastAdaptiveSetupTag = activeStrategyTag;
+   OpenScalpTrade(signal);
 }
 
 void EvaluateAggressiveBurst(const datetime now)
@@ -345,6 +432,7 @@ void EvaluateAggressiveBurst(const datetime now)
       return;
    }
 
+   activeStrategyTag = "BURST";
    if(OpenScalpTrade(trend))
    {
       burstTradesOpened++;
@@ -358,8 +446,269 @@ void StartBurst(const TrendDirection trend, const datetime now)
    burstActive = true;
    burstTradesOpened = 0;
    burstTrend = (int)trend;
+   activeStrategyTag = "BURST";
    nextBurstTradeTime = now;
    SavePersistentState();
+}
+
+bool AdaptiveIndicatorsReady()
+{
+   return IndicatorsReady() &&
+          BarsCalculated(handleMacdH1) >= 60 &&
+          BarsCalculated(handleEma34H4) >= 60 &&
+          BarsCalculated(handleEma55H4) >= 60 &&
+          BarsCalculated(handleRsiH1) >= InpRsiPeriod &&
+          BarsCalculated(handleAdxH1) >= InpAdxPeriod &&
+          BarsCalculated(handleAtrH1) >= InpAtrPeriod;
+}
+
+TrendDirection AdaptiveStrategySignal()
+{
+   activeStrategyTime = 0;
+   TrendDirection signal = DonchianBreakoutSignal();
+   if(signal != TREND_FLAT)
+   {
+      activeStrategyTag = "ADAPT:DONCHIAN";
+      if(SymbolStrategyAllowed(activeStrategyTag))
+         return signal;
+   }
+
+   signal = IntradayBreakoutSignal();
+   if(signal != TREND_FLAT)
+   {
+      activeStrategyTag = "ADAPT:BREAKOUT";
+      if(SymbolStrategyAllowed(activeStrategyTag))
+         return signal;
+   }
+
+   signal = MacdMomentumSignal();
+   if(signal != TREND_FLAT)
+   {
+      activeStrategyTag = "ADAPT:MACD";
+      if(SymbolStrategyAllowed(activeStrategyTag))
+         return signal;
+   }
+
+   signal = EmaPullbackSignal();
+   if(signal != TREND_FLAT)
+   {
+      activeStrategyTag = "ADAPT:EMA_H4";
+      if(SymbolStrategyAllowed(activeStrategyTag))
+         return signal;
+   }
+
+   signal = MeanReversionSignal();
+   if(signal != TREND_FLAT)
+   {
+      activeStrategyTag = "ADAPT:MEAN_REVERSION";
+      if(SymbolStrategyAllowed(activeStrategyTag))
+         return signal;
+   }
+
+   activeStrategyTag = "ADAPT:NO_SETUP";
+   return TREND_FLAT;
+}
+
+bool SymbolStrategyAllowed(const string strategyTag)
+{
+   if(!InpUseEvaluatedSymbolProfile)
+      return true;
+
+   string symbol = _Symbol;
+   if(StringFind(symbol, "EURUSD") >= 0)
+      return strategyTag == "ADAPT:DONCHIAN" || strategyTag == "ADAPT:EMA_H4" || strategyTag == "ADAPT:MEAN_REVERSION";
+   if(StringFind(symbol, "USDJPY") >= 0)
+      return false;
+   if(StringFind(symbol, "GBPUSD") >= 0)
+      return strategyTag == "ADAPT:DONCHIAN";
+   if(StringFind(symbol, "EURJPY") >= 0)
+      return false;
+   if(StringFind(symbol, "XAUUSD") >= 0 || StringFind(symbol, "GOLD") >= 0)
+      return false;
+
+   return true;
+}
+
+TrendDirection IntradayBreakoutSignal()
+{
+   MqlRates rates[];
+   int lookback = MathMax(6, InpBreakoutLookbackBars);
+   ArraySetAsSeries(rates, true);
+   if(CopyRates(_Symbol, PERIOD_M15, 0, lookback + 3, rates) < lookback + 3)
+      return TREND_FLAT;
+
+   double rangeHigh = rates[2].high;
+   double rangeLow = rates[2].low;
+   for(int i = 3; i < lookback + 2; i++)
+   {
+      rangeHigh = MathMax(rangeHigh, rates[i].high);
+      rangeLow = MathMin(rangeLow, rates[i].low);
+   }
+
+   double rangeHeight = rangeHigh - rangeLow;
+   double atr = CurrentAdaptiveAtr();
+   if(atr <= 0.0 || rangeHeight < atr * 0.45)
+      return TREND_FLAT;
+
+   if(rates[1].close > rangeHigh && rates[1].close > rates[1].open)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_UP;
+   }
+   if(rates[1].close < rangeLow && rates[1].close < rates[1].open)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_DOWN;
+   }
+
+   return TREND_FLAT;
+}
+
+TrendDirection MacdMomentumSignal()
+{
+   double macdMain[];
+   double macdSignal[];
+   MqlRates rates[];
+   ArrayResize(macdMain, 3);
+   ArrayResize(macdSignal, 3);
+   ArraySetAsSeries(macdMain, true);
+   ArraySetAsSeries(macdSignal, true);
+   ArraySetAsSeries(rates, true);
+
+   if(CopyBuffer(handleMacdH1, 0, 0, 3, macdMain) < 3 ||
+      CopyBuffer(handleMacdH1, 1, 0, 3, macdSignal) < 3 ||
+      CopyRates(_Symbol, PERIOD_H1, 0, 4, rates) < 4)
+   {
+      return TREND_FLAT;
+   }
+
+   double hist0 = macdMain[1] - macdSignal[1];
+   double hist1 = macdMain[2] - macdSignal[2];
+
+   if(hist0 > 0.0 && hist1 <= 0.0 && rates[1].close > rates[2].high)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_UP;
+   }
+   if(hist0 < 0.0 && hist1 >= 0.0 && rates[1].close < rates[2].low)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_DOWN;
+   }
+
+   return TREND_FLAT;
+}
+
+TrendDirection EmaPullbackSignal()
+{
+   double ema34[];
+   double ema55[];
+   MqlRates rates[];
+   ArrayResize(ema34, 3);
+   ArrayResize(ema55, 3);
+   ArraySetAsSeries(ema34, true);
+   ArraySetAsSeries(ema55, true);
+   ArraySetAsSeries(rates, true);
+
+   if(CopyBuffer(handleEma34H4, 0, 0, 3, ema34) < 3 ||
+      CopyBuffer(handleEma55H4, 0, 0, 3, ema55) < 3 ||
+      CopyRates(_Symbol, PERIOD_H4, 0, 4, rates) < 4)
+   {
+      return TREND_FLAT;
+   }
+
+   if(ema34[1] > ema55[1] && rates[1].low <= ema34[1] && rates[1].close > ema34[1] && rates[1].close > rates[1].open)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_UP;
+   }
+
+   if(ema34[1] < ema55[1] && rates[1].high >= ema34[1] && rates[1].close < ema34[1] && rates[1].close < rates[1].open)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_DOWN;
+   }
+
+   return TREND_FLAT;
+}
+
+TrendDirection MeanReversionSignal()
+{
+   double adx[];
+   double rsi[];
+   MqlRates rates[];
+   int lookback = 24;
+   ArrayResize(adx, 2);
+   ArrayResize(rsi, 2);
+   ArraySetAsSeries(adx, true);
+   ArraySetAsSeries(rsi, true);
+   ArraySetAsSeries(rates, true);
+
+   if(CopyBuffer(handleAdxH1, 0, 0, 2, adx) < 2 ||
+      CopyBuffer(handleRsiH1, 0, 0, 2, rsi) < 2 ||
+      CopyRates(_Symbol, PERIOD_H1, 0, lookback + 2, rates) < lookback + 2)
+   {
+      return TREND_FLAT;
+   }
+
+   if(adx[1] >= InpMinAdx)
+      return TREND_FLAT;
+
+   double rangeHigh = rates[2].high;
+   double rangeLow = rates[2].low;
+   for(int i = 3; i < lookback + 2; i++)
+   {
+      rangeHigh = MathMax(rangeHigh, rates[i].high);
+      rangeLow = MathMin(rangeLow, rates[i].low);
+   }
+
+   double zone = (rangeHigh - rangeLow) * InpRangeZonePercent / 100.0;
+   if(zone <= 0.0)
+      return TREND_FLAT;
+
+   if(rates[1].low <= rangeLow + zone && rsi[1] <= 35.0 && rates[1].close > rates[1].open)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_UP;
+   }
+   if(rates[1].high >= rangeHigh - zone && rsi[1] >= 65.0 && rates[1].close < rates[1].open)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_DOWN;
+   }
+
+   return TREND_FLAT;
+}
+
+TrendDirection DonchianBreakoutSignal()
+{
+   MqlRates rates[];
+   int lookback = MathMax(10, InpDonchianLookbackBars);
+   ArraySetAsSeries(rates, true);
+   if(CopyRates(_Symbol, PERIOD_H4, 0, lookback + 3, rates) < lookback + 3)
+      return TREND_FLAT;
+
+   double upper = rates[2].high;
+   double lower = rates[2].low;
+   for(int i = 3; i < lookback + 2; i++)
+   {
+      upper = MathMax(upper, rates[i].high);
+      lower = MathMin(lower, rates[i].low);
+   }
+
+   TrendDirection broadTrend = DetectTrend();
+   if(rates[1].close > upper && broadTrend != TREND_DOWN)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_UP;
+   }
+   if(rates[1].close < lower && broadTrend != TREND_UP)
+   {
+      activeStrategyTime = rates[1].time;
+      return TREND_DOWN;
+   }
+
+   return TREND_FLAT;
 }
 
 bool IndicatorsReady()
@@ -470,13 +819,15 @@ bool BetterOpportunityEntryAllows(const TrendDirection trend)
 
 bool OpenScalpTrade(const TrendDirection trend)
 {
-   double atr = CurrentAtr();
+   double atr = (InpTradingMode == MODE_ADAPTIVE_MULTI) ? CurrentAdaptiveAtr() : CurrentAtr();
    if(atr <= 0.0)
       return false;
 
    double lot = NextLot();
    double stopDistance = SmartStopDistance(atr);
-   double tpDistance = atr * InpTp3AtrMultiplier;
+   double tpDistance = (InpTradingMode == MODE_ADAPTIVE_MULTI)
+                       ? stopDistance * MathMax(1.0, InpMinRiskReward)
+                       : atr * InpTp3AtrMultiplier;
    double ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
    double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
    double price = trend == TREND_UP ? ask : bid;
@@ -487,8 +838,9 @@ bool OpenScalpTrade(const TrendDirection trend)
    tp = NormalizeDouble(tp, _Digits);
 
    string side = trend == TREND_UP ? "BUY" : "SELL";
-   string comment = "PK30 SmartScalper " + InpBrokerTag;
-   string signalMessage = StringFormat("%s signal %s lot=%.2f recovery_step=%d", _Symbol, side, lot, lossStreak);
+   string comment = "PK30 " + activeStrategyTag + " " + InpBrokerTag;
+   string signalMessage = StringFormat("%s %s signal %s lot=%.2f recovery_step=%d",
+                                       _Symbol, activeStrategyTag, side, lot, lossStreak);
 
    if(InpShowAlerts)
       Alert(signalMessage);
@@ -548,6 +900,7 @@ void ManageOpenPositions()
 
       ENUM_POSITION_TYPE type = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
       double openPrice = PositionGetDouble(POSITION_PRICE_OPEN);
+      double currentSl = PositionGetDouble(POSITION_SL);
       double currentTp = PositionGetDouble(POSITION_TP);
       double volume = PositionGetDouble(POSITION_VOLUME);
       datetime openedAt = (datetime)PositionGetInteger(POSITION_TIME);
@@ -560,29 +913,37 @@ void ManageOpenPositions()
       double tp1Distance = atr * InpTp1AtrMultiplier;
       double tp2Distance = atr * InpTp2AtrMultiplier;
 
-      if(stage < 1 && profitDistance >= tp1Distance)
+      if(IsAdaptivePosition())
       {
-         TryPartialClose(ticket, volume, InpTp1ClosePercent);
-         MoveStopToBreakEven(ticket, type, openPrice, currentTp);
-         SetPositionStage(ticket, 1);
-         stage = 1;
+         ManageAdaptivePosition(ticket, type, openPrice, currentSl, currentTp, profitDistance);
+      }
+      else
+      {
+         if(stage < 1 && profitDistance >= tp1Distance)
+         {
+            TryPartialClose(ticket, volume, InpTp1ClosePercent);
+            MoveStopToBreakEven(ticket, type, openPrice, currentTp);
+            SetPositionStage(ticket, 1);
+            stage = 1;
+         }
+
+         if(stage < 2 && profitDistance >= tp2Distance)
+         {
+            if(PositionSelectByTicket(ticket))
+               volume = PositionGetDouble(POSITION_VOLUME);
+
+            TryPartialClose(ticket, volume, InpTp2ClosePercent);
+            LockProfitStop(ticket, type, openPrice, currentTp, atr);
+            SetPositionStage(ticket, 2);
+            stage = 2;
+         }
+
+         if(stage >= 2)
+            TrailSmartStop(ticket, type, currentTp, atr);
       }
 
-      if(stage < 2 && profitDistance >= tp2Distance)
-      {
-         if(PositionSelectByTicket(ticket))
-            volume = PositionGetDouble(POSITION_VOLUME);
-
-         TryPartialClose(ticket, volume, InpTp2ClosePercent);
-         LockProfitStop(ticket, type, openPrice, currentTp, atr);
-         SetPositionStage(ticket, 2);
-         stage = 2;
-      }
-
-      if(stage >= 2)
-         TrailSmartStop(ticket, type, currentTp, atr);
-
-      if(InpMaxPositionHoldSeconds > 0 && (TimeCurrent() - openedAt) >= InpMaxPositionHoldSeconds)
+      int maxHoldSeconds = PositionMaxHoldSeconds();
+      if(maxHoldSeconds > 0 && (TimeCurrent() - openedAt) >= maxHoldSeconds)
       {
          if(!trade.PositionClose(ticket))
          {
@@ -595,6 +956,37 @@ void ManageOpenPositions()
          }
       }
    }
+}
+
+bool IsAdaptivePosition()
+{
+   return StringFind(PositionGetString(POSITION_COMMENT), "ADAPT:") >= 0;
+}
+
+void ManageAdaptivePosition(const ulong ticket,
+                            const ENUM_POSITION_TYPE type,
+                            const double openPrice,
+                            const double currentSl,
+                            const double currentTp,
+                            const double profitDistance)
+{
+   double initialRisk = MathAbs(openPrice - currentSl);
+   if(initialRisk <= 0.0)
+      return;
+
+   if(profitDistance >= initialRisk)
+      MoveStopToBreakEven(ticket, type, openPrice, currentTp);
+
+   if(profitDistance >= initialRisk * 1.20)
+      TrailSmartStop(ticket, type, currentTp, CurrentAdaptiveAtr());
+}
+
+int PositionMaxHoldSeconds()
+{
+   string comment = PositionGetString(POSITION_COMMENT);
+   if(StringFind(comment, "ADAPT:") >= 0)
+      return InpAdaptiveMaxHoldSeconds;
+   return InpMaxPositionHoldSeconds;
 }
 
 void TryPartialClose(const ulong ticket, const double currentVolume, const double percent)
@@ -705,6 +1097,16 @@ double CurrentAtr()
    ArraySetAsSeries(atr, true);
    if(CopyBuffer(handleAtr, 0, 0, 1, atr) != 1)
       return 0.0;
+   return atr[0];
+}
+
+double CurrentAdaptiveAtr()
+{
+   double atr[];
+   ArrayResize(atr, 1);
+   ArraySetAsSeries(atr, true);
+   if(CopyBuffer(handleAtrH1, 0, 0, 1, atr) != 1)
+      return CurrentAtr();
    return atr[0];
 }
 
@@ -1037,7 +1439,9 @@ void UpdatePanel(const string status, const color statusColor)
    string modeLine = "Mode: ";
    if(InpSignalOnlyMode || !InpEnableAutoTrading)
       modeLine += "semi-auto signal";
-   else if(InpAggressiveBurstMode)
+   else if(InpTradingMode == MODE_ADAPTIVE_MULTI)
+      modeLine += "adaptive " + activeStrategyTag;
+   else if(InpTradingMode == MODE_AGGRESSIVE_BURST || InpAggressiveBurstMode)
    {
       modeLine += StringFormat("aggressive burst %d/%d open=%d",
                                burstTradesOpened, InpBurstMaxTrades, CountOpenPositions());

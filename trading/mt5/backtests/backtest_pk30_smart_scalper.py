@@ -72,6 +72,8 @@ class Position:
     sl: float
     tp: float
     volume: float
+    strategy: str
+    initial_risk: float
     realized_pnl: float = 0.0
     stage: int = 0
 
@@ -86,6 +88,7 @@ class Trade:
     pnl: float
     close_reason: str
     loss_streak_after: int
+    strategy: str
 
 
 @dataclass
@@ -93,12 +96,20 @@ class BacktestConfig:
     initial_equity: float = 1000.0
     base_lot: float = 0.01
     max_lot: float = 1.0
-    recovery_multiplier: float = 2.0
-    max_recovery_steps: int = 3
-    scalp_window_seconds: int = 30
-    max_hold_seconds: int = 30
+    recovery_multiplier: float = 1.0
+    max_recovery_steps: int = 0
+    scalp_window_seconds: int = 60
+    max_hold_seconds: int = 3600
+    adaptive_mode: bool = True
+    adaptive_signal_seconds: int = 60
+    adaptive_max_hold_seconds: int = 14400
+    min_risk_reward: float = 1.60
+    breakout_lookback_bars: int = 16
+    donchian_lookback_bars: int = 20
+    range_zone_percent: float = 20.0
+    use_evaluated_symbol_profile: bool = True
     min_seconds_after_close: int = 8
-    aggressive_burst_mode: bool = True
+    aggressive_burst_mode: bool = False
     burst_max_trades: int = 10
     burst_interval_min_seconds: int = 5
     burst_interval_max_seconds: int = 10
@@ -214,6 +225,26 @@ class Rsi:
         return self.value
 
 
+class Macd:
+    def __init__(self, fast: int = 12, slow: int = 26, signal: int = 9) -> None:
+        self.fast_ema = Ema(fast)
+        self.slow_ema = Ema(slow)
+        self.signal_ema = Ema(signal)
+        self.hist_history: list[float] = []
+        self.value: float | None = None
+
+    def update(self, close: float) -> float | None:
+        fast = self.fast_ema.update(close)
+        slow = self.slow_ema.update(close)
+        macd_line = fast - slow
+        signal_line = self.signal_ema.update(macd_line)
+        self.value = macd_line - signal_line
+        self.hist_history.append(self.value)
+        if len(self.hist_history) > 5:
+            self.hist_history.pop(0)
+        return self.value
+
+
 class Adx:
     def __init__(self, period: int) -> None:
         self.period = period
@@ -314,17 +345,30 @@ class SmartScalperBacktest:
         self.burst_trend = 0
         self.next_burst_trade_time: dt.datetime | None = None
         self.burst_cooldown_until: dt.datetime | None = None
+        self.last_adaptive_signal_times: dict[str, dt.datetime] = {}
         self.trades: list[Trade] = []
         self.equity_curve: list[float] = [config.initial_equity]
 
         self.m1 = BarAggregator(60)
         self.m5 = BarAggregator(300)
+        self.m15 = BarAggregator(900)
+        self.h1 = BarAggregator(3600)
+        self.h4 = BarAggregator(14400)
         self.entry_ema = Ema(config.entry_ema)
         self.trend_fast = Ema(config.trend_fast_ema)
         self.trend_slow = Ema(config.trend_slow_ema)
         self.atr = Atr(config.atr_period)
         self.rsi = Rsi(config.rsi_period)
         self.adx = Adx(config.adx_period)
+        self.h1_atr = Atr(config.atr_period)
+        self.h1_rsi = Rsi(config.rsi_period)
+        self.h1_adx = Adx(config.adx_period)
+        self.h1_macd = Macd()
+        self.h4_ema34 = Ema(34)
+        self.h4_ema55 = Ema(55)
+        self.m15_history: list[Bar] = []
+        self.h1_history: list[Bar] = []
+        self.h4_history: list[Bar] = []
 
     def on_tick(self, tick: Tick) -> None:
         closed_m1 = self.m1.update(tick.at, tick.bid)
@@ -339,18 +383,49 @@ class SmartScalperBacktest:
             self.trend_slow.update(closed_m5.close)
             self.adx.update(closed_m5)
 
+        closed_m15 = self.m15.update(tick.at, tick.bid)
+        if closed_m15:
+            self.m15_history.append(closed_m15)
+            self.m15_history = self.m15_history[-80:]
+
+        closed_h1 = self.h1.update(tick.at, tick.bid)
+        if closed_h1:
+            self.h1_history.append(closed_h1)
+            self.h1_history = self.h1_history[-120:]
+            self.h1_atr.update(closed_h1)
+            self.h1_rsi.update(closed_h1.close)
+            self.h1_adx.update(closed_h1)
+            self.h1_macd.update(closed_h1.close)
+
+        closed_h4 = self.h4.update(tick.at, tick.bid)
+        if closed_h4:
+            self.h4_history.append(closed_h4)
+            self.h4_history = self.h4_history[-120:]
+            self.h4_ema34.update(closed_h4.close)
+            self.h4_ema55.update(closed_h4.close)
+
         self.manage_positions(tick)
 
         if self.next_cycle is None:
-            seconds = 1 if self.config.aggressive_burst_mode else self.config.scalp_window_seconds
+            if self.config.adaptive_mode:
+                seconds = self.config.adaptive_signal_seconds
+            else:
+                seconds = 1 if self.config.aggressive_burst_mode else self.config.scalp_window_seconds
             self.next_cycle = floor_time(tick.at, seconds)
 
         while self.next_cycle is not None and tick.at >= self.next_cycle:
             self.evaluate_cycle(self.next_cycle, tick)
-            seconds = 1 if self.config.aggressive_burst_mode else self.config.scalp_window_seconds
+            if self.config.adaptive_mode:
+                seconds = self.config.adaptive_signal_seconds
+            else:
+                seconds = 1 if self.config.aggressive_burst_mode else self.config.scalp_window_seconds
             self.next_cycle += dt.timedelta(seconds=seconds)
 
     def evaluate_cycle(self, cycle_time: dt.datetime, tick: Tick) -> None:
+        if self.config.adaptive_mode:
+            self.evaluate_adaptive(cycle_time, tick)
+            return
+
         if self.config.aggressive_burst_mode:
             self.evaluate_aggressive_burst(cycle_time, tick)
             return
@@ -372,7 +447,28 @@ class SmartScalperBacktest:
         if not self.entry_filter_allows(trend, tick):
             return
 
-        self.open_position(trend, tick)
+        self.open_position(trend, tick, "TREND_SCALP")
+
+    def evaluate_adaptive(self, cycle_time: dt.datetime, tick: Tick) -> None:
+        if self.positions:
+            return
+        if self.last_close_time and (cycle_time - self.last_close_time).total_seconds() < self.config.min_seconds_after_close:
+            return
+        if not self.risk_guards_allow_entry(cycle_time):
+            return
+        if not self.adaptive_ready():
+            return
+        if self.spread_points(tick) > self.config.max_spread_points:
+            return
+
+        trend, strategy, signal_time = self.adaptive_strategy_signal(tick)
+        if trend == 0:
+            return
+        if self.last_adaptive_signal_times.get(strategy) == signal_time:
+            return
+        self.last_adaptive_signal_times[strategy] = signal_time
+
+        self.open_position(trend, tick, strategy)
 
     def evaluate_aggressive_burst(self, cycle_time: dt.datetime, tick: Tick) -> None:
         if self.burst_cooldown_until and cycle_time < self.burst_cooldown_until:
@@ -408,7 +504,7 @@ class SmartScalperBacktest:
             self.next_burst_trade_time = cycle_time + dt.timedelta(seconds=self.config.scalp_window_seconds)
             return
 
-        self.open_position(trend, tick)
+        self.open_position(trend, tick, "BURST")
         self.burst_trades_opened += 1
         self.next_burst_trade_time = cycle_time + dt.timedelta(seconds=self.next_burst_interval_seconds(cycle_time))
 
@@ -446,6 +542,116 @@ class SmartScalperBacktest:
             or self.trend_slow.value is None
             or len(self.trend_fast.history) < 3
         )
+
+    def adaptive_ready(self) -> bool:
+        return (
+            len(self.m15_history) >= self.config.breakout_lookback_bars + 2
+            and len(self.h1_history) >= 30
+            and len(self.h4_history) >= self.config.donchian_lookback_bars + 2
+            and self.h1_atr.value is not None
+            and self.h1_rsi.value is not None
+            and self.h1_adx.value is not None
+            and self.h1_macd.value is not None
+            and len(self.h1_macd.hist_history) >= 3
+            and self.h4_ema34.value is not None
+            and self.h4_ema55.value is not None
+        )
+
+    def adaptive_strategy_signal(self, tick: Tick) -> tuple[int, str, dt.datetime | None]:
+        for strategy in (
+            self.donchian_breakout_signal,
+            self.intraday_breakout_signal,
+            self.macd_momentum_signal,
+            self.ema_pullback_signal,
+            self.mean_reversion_signal,
+        ):
+            trend, name, signal_time = strategy(tick)
+            if trend != 0 and self.symbol_strategy_allowed(name):
+                return trend, name, signal_time
+        return 0, "ADAPT:NO_SETUP", None
+
+    def symbol_strategy_allowed(self, strategy: str) -> bool:
+        if not self.config.use_evaluated_symbol_profile:
+            return True
+        if self.symbol == "EURUSD":
+            return strategy in {"ADAPT:DONCHIAN", "ADAPT:EMA_H4", "ADAPT:MEAN_REVERSION"}
+        if self.symbol == "USDJPY":
+            return False
+        if self.symbol == "GBPUSD":
+            return strategy == "ADAPT:DONCHIAN"
+        if self.symbol == "EURJPY":
+            return False
+        if self.symbol == "XAUUSD":
+            return False
+        return True
+
+    def intraday_breakout_signal(self, tick: Tick) -> tuple[int, str, dt.datetime | None]:
+        lookback = max(6, self.config.breakout_lookback_bars)
+        prior = self.m15_history[-lookback - 1 : -1]
+        last = self.m15_history[-1]
+        range_high = max(bar.high for bar in prior)
+        range_low = min(bar.low for bar in prior)
+        assert self.h1_atr.value is not None
+        if (range_high - range_low) < self.h1_atr.value * 0.45:
+            return 0, "ADAPT:BREAKOUT", None
+        if last.close > range_high and last.close > last.open:
+            return 1, "ADAPT:BREAKOUT", last.start
+        if last.close < range_low and last.close < last.open:
+            return -1, "ADAPT:BREAKOUT", last.start
+        return 0, "ADAPT:BREAKOUT", None
+
+    def macd_momentum_signal(self, tick: Tick) -> tuple[int, str, dt.datetime | None]:
+        hist = self.h1_macd.hist_history
+        last = self.h1_history[-1]
+        prev = self.h1_history[-2]
+        if hist[-1] > 0.0 and hist[-2] <= 0.0 and last.close > prev.high:
+            return 1, "ADAPT:MACD", last.start
+        if hist[-1] < 0.0 and hist[-2] >= 0.0 and last.close < prev.low:
+            return -1, "ADAPT:MACD", last.start
+        return 0, "ADAPT:MACD", None
+
+    def ema_pullback_signal(self, tick: Tick) -> tuple[int, str, dt.datetime | None]:
+        last = self.h4_history[-1]
+        ema34 = self.h4_ema34.value
+        ema55 = self.h4_ema55.value
+        if ema34 is None or ema55 is None:
+            return 0, "ADAPT:EMA_H4", None
+        if ema34 > ema55 and last.low <= ema34 and last.close > ema34 and last.close > last.open:
+            return 1, "ADAPT:EMA_H4", last.start
+        if ema34 < ema55 and last.high >= ema34 and last.close < ema34 and last.close < last.open:
+            return -1, "ADAPT:EMA_H4", last.start
+        return 0, "ADAPT:EMA_H4", None
+
+    def mean_reversion_signal(self, tick: Tick) -> tuple[int, str, dt.datetime | None]:
+        assert self.h1_adx.value is not None
+        assert self.h1_rsi.value is not None
+        if self.h1_adx.value >= self.config.min_adx:
+            return 0, "ADAPT:MEAN_REVERSION", None
+        prior = self.h1_history[-25:-1]
+        last = self.h1_history[-1]
+        range_high = max(bar.high for bar in prior)
+        range_low = min(bar.low for bar in prior)
+        zone = (range_high - range_low) * self.config.range_zone_percent / 100.0
+        if zone <= 0.0:
+            return 0, "ADAPT:MEAN_REVERSION", None
+        if last.low <= range_low + zone and self.h1_rsi.value <= 35.0 and last.close > last.open:
+            return 1, "ADAPT:MEAN_REVERSION", last.start
+        if last.high >= range_high - zone and self.h1_rsi.value >= 65.0 and last.close < last.open:
+            return -1, "ADAPT:MEAN_REVERSION", last.start
+        return 0, "ADAPT:MEAN_REVERSION", None
+
+    def donchian_breakout_signal(self, tick: Tick) -> tuple[int, str, dt.datetime | None]:
+        lookback = max(10, self.config.donchian_lookback_bars)
+        prior = self.h4_history[-lookback - 1 : -1]
+        last = self.h4_history[-1]
+        upper = max(bar.high for bar in prior)
+        lower = min(bar.low for bar in prior)
+        broad_trend = self.detect_trend() if not self.indicators_not_ready() else 0
+        if last.close > upper and broad_trend != -1:
+            return 1, "ADAPT:DONCHIAN", last.start
+        if last.close < lower and broad_trend != 1:
+            return -1, "ADAPT:DONCHIAN", last.start
+        return 0, "ADAPT:DONCHIAN", None
 
     def detect_trend(self) -> int:
         assert self.adx.value is not None
@@ -488,15 +694,18 @@ class SmartScalperBacktest:
             <= self.config.sell_rsi_max - self.config.better_opportunity_rsi_buffer
         )
 
-    def open_position(self, trend: int, tick: Tick) -> None:
-        assert self.atr.value is not None
+    def open_position(self, trend: int, tick: Tick, strategy: str) -> None:
         lot = self.next_lot()
-        stop_distance = self.smart_stop_distance(tick)
-        tp_distance = self.atr.value * self.config.tp3_atr_multiplier
+        adaptive = strategy.startswith("ADAPT:")
+        atr = self.h1_atr.value if adaptive and self.h1_atr.value is not None else self.atr.value
+        if atr is None:
+            return
+        stop_distance = self.smart_stop_distance(tick, atr)
+        tp_distance = stop_distance * self.config.min_risk_reward if adaptive else atr * self.config.tp3_atr_multiplier
         price = tick.ask if trend == 1 else tick.bid
         sl = price - stop_distance if trend == 1 else price + stop_distance
         tp = price + tp_distance if trend == 1 else price - tp_distance
-        self.positions.append(Position(trend, lot, price, tick.at, sl, tp, lot))
+        self.positions.append(Position(trend, lot, price, tick.at, sl, tp, lot, strategy, stop_distance))
 
     def manage_positions(self, tick: Tick) -> None:
         if not self.positions or self.atr.value is None:
@@ -522,6 +731,14 @@ class SmartScalperBacktest:
             self.close_position(pos, tick, pos.tp, "tp3")
             return
 
+        if pos.strategy.startswith("ADAPT:"):
+            self.manage_adaptive_open_position(pos, tick, profit_distance)
+            max_hold = self.config.adaptive_max_hold_seconds
+            if pos in self.positions and (tick.at - pos.open_time).total_seconds() >= max_hold:
+                exit_price = tick.bid if pos.side == 1 else tick.ask
+                self.close_position(pos, tick, exit_price, "time_exit")
+            return
+
         assert self.atr.value is not None
         tp1_distance = self.atr.value * self.config.tp1_atr_multiplier
         tp2_distance = self.atr.value * self.config.tp2_atr_multiplier
@@ -539,9 +756,21 @@ class SmartScalperBacktest:
         if pos in self.positions and pos.stage >= 2:
             self.trail_stop(pos, tick)
 
-        if pos in self.positions and (tick.at - pos.open_time).total_seconds() >= self.config.max_hold_seconds:
+        max_hold = self.config.adaptive_max_hold_seconds if pos.strategy.startswith("ADAPT:") else self.config.max_hold_seconds
+        if pos in self.positions and (tick.at - pos.open_time).total_seconds() >= max_hold:
             exit_price = tick.bid if pos.side == 1 else tick.ask
             self.close_position(pos, tick, exit_price, "time_exit")
+
+    def manage_adaptive_open_position(self, pos: Position, tick: Tick, profit_distance: float) -> None:
+        if profit_distance >= pos.initial_risk:
+            buffer = self.config.breakeven_buffer_points * self.spec.point
+            new_sl = pos.open_price + buffer if pos.side == 1 else pos.open_price - buffer
+            self.modify_stop_if_better(pos, new_sl)
+
+        if profit_distance >= pos.initial_risk * 1.20 and self.h1_atr.value is not None:
+            trail_distance = max(self.h1_atr.value * self.config.trail_atr_multiplier, pos.initial_risk * 0.50)
+            new_sl = tick.bid - trail_distance if pos.side == 1 else tick.ask + trail_distance
+            self.modify_stop_if_better(pos, new_sl)
 
     def partial_close(self, pos: Position, tick: Tick, percent: float) -> None:
         close_volume = normalize_volume(pos.volume * percent / 100.0)
@@ -568,7 +797,7 @@ class SmartScalperBacktest:
     def trail_stop(self, pos: Position, tick: Tick) -> None:
         if self.atr.value is None:
             return
-        trail_distance = max(self.atr.value * self.config.trail_atr_multiplier, self.smart_stop_distance(tick) * 0.35)
+        trail_distance = max(self.atr.value * self.config.trail_atr_multiplier, self.smart_stop_distance(tick, self.atr.value) * 0.35)
         new_sl = tick.bid - trail_distance if pos.side == 1 else tick.ask + trail_distance
         self.modify_stop_if_better(pos, new_sl)
 
@@ -610,6 +839,7 @@ class SmartScalperBacktest:
                 pnl=pnl,
                 close_reason=reason,
                 loss_streak_after=self.loss_streak,
+                strategy=pos.strategy,
             )
         )
         self.last_close_time = tick.at
@@ -632,10 +862,9 @@ class SmartScalperBacktest:
     def spread_points(self, tick: Tick) -> float:
         return (tick.ask - tick.bid) / self.spec.point
 
-    def smart_stop_distance(self, tick: Tick) -> float:
-        assert self.atr.value is not None
+    def smart_stop_distance(self, tick: Tick, atr: float) -> float:
         broker_min = ((self.spread_points(tick) + 3.0) * self.spec.point)
-        atr_stop = self.atr.value * self.config.stop_atr_multiplier
+        atr_stop = atr * self.config.stop_atr_multiplier
         return max(atr_stop, broker_min)
 
     def next_burst_interval_seconds(self, cycle_time: dt.datetime) -> int:
@@ -762,6 +991,11 @@ def read_ticks(path: Path, spec: SymbolSpec, hour: dt.datetime, start: dt.dateti
 
 def run_symbol(symbol: str, start: dt.datetime, end: dt.datetime, cache_dir: Path, workers: int, config: BacktestConfig) -> tuple[dict[str, object], list[Trade]]:
     spec = SYMBOL_SPECS[symbol]
+    if not symbol_profile_has_any_strategy(symbol, config):
+        tester = SmartScalperBacktest(symbol, spec, config)
+        print(f"{symbol}: skipped by evaluated symbol profile.", file=sys.stderr)
+        return tester.summary(), tester.trades
+
     print(f"{symbol}: downloading/caching real tick data...", file=sys.stderr)
     paths = ensure_symbol_data(cache_dir, symbol, start, end, workers)
     tester = SmartScalperBacktest(symbol, spec, config)
@@ -772,6 +1006,12 @@ def run_symbol(symbol: str, start: dt.datetime, end: dt.datetime, cache_dir: Pat
         for tick in read_ticks(path, spec, hour, start, end):
             tester.on_tick(tick)
     return tester.summary(), tester.trades
+
+
+def symbol_profile_has_any_strategy(symbol: str, config: BacktestConfig) -> bool:
+    if not config.adaptive_mode or not config.use_evaluated_symbol_profile:
+        return True
+    return symbol in {"EURUSD", "GBPUSD"}
 
 
 def parse_dt(value: str) -> dt.datetime:
@@ -796,6 +1036,8 @@ def write_outputs(output_dir: Path, results: list[dict[str, object]], trades: li
         f"- End: `{metadata['end']}`",
         f"- Initial equity: `{metadata['initial_equity']}` USD",
         f"- Commission model: `{metadata['commission_per_lot_round_turn']}` USD per lot round turn",
+        f"- Adaptive multi-strategy: `{metadata['adaptive_mode']}`; signal interval `{metadata['adaptive_signal_seconds']}` seconds; max hold `{metadata['adaptive_max_hold_seconds']}` seconds; minimum R:R `{metadata['min_risk_reward']}`",
+        f"- Evaluated symbol profile filter: `{metadata['use_evaluated_symbol_profile']}`",
         f"- Aggressive burst: `{metadata['aggressive_burst_mode']}`; max trades `{metadata['burst_max_trades']}`; interval `{metadata['burst_interval_seconds'][0]}-{metadata['burst_interval_seconds'][1]}` seconds",
         f"- First-loss stop: `{metadata['burst_stop_on_first_loss']}`; cooldown `{metadata['burst_cooldown_after_loss_seconds']}` seconds; better-opportunity ADX bonus `{metadata['better_opportunity_adx_bonus']}`",
         f"- Note: portable Python approximation of the MT5 EA; MT5 Strategy Tester on BazarnForex remains the broker-accurate reference.",
@@ -862,6 +1104,13 @@ def main() -> int:
         "symbols": symbols,
         "commission_per_lot_round_turn": args.commission_per_lot_round_turn,
         "jpy_per_usd": args.jpy_per_usd,
+        "adaptive_mode": config.adaptive_mode,
+        "adaptive_signal_seconds": config.adaptive_signal_seconds,
+        "adaptive_max_hold_seconds": config.adaptive_max_hold_seconds,
+        "min_risk_reward": config.min_risk_reward,
+        "breakout_lookback_bars": config.breakout_lookback_bars,
+        "donchian_lookback_bars": config.donchian_lookback_bars,
+        "use_evaluated_symbol_profile": config.use_evaluated_symbol_profile,
         "aggressive_burst_mode": config.aggressive_burst_mode,
         "burst_max_trades": config.burst_max_trades,
         "burst_interval_seconds": [config.burst_interval_min_seconds, config.burst_interval_max_seconds],

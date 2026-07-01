@@ -1,8 +1,8 @@
 # PedramKamangar 30s SmartScalper for MT5
 
-Standalone MetaTrader 5 Expert Advisor for 30-second trend scalping on BazarnForex or any MT5 broker.
+Standalone MetaTrader 5 Expert Advisor for adaptive Forex strategy execution on BazarnForex or any MT5 broker.
 
-> Risk warning: this EA uses recovery sizing after losing trades. Even with caps, this is high risk and can quickly increase drawdown during choppy markets. Test on demo first.
+> Risk warning: no Forex strategy can guarantee profit. This EA uses objective rules and risk guards, but it must be demo-tested and forward-tested before any live use.
 
 ## Files
 
@@ -11,17 +11,28 @@ Standalone MetaTrader 5 Expert Advisor for 30-second trend scalping on BazarnFor
 
 ## Strategy summary
 
-1. **Trend discovery first**
-   - Uses EMA 21/55 and ADX on `InpTrendTimeframe` (default `M5`).
-   - Trades only in the trend direction.
+1. **Adaptive multi-strategy router**
+   - Default mode is `InpTradingMode=MODE_ADAPTIVE_MULTI`.
+   - The EA first identifies market conditions, then routes to one of five strategy families:
+     - Intraday breakout on M15 ranges.
+     - MACD 1-hour momentum.
+     - 4-hour EMA 34/55 pullback trend strategy.
+     - H1 mean reversion/range trading with RSI exhaustion.
+     - H4 Donchian-style trend breakout.
+   - If the market condition does not match a rule set, no trade is opened.
+   - `InpUseEvaluatedSymbolProfile=true` filters strategy families per symbol based on the latest real tick-data evaluation. This reduces applying a strategy to symbols where it recently had negative expectancy, but it must be forward-tested because profiles can become overfit.
+   - Current default profile: EURUSD uses Donchian/EMA/Mean Reversion; GBPUSD uses Donchian; USDJPY, EURJPY and XAUUSD are disabled until forward testing or a new optimization proves positive expectancy.
 
-2. **30-second scalping cadence**
-   - MT5 standard charts do not have a native 30-second timeframe, so the EA uses a timer.
-   - Every `InpScalpWindowSeconds` seconds (default `30`), it checks for a fresh trend-aligned entry.
-   - `InpMaxPositionHoldSeconds` defaults to `30`, so stale scalp positions are closed by time if TP/SL does not finish first.
+2. **Structured workflow**
+   - Identify market condition.
+   - Look for a matching setup.
+   - Define stop and target before entry.
+   - Execute only when spread/drawdown/daily-loss guards allow.
+   - Record trades with strategy tags in comments and backtest CSV.
 
 3. **Aggressive burst mode**
-   - Enabled by default with `InpAggressiveBurstMode=true`.
+   - Disabled by default because the real tick-data backtest was not profitable.
+   - Can still be selected with `InpTradingMode=MODE_AGGRESSIVE_BURST` or `InpAggressiveBurstMode=true`.
    - When the EA finds a valid trend-aligned setup after activation, it can open up to `InpBurstMaxTrades=10` trades.
    - Burst entries are spaced by `InpBurstIntervalMinSec=5` to `InpBurstIntervalMaxSec=10` seconds.
    - `InpMaxConcurrentPositions=10` caps simultaneous positions for hedging accounts. On netting accounts, MT5 may merge same-symbol entries into one net position.
@@ -34,11 +45,11 @@ Standalone MetaTrader 5 Expert Advisor for 30-second trend scalping on BazarnFor
 
 5. **Recovery sizing**
    - Base lot: `InpBaseLot`.
-   - After a losing final close, next lot = `BaseLot * 2^lossStreak`.
-   - After a winning final close, lot resets to base.
-   - Safety caps: `InpMaxRecoverySteps` and `InpMaxLot`.
+   - Default recovery is disabled with `InpRecoveryMultiplier=1.0` and `InpMaxRecoverySteps=0`.
+   - If manually enabled, safety caps are `InpMaxRecoverySteps` and `InpMaxLot`.
 
-6. **Smart three-step profit**
+6. **Risk/reward-aware exits**
+   - Adaptive entries use `InpMinRiskReward` so the target is not smaller than the configured reward multiple of stop distance.
    - TP1: partial close and move SL to breakeven.
    - TP2: partial close and lock profit.
    - TP3: broker TP target, with smart ATR trailing after TP2.
@@ -70,10 +81,14 @@ Standalone MetaTrader 5 Expert Advisor for 30-second trend scalping on BazarnFor
 
 | Input | Conservative start |
 | --- | --- |
+| `InpTradingMode` | `MODE_ADAPTIVE_MULTI` |
 | `InpBaseLot` | `0.01` |
 | `InpMaxLot` | account-dependent, start low |
-| `InpMaxRecoverySteps` | `2` or `3` |
-| `InpAggressiveBurstMode` | `true` only after demo testing |
+| `InpRecoveryMultiplier` | `1.0` |
+| `InpMaxRecoverySteps` | `0` |
+| `InpMinRiskReward` | `1.60` or higher |
+| `InpUseEvaluatedSymbolProfile` | `true` |
+| `InpAggressiveBurstMode` | `false`; enable only after demo testing |
 | `InpBurstMaxTrades` | `10` requested aggressive mode; reduce if drawdown is high |
 | `InpBurstIntervalMinSec` / `InpBurstIntervalMaxSec` | `5` / `10` |
 | `InpBurstStopOnFirstLoss` | `true` |
