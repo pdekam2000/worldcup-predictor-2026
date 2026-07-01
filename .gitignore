@@ -40,3 +40,25 @@ reports/
 
 # Accidental local junk
 datetime
+
+# CODEBASE-CONSOLIDATION-1 — runtime/generated (code-first)
+data/
+!data/.gitkeep
+artifacts/
+logs/
+models/
+credentials/
+*.db
+*.sqlite
+*.sqlite3
+*.csv
+*.jsonl
+**/.gmail_token.json
+**/gmail_oauth_client*.json
+backups/
+deploy_staging_phase40a/
+_pack_*/
+dist_*/
+scripts/_audit_*.py
+scripts/_codebase_consolidation_analyze.py
+^
