@@ -14,7 +14,7 @@ Local source code gap to GitHub **closed**. The bad unpushed commit `d143e98` (c
 | Metric | Before | After |
 |--------|--------|-------|
 | Local vs GitHub | ahead 1 + ~490 uncommitted code files | **synced** |
-| GitHub `main` | `4dd87d2` | **`bbe2dd8`** |
+| GitHub `main` | `4dd87d2` | **`d8c9e8c`** |
 | Safe code files pushed | 0 | **~504** |
 | Secrets/DB/CSV pushed | — | **0** |
 
@@ -48,8 +48,9 @@ Excluded paths: `data/`, `artifacts/`, `credentials/`, `models/`, `logs/`, `*.db
 | 8 | `5552bf1` | docs: phase reports and consolidation audit artifacts | 88 |
 | 9 | `8d62939` | chore(tooling): project asset audit and consolidation runners | 1 |
 | 10 | `bbe2dd8` | chore(consolidation): expand gitignore for code-first policy | 1 |
+| 11 | `d8c9e8c` | docs(consolidation-1): report, config schemas, runner fix | 9 |
 
-**Total source files:** ~504
+**Total source files:** ~513
 
 ---
 
@@ -92,14 +93,10 @@ Excluded paths: `data/`, `artifacts/`, `credentials/`, `models/`, `logs/`, `*.db
 
 ## 7. Remaining local-only (minor)
 
-These safe files remain uncommitted locally (optional follow-up batch):
+These remain uncommitted locally (by design):
 
-- `config/*.json` — OddAlerts/historical CSV policy schemas (4 files)
-- `scripts/run_codebase_consolidation_1.py` — runner fix after batch 9
-- `EUROPEAN_LEAGUES_PREDICTION_COVERAGE_AUDIT.md` — doc naming mismatch
-- `deployment/ecse_x2_m7_enablement_snippet.env` — excluded (env snippet)
-
-Local `data/` shadow jsonl modifications remain unstaged (runtime).
+- `deployment/ecse_x2_m7_enablement_snippet.env` — env snippet (excluded)
+- Local `data/` shadow jsonl and cache modifications — runtime only
 
 ---
 
@@ -108,7 +105,7 @@ Local `data/` shadow jsonl modifications remain unstaged (runtime).
 ```
 Repository: https://github.com/pdekam2000/worldcup-predictor-2026.git
 Branch: main
-HEAD: bbe2dd8
+HEAD: d8c9e8c
 Previous: 4dd87d2
 ```
 
