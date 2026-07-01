@@ -14,7 +14,7 @@ Local source code gap to GitHub **closed**. The bad unpushed commit `d143e98` (c
 | Metric | Before | After |
 |--------|--------|-------|
 | Local vs GitHub | ahead 1 + ~490 uncommitted code files | **synced** |
-| GitHub `main` | `4dd87d2` | **`d8c9e8c`** |
+| GitHub `main` | `4dd87d2` | **`b9203f3`** |
 | Safe code files pushed | 0 | **~504** |
 | Secrets/DB/CSV pushed | — | **0** |
 
@@ -105,7 +105,7 @@ These remain uncommitted locally (by design):
 ```
 Repository: https://github.com/pdekam2000/worldcup-predictor-2026.git
 Branch: main
-HEAD: d8c9e8c
+HEAD: b9203f3
 Previous: 4dd87d2
 ```
 
