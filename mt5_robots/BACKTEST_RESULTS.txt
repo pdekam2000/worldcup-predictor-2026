@@ -1,0 +1,56 @@
+
+══════════════════════════════════════════════════════════════════════
+  PEDRAM SCALPER PRO — PYTHON BACKTEST ENGINE
+  © Pedram Kamangar
+  Period : 2025-12-30  →  2026-07-01  (6 months)
+  Balance: $10,000  |  Spread: 0.5 pips
+  Martingale: 1×  →  2×  →  4×  |  Max Loss Streak: 4
+  ATR SL ×1.5  |  TP: 1.0:2.0:3.0 R/R
+══════════════════════════════════════════════════════════════════════
+  Downloading EURUSD   (Euro / US Dollar) ... ✔  10 trades | WR=40.0% | PF=0.9 | DD=1.51% | PnL=$-19.23  🛑HALTED
+  Downloading USDJPY   (US Dollar / Japanese Yen) ... ✔  30 trades | WR=46.7% | PF=0.87 | DD=5.36% | PnL=$-169.20  🛑HALTED
+  Downloading GBPUSD   (British Pound / US Dollar) ... ✔  29 trades | WR=41.4% | PF=0.83 | DD=2.61% | PnL=$-147.39  🛑HALTED
+  Downloading AUDUSD   (Australian Dollar / USD) ... ✔  4 trades | WR=0.0% | PF=0.0 | DD=1.04% | PnL=$-103.98  🛑HALTED
+  Downloading USDCAD   (US Dollar / Canadian Dollar) ... ✔  37 trades | WR=54.1% | PF=1.58 | DD=2.39% | PnL=$+410.11  🛑HALTED
+  Downloading XAUUSD   (Gold / US Dollar) ... ✔  1 trades | WR=0.0% | PF=0.0 | DD=40.45% | PnL=$-4,045.21  🛑HALTED
+
+══════════════════════════════════════════════════════════════════════
+  SUMMARY TABLE
+══════════════════════════════════════════════════════════════════════
+╭──────────┬──────────┬────────┬─────────────────┬───────────┬────────────┬───────────┬────────────┬───────────╮
+│   Symbol │   Trades │   Win% │   Profit Factor │   Max DD% │    Net PnL │   Return% │    Balance │   Verdict │
+├──────────┼──────────┼────────┼─────────────────┼───────────┼────────────┼───────────┼────────────┼───────────┤
+│   USDCAD │       37 │  54.1% │            1.58 │     2.39% │   $+410.11 │     +4.1% │ $10,410.11 │    ✔ GOOD │
+│   EURUSD │       10 │  40.0% │            0.9  │     1.51% │    $-19.23 │     -0.2% │  $9,980.77 │    ✗ WEAK │
+│   USDJPY │       30 │  46.7% │            0.87 │     5.36% │   $-169.20 │     -1.7% │  $9,830.80 │    ✗ WEAK │
+│   GBPUSD │       29 │  41.4% │            0.83 │     2.61% │   $-147.39 │     -1.5% │  $9,852.61 │    ✗ WEAK │
+│   AUDUSD │        4 │   0.0% │            0    │     1.04% │   $-103.98 │     -1.0% │  $9,896.02 │    ✗ WEAK │
+│   XAUUSD │        1 │   0.0% │            0    │    40.45% │ $-4,045.21 │    -40.5% │  $5,954.79 │    ✗ WEAK │
+╰──────────┴──────────┴────────┴─────────────────┴───────────┴────────────┴───────────┴────────────┴───────────╯
+
+  BEST PAIR: USDCAD (Profit Factor = 1.58)
+  Trades: 37  |  Wins: 20  |  Losses: 17  |  Win Rate: 54.1%
+  Net P/L: $+410.11  |  Max DD: 2.39%  |  Final Balance: $10,410.11
+
+  MONTHLY BREAKDOWN — USDCAD
+  ────────────────────────────────────────────────────────────
+Month      Trades    Wins    Win%    Net PnL ($)
+-------  --------  ------  ------  -------------
+2026-01        15       9    60           415.69
+2026-02         4       4   100            92.5
+2026-03         9       3    33.3        -133.62
+2026-04         8       4    50           124.34
+2026-05         1       0     0           -88.8
+
+══════════════════════════════════════════════════════════════════════
+  RECOMMENDATIONS
+══════════════════════════════════════════════════════════════════════
+  USDCAD    PF=1.58  WR=54.1%  DD=2.39%  →  🟡 Marginal — optimize parameters
+  EURUSD    PF=0.9  WR=40.0%  DD=1.51%  →  ❌ Not recommended — negative edge
+  USDJPY    PF=0.87  WR=46.7%  DD=5.36%  →  ❌ Not recommended — negative edge
+
+  NOTE: This backtest uses 1-hour bars as proxy for 30-second intervals.
+        For highest fidelity, run in MT5 Strategy Tester with 'Every Tick' model.
+        Real 30-second data is only available inside MT5.
+══════════════════════════════════════════════════════════════════════
+
