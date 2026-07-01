@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { qualityColorClass } from "@/lib/betQualityOverlay";
 import { fmtMarketSel, safeMarketSelection } from "@/lib/predictionDetailProUtils";
 import { TRUST_RESEARCH_ONLY } from "@/lib/trustCopy";
+import EcseExactScorePanel from "./EcseExactScorePanel";
 
 function MarketRow({ title, selection, probability, confidence, risk, reason, onAdd }) {
   if (!selection) return null;
@@ -161,6 +162,7 @@ export default function PredictionExpandPanel({ prediction, match, onAddLeg }) {
           </div>
         </div>
       )}
+      <EcseExactScorePanel fixtureId={fixtureId} compact />
       {Array.isArray(prediction.recommended_bets) && prediction.recommended_bets.length > 0 && (
         <div className="rounded-lg border border-[#FFD166]/20 bg-[#FFD166]/5 p-3">
           <p className="text-[10px] uppercase text-[#FFD166] mb-2">Recommended bets</p>

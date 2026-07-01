@@ -78,6 +78,8 @@ import OwnerNotificationsPage from './pages/owner/OwnerNotificationsPage';
 import OwnerPerformancePage from './pages/owner/OwnerPerformancePage';
 import OwnerModelCenter from './pages/owner/OwnerModelCenter';
 import OwnerResearchLab from './pages/owner/OwnerResearchLab';
+import OwnerEcseShadowLab from './pages/owner/OwnerEcseShadowLab';
+import OwnerEcseOddalertsShadow from './pages/owner/OwnerEcseOddalertsShadow';
 import OwnerPromotionCenter from './pages/owner/OwnerPromotionCenter';
 import OwnerBettingIntelligence from './pages/owner/OwnerBettingIntelligence';
 import OwnerPrefetchCoveragePage from './pages/owner/OwnerPrefetchCoveragePage';
@@ -139,6 +141,8 @@ const AuthenticatedApp = () => {
           <Route path="/owner/performance" element={<OwnerPerformancePage />} />
           <Route path="/owner/model-center" element={<OwnerModelCenter />} />
           <Route path="/owner/research-lab" element={<OwnerResearchLab />} />
+          <Route path="/owner/ecse-shadow-lab" element={<OwnerEcseShadowLab />} />
+          <Route path="/owner/ecse-oddalerts-shadow" element={<OwnerEcseOddalertsShadow />} />
           <Route path="/owner/promotion-center" element={<OwnerPromotionCenter />} />
           <Route path="/owner/betting-intelligence" element={<OwnerBettingIntelligence />} />
           <Route path="/owner/prefetch-coverage" element={<OwnerPrefetchCoveragePage />} />

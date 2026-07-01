@@ -487,6 +487,78 @@ export async function runOwnerPrefetchOnce({ windowDays = 7, maxPerCycle = 24 } 
   return saasFetch(`/api/owner/prefetch/run-once?${qs}`, { method: "POST" });
 }
 
+/** Phase ECSE-X2-M8 — Owner ECSE shadow lab (research only) */
+export async function fetchOwnerEcseShadowLabSummary() {
+  return saasFetch("/api/owner/ecse-shadow-lab/summary");
+}
+
+export async function fetchOwnerEcseShadowLabFixtures({
+  filter = "all",
+  league,
+  dateFrom,
+  dateTo,
+  limit = 100,
+  offset = 0,
+} = {}) {
+  const qs = new URLSearchParams({
+    filter,
+    limit: String(limit),
+    offset: String(offset),
+  });
+  if (league) qs.set("league", league);
+  if (dateFrom) qs.set("date_from", dateFrom);
+  if (dateTo) qs.set("date_to", dateTo);
+  return saasFetch(`/api/owner/ecse-shadow-lab/fixtures?${qs}`);
+}
+
+export async function fetchOwnerEcseShadowLabFixture(fixtureId) {
+  return saasFetch(`/api/owner/ecse-shadow-lab/fixtures/${encodeURIComponent(fixtureId)}`);
+}
+
+/** Phase ECSE-ODDALERTS-3 — Owner OddAlerts ECSE shadow lab (research only) */
+export async function fetchOwnerEcseOddalertsShadow(params = {}) {
+  const qs = new URLSearchParams();
+  const map = {
+    shadowRunId: "shadow_run_id",
+    dateFrom: "date_from",
+    dateTo: "date_to",
+    competition: "competition",
+    team: "team",
+    promotionAction: "promotion_action",
+    status: "status",
+    top1Score: "top1_score",
+    top1Outcome: "top1_outcome",
+    lambdaHomeMin: "lambda_home_min",
+    lambdaHomeMax: "lambda_home_max",
+    lambdaAwayMin: "lambda_away_min",
+    lambdaAwayMax: "lambda_away_max",
+    top3ContainsActual: "top3_contains_actual",
+    top5ContainsActual: "top5_contains_actual",
+    bookmakerAgreementMin: "bookmaker_agreement_min",
+    crosswalkConfidenceMin: "crosswalk_confidence_min",
+    segmentRecommendation: "segment_recommendation",
+    limit: "limit",
+    offset: "offset",
+  };
+  for (const [key, param] of Object.entries(map)) {
+    const val = params[key];
+    if (val !== undefined && val !== null && val !== "") {
+      qs.set(param, String(val));
+    }
+  }
+  return saasFetch(`/api/owner/ecse-oddalerts-shadow?${qs}`);
+}
+
+/** Phase ECSE-ODDALERTS-5 — Live shadow monitor (owner only) */
+export async function fetchOwnerEcseOddalertsShadowMonitor(params = {}) {
+  const qs = new URLSearchParams();
+  if (params.dateFrom) qs.set("date_from", params.dateFrom);
+  if (params.dateTo) qs.set("date_to", params.dateTo);
+  if (params.status) qs.set("status", params.status);
+  if (params.limit) qs.set("limit", String(params.limit));
+  return saasFetch(`/api/owner/ecse-oddalerts-shadow/monitor?${qs}`);
+}
+
 export async function fetchPredOpsCoverage() {
   return saasFetch("/api/predops/coverage");
 }

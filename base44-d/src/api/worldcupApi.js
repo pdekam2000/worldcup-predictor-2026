@@ -311,6 +311,12 @@ export async function runPrediction(fixtureId, params = {}) {
   return parseJsonResponse(response);
 }
 
+/** PHASE ECSE-UI-1 — read-only ECSE exact-score distribution for Match Center. */
+export async function fetchEcseForFixture(fixtureId) {
+  const response = await authFetch(buildApiUrl(`/api/research/ecse/fixtures/${fixtureId}`));
+  return parseJsonResponse(response);
+}
+
 /** Normalize prediction API payload for UI — Phase 30A/30C + H4 safe scalars. */
 export function normalizePredictionPayload(data) {
   if (!data || typeof data !== "object") return data;

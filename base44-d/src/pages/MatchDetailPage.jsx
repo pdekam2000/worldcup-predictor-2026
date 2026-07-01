@@ -27,6 +27,7 @@ import { DetailSectionSkeleton } from "@/components/prediction-detail-pro/Detail
 import { useAuth } from "@/lib/AuthContext";
 import ShareButton from "@/components/social/ShareButton";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
+import EcseExactScorePanel from "@/components/match-center/EcseExactScorePanel";
 
 const SECTION_TABS = [
   { id: "summary", label: "Summary" },
@@ -290,6 +291,12 @@ export default function MatchDetailPage() {
             <ErrorBoundary label="summary">
               <PredictionSummaryCards summary={summary} />
               <BetSlipActions summary={summary} match={matchCtx} onAddBestPick={handleAddBestPick} onAddCombo={handleAddCombo} />
+            </ErrorBoundary>
+          )}
+
+          {(tab === "summary" || tab === "markets") && (
+            <ErrorBoundary label="ecse-exact-scores">
+              <EcseExactScorePanel fixtureId={Number(fixtureId)} />
             </ErrorBoundary>
           )}
 
