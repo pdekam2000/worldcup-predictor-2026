@@ -1,0 +1,30 @@
+"""PHASE ECSE-X2-M4 — Internal weight test constants."""
+
+from __future__ import annotations
+
+PHASE = "ECSE-X2-M4"
+METHOD_VERSION = "ECSE-X2-M4-v1"
+EQUATION_NAME = "log_home_prob_phi"
+
+SHADOW_ARTIFACT = "artifacts/ecse_x2_m4_internal_weight_test.jsonl"
+SUMMARY_ARTIFACT = "artifacts/ecse_x2_m4_internal_weight_summary.json"
+
+TEST_WEIGHTS: tuple[float, ...] = (0.01, 0.03, 0.05, 0.07, 0.10)
+
+MIN_HOME_PROB = 0.55
+STRONG_HOME_PROB = 0.60
+HOME_FAVORITE_MARGIN = 0.08
+STRONG_HOME_FAVORITE_MARGIN = 0.15
+
+TRAIN_FRACTION = 0.70
+NUM_TEMPORAL_FOLDS = 5
+TOP_N_STORE = 15
+TOP_N_SHADOW = 10
+
+MAX_LOG_LOSS_WORSEN = 0.005
+MAX_RANK_VOLATILITY = 1.5
+MIN_FOLDS_IMPROVED_TOP3 = 3
+MIN_SEGMENT_SAMPLE = 500
+MIN_FOLD_SAMPLE = 500
+HOME_PROB_MID_BUCKET_LO = 0.40
+HOME_PROB_MID_BUCKET_HI = 0.55
