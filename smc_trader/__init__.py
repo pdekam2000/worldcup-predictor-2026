@@ -1,0 +1,1 @@
+# SMC Forex Robot Trader
