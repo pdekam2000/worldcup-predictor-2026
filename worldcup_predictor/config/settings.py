@@ -181,6 +181,70 @@ class Settings(BaseSettings):
         alias="AUTONOMOUS_DRY_RUN",
     )
 
+    # Phase ECSE-LIVE-1 — internal ECSE snapshot + evaluation loop (no public exposure)
+    ecse_live_enabled: bool = Field(
+        default=False,
+        alias="ECSE_LIVE_ENABLED",
+    )
+    ecse_live_snapshot_minutes_before: int = Field(
+        default=60,
+        alias="ECSE_LIVE_SNAPSHOT_MINUTES_BEFORE",
+    )
+    ecse_live_eval_minutes_after_ft: int = Field(
+        default=15,
+        alias="ECSE_LIVE_EVAL_MINUTES_AFTER_FT",
+    )
+    ecse_live_dry_run: bool = Field(
+        default=False,
+        alias="ECSE_LIVE_DRY_RUN",
+    )
+    ecse_live_use_providers: bool = Field(
+        default=True,
+        alias="ECSE_LIVE_USE_PROVIDERS",
+    )
+
+    # Phase ECSE-X2-M6 — shadow-live shortlist enhancer (admin/internal only)
+    ecse_x2_m6_shadow_live_enabled: bool = Field(
+        default=False,
+        alias="ECSE_X2_M6_SHADOW_LIVE_ENABLED",
+    )
+
+    # Phase ECSE-X3-B — owner shadow lab j2_g_slope wiring (internal only)
+    ecse_x3_b_owner_shadow_lab_enabled: bool = Field(
+        default=False,
+        alias="ECSE_X3_B_OWNER_SHADOW_LAB_ENABLED",
+    )
+
+    # Phase SAFE-BETS-1 — internal high-probability market scanner (research only)
+    safe_bets_enabled: bool = Field(
+        default=False,
+        alias="SAFE_BETS_ENABLED",
+    )
+    safe_bets_hours: int = Field(
+        default=72,
+        alias="SAFE_BETS_HOURS",
+    )
+    safe_bets_min_implied: float = Field(
+        default=0.75,
+        alias="SAFE_BETS_MIN_IMPLIED",
+    )
+    safe_bets_allow_trivial: bool = Field(
+        default=False,
+        alias="SAFE_BETS_ALLOW_TRIVIAL",
+    )
+    safe_bets_max_api_calls: int = Field(
+        default=200,
+        alias="SAFE_BETS_MAX_API_CALLS",
+    )
+    safe_bets_dry_run: bool = Field(
+        default=False,
+        alias="SAFE_BETS_DRY_RUN",
+    )
+    safe_bets_use_live_api: bool = Field(
+        default=True,
+        alias="SAFE_BETS_USE_LIVE_API",
+    )
+
     # Phase 61 — unified hybrid prediction engine (orchestration only; specialists unchanged)
     unified_engine_enabled: bool = Field(
         default=False,

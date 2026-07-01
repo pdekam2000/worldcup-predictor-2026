@@ -211,7 +211,15 @@ class FootballIntelligenceRepository:
         self._conn.commit()
         return True
 
-    def upsert_fixture_result(self, fixture: TournamentFixture, *, competition_key: str) -> bool:
+    def upsert_fixture_result(
+        self,
+        fixture: TournamentFixture,
+        *,
+        competition_key: str,
+        match_outcome_type: str | None = None,
+        penalty_score: str | None = None,
+        outcome_source: str | None = None,
+    ) -> bool:
         if fixture.home_goals is None or fixture.away_goals is None:
             return False
         if classify_status(fixture.status) != "finished":
@@ -227,13 +235,14 @@ class FootballIntelligenceRepository:
         ht = None
         if fixture.halftime_home_goals is not None and fixture.halftime_away_goals is not None:
             ht = f"{fixture.halftime_home_goals}-{fixture.halftime_away_goals}"
+        resolved_outcome_type = match_outcome_type or str(fixture.status or "").upper() or None
         self._conn.execute(
             """
             INSERT INTO fixture_results(
                 fixture_id, competition_key, final_score, halftime_score,
                 home_goals, away_goals, winner, over_under_2_5, total_goals,
-                finished_at, source
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                finished_at, source, match_outcome_type, penalty_score, outcome_source
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(fixture_id) DO UPDATE SET
                 final_score=excluded.final_score,
                 halftime_score=excluded.halftime_score,
@@ -243,7 +252,10 @@ class FootballIntelligenceRepository:
                 over_under_2_5=excluded.over_under_2_5,
                 total_goals=excluded.total_goals,
                 finished_at=excluded.finished_at,
-                source=excluded.source
+                source=excluded.source,
+                match_outcome_type=COALESCE(excluded.match_outcome_type, fixture_results.match_outcome_type),
+                penalty_score=COALESCE(excluded.penalty_score, fixture_results.penalty_score),
+                outcome_source=COALESCE(excluded.outcome_source, fixture_results.outcome_source)
             """,
             (
                 fixture.fixture_id,
@@ -257,6 +269,9 @@ class FootballIntelligenceRepository:
                 total,
                 _utc_now(),
                 fixture.source,
+                resolved_outcome_type,
+                penalty_score,
+                outcome_source,
             ),
         )
         self._conn.commit()
@@ -1601,3 +1616,232 @@ class FootballIntelligenceRepository:
             params.append(season)
         query += " ORDER BY kickoff_utc ASC"
         return [dict(r) for r in self._conn.execute(query, params).fetchall()]
+
+    # ------------------------------------------------------------------ #
+    # Phase EURO-A / 39B — league sync + enrichment helpers
+    # ------------------------------------------------------------------ #
+
+    def fixture_ids_for_competition_season(
+        self,
+        *,
+        competition_key: str,
+        season: int,
+    ) -> set[int]:
+        rows = self._conn.execute(
+            """
+            SELECT fixture_id FROM fixtures
+            WHERE competition_key = ? AND season = ? AND is_placeholder = 0
+            """,
+            (competition_key, int(season)),
+        ).fetchall()
+        return {int(r["fixture_id"]) for r in rows}
+
+    def count_fixtures_for_competition_season(
+        self,
+        *,
+        competition_key: str,
+        season: int,
+    ) -> int:
+        row = self._conn.execute(
+            """
+            SELECT COUNT(*) AS c FROM fixtures
+            WHERE competition_key = ? AND season = ? AND is_placeholder = 0
+            """,
+            (competition_key, int(season)),
+        ).fetchone()
+        return int(row["c"]) if row else 0
+
+    def count_competition_coverage(self, competition_key: str) -> dict[str, int]:
+        """Read-only counts for EURO-A audit summaries."""
+        fx = self._conn.execute(
+            "SELECT COUNT(*) AS c FROM fixtures WHERE competition_key = ? AND is_placeholder = 0",
+            (competition_key,),
+        ).fetchone()
+        upcoming = self._conn.execute(
+            """
+            SELECT COUNT(*) AS c FROM fixtures
+            WHERE competition_key = ? AND is_placeholder = 0
+              AND status IN ('NS', 'TBD', 'SCHEDULED', 'TIMED')
+              AND kickoff_utc > ?
+            """,
+            (competition_key, _utc_now()),
+        ).fetchone()
+        finished = self._conn.execute(
+            """
+            SELECT COUNT(*) AS c FROM fixtures
+            WHERE competition_key = ? AND is_placeholder = 0
+              AND status IN ('FT', 'AET', 'PEN')
+            """,
+            (competition_key,),
+        ).fetchone()
+        results = self._conn.execute(
+            "SELECT COUNT(*) AS c FROM fixture_results WHERE competition_key = ?",
+            (competition_key,),
+        ).fetchone()
+        odds = self._conn.execute(
+            "SELECT COUNT(*) AS c FROM odds_snapshots WHERE competition_key = ?",
+            (competition_key,),
+        ).fetchone()
+        return {
+            "fixtures": int(fx["c"]) if fx else 0,
+            "upcoming": int(upcoming["c"]) if upcoming else 0,
+            "finished": int(finished["c"]) if finished else 0,
+            "fixture_results": int(results["c"]) if results else 0,
+            "odds_snapshots": int(odds["c"]) if odds else 0,
+        }
+
+    def get_league_sync_state(
+        self,
+        *,
+        competition_key: str,
+        season: int,
+    ) -> dict[str, Any] | None:
+        row = self._conn.execute(
+            """
+            SELECT * FROM league_sync_state
+            WHERE competition_key = ? AND season = ?
+            """,
+            (competition_key, int(season)),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def upsert_league_sync_state(
+        self,
+        *,
+        competition_key: str,
+        season: int,
+        last_imported_fixture_id: int | None = None,
+        last_imported_date: str | None = None,
+        sync_mode: str = "incremental",
+    ) -> None:
+        now = _utc_now()
+        self._conn.execute(
+            """
+            INSERT INTO league_sync_state (
+                competition_key, season, last_imported_fixture_id,
+                last_imported_date, last_sync_at, sync_mode
+            ) VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(competition_key, season) DO UPDATE SET
+                last_imported_fixture_id = COALESCE(excluded.last_imported_fixture_id, league_sync_state.last_imported_fixture_id),
+                last_imported_date = COALESCE(excluded.last_imported_date, league_sync_state.last_imported_date),
+                last_sync_at = excluded.last_sync_at,
+                sync_mode = excluded.sync_mode
+            """,
+            (
+                competition_key,
+                int(season),
+                last_imported_fixture_id,
+                last_imported_date,
+                now,
+                sync_mode,
+            ),
+        )
+        self._conn.commit()
+
+    def start_league_import_run(
+        self,
+        *,
+        competition_key: str,
+        league_id: int,
+        season: int,
+        started_at: str,
+    ) -> int:
+        cur = self._conn.execute(
+            """
+            INSERT INTO league_import_runs (
+                competition_key, league_id, season, status, started_at
+            ) VALUES (?, ?, ?, 'running', ?)
+            """,
+            (competition_key, int(league_id), int(season), started_at),
+        )
+        self._conn.commit()
+        return int(cur.lastrowid)
+
+    def finish_league_import_run(
+        self,
+        run_id: int,
+        *,
+        status: str,
+        fixtures_imported: int,
+        fixtures_skipped: int,
+        enrichment_errors: int,
+        message: str,
+        finished_at: str,
+    ) -> None:
+        self._conn.execute(
+            """
+            UPDATE league_import_runs SET
+                status = ?,
+                fixtures_imported = ?,
+                fixtures_skipped = ?,
+                enrichment_errors = ?,
+                message = ?,
+                finished_at = ?
+            WHERE id = ?
+            """,
+            (
+                status,
+                int(fixtures_imported),
+                int(fixtures_skipped),
+                int(enrichment_errors),
+                message,
+                finished_at,
+                int(run_id),
+            ),
+        )
+        self._conn.commit()
+
+    def upsert_fixture_enrichment(
+        self,
+        *,
+        fixture_id: int,
+        competition_key: str,
+        league_id: int | None = None,
+        season: int | None = None,
+        events: Any = None,
+        lineups: Any = None,
+        statistics: Any = None,
+        players: Any = None,
+        odds: Any = None,
+    ) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO fixture_enrichment (
+                fixture_id, competition_key, league_id, season,
+                events_json, lineups_json, statistics_json, players_json, odds_json, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(fixture_id) DO UPDATE SET
+                competition_key = excluded.competition_key,
+                league_id = COALESCE(excluded.league_id, fixture_enrichment.league_id),
+                season = COALESCE(excluded.season, fixture_enrichment.season),
+                events_json = COALESCE(excluded.events_json, fixture_enrichment.events_json),
+                lineups_json = COALESCE(excluded.lineups_json, fixture_enrichment.lineups_json),
+                statistics_json = COALESCE(excluded.statistics_json, fixture_enrichment.statistics_json),
+                players_json = COALESCE(excluded.players_json, fixture_enrichment.players_json),
+                odds_json = COALESCE(excluded.odds_json, fixture_enrichment.odds_json),
+                updated_at = excluded.updated_at
+            """,
+            (
+                int(fixture_id),
+                competition_key,
+                league_id,
+                season,
+                json.dumps(events, ensure_ascii=False) if events is not None else None,
+                json.dumps(lineups, ensure_ascii=False) if lineups is not None else None,
+                json.dumps(statistics, ensure_ascii=False) if statistics is not None else None,
+                json.dumps(players, ensure_ascii=False) if players is not None else None,
+                json.dumps(odds, ensure_ascii=False) if odds is not None else None,
+                _utc_now(),
+            ),
+        )
+        self._conn.commit()
+
+    def update_fixture_competition_type(self, fixture_id: int, competition_type: str) -> None:
+        cols = {row[1] for row in self._conn.execute("PRAGMA table_info(fixtures)").fetchall()}
+        if "competition_type" not in cols:
+            return
+        self._conn.execute(
+            "UPDATE fixtures SET competition_type = ? WHERE fixture_id = ?",
+            (competition_type, int(fixture_id)),
+        )
+        self._conn.commit()

@@ -24,6 +24,15 @@ EUROPEAN_LEAGUE_KEYS: tuple[str, ...] = (
     "conference_league",
 )
 
+# EURO-A import scope (subset of EUROPEAN_LEAGUE_KEYS)
+EURO_A_FEED_KEYS: tuple[str, ...] = (
+    "premier_league",
+    "bundesliga",
+    "champions_league",
+    "europa_league",
+    "conference_league",
+)
+
 LEARNING_PROFILE_KEYS: tuple[str, ...] = (
     "world_cup",
     *EUROPEAN_LEAGUE_KEYS,

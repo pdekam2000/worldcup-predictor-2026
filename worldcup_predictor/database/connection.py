@@ -15,9 +15,10 @@ def get_db_path(path: str | Path | None = None) -> Path:
 def connect(path: str | Path | None = None) -> sqlite3.Connection:
     db_path = get_db_path(path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(db_path), check_same_thread=False)
+    conn = sqlite3.connect(str(db_path), check_same_thread=False, timeout=60.0)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA busy_timeout = 30000")
     if db_path.exists() and db_path.stat().st_size > 0:
         from worldcup_predictor.database.migrations import ensure_schema_compat
 

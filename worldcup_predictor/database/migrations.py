@@ -216,6 +216,11 @@ PHASE46C1_DDL: tuple[str, ...] = (
 )
 
 # Phase 62B — World Cup fixture competition_type + Sportmonks mapping
+# HOTFIX WC-RESULT-SYNC-2 — penalty shootout score separate from match aggregate
+WC_RESULT_SYNC_2_COLUMNS: tuple[tuple[str, str, str], ...] = (
+    ("fixture_results", "penalty_score", "TEXT"),
+)
+
 PHASE62B_COLUMNS: tuple[tuple[str, str, str], ...] = (
     ("fixtures", "competition_type", "TEXT NOT NULL DEFAULT 'world_cup_finals'"),
 )
@@ -738,6 +743,10 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
         if _table_exists(conn, table):
             _add_column_if_missing(conn, table, column, typedef)
 
+    for table, column, typedef in WC_RESULT_SYNC_2_COLUMNS:
+        if _table_exists(conn, table):
+            _add_column_if_missing(conn, table, column, typedef)
+
     for ddl in PHASE62B_DDL:
         conn.execute(ddl)
 
@@ -749,6 +758,37 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
 
     for ddl in PHASE61_DDL:
         conn.execute(ddl)
+
+    try:
+        from worldcup_predictor.research.ecse_live.ddl import PHASE_ECSE_LIVE_DDL
+
+        for ddl in PHASE_ECSE_LIVE_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.research.safe_bets.ddl import PHASE_SAFE_BETS_DDL
+
+        for ddl in PHASE_SAFE_BETS_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.research.goal_timing_split.ddl import PHASE_GOAL_TIMING_SPLIT_DDL
+
+        for ddl in PHASE_GOAL_TIMING_SPLIT_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.research.ecse_x2_m1.build import ensure_ecse_score_distributions_m1_table
+
+        ensure_ecse_score_distributions_m1_table(conn)
+    except ModuleNotFoundError:
+        pass
 
     for ddl in PHASE44_DDL:
         conn.execute(ddl)
@@ -780,6 +820,54 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
         from worldcup_predictor.providers.oddalerts_historical_odds import PHASE_OA2_DDL
 
         for ddl in PHASE_OA2_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.data_import.european_fixture_feed import EURO_FIXTURE_FEED_DDL
+
+        for ddl in EURO_FIXTURE_FEED_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.data_import.oddalerts_enrichment_ddl import ODDALERTS_ENRICHMENT_DDL
+
+        for ddl in ODDALERTS_ENRICHMENT_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.data_import.oddalerts_csv_incremental_ddl import ODDALERTS_INBOX_CATALOG_DDL
+
+        for ddl in ODDALERTS_INBOX_CATALOG_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.data_import.oddalerts_probability_market_ddl import ODDALERTS_PROBABILITY_MARKET_DDL
+
+        for ddl in ODDALERTS_PROBABILITY_MARKET_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.research.oddalerts_ecse_shadow_ddl import ECSE_ODDALERTS_SHADOW_DDL
+
+        for ddl in ECSE_ODDALERTS_SHADOW_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.research.oddalerts_ecse_monitor_ddl import ECSE_ODDALERTS_MONITOR_DDL
+
+        for ddl in ECSE_ODDALERTS_MONITOR_DDL:
             conn.execute(ddl)
     except ModuleNotFoundError:
         pass
