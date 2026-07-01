@@ -58,6 +58,16 @@ def run_autonomous_cycle(
 
         certification = run_performance_certification(settings=settings)
 
+        ecse_live_report: dict[str, Any] | None = None
+        if settings.ecse_live_enabled:
+            try:
+                from worldcup_predictor.research.ecse_live.scheduler import run_ecse_live_cycle
+
+                ecse_live_report = run_ecse_live_cycle(settings=settings)
+            except Exception as exc:
+                logger.warning("ecse_live_cycle_failed: %s", exc)
+                ecse_live_report = {"status": "error", "error": str(exc)}
+
         try:
             highlights = load_highlights_payload()
             merged = merge_into_highlights_payload(highlights, settings=settings)
@@ -77,6 +87,8 @@ def run_autonomous_cycle(
             "evaluation": eval_result.to_dict(),
             "certification": certification.to_dict(),
         }
+        if ecse_live_report is not None:
+            report["ecse_live"] = ecse_live_report
 
         artifacts = Path("artifacts/phase61_autonomous")
         artifacts.mkdir(parents=True, exist_ok=True)

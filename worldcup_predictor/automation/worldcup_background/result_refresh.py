@@ -222,6 +222,29 @@ def refresh_stored_prediction_results(
 
         if finished_for_jsonl and not dry_run:
             outcome.jsonl_saved = save_finished_fixtures(finished_for_jsonl, MatchResultsStore())
+
+        # HOTFIX WC-RESULT-SYNC-2 — ECSE snapshot fixtures (not only WDE stored predictions)
+        if not dry_run:
+            try:
+                from worldcup_predictor.research.ecse_live.result_sync import refresh_ecse_snapshot_results
+
+                ecse_refresh = refresh_ecse_snapshot_results(
+                    settings=settings,
+                    competition_key=competition_key,
+                    limit=limit,
+                    dry_run=False,
+                )
+                outcome.details.append(
+                    {
+                        "status": "ecse_snapshot_result_sync",
+                        "synced": ecse_refresh.synced,
+                        "scanned": ecse_refresh.scanned,
+                        "ecse_evaluated": ecse_refresh.ecse_evaluated,
+                        "errors": ecse_refresh.errors,
+                    }
+                )
+            except Exception:
+                logger.exception("ECSE snapshot result sync failed during worldcup_result_refresh")
     finally:
         repo.close()
 

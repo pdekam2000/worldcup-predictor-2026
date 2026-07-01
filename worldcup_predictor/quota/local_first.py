@@ -9,6 +9,10 @@ from typing import Any
 from worldcup_predictor.database.repository import FootballIntelligenceRepository
 from worldcup_predictor.domain.schedule import TournamentFixture
 
+UNFINISHED_LOCAL_STATUSES = frozenset(
+    {"NS", "TBD", "SCHEDULED", "TIMED", "NOT_STARTED", "NOT STARTED"}
+)
+
 
 def _parse_kickoff_utc(value: str | None) -> datetime:
     raw = (value or "").strip()
@@ -67,6 +71,22 @@ def load_upcoming_fixtures_from_db(
 
 def fixture_exists(repo: FootballIntelligenceRepository, fixture_id: int) -> bool:
     return repo.fixture_exists(fixture_id)
+
+
+def should_bypass_stale_local_fixture(fixture_row: dict[str, Any]) -> bool:
+    """Bypass local-first when kickoff passed but stored status is still unfinished."""
+    status = str(fixture_row.get("status") or "NS").upper()
+    if status not in UNFINISHED_LOCAL_STATUSES:
+        return False
+    kickoff_raw = fixture_row.get("kickoff_utc")
+    if not kickoff_raw:
+        return False
+    try:
+        kickoff = _parse_kickoff_utc(str(kickoff_raw))
+    except ValueError:
+        return False
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    return kickoff < now
 
 
 def load_fixture_api_item_from_db(

@@ -47,6 +47,8 @@ _TEAM_ALIASES: dict[str, frozenset[str]] = {
     "england": frozenset({"england"}),
     "cote d'ivoire": frozenset({"ivory coast", "cote d'ivoire", "côte d'ivoire"}),
     "ivory coast": frozenset({"ivory coast", "cote d'ivoire", "côte d'ivoire"}),
+    "dr congo": frozenset({"dr congo", "congo dr", "congo", "democratic republic of the congo", "drc"}),
+    "congo dr": frozenset({"dr congo", "congo dr", "congo", "democratic republic of the congo", "drc"}),
 }
 
 

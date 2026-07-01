@@ -240,11 +240,12 @@ class ApiFootballClient:
             skip_reason="missing_league_id",
         )
 
-    def get_odds(self, fixture_id: int) -> ApiCallResult:
+    def get_odds(self, fixture_id: int, *, force_refresh: bool = False) -> ApiCallResult:
         return self._safe_get(
             "odds",
             {"fixture": fixture_id},
             placeholder_factory=lambda: self._placeholder_odds(fixture_id),
+            force_refresh=force_refresh,
         )
 
     def get_team_recent_fixtures(self, team_id: int, last: int = 10) -> ApiCallResult:
@@ -487,11 +488,17 @@ class ApiFootballClient:
             return None
         try:
             from worldcup_predictor.database.repository import FootballIntelligenceRepository
-            from worldcup_predictor.quota.local_first import load_fixture_api_item_from_db
+            from worldcup_predictor.quota.local_first import (
+                load_fixture_api_item_from_db,
+                should_bypass_stale_local_fixture,
+            )
 
             fixture_id = int(params["id"])
             repo = FootballIntelligenceRepository()
             if not repo.fixture_exists(fixture_id):
+                return None
+            row = repo.get_fixture_row(fixture_id)
+            if row and should_bypass_stale_local_fixture(row):
                 return None
             return load_fixture_api_item_from_db(repo, fixture_id)
         except Exception:

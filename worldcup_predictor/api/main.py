@@ -35,7 +35,11 @@ from worldcup_predictor.api.routes.social_trust import router as social_trust_ro
 from worldcup_predictor.api.routes.prediction_lifecycle import admin_router as lifecycle_admin_router
 from worldcup_predictor.api.routes.prediction_lifecycle import router as lifecycle_router
 from worldcup_predictor.api.routes.owner import router as owner_router
+from worldcup_predictor.api.routes.owner_ecse_shadow_lab import router as owner_ecse_shadow_lab_router
+from worldcup_predictor.api.routes.owner_ecse_oddalerts_shadow import router as owner_ecse_oddalerts_shadow_router
 from worldcup_predictor.api.routes.research_highlights import router as research_highlights_router
+from worldcup_predictor.api.routes.admin_ecse_x2_shadow import router as admin_ecse_x2_shadow_router
+from worldcup_predictor.api.routes.ecse_display import router as ecse_display_router
 from worldcup_predictor.api.routes.results import router as results_router
 from worldcup_predictor.api.routes.user import router as user_router
 from worldcup_predictor.config.production_guard import assert_production_ready
@@ -88,14 +92,18 @@ app.include_router(admin_gate_router, prefix="/api")
 app.include_router(admin_accuracy_router, prefix="/api")
 app.include_router(admin_learning_router, prefix="/api")
 app.include_router(admin_elite_shadow_router, prefix="/api")
+app.include_router(admin_ecse_x2_shadow_router, prefix="/api")
 app.include_router(admin_performance_router, prefix="/api")
 app.include_router(owner_router, prefix="/api")
+app.include_router(owner_ecse_shadow_lab_router, prefix="/api")
+app.include_router(owner_ecse_oddalerts_shadow_router, prefix="/api")
 app.include_router(matches_router, prefix="/api")
 app.include_router(competitions_router, prefix="/api")
 app.include_router(predictions_router, prefix="/api")
 app.include_router(unified_hybrid_router, prefix="/api")
 app.include_router(goal_timing_router, prefix="/api")
 app.include_router(research_highlights_router, prefix="/api")
+app.include_router(ecse_display_router, prefix="/api")
 app.include_router(elite_world_cup_router, prefix="/api")
 app.include_router(history_router, prefix="/api")
 app.include_router(results_router, prefix="/api")
