@@ -2,7 +2,7 @@
 
 **Phase:** IMPLEMENT-1 (Parts A–F)  
 **Date:** 2026-07-02  
-**Commit:** `e491818` (+ learning fix `pending pull`)  
+**Commit:** `a121a33` (local, GitHub, production aligned)  
 **Production server:** `91.107.188.229` → `/opt/worldcup-predictor`
 
 ---
@@ -222,9 +222,9 @@ Checks covered: runner imports, dry-run daily, lock overlap, all mode dry-runs, 
 
 | Environment | Commit |
 |-------------|--------|
-| Local PC | `e491818` |
-| GitHub `main` | `e491818` |
-| Hetzner production | `e491818` (pulled) |
+| Local PC | `a121a33` |
+| GitHub `main` | `a121a33` |
+| Hetzner production | `a121a33` |
 
 Production DB: `football_intelligence.db` (~9.5 GB) — **not modified or replaced**.
 
@@ -234,7 +234,7 @@ Production DB: `football_intelligence.db` (~9.5 GB) — **not modified or replac
 
 1. **`API_FOOTBALL_KEY` missing in production env** — blocks live fixture discovery for predictions-only/daily modes when DB has no fixtures for target date.
 2. **`set_evaluation_quarantine` missing** on `FootballIntelligenceRepository` — WC auto-eval sub-step fails; owner result_sync eval still works.
-3. **Learning step dataclass bug** — fixed in follow-up commit; pull before next live run.
+3. **Learning step dataclass bug** — fixed in `6b61286`, deployed to production.
 4. **OddAlerts shadow** — monitor runs but reports `NEED_NEW_ODDALERTS_EXPORTS` (expected when no new CSV exports).
 
 These do **not** block hourly results/evaluation timer (cache-first, 15 evals succeeded). They **do** block unattended daily prediction until API key is confirmed.
