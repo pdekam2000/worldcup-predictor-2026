@@ -120,7 +120,9 @@ def _run_learning_feedback(*, dry_run: bool) -> dict[str, Any]:
         from worldcup_predictor.learning.self_learning_engine_v2 import build_self_learning_report
 
         report = build_self_learning_report()
-        return {"status": "ok", "summary_keys": list(report.keys())[:12]}
+        summary = report.to_dict() if hasattr(report, "to_dict") else report
+        keys = list(summary.keys())[:12] if isinstance(summary, dict) else []
+        return {"status": "ok", "summary_keys": keys, "total_records": getattr(report, "total_records", None)}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
 
