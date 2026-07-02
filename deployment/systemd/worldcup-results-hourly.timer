@@ -1,0 +1,15 @@
+# IMPLEMENT-1 — Hourly result/evaluation run
+#
+# NOT enabled by default.
+
+[Unit]
+Description=WorldCup hourly results pipeline timer
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=120
+Unit=worldcup-results-hourly.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,15 @@
+# IMPLEMENT-1 — Daily prediction run at 06:00 Europe/Vienna (04:00 UTC standard time)
+#
+# NOT enabled by default.
+
+[Unit]
+Description=WorldCup daily prediction pipeline timer
+
+[Timer]
+OnCalendar=*-*-* 04:00:00
+Persistent=true
+RandomizedDelaySec=300
+Unit=worldcup-prediction-daily.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,28 @@
+# IMPLEMENT-1 — Hourly result sync + evaluation pipeline
+#
+# NOT enabled by default. Install after validation + operator approval:
+#   sudo cp deployment/systemd/worldcup-results-hourly.* /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now worldcup-results-hourly.timer
+
+[Unit]
+Description=WorldCup hourly results/evaluation pipeline (IMPLEMENT-1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=APP_ENV=production
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/run_production_prediction_pipeline.py --mode hourly --timezone Europe/Vienna
+Nice=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-results-hourly
+
+[Install]
+WantedBy=multi-user.target

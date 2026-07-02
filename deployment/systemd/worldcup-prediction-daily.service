@@ -1,0 +1,31 @@
+# IMPLEMENT-1 — Daily production prediction pipeline
+#
+# NOT enabled by default. Install after validation + operator approval:
+#   sudo cp deployment/systemd/worldcup-prediction-daily.* /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now worldcup-prediction-daily.timer
+#
+# Rollback:
+#   sudo systemctl disable --now worldcup-prediction-daily.timer
+
+[Unit]
+Description=WorldCup production daily prediction pipeline (IMPLEMENT-1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=APP_ENV=production
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/run_production_prediction_pipeline.py --mode daily --timezone Europe/Vienna
+Nice=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-prediction-daily
+
+[Install]
+WantedBy=multi-user.target
