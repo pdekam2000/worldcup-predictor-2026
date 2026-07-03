@@ -21,6 +21,7 @@ from worldcup_predictor.api.routes.matches import router as matches_router
 from worldcup_predictor.api.routes.predictions import router as predictions_router
 from worldcup_predictor.api.routes.unified_hybrid import router as unified_hybrid_router
 from worldcup_predictor.api.routes.elite_world_cup import router as elite_world_cup_router
+from worldcup_predictor.api.routes.admin_owner_predictions import router as admin_owner_predictions_router
 from worldcup_predictor.api.routes.admin_performance import router as admin_performance_router
 from worldcup_predictor.api.routes.history import router as history_router
 from worldcup_predictor.api.routes.performance import router as performance_router
@@ -88,6 +89,7 @@ app.include_router(health_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
 app.include_router(admin_router, prefix="/api")
+app.include_router(admin_owner_predictions_router, prefix="/api")
 app.include_router(admin_gate_router, prefix="/api")
 app.include_router(admin_accuracy_router, prefix="/api")
 app.include_router(admin_learning_router, prefix="/api")
