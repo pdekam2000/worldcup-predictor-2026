@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { qualityColorClass } from "@/lib/betQualityOverlay";
 import { fmtMarketSel, safeMarketSelection } from "@/lib/predictionDetailProUtils";
 import { TRUST_RESEARCH_ONLY } from "@/lib/trustCopy";
-import EcseExactScorePanel from "./EcseExactScorePanel";
+import EndResultCandidatesPanel from "./EndResultCandidatesPanel";
 
 function MarketRow({ title, selection, probability, confidence, risk, reason, onAdd }) {
   if (!selection) return null;
@@ -115,6 +115,7 @@ export default function PredictionExpandPanel({ prediction, match, onAddLeg }) {
   ];
 
   const scores = Array.isArray(dm.correct_scores) ? dm.correct_scores.slice(0, 3) : [];
+  const mainPick = fmtSel(prediction.prediction || dm.match_winner?.selection);
 
   return (
     <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
@@ -150,19 +151,25 @@ export default function PredictionExpandPanel({ prediction, match, onAddLeg }) {
           }
         />
       ))}
+      {mainPick && (
+        <div className="rounded-lg border border-[#00E676]/20 bg-[#00E676]/5 p-3">
+          <p className="text-[10px] uppercase tracking-wide text-[#00E676] mb-1">Main Pick — WDE 1X2</p>
+          <p className="text-sm font-semibold text-[#F8FAFC]">{mainPick}</p>
+        </div>
+      )}
+      <EndResultCandidatesPanel fixtureId={fixtureId} compact />
       {scores.length > 0 && (
-        <div className="rounded-lg border border-white/[0.05] p-3">
-          <p className="text-[10px] uppercase text-[#64748B] mb-2">Correct Score (top 3)</p>
+        <div className="rounded-lg border border-white/[0.05] p-3 opacity-80">
+          <p className="text-[10px] uppercase text-[#64748B] mb-2">WDE score estimates (reference)</p>
           <div className="space-y-1">
             {scores.map((s) => (
-              <p key={s.label} className="text-sm text-[#F8FAFC]">
+              <p key={s.label} className="text-xs text-[#94A3B8]">
                 {s.label} — {s.probability != null ? `${Math.round((s.probability <= 1 ? s.probability * 100 : s.probability))}%` : "—"}
               </p>
             ))}
           </div>
         </div>
       )}
-      <EcseExactScorePanel fixtureId={fixtureId} compact />
       {Array.isArray(prediction.recommended_bets) && prediction.recommended_bets.length > 0 && (
         <div className="rounded-lg border border-[#FFD166]/20 bg-[#FFD166]/5 p-3">
           <p className="text-[10px] uppercase text-[#FFD166] mb-2">Recommended bets</p>

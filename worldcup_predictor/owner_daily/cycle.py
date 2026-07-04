@@ -50,6 +50,10 @@ class DailyCycleConfig:
     skip_result_sync: bool = False
     fetch_missing_odds: bool = False
     include_shadow: bool = False
+    refresh_stale_odds: bool = False
+    max_odds_provider_calls: int = 20
+    strict_fresh_odds: bool = False
+    fixture_id: int | None = None
 
 
 @dataclass
@@ -111,6 +115,10 @@ def run_daily_owner_cycle(
             "no_provider_calls": config.no_provider_calls,
             "fetch_missing_odds": config.fetch_missing_odds,
             "include_shadow": config.include_shadow,
+            "refresh_stale_odds": config.refresh_stale_odds,
+            "max_odds_provider_calls": config.max_odds_provider_calls,
+            "strict_fresh_odds": config.strict_fresh_odds,
+            "fixture_id": config.fixture_id,
         }
     )
 
@@ -135,6 +143,36 @@ def run_daily_owner_cycle(
     )
     result.discovery = discovery.to_dict()
 
+    if config.fixture_id is not None:
+        fid = int(config.fixture_id)
+        discovery.fixtures = [f for f in discovery.fixtures if int(f.provider_fixture_id) == fid]
+        if not discovery.fixtures:
+            conn_single = connect(settings.sqlite_path)
+            row = conn_single.execute(
+                """SELECT fixture_id, home_team, away_team, kickoff_utc, status, competition_key
+                   FROM fixtures WHERE fixture_id=? AND is_placeholder=0 LIMIT 1""",
+                (fid,),
+            ).fetchone()
+            conn_single.close()
+            if row:
+                from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
+
+                discovery.fixtures = [
+                    DailyFixture(
+                        fixture_id=int(row["fixture_id"]),
+                        provider_fixture_id=int(row["fixture_id"]),
+                        competition_key=str(row["competition_key"]),
+                        home_team=str(row["home_team"]),
+                        away_team=str(row["away_team"]),
+                        kickoff_utc=str(row["kickoff_utc"] or ""),
+                        status=str(row["status"] or "NS"),
+                        season=None,
+                        coverage_sources=["local_db"],
+                    )
+                ]
+        result.discovery = discovery.to_dict()
+        result.discovery["fixture_filter"] = fid
+
     repo = FootballIntelligenceRepository(settings.sqlite_path or None)
     conn = connect(settings.sqlite_path)
     sm = SportmonksProvider(settings)
@@ -156,6 +194,21 @@ def run_daily_owner_cycle(
         limit=config.limit,
         settings=settings,
     )
+
+    if config.refresh_stale_odds and not config.no_provider_calls:
+        from worldcup_predictor.odds.freshness_refresh import run_odds_freshness_refresh
+
+        refresh_out = run_odds_freshness_refresh(
+            date_arg=config.date_arg,
+            timezone=config.timezone,
+            competition_keys=keys,
+            fixture_id=config.fixture_id,
+            mode="refresh",
+            max_provider_calls=config.max_odds_provider_calls,
+            dry_run=config.dry_run,
+            settings=settings,
+        )
+        result.odds_import["freshness_refresh"] = refresh_out.to_dict()
 
     if config.fetch_missing_odds and not config.no_provider_calls:
         odds_out = import_daily_odds(
@@ -210,6 +263,7 @@ def run_daily_owner_cycle(
         discovery.fixtures,
         dry_run=config.dry_run,
         force=config.force_predictions,
+        strict_fresh_odds=config.strict_fresh_odds,
         settings=settings,
     )
     result.predictions = pred_out.to_dict()

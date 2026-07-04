@@ -53,6 +53,10 @@ class PipelineConfig:
     max_oddalerts_calls: int = 50
     max_sportmonks_calls: int = 50
     skip_lock: bool = False
+    refresh_stale_odds: bool = False
+    max_odds_provider_calls: int = 20
+    strict_fresh_odds: bool = False
+    fixture_id: int | None = None
 
 
 @dataclass
@@ -173,7 +177,7 @@ def _cycle_step(
         dry_run=config.dry_run,
         only_missing=True,
         force_refresh=False,
-        fetch_missing_odds=fetch_odds,
+        fetch_missing_odds=fetch_odds or config.refresh_stale_odds,
         include_shadow=False,
         skip_result_sync=skip_result_sync,
         force_predictions=force_predictions,
@@ -181,6 +185,10 @@ def _cycle_step(
         max_oddalerts_calls=config.max_oddalerts_calls,
         max_sportmonks_calls=config.max_sportmonks_calls,
         no_provider_calls=config.dry_run,
+        refresh_stale_odds=config.refresh_stale_odds,
+        max_odds_provider_calls=config.max_odds_provider_calls,
+        strict_fresh_odds=config.strict_fresh_odds,
+        fixture_id=config.fixture_id,
     )
     result = run_daily_owner_cycle(cycle_cfg)
     return result.to_dict()

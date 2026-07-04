@@ -52,6 +52,11 @@ export function canViewFullArchive(subscription) {
   return planRank(normalizePlan(subscription)) >= PLAN_RANK.pro;
 }
 
+/** Pro+ can expand End Result Top 5 in match UI (display only). */
+export function canViewEndResultTop5(subscription) {
+  return planRank(normalizePlan(subscription)) >= PLAN_RANK.pro;
+}
+
 /** Free tier: best pick only, limited matches, hide reasoning/EGIE/tier debug */
 export function gateMatchDetailPayload(payload, subscription) {
   if (!payload) return payload;

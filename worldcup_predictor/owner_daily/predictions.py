@@ -16,6 +16,8 @@ from worldcup_predictor.orchestration.predict_pipeline import PredictPipeline
 from worldcup_predictor.owner.euro_b_fixture_selector import UefaFixtureSelection, odds_readiness_audit
 from worldcup_predictor.owner_daily.constants import GENERATED_BY, PHASE
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
+from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata, stamp_payload_odds_freshness
+from worldcup_predictor.odds.freshness_policy import FreshnessStatus
 from worldcup_predictor.research.ecse_live.prediction_builder import build_ecse_live_prediction
 from worldcup_predictor.research.ecse_live.store import ensure_ecse_live_tables, has_snapshot, insert_snapshot
 
@@ -96,8 +98,10 @@ def run_daily_wde(
     *,
     settings: Settings,
     repo: FootballIntelligenceRepository,
+    conn,
     dry_run: bool,
     force: bool,
+    strict_fresh_odds: bool = False,
 ) -> tuple[str, dict[str, Any]]:
     sel = _to_selection(fixture)
     fid = sel.provider_fixture_id
@@ -115,6 +119,20 @@ def run_daily_wde(
     if dry_run:
         detail["reason"] = "dry_run_would_generate"
         return "dry_run", detail
+
+    fixture_row = repo.get_fixture_row(fid)
+    freshness = build_fixture_freshness_metadata(
+        conn,
+        fixture_id=fid,
+        kickoff_utc=sel.kickoff_utc,
+        round_name=fixture_row.get("round_name") if fixture_row else None,
+        status=sel.status,
+        prediction_generated_at=_utc_now_iso(),
+    )
+    detail["odds_freshness"] = freshness
+    if strict_fresh_odds and freshness.get("requires_fresh_odds"):
+        detail["reason"] = "strict_fresh_odds_blocked"
+        return "skipped", detail
 
     try:
         pipeline = PredictPipeline(settings, competition_key=comp_key, locale="en")
@@ -147,6 +165,7 @@ def run_daily_wde(
         "provider_source": sel.provider_source,
         "crosswalk_status": sel.crosswalk_status,
     }
+    payload = stamp_payload_odds_freshness(payload, freshness)
 
     repo.upsert_worldcup_stored_prediction(
         fixture_id=fid,
@@ -243,6 +262,7 @@ def run_daily_predictions(
     mode: Literal["wde_only", "ecse_only", "wde_and_ecse"] = "wde_and_ecse",
     dry_run: bool = False,
     force: bool = False,
+    strict_fresh_odds: bool = False,
     settings: Settings | None = None,
 ) -> DailyPredictionResult:
     settings = settings or get_settings()
@@ -254,7 +274,13 @@ def run_daily_predictions(
     for fixture in fixtures:
         if mode in ("wde_only", "wde_and_ecse"):
             status, detail = run_daily_wde(
-                fixture, settings=settings, repo=repo, dry_run=dry_run, force=force
+                fixture,
+                settings=settings,
+                repo=repo,
+                conn=conn,
+                dry_run=dry_run,
+                force=force,
+                strict_fresh_odds=strict_fresh_odds,
             )
             if status in ("generated", "dry_run"):
                 result.wde_generated += 1

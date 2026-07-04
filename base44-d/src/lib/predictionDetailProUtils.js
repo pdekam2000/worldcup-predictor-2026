@@ -253,7 +253,7 @@ export function groupMarkets(prediction, { isOwner = false } = {}) {
     { id: "timing", label: "Goal Timing", markets: timing },
     { id: "scorers", label: "Goalscorers", markets: scorers },
     { id: "halftime", label: "Half Time", markets: halftime },
-    { id: "correct_score", label: "Correct Score", markets: correctScore },
+    { id: "correct_score", label: "End Result Candidates (WDE reference)", markets: correctScore },
     { id: "special", label: "Special Markets", markets: special },
   ].filter((g) => g.markets.length > 0);
 }

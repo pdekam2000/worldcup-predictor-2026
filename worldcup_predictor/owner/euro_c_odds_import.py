@@ -35,6 +35,7 @@ from worldcup_predictor.owner.euro_b_fixture_selector import (
     UefaFixtureSelection,
     select_upcoming_uefa_fixtures,
 )
+from worldcup_predictor.odds.timestamp_normalization import format_timestamp_utc, parse_timestamp_utc
 
 PHASE = "EURO-C"
 GENERATED_BY_WDE = "owner_euro_b"
@@ -42,27 +43,11 @@ FAKE_BOOKMAKER_MARKERS = frozenset({"sample bookmaker", "placeholder bookmaker"}
 
 
 def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    return format_timestamp_utc()
 
 
 def _parse_snapshot_time(value: str | None) -> datetime | None:
-    if not value:
-        return None
-    for fmt in ("%Y-%m-%d %H:%M:%S UTC", "%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S"):
-        try:
-            dt = datetime.strptime(value.replace(" UTC", ""), fmt.replace(" UTC", "").replace("%z", ""))
-            if dt.tzinfo is None:
-                return dt.replace(tzinfo=timezone.utc)
-            return dt
-        except ValueError:
-            continue
-    try:
-        dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
-        if dt.tzinfo is None:
-            return dt.replace(tzinfo=timezone.utc)
-        return dt
-    except ValueError:
-        return None
+    return parse_timestamp_utc(value)
 
 
 def is_fake_odds_payload(payload: Any, *, source: str | None = None) -> bool:

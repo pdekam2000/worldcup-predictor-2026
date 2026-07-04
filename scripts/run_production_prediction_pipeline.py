@@ -34,6 +34,10 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=50)
     parser.add_argument("--no-tomorrow", action="store_true")
     parser.add_argument("--no-shadow", action="store_true")
+    parser.add_argument("--refresh-stale-odds", action="store_true")
+    parser.add_argument("--max-odds-provider-calls", type=int, default=20)
+    parser.add_argument("--strict-fresh-odds", action="store_true")
+    parser.add_argument("--fixture-id", type=int, default=None)
     args = parser.parse_args()
 
     if args.mode == "hourly":
@@ -50,6 +54,10 @@ def main() -> int:
         include_tomorrow=not args.no_tomorrow,
         include_shadow_monitor=not args.no_shadow,
         skip_lock=args.skip_lock,
+        refresh_stale_odds=args.refresh_stale_odds,
+        max_odds_provider_calls=args.max_odds_provider_calls,
+        strict_fresh_odds=args.strict_fresh_odds,
+        fixture_id=args.fixture_id,
     )
     result = run_production_prediction_pipeline(config)
     print(json.dumps(result.to_dict(), indent=2, ensure_ascii=False))
