@@ -13,7 +13,8 @@ from worldcup_predictor.database.postgres.schemas import PredictionHistoryRecord
 from worldcup_predictor.quota.prediction_cache import get_cached_prediction
 from worldcup_predictor.quota.prediction_cache_policy import specialist_agent_count
 from worldcup_predictor.results.match_results_store import MatchResultsStore
-from worldcup_predictor.schedule.match_center import FINISHED_STATUSES, actual_result
+from worldcup_predictor.schedule.match_center import FINISHED_STATUSES, actual_result, classify_status
+from worldcup_predictor.outcomes.market_result_resolver import regulation_fixture_outcome_fields
 
 ResultStatus = Literal["correct", "wrong", "partial", "pending", "unknown"]
 
@@ -169,6 +170,37 @@ class FixtureOutcomeResolver:
         return outcome
 
     def _resolve_once(self, fixture_id: int) -> FixtureOutcome:
+        try:
+            from worldcup_predictor.database.repository import FootballIntelligenceRepository
+
+            repo = FootballIntelligenceRepository(self._settings.sqlite_path or None)
+            fixture_row = repo.get_fixture_row(fixture_id)
+            result_row = repo.get_fixture_result_row(fixture_id)
+        except Exception:
+            fixture_row = None
+            result_row = None
+            repo = None
+
+        if result_row and result_row.get("regulation_home_goals") is not None:
+            status = str((fixture_row or {}).get("status") or "NS").upper()
+            goal_events = repo.list_fixture_goal_events(fixture_id) if repo else []
+            reg_h, reg_a, reg_score, _reg_actual = regulation_fixture_outcome_fields(
+                result_row, fixture_row
+            )
+            use_h = reg_h if reg_h is not None else result_row.get("home_goals")
+            use_a = reg_a if reg_a is not None else result_row.get("away_goals")
+            use_score = reg_score if reg_score else result_row.get("final_score")
+            return _outcome_from_goals(
+                home_goals=use_h,
+                away_goals=use_a,
+                final_score=use_score,
+                status=status,
+                finished_at=result_row.get("finished_at"),
+                is_finished=status in FINISHED_STATUSES,
+                result_row=result_row,
+                goal_events=goal_events,
+            )
+
         jsonl_row = self._jsonl.get(fixture_id)
         if jsonl_row is not None:
             status = (jsonl_row.status or "FT").upper()
@@ -183,25 +215,21 @@ class FixtureOutcomeResolver:
                 is_finished=is_finished,
             )
 
-        try:
-            from worldcup_predictor.database.repository import FootballIntelligenceRepository
-
-            repo = FootballIntelligenceRepository(self._settings.sqlite_path or None)
-            fixture_row = repo.get_fixture_row(fixture_id)
-            result_row = repo.get_fixture_result_row(fixture_id)
-        except Exception:
-            fixture_row = None
-            result_row = None
-
         status = str((fixture_row or {}).get("status") or "NS").upper()
         is_finished = status in FINISHED_STATUSES
 
         if result_row:
-            goal_events = repo.list_fixture_goal_events(fixture_id)
+            goal_events = repo.list_fixture_goal_events(fixture_id) if repo else []
+            reg_h, reg_a, reg_score, _reg_actual = regulation_fixture_outcome_fields(
+                result_row, fixture_row
+            )
+            use_h = reg_h if reg_h is not None else result_row.get("home_goals")
+            use_a = reg_a if reg_a is not None else result_row.get("away_goals")
+            use_score = reg_score if reg_score else result_row.get("final_score")
             return _outcome_from_goals(
-                home_goals=result_row.get("home_goals"),
-                away_goals=result_row.get("away_goals"),
-                final_score=result_row.get("final_score"),
+                home_goals=use_h,
+                away_goals=use_a,
+                final_score=use_score,
                 status=status,
                 finished_at=result_row.get("finished_at"),
                 is_finished=True,

@@ -215,6 +215,19 @@ PHASE46C1_DDL: tuple[str, ...] = (
     """,
 )
 
+# RESULT-TRUTH-REPAIR-1 — explicit regulation / AET / PEN stage columns
+RESULT_TRUTH_REPAIR_1_COLUMNS: tuple[tuple[str, str, str], ...] = (
+    ("fixture_results", "regulation_home_goals", "INTEGER"),
+    ("fixture_results", "regulation_away_goals", "INTEGER"),
+    ("fixture_results", "extra_time_home_goals", "INTEGER"),
+    ("fixture_results", "extra_time_away_goals", "INTEGER"),
+    ("fixture_results", "penalties_home_goals", "INTEGER"),
+    ("fixture_results", "penalties_away_goals", "INTEGER"),
+    ("fixture_results", "final_stage", "TEXT"),
+    ("fixture_results", "qualified_team", "TEXT"),
+    ("fixture_results", "result_synced_at", "TEXT"),
+)
+
 # Phase 62B — World Cup fixture competition_type + Sportmonks mapping
 # HOTFIX WC-RESULT-SYNC-2 — penalty shootout score separate from match aggregate
 WC_RESULT_SYNC_2_COLUMNS: tuple[tuple[str, str, str], ...] = (
@@ -744,6 +757,10 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
             _add_column_if_missing(conn, table, column, typedef)
 
     for table, column, typedef in WC_RESULT_SYNC_2_COLUMNS:
+        if _table_exists(conn, table):
+            _add_column_if_missing(conn, table, column, typedef)
+
+    for table, column, typedef in RESULT_TRUTH_REPAIR_1_COLUMNS:
         if _table_exists(conn, table):
             _add_column_if_missing(conn, table, column, typedef)
 

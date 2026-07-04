@@ -18,6 +18,11 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
 
 
+def _column_names(conn: sqlite3.Connection, table: str) -> set[str]:
+    rows = conn.execute(f"PRAGMA table_info({table})").fetchall()
+    return {str(row[1]) for row in rows}
+
+
 @dataclass
 class DatabaseStatus:
     connected: bool
@@ -219,6 +224,7 @@ class FootballIntelligenceRepository:
         match_outcome_type: str | None = None,
         penalty_score: str | None = None,
         outcome_source: str | None = None,
+        stage_truth: Any | None = None,
     ) -> bool:
         if fixture.home_goals is None or fixture.away_goals is None:
             return False
@@ -236,13 +242,65 @@ class FootballIntelligenceRepository:
         if fixture.halftime_home_goals is not None and fixture.halftime_away_goals is not None:
             ht = f"{fixture.halftime_home_goals}-{fixture.halftime_away_goals}"
         resolved_outcome_type = match_outcome_type or str(fixture.status or "").upper() or None
+
+        reg_h = reg_a = et_h = et_a = pen_h = pen_a = None
+        final_stage = qualified_team = result_synced_at = None
+        if stage_truth is not None:
+            reg_h = getattr(stage_truth, "regulation_home", None)
+            reg_a = getattr(stage_truth, "regulation_away", None)
+            et_h = getattr(stage_truth, "extra_time_home", None)
+            et_a = getattr(stage_truth, "extra_time_away", None)
+            pen_h = getattr(stage_truth, "penalties_home", None)
+            pen_a = getattr(stage_truth, "penalties_away", None)
+            final_stage = getattr(stage_truth, "final_stage", None) or resolved_outcome_type
+            qualified_team = getattr(stage_truth, "qualified_team", None)
+            result_synced_at = _utc_now()
+        elif resolved_outcome_type == "FT":
+            reg_h, reg_a = fixture.home_goals, fixture.away_goals
+            final_stage = "FT"
+        elif resolved_outcome_type == "PEN":
+            reg_h, reg_a = fixture.home_goals, fixture.away_goals
+            final_stage = "PEN"
+            if penalty_score and "-" in penalty_score:
+                try:
+                    pen_h, pen_a = [int(x.strip()) for x in penalty_score.split("-", 1)]
+                except ValueError:
+                    pass
+
+        cols = _column_names(self._conn, "fixture_results")
+        extra_cols: list[str] = []
+        extra_vals: list[Any] = []
+        extra_updates: list[str] = []
+        stage_pairs = (
+            ("regulation_home_goals", reg_h),
+            ("regulation_away_goals", reg_a),
+            ("extra_time_home_goals", et_h),
+            ("extra_time_away_goals", et_a),
+            ("penalties_home_goals", pen_h),
+            ("penalties_away_goals", pen_a),
+            ("final_stage", final_stage),
+            ("qualified_team", qualified_team),
+            ("result_synced_at", result_synced_at),
+        )
+        for col, val in stage_pairs:
+            if col in cols and val is not None:
+                extra_cols.append(col)
+                extra_vals.append(val)
+                extra_updates.append(f"{col}=excluded.{col}")
+
+        base_cols = (
+            "fixture_id, competition_key, final_score, halftime_score, "
+            "home_goals, away_goals, winner, over_under_2_5, total_goals, "
+            "finished_at, source, match_outcome_type, penalty_score, outcome_source"
+        )
+        all_cols = base_cols + (", " + ", ".join(extra_cols) if extra_cols else "")
+        placeholders = ", ".join(["?"] * (14 + len(extra_vals)))
+        update_extra = (", " + ", ".join(extra_updates)) if extra_updates else ""
+
         self._conn.execute(
-            """
-            INSERT INTO fixture_results(
-                fixture_id, competition_key, final_score, halftime_score,
-                home_goals, away_goals, winner, over_under_2_5, total_goals,
-                finished_at, source, match_outcome_type, penalty_score, outcome_source
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            f"""
+            INSERT INTO fixture_results({all_cols})
+            VALUES ({placeholders})
             ON CONFLICT(fixture_id) DO UPDATE SET
                 final_score=excluded.final_score,
                 halftime_score=excluded.halftime_score,
@@ -256,6 +314,7 @@ class FootballIntelligenceRepository:
                 match_outcome_type=COALESCE(excluded.match_outcome_type, fixture_results.match_outcome_type),
                 penalty_score=COALESCE(excluded.penalty_score, fixture_results.penalty_score),
                 outcome_source=COALESCE(excluded.outcome_source, fixture_results.outcome_source)
+                {update_extra}
             """,
             (
                 fixture.fixture_id,
@@ -272,6 +331,7 @@ class FootballIntelligenceRepository:
                 resolved_outcome_type,
                 penalty_score,
                 outcome_source,
+                *extra_vals,
             ),
         )
         self._conn.commit()

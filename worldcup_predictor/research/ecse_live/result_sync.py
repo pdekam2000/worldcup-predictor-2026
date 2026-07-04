@@ -15,6 +15,7 @@ from worldcup_predictor.database.connection import connect, get_db_path
 from worldcup_predictor.database.repository import FootballIntelligenceRepository
 from worldcup_predictor.integrations.fixture_api_parser import parse_api_fixture_item
 from worldcup_predictor.outcomes.outcome_persistence import normalize_match_outcome_type
+from worldcup_predictor.outcomes.provider_score_truth import parse_provider_fixture_item
 from worldcup_predictor.results.match_results_store import MatchResultsStore, save_finished_fixtures
 from worldcup_predictor.research.ecse_live.evaluator import run_ecse_evaluations
 from worldcup_predictor.research.ecse_live.store import ensure_ecse_live_tables
@@ -392,12 +393,14 @@ def sync_ecse_snapshot_results(
 
                 score_type = final_score_type_from_status(fixture.status)
                 penalty_score = _penalty_score_from_item(item)
+                stage_truth = parse_provider_fixture_item(item, source=str(call.source or "api-football"))
                 detail.update(
                     {
                         "provider_status": fixture.status,
                         "final_score_type": score_type,
                         "final_score": f"{fixture.home_goals}-{fixture.away_goals}",
                         "penalty_score": penalty_score,
+                        "regulation_score": stage_truth.regulation_score if stage_truth else None,
                     }
                 )
 
@@ -412,6 +415,8 @@ def sync_ecse_snapshot_results(
                     competition_key=competition_key,
                     match_outcome_type=score_type,
                     penalty_score=penalty_score,
+                    outcome_source=str(call.source or "api-football"),
+                    stage_truth=stage_truth,
                 ):
                     outcome.synced += 1
                     finished_for_jsonl.append(fixture)
