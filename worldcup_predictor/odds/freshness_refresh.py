@@ -100,7 +100,7 @@ def run_odds_freshness_refresh(
         if not fixtures:
             conn_lookup = connect(settings.sqlite_path)
             row = conn_lookup.execute(
-                """SELECT fixture_id, home_team, away_team, kickoff_utc, status, competition_key
+                """SELECT fixture_id, home_team, away_team, kickoff_utc, status, competition_key, season
                    FROM fixtures WHERE fixture_id=? AND is_placeholder=0 LIMIT 1""",
                 (int(fixture_id),),
             ).fetchone()
@@ -115,8 +115,10 @@ def run_odds_freshness_refresh(
                         competition_key=str(row["competition_key"]),
                         home_team=str(row["home_team"]),
                         away_team=str(row["away_team"]),
-                        kickoff_utc=str(row["kickoff_utc"]),
-                        status=str(row["status"]),
+                        kickoff_utc=str(row["kickoff_utc"] or ""),
+                        status=str(row["status"] or "NS"),
+                        season=int(row["season"]) if row["season"] is not None else None,
+                        coverage_sources=["local_db"],
                     )
                 ]
 
