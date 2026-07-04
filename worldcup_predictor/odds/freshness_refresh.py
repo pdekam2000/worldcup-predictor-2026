@@ -106,7 +106,7 @@ def run_odds_freshness_refresh(
             ).fetchone()
             conn_lookup.close()
             if row:
-                from worldcup_predictor.owner_daily.discovery import DailyFixture
+                from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
 
                 fixtures = [
                     DailyFixture(
