@@ -155,7 +155,45 @@ def list_snapshots_needing_evaluation(conn: sqlite3.Connection, *, limit: int = 
     return [_hydrate_snapshot(dict(r)) for r in rows]
 
 
+def upsert_evaluation(conn: sqlite3.Connection, payload: dict[str, Any]) -> tuple[int | None, str]:
+    """Insert or update evaluation for a snapshot (reevaluation-safe)."""
+    snapshot_id = int(payload["snapshot_id"])
+    existing = conn.execute(
+        "SELECT id FROM ecse_prediction_evaluations WHERE snapshot_id = ? LIMIT 1",
+        (snapshot_id,),
+    ).fetchone()
+    cols = (
+        payload.get("final_score"),
+        1 if payload.get("top1_correct") else 0,
+        1 if payload.get("top3_correct") else 0,
+        1 if payload.get("top5_correct") else 0,
+        1 if payload.get("top10_correct") else 0,
+        payload.get("rank_of_actual_score"),
+        payload.get("actual_home_goals"),
+        payload.get("actual_away_goals"),
+        payload.get("status") or "evaluated",
+        payload.get("evaluated_at") or _utc_now(),
+    )
+    if existing:
+        conn.execute(
+            """
+            UPDATE ecse_prediction_evaluations SET
+                final_score=?, top1_correct=?, top3_correct=?, top5_correct=?, top10_correct=?,
+                rank_of_actual_score=?, actual_home_goals=?, actual_away_goals=?, status=?, evaluated_at=?
+            WHERE snapshot_id=?
+            """,
+            (*cols, snapshot_id),
+        )
+        conn.commit()
+        return int(existing["id"]), "updated"
+    return _insert_evaluation(conn, payload)
+
+
 def insert_evaluation(conn: sqlite3.Connection, payload: dict[str, Any]) -> tuple[int | None, str]:
+    return upsert_evaluation(conn, payload)
+
+
+def _insert_evaluation(conn: sqlite3.Connection, payload: dict[str, Any]) -> tuple[int | None, str]:
     snapshot_id = int(payload["snapshot_id"])
     if has_evaluation(conn, snapshot_id):
         return None, "already_exists"
