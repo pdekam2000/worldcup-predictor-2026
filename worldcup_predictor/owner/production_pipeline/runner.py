@@ -23,6 +23,7 @@ from worldcup_predictor.owner_daily.cycle import DailyCycleConfig, run_daily_own
 from worldcup_predictor.owner_daily.result_sync import run_daily_result_sync_and_evaluation
 from worldcup_predictor.owner_predict_eval.control_panel import build_owner_daily_control_panel
 from worldcup_predictor.owner_predict_eval.runner import run_owner_daily_prediction_and_eval
+from worldcup_predictor.owner_predict_eval.tomorrow_league_batch import evaluate_all_pending_frozen_batches
 
 PHASE = "IMPLEMENT-1-PRODUCTION-PIPELINE"
 LOCK_PATH = Path("data/locks/production_prediction_pipeline.lock")
@@ -203,6 +204,7 @@ def _results_step(*, config: PipelineConfig, settings: Settings) -> dict[str, An
         force=False,
     )
     auto = {}
+    league_batches = {}
     if not config.dry_run:
         try:
             ev = run_production_auto_evaluation(settings=settings, competition_key="world_cup_2026", limit=200)
@@ -213,7 +215,15 @@ def _results_step(*, config: PipelineConfig, settings: Settings) -> dict[str, An
             }
         except Exception as exc:
             auto = {"error": str(exc)}
-    return {"result_sync": sync.to_dict(), "worldcup_auto_eval": auto}
+        try:
+            league_batches = evaluate_all_pending_frozen_batches(settings=settings)
+        except Exception as exc:
+            league_batches = {"error": str(exc)}
+    return {
+        "result_sync": sync.to_dict(),
+        "worldcup_auto_eval": auto,
+        "frozen_league_batch_eval": league_batches,
+    }
 
 
 def _write_reports(result: PipelineRunResult) -> None:

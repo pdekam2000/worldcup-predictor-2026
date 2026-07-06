@@ -666,3 +666,119 @@ def import_daily_odds(
         log.flush()
 
     return result
+
+
+def import_odds_for_single_fixture(
+    fixture: DailyFixture,
+    *,
+    settings: Settings | None = None,
+    force: bool = True,
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Fetch and persist odds for one fixture outside DAILY_SUPPORTED_COMPETITIONS discovery."""
+    settings = settings or get_settings()
+    conn = connect(settings.sqlite_path)
+    repo = FootballIntelligenceRepository(settings.sqlite_path or None)
+    api = ApiFootballClient(settings)
+    sm = SportmonksProvider(settings)
+    oa = OddAlertsClient()
+    disk_cache = get_api_cache(settings.api_cache_dir, settings.api_cache_ttl_seconds)
+    cached_sources = collect_cached_odds_sources(repo, disk_cache=disk_cache)
+
+    fid = int(fixture.provider_fixture_id)
+    comp = fixture.competition_key
+    stamp = datetime.now(dt_timezone.utc).strftime("%Y%m%d_%H%M%S")
+    before = scan_fixture_odds_readiness(conn, fixture, settings=settings, sm=sm, oa=oa)
+    if (
+        not force
+        and before.get("has_1x2")
+        and before.get("has_ou25")
+        and before.get("has_btts")
+        and before.get("odds_freshness") == "fresh"
+    ):
+        conn.close()
+        return {"fixture_id": fid, "status": "already_fresh", "before": before}
+
+    bookmakers: list[Any] = []
+    provider = ""
+    api_source = "none"
+    raw_path: str | None = None
+
+    if cache_hit_entry := cached_sources.get(fid):
+        bookmakers = list(cache_hit_entry.get("bookmakers") or [])
+        provider = "api-football"
+        api_source = str(cache_hit_entry.get("source") or "cache")
+
+    if not bookmakers and api.is_configured:
+        odds_result = api.get_odds(fid)
+        if odds_result.ok and not is_fake_odds_payload(odds_result.data, source=odds_result.source):
+            bookmakers = normalize_odds_bookmakers(odds_result.data)
+            provider = "api-football"
+            api_source = odds_result.source
+            if bookmakers:
+                RAW_DIR.mkdir(parents=True, exist_ok=True)
+                raw_path = str(RAW_DIR / f"{fid}_{stamp}_api-football.json")
+                Path(raw_path).write_text(
+                    json.dumps(
+                        {"fixture_id": fid, "fetched_at": _utc_now_iso(), "data": odds_result.data},
+                        ensure_ascii=False,
+                        indent=2,
+                    ),
+                    encoding="utf-8",
+                )
+
+    if not bookmakers and oa.is_configured:
+        oa_res = fetch_oddalerts_odds_history(fid, conn=conn)
+        if oa_res.lines:
+            bookmakers = _oddalerts_lines_to_bookmakers(oa_res.lines)
+            provider = "oddalerts"
+            api_source = "oddalerts"
+            RAW_DIR.mkdir(parents=True, exist_ok=True)
+            raw_path = str(RAW_DIR / f"{fid}_{stamp}_oddalerts.json")
+
+    if not bookmakers:
+        sm_cached = fetch_sportmonks_odds_from_cache(conn, fid)
+        if sm_cached.lines:
+            bookmakers = _sportmonks_lines_to_bookmakers(sm_cached.lines)
+            provider = "sportmonks"
+            api_source = "sportmonks_cache"
+
+    if not bookmakers:
+        conn.close()
+        return {"fixture_id": fid, "status": "no_odds_available", "before": before}
+
+    normalized = normalize_uefa_odds_snapshot(bookmakers, fixture_id=fid, raw_odds_path=raw_path)
+    if not _probabilities_valid(normalized):
+        conn.close()
+        return {"fixture_id": fid, "status": "invalid_probabilities", "before": before}
+
+    if dry_run:
+        conn.close()
+        return {"fixture_id": fid, "status": "dry_run", "bookmaker_count": normalized.bookmaker_count}
+
+    payload = _build_daily_storage_payload(
+        bookmakers=bookmakers,
+        normalized=normalized,
+        provider=provider,
+        provider_fixture_id=fid,
+        api_source=api_source,
+        raw_path=raw_path,
+        freshness="fresh",
+    )
+    repo.save_snapshot(
+        "odds_snapshots",
+        fixture_id=fid,
+        competition_key=comp,
+        payload=payload,
+        snapshot_at=payload.get("snapshot_at"),
+    )
+    after = scan_fixture_odds_readiness(conn, fixture, settings=settings, sm=sm, oa=oa)
+    conn.close()
+    return {
+        "fixture_id": fid,
+        "status": "imported",
+        "provider": provider,
+        "bookmaker_count": normalized.bookmaker_count,
+        "before": before,
+        "after": after,
+    }
