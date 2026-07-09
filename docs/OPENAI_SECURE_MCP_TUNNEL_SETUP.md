@@ -2,6 +2,8 @@
 
 **Status:** PREPARED — do not install until owner explicitly approves.
 
+> **Operational runbook (Phase 3.3):** see [OPENAI_SECURE_MCP_TUNNEL_RUNBOOK.md](./OPENAI_SECURE_MCP_TUNNEL_RUNBOOK.md) and [CHATGPT_WORLDCUP_MCP_CONNECTION_RUNBOOK.md](./CHATGPT_WORLDCUP_MCP_CONNECTION_RUNBOOK.md).
+
 ## Architecture
 
 ```
@@ -72,7 +74,7 @@ PrivateTmp=true
 WantedBy=multi-user.target
 ```
 
-Replace `openai-mcp-tunnel-client` with the exact binary/command from OpenAI's current Secure MCP Tunnel documentation.
+Replace `openai-mcp-tunnel-client` with the official `tunnel-client` binary from OpenAI's Secure MCP Tunnel documentation (see `scripts/install_worldcup_mcp_tunnel.sh`).
 
 ## Secret storage strategy
 

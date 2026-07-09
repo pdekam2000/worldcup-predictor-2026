@@ -1,0 +1,32 @@
+[Unit]
+Description=OpenAI Secure MCP Tunnel client for WorldCup Predictor
+Documentation=https://developers.openai.com/api/docs/guides/secure-mcp-tunnels
+After=network-online.target worldcup-mcp.service
+Wants=worldcup-mcp.service
+# Tunnel failure must not stop worldcup-mcp or worldcup-api.
+
+[Service]
+Type=simple
+User=worldcup-mcp-tunnel
+Group=worldcup-mcp-tunnel
+EnvironmentFile=/etc/worldcup-mcp-tunnel/environment
+WorkingDirectory=/var/lib/worldcup-mcp-tunnel
+ExecStart=/usr/local/bin/tunnel-client run --profile worldcup-predictor --log.level=info --log.format=struct-text
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-mcp-tunnel
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/worldcup-mcp-tunnel
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+MemoryDenyWriteExecute=true
+
+[Install]
+WantedBy=multi-user.target
