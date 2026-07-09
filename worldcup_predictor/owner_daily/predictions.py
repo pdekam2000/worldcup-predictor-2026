@@ -17,7 +17,6 @@ from worldcup_predictor.owner.euro_b_fixture_selector import UefaFixtureSelectio
 from worldcup_predictor.owner_daily.constants import GENERATED_BY, PHASE
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
 from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata, stamp_payload_odds_freshness
-from worldcup_predictor.odds.freshness_policy import FreshnessStatus
 from worldcup_predictor.research.ecse_live.prediction_builder import build_ecse_live_prediction
 from worldcup_predictor.research.ecse_live.store import ensure_ecse_live_tables, has_snapshot, insert_snapshot
 
@@ -108,17 +107,9 @@ def run_daily_wde(
     comp_key = sel.competition_key
     detail: dict[str, Any] = {"fixture_id": fid, "competition_key": comp_key, "engine": "wde"}
 
-    if not force and _existing_wde(repo, fid, comp_key):
-        detail["reason"] = "existing_prediction"
-        return "skipped", detail
-
     if not settings.api_football_configured:
         detail["reason"] = "missing_fixture_context"
         return "skipped", detail
-
-    if dry_run:
-        detail["reason"] = "dry_run_would_generate"
-        return "dry_run", detail
 
     fixture_row = repo.get_fixture_row(fid)
     freshness = build_fixture_freshness_metadata(
@@ -133,6 +124,14 @@ def run_daily_wde(
     if strict_fresh_odds and freshness.get("requires_fresh_odds"):
         detail["reason"] = "strict_fresh_odds_blocked"
         return "skipped", detail
+
+    if not force and _existing_wde(repo, fid, comp_key):
+        detail["reason"] = "existing_prediction"
+        return "skipped", detail
+
+    if dry_run:
+        detail["reason"] = "dry_run_would_generate"
+        return "dry_run", detail
 
     try:
         pipeline = PredictPipeline(settings, competition_key=comp_key, locale="en")
@@ -191,11 +190,27 @@ def run_daily_ecse(
     conn,
     dry_run: bool,
     force: bool,
+    strict_fresh_odds: bool = False,
 ) -> tuple[str, dict[str, Any]]:
     sel = _to_selection(fixture)
     fid = sel.provider_fixture_id
     comp_key = sel.competition_key
     detail: dict[str, Any] = {"fixture_id": fid, "competition_key": comp_key, "engine": "ecse"}
+
+    repo = FootballIntelligenceRepository(settings.sqlite_path or None)
+    fixture_row = repo.get_fixture_row(fid)
+    freshness = build_fixture_freshness_metadata(
+        conn,
+        fixture_id=fid,
+        kickoff_utc=sel.kickoff_utc,
+        round_name=fixture_row.get("round_name") if fixture_row else None,
+        status=sel.status,
+        prediction_generated_at=_utc_now_iso(),
+    )
+    detail["odds_freshness"] = freshness
+    if strict_fresh_odds and freshness.get("requires_fresh_odds"):
+        detail["reason"] = "strict_fresh_odds_blocked"
+        return "skipped", detail
 
     audit = odds_readiness_audit(conn, sel)
     detail["odds_audit"] = audit
@@ -214,7 +229,6 @@ def run_daily_ecse(
         detail["reason"] = "dry_run_would_generate"
         return "dry_run", detail
 
-    repo = FootballIntelligenceRepository(settings.sqlite_path or None)
     fx_row = {
         "fixture_id": fid,
         "competition_key": comp_key,
@@ -239,6 +253,7 @@ def run_daily_ecse(
     if isinstance(raw, dict):
         raw["owner_only"] = True
         raw["generated_by"] = GENERATED_BY
+        raw["odds_freshness"] = freshness
         prediction["raw_features"] = raw
 
     sid, reason = insert_snapshot(conn, prediction)
@@ -292,7 +307,12 @@ def run_daily_predictions(
 
         if mode in ("ecse_only", "wde_and_ecse"):
             status, detail = run_daily_ecse(
-                fixture, settings=settings, conn=conn, dry_run=dry_run, force=force
+                fixture,
+                settings=settings,
+                conn=conn,
+                dry_run=dry_run,
+                force=force,
+                strict_fresh_odds=strict_fresh_odds,
             )
             if status in ("generated", "dry_run"):
                 result.ecse_generated += 1
