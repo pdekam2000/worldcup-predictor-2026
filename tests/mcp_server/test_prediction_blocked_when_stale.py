@@ -1,0 +1,1 @@
+from tests.mcp_server.test_mcp_security import test_prediction_blocked_structure
