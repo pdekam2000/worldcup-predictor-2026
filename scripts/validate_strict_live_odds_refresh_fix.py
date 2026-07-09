@@ -57,10 +57,42 @@ def main() -> int:
     cycle_src = (ROOT / "worldcup_predictor/owner_daily/cycle.py").read_text(encoding="utf-8")
     pred_src = (ROOT / "worldcup_predictor/owner_daily/predictions.py").read_text(encoding="utf-8")
 
-    checks.append(check("api_force_refresh", "get_odds(fid, force_refresh=True)" in strict_src))
-    checks.append(check("require_live_source", 'odds_result.source != "live"' in strict_src))
+    checks.append(check("api_force_refresh", "get_odds(fixture_id, force_refresh=True)" in strict_src))
+    checks.append(check("api_requires_live_source", 'result.source != "live"' in strict_src))
     checks.append(check("no_cached_restamp", "cache_bypassed" in strict_src))
     checks.append(check("stale_ids_targeted", "refresh_fixture_odds_live" in refresh_src))
+
+    api_pos = strict_src.find('(\"api-football\", lambda: _try_api_football')
+    sm_pos = strict_src.find('(\"sportmonks\", lambda: _try_sportmonks')
+    oa_pos = strict_src.find('(\"oddalerts\", lambda: _try_oddalerts')
+    checks.append(
+        check(
+            "provider_fallback_order",
+            api_pos >= 0 and sm_pos > api_pos and oa_pos > sm_pos,
+            f"positions={api_pos},{sm_pos},{oa_pos}",
+        )
+    )
+    checks.append(check("sportmonks_live_call", "provider.safe_get(" in strict_src))
+    checks.append(check("oddalerts_live_call", "fetch_oddalerts_odds_history" in strict_src))
+    checks.append(
+        check(
+            "provider_quality_gate",
+            "required_markets_missing_or_invalid" in strict_src
+            and 'quality["match_winner"] and quality["over_under_2_5"]' in strict_src,
+        )
+    )
+    checks.append(
+        check(
+            "provider_attempt_trace",
+            'payload["provider_attempts"] = attempts' in strict_src,
+        )
+    )
+    checks.append(
+        check(
+            "per_provider_call_accounting",
+            'provider = str(attempt.get("provider") or "unknown")' in refresh_src,
+        )
+    )
     checks.append(
         check(
             "strict_path_isolated",
