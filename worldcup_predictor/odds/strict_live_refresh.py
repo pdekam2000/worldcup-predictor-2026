@@ -2,7 +2,7 @@
 
 Provider order:
 1. API-Football live (forced cache bypass)
-2. Sportmonks live (using the stored fixture crosswalk)
+2. Sportmonks live pre-match odds (using the stored fixture crosswalk)
 3. OddAlerts live odds history
 
 A provider is accepted only when it returns parseable, usable odds. Failed or
@@ -16,7 +16,7 @@ import json
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from worldcup_predictor.backtesting.phase31e_backfill import normalize_odds_bookmakers
 from worldcup_predictor.clients.api_football import ApiFootballClient
@@ -53,9 +53,13 @@ def _market_quality(normalized: Any) -> dict[str, bool]:
 
 
 def _usable_for_prediction(normalized: Any) -> bool:
-    """Require at least the two core odds inputs used by the production stack."""
+    """Require the two core odds inputs used by WDE/ECSE odds consumers."""
     quality = _market_quality(normalized)
-    return quality["match_winner"] and quality["over_under_2_5"] and _probabilities_valid(normalized)
+    return (
+        quality["match_winner"]
+        and quality["over_under_2_5"]
+        and _probabilities_valid(normalized)
+    )
 
 
 def _normalize_candidate(
@@ -73,45 +77,65 @@ def _normalize_candidate(
 
 
 def _sportmonks_fixture_id(conn: sqlite3.Connection, api_fixture_id: int) -> int | None:
-    """Resolve API-Football fixture ID to Sportmonks fixture ID from local crosswalk/enrichment."""
-    queries = (
-        """
-        SELECT sportmonks_fixture_id
-        FROM sportmonks_fixture_enrichment
-        WHERE fixture_id_api_football = ? OR api_fixture_id = ?
-        ORDER BY id DESC LIMIT 1
-        """,
-        """
-        SELECT sportmonks_fixture_id
-        FROM sportmonks_fixture_enrichment
-        WHERE fixture_id_api_football = ?
-        ORDER BY id DESC LIMIT 1
-        """,
-    )
-    for index, query in enumerate(queries):
-        try:
-            params = (int(api_fixture_id), int(api_fixture_id)) if index == 0 else (int(api_fixture_id),)
-            row = conn.execute(query, params).fetchone()
-        except sqlite3.OperationalError:
-            continue
-        if row and row["sportmonks_fixture_id"] is not None:
-            return int(row["sportmonks_fixture_id"])
+    """Resolve an API-Football fixture ID to a Sportmonks fixture ID."""
+    try:
+        row = conn.execute(
+            """
+            SELECT sportmonks_fixture_id
+            FROM sportmonks_fixture_enrichment
+            WHERE fixture_id_api_football = ?
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (int(api_fixture_id),),
+        ).fetchone()
+    except sqlite3.OperationalError:
+        return None
+    if row and row["sportmonks_fixture_id"] is not None:
+        return int(row["sportmonks_fixture_id"])
     return None
 
 
-def _sportmonks_odds_to_bookmakers(payload: Any) -> list[dict[str, Any]]:
-    """Convert common Sportmonks odds shapes into API-Football bookmaker blocks.
+def _normalize_sportmonks_market_name(value: Any) -> str:
+    name = str(value or "").strip()
+    key = name.lower()
+    if key in {"fulltime result", "full time result", "3-way result", "match result"}:
+        return "Match Winner"
+    if "both teams" in key and "score" in key:
+        return "Both Teams To Score"
+    if "over/under" in key or "over under" in key or "total goals" in key:
+        return "Goals Over/Under"
+    return name or "Unknown Market"
 
-    The converter is intentionally tolerant because Sportmonks payloads can be
-    returned as a fixture with an `odds` include or as a direct odds list.
-    """
+
+def _normalize_sportmonks_selection(
+    selection: Any,
+    *,
+    market_name: str,
+    total: Any = None,
+) -> str:
+    label = str(selection or "").strip()
+    if market_name == "Match Winner":
+        mapping = {
+            "1": "Home",
+            "x": "Draw",
+            "2": "Away",
+            "home": "Home",
+            "draw": "Draw",
+            "away": "Away",
+        }
+        return mapping.get(label.lower(), label)
+    if market_name == "Goals Over/Under" and total not in (None, ""):
+        lower = label.lower()
+        if lower in {"over", "under"}:
+            return f"{label.title()} {total}"
+    return label
+
+
+def _sportmonks_odds_to_bookmakers(payload: Any) -> list[dict[str, Any]]:
+    """Convert Sportmonks pre-match odds rows to API-Football bookmaker blocks."""
     data = payload.get("data") if isinstance(payload, dict) else payload
-    if isinstance(data, dict):
-        odds_rows = data.get("odds") or []
-    elif isinstance(data, list):
-        odds_rows = data
-    else:
-        odds_rows = []
+    odds_rows = data if isinstance(data, list) else []
 
     grouped: dict[str, dict[str, list[dict[str, str]]]] = {}
     for row in odds_rows:
@@ -122,23 +146,20 @@ def _sportmonks_odds_to_bookmakers(payload: Any) -> list[dict[str, Any]]:
         market_obj = row.get("market")
         bookmaker_name = (
             bookmaker_obj.get("name") if isinstance(bookmaker_obj, dict) else None
-        ) or row.get("bookmaker_name") or row.get("bookmaker") or f"sportmonks:{row.get('bookmaker_id', 'unknown')}"
-        market_name = (
+        ) or row.get("bookmaker_name") or f"sportmonks:{row.get('bookmaker_id', 'unknown')}"
+
+        raw_market_name = (
             market_obj.get("name") if isinstance(market_obj, dict) else None
-        ) or row.get("market_name") or row.get("market_description") or row.get("market") or f"market:{row.get('market_id', 'unknown')}"
+        ) or row.get("market_description") or row.get("market_name")
+        market_name = _normalize_sportmonks_market_name(raw_market_name)
 
-        selection = (
-            row.get("label")
-            or row.get("selection")
-            or row.get("name")
-            or row.get("outcome")
-            or ""
+        raw_selection = row.get("label") or row.get("name") or row.get("selection") or row.get("outcome")
+        selection = _normalize_sportmonks_selection(
+            raw_selection,
+            market_name=market_name,
+            total=row.get("total"),
         )
-        odd = row.get("value")
-        if isinstance(odd, dict):
-            odd = odd.get("decimal") or odd.get("value")
-        odd = odd or row.get("odds") or row.get("decimal") or row.get("price")
-
+        odd = row.get("value") or row.get("odds") or row.get("decimal") or row.get("price")
         try:
             odd_value = float(odd)
         except (TypeError, ValueError):
@@ -146,8 +167,8 @@ def _sportmonks_odds_to_bookmakers(payload: Any) -> list[dict[str, Any]]:
         if odd_value <= 1.0 or not selection:
             continue
 
-        grouped.setdefault(str(bookmaker_name), {}).setdefault(str(market_name), []).append(
-            {"value": str(selection), "odd": str(odd_value)}
+        grouped.setdefault(str(bookmaker_name), {}).setdefault(market_name, []).append(
+            {"value": selection, "odd": str(odd_value)}
         )
 
     bookmakers: list[dict[str, Any]] = []
@@ -162,11 +183,7 @@ def _sportmonks_odds_to_bookmakers(payload: Any) -> list[dict[str, Any]]:
     return bookmakers
 
 
-def _write_raw_payload(
-    fixture_id: int,
-    provider: str,
-    payload: Any,
-) -> str:
+def _write_raw_payload(fixture_id: int, provider: str, payload: Any) -> str:
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     path = RAW_DIR / f"{fixture_id}_{stamp}_{provider}-live.json"
@@ -249,8 +266,8 @@ def _try_sportmonks(
         return [], None, attempt
 
     status_code, payload, error = provider.safe_get(
-        f"/fixtures/{sportmonks_id}",
-        params={"include": "odds;odds.bookmaker;odds.market"},
+        f"/odds/pre-match/fixtures/{sportmonks_id}",
+        params={"include": "bookmaker;market"},
     )
     attempt.update(
         {
@@ -316,14 +333,17 @@ def refresh_fixture_odds_live(
     *,
     settings: Settings | None = None,
     dry_run: bool = False,
+    max_live_calls: int | None = None,
 ) -> dict[str, Any]:
-    """Try each configured live provider until usable prediction odds are found."""
+    """Try configured live providers in order until usable odds are found."""
     settings = settings or get_settings()
     fid = int(fixture.provider_fixture_id)
     conn = connect(settings.sqlite_path)
     attempts: list[dict[str, Any]] = []
 
-    provider_chain = (
+    provider_chain: tuple[
+        tuple[str, Callable[[], tuple[list[Any], Any, dict[str, Any]]]], ...
+    ] = (
         ("api-football", lambda: _try_api_football(fid, settings)),
         ("sportmonks", lambda: _try_sportmonks(fid, settings, conn)),
         ("oddalerts", lambda: _try_oddalerts(fid, conn)),
@@ -331,15 +351,29 @@ def refresh_fixture_odds_live(
 
     selected_provider: str | None = None
     selected_bookmakers: list[Any] = []
-    selected_payload: Any = None
     selected_normalized: Any = None
     selected_quality: dict[str, bool] = {}
     selected_raw_path: str | None = None
+    live_calls = 0
 
     try:
         for provider_name, provider_call in provider_chain:
+            if max_live_calls is not None and live_calls >= max(0, int(max_live_calls)):
+                attempts.append(
+                    {
+                        "provider": provider_name,
+                        "configured": True,
+                        "call_made": False,
+                        "success": False,
+                        "reason": "provider_call_budget_exhausted",
+                    }
+                )
+                break
+
             bookmakers, raw_payload, attempt = provider_call()
             attempts.append(attempt)
+            if attempt.get("call_made"):
+                live_calls += 1
             if not bookmakers:
                 continue
 
@@ -358,7 +392,6 @@ def refresh_fixture_odds_live(
 
             selected_provider = provider_name
             selected_bookmakers = bookmakers
-            selected_payload = raw_payload
             selected_normalized = normalized
             selected_quality = quality
             selected_raw_path = raw_path
@@ -366,7 +399,6 @@ def refresh_fixture_odds_live(
     finally:
         conn.close()
 
-    live_calls = sum(1 for attempt in attempts if attempt.get("call_made"))
     if selected_provider is None or selected_normalized is None:
         return {
             "fixture_id": fid,
