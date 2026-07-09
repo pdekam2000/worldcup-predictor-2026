@@ -577,7 +577,6 @@ def model_status(*, settings: Settings | None = None) -> dict[str, Any]:
     db_exists = bool(db_path and Path(db_path).exists())
     version = build_version_payload()
     from worldcup_predictor.providers.oddalerts_provider import OddAlertsClient
-    from worldcup_predictor.providers.sportmonks_provider import SportmonksProvider
 
     oa = OddAlertsClient()
     return {

@@ -7,8 +7,30 @@ import json
 import sys
 import time
 
+from worldcup_predictor.config.settings import get_settings
+from worldcup_predictor.database.connection import connect
 from worldcup_predictor.mcp_server import runtime
 from worldcup_predictor.mcp_server.tools import health
+
+
+def _sample_fixture_id() -> int | None:
+    settings = get_settings()
+    conn = connect(settings.sqlite_path)
+    try:
+        row = conn.execute(
+            """
+            SELECT f.fixture_id
+            FROM fixtures f
+            JOIN worldcup_stored_predictions w ON w.fixture_id = f.fixture_id
+            JOIN ecse_prediction_snapshots e ON e.fixture_id = f.fixture_id
+            WHERE f.is_placeholder = 0
+            ORDER BY f.kickoff_utc DESC
+            LIMIT 1
+            """
+        ).fetchone()
+        return int(row[0]) if row else None
+    finally:
+        conn.close()
 
 
 def main() -> int:
@@ -37,11 +59,28 @@ def main() -> int:
         }
     )
 
+    sample_fid = _sample_fixture_id()
     t0 = time.perf_counter()
-    resolved = runtime.resolve_fixtures(
-        [{"home_team": "France", "away_team": "Morocco", "date": "2026-07-09"}]
-    )
+    if sample_fid:
+        conn = connect(get_settings().sqlite_path)
+        try:
+            row = conn.execute(
+                "SELECT home_team, away_team, date(kickoff_utc) FROM fixtures WHERE fixture_id=?",
+                (sample_fid,),
+            ).fetchone()
+        finally:
+            conn.close()
+        home, away, kick_date = row[0], row[1], row[2]
+        resolved = runtime.resolve_fixtures(
+            [{"home_team": home, "away_team": away, "date": str(kick_date)}]
+        )
+    else:
+        resolved = runtime.resolve_fixtures(
+            [{"home_team": "France", "away_team": "Morocco", "date": "2026-07-09"}]
+        )
     fid = resolved[0].get("fixture_id") if resolved else None
+    if fid is None and sample_fid:
+        fid = sample_fid
     out["tests"].append(
         {
             "name": "resolve_fixtures",
