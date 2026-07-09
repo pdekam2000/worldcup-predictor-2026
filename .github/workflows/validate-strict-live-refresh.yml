@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          python scripts/validate_strict_live_odds_refresh_fix.py | tee validator-output.json
+          python scripts/validate_strict_live_odds_refresh_fix.py 2>&1 | tee validator-output.txt
           code=${PIPESTATUS[0]}
           echo "validator_exit_code=${code}" >> "$GITHUB_ENV"
           exit "$code"
@@ -43,5 +43,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: strict-refresh-validator-output
-          path: validator-output.json
+          path: validator-output.txt
           if-no-files-found: warn
