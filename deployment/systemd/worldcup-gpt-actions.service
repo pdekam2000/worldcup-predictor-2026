@@ -1,0 +1,33 @@
+[Unit]
+Description=WorldCup Predictor GPT Actions Bridge (ChatGPT Plus)
+After=network.target worldcup-api.service
+Wants=worldcup-api.service
+
+[Service]
+Type=simple
+User=worldcup-gpt-actions
+Group=worldcup-gpt-actions
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/etc/worldcup-gpt-actions/environment
+Environment=PYTHONUNBUFFERED=1
+Environment=APP_ENV=production
+Environment=GPT_ACTIONS_HOST=127.0.0.1
+Environment=GPT_ACTIONS_PORT=8770
+Environment=GPT_ACTIONS_AUDIT_LOG_PATH=/var/log/worldcup-gpt-actions/audit.jsonl
+Environment=GPT_ACTIONS_JOB_DIR=/opt/worldcup-predictor/artifacts/gpt_actions_jobs
+ExecStart=/opt/worldcup-predictor/.venv/bin/python -m worldcup_predictor.gpt_actions.server
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-gpt-actions
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/log/worldcup-gpt-actions /opt/worldcup-predictor/data /opt/worldcup-predictor/artifacts /opt/worldcup-predictor/reports
+
+[Install]
+WantedBy=multi-user.target

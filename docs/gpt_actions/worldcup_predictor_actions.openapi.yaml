@@ -1,0 +1,390 @@
+openapi: 3.1.0
+info:
+  title: WorldCup Predictor GPT Actions
+  version: 1.0.0
+  description: |
+    Owner-only narrow REST bridge for ChatGPT Plus Custom GPT Actions.
+    Returns structured model evidence (WDE, BTTS, O/U 2.5, ECSE Top1–Top5).
+    Long predictions use async jobs — poll until completed.
+servers:
+  - url: https://footballpredictor.it.com
+    description: Production HTTPS (443)
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/gpt-actions/v1/system/status:
+    get:
+      operationId: getSystemStatus
+      summary: Get bridge and canonical pipeline health
+      responses:
+        "200":
+          description: System status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemStatusResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /api/gpt-actions/v1/matches/discover:
+    get:
+      operationId: discoverTodayMatches
+      summary: Discover fixtures for a calendar date
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+        - name: timezone
+          in: query
+          required: false
+          schema:
+            type: string
+            default: Europe/Vienna
+      responses:
+        "200":
+          description: Discovered matches
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiscoverMatchesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/gpt-actions/v1/matches/filter-odds:
+    post:
+      operationId: filterMatchesByOdds
+      summary: Filter discovered matches by decimal odds thresholds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterMatchesRequest"
+      responses:
+        "200":
+          description: Filtered matches
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterMatchesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/gpt-actions/v1/prediction-jobs:
+    post:
+      operationId: startPredictionJob
+      summary: Start async canonical prediction job
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+            maxLength: 128
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartPredictionJobRequest"
+      responses:
+        "202":
+          description: Job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobCreateResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /api/gpt-actions/v1/prediction-jobs/{job_id}:
+    get:
+      operationId: getPredictionJob
+      summary: Poll prediction job status and evidence
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Job status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobStatusResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/gpt-actions/v1/reports/latest:
+    get:
+      operationId: getLatestPredictionReport
+      summary: Fetch latest owner markdown report
+      responses:
+        "200":
+          description: Latest report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/gpt-actions/v1/reports/{report_date}:
+    get:
+      operationId: getPredictionReportByDate
+      summary: Fetch owner report for YYYY-MM-DD
+      parameters:
+        - name: report_date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+      responses:
+        "200":
+          description: Report for date
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key
+    BadRequest:
+      description: Invalid input
+    NotFound:
+      description: Resource not found
+    RateLimited:
+      description: Rate limit or job concurrency exceeded
+  schemas:
+    OddsFilter:
+      type: object
+      additionalProperties: false
+      properties:
+        home_odds_gt:
+          type: number
+          minimum: 1
+          maximum: 100
+        away_odds_gt:
+          type: number
+          minimum: 1
+          maximum: 100
+    FilterMatchesRequest:
+      type: object
+      required: [date]
+      additionalProperties: false
+      properties:
+        date:
+          type: string
+          format: date
+        timezone:
+          type: string
+          default: Europe/Vienna
+        filter:
+          $ref: "#/components/schemas/OddsFilter"
+    StartPredictionJobRequest:
+      type: object
+      required: [date]
+      additionalProperties: false
+      properties:
+        date:
+          type: string
+          format: date
+        timezone:
+          type: string
+          default: Europe/Vienna
+        filter:
+          $ref: "#/components/schemas/OddsFilter"
+        fixture_ids:
+          type: array
+          maxItems: 20
+          items:
+            type: integer
+            minimum: 1
+        select_best:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 3
+        include_all_predictions:
+          type: boolean
+          default: true
+        exact_score_top_n:
+          type: integer
+          minimum: 1
+          maximum: 5
+          default: 5
+        refresh_if_stale:
+          type: boolean
+          default: true
+    JobCreateResponse:
+      type: object
+      required: [job_id, status, created_at, poll_after_seconds]
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+          enum: [queued, running]
+        created_at:
+          type: string
+        poll_after_seconds:
+          type: integer
+          minimum: 1
+          maximum: 30
+    JobStatusResponse:
+      type: object
+      required: [job_id, status, created_at, updated_at]
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+          enum: [queued, running, completed, partial, failed]
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        result:
+          $ref: "#/components/schemas/PredictionJobResult"
+        error:
+          type: string
+    PredictionJobResult:
+      type: object
+      properties:
+        date:
+          type: string
+        timezone:
+          type: string
+        fixture_count:
+          type: integer
+        fixture_ids:
+          type: array
+          maxItems: 20
+          items:
+            type: integer
+        predictions:
+          type: array
+          maxItems: 20
+          items:
+            $ref: "#/components/schemas/FixtureEvidence"
+        all_match_ranking:
+          type: array
+          maxItems: 20
+          items:
+            $ref: "#/components/schemas/MatchRankingRow"
+        best_3:
+          type: array
+          maxItems: 3
+          items:
+            $ref: "#/components/schemas/FixtureEvidence"
+    FixtureEvidence:
+      type: object
+      properties:
+        match:
+          type: string
+        fixture_id:
+          type: integer
+        competition:
+          type: string
+        kickoff:
+          type: string
+        timezone:
+          type: string
+        odds:
+          type: object
+        wde:
+          type: object
+        btts:
+          type: object
+        over_under_2_5:
+          type: object
+        ecse:
+          type: object
+        quality:
+          type: string
+          enum: [OK, PARTIAL, FAILED, BLOCKED]
+        warnings:
+          type: array
+          maxItems: 20
+          items:
+            type: string
+    MatchRankingRow:
+      type: object
+      properties:
+        fixture_id:
+          type: integer
+        match:
+          type: string
+        wde_confidence:
+          type: number
+        wde_pick:
+          type: string
+        ecse_top1:
+          type: object
+    DiscoverMatchesResponse:
+      type: object
+      properties:
+        date:
+          type: string
+        timezone:
+          type: string
+        count:
+          type: integer
+        matches:
+          type: array
+          maxItems: 500
+          items:
+            type: object
+    FilterMatchesResponse:
+      type: object
+      properties:
+        date:
+          type: string
+        timezone:
+          type: string
+        count:
+          type: integer
+        matches:
+          type: array
+          maxItems: 500
+          items:
+            type: object
+    SystemStatusResponse:
+      type: object
+    ReportResponse:
+      type: object
+      properties:
+        found:
+          type: boolean
+        report_name:
+          type: string
+        report_date:
+          type: string
+        content:
+          type: string
+          maxLength: 95000
+        generated_at:
+          type: string
