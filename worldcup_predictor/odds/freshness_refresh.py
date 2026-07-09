@@ -174,7 +174,8 @@ def run_odds_freshness_refresh(
     if mode == "refresh" and not dry_run and stale_ids and max_provider_calls > 0:
         provider_call_budget_used = 0
         for fid in stale_ids:
-            if provider_call_budget_used >= max_provider_calls:
+            remaining_budget = max_provider_calls - provider_call_budget_used
+            if remaining_budget <= 0:
                 result.errors.append("provider call budget exhausted")
                 break
 
@@ -183,7 +184,12 @@ def run_odds_freshness_refresh(
                 result.errors.append(f"fixture {fid}: discovery row missing")
                 continue
 
-            refresh = refresh_fixture_odds_live(fx, settings=settings, dry_run=False)
+            refresh = refresh_fixture_odds_live(
+                fx,
+                settings=settings,
+                dry_run=False,
+                max_live_calls=remaining_budget,
+            )
             for attempt in refresh.get("attempts") or []:
                 if attempt.get("call_made"):
                     provider = str(attempt.get("provider") or "unknown")
