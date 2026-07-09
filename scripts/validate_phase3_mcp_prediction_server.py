@@ -164,6 +164,19 @@ def main() -> int:
     checks.append(_check("report_path_restriction", "REPORTS_DIR" in (MCP_ROOT / "runtime.py").read_text(encoding="utf-8")))
     checks.append(_check("audit_logging_module", (MCP_ROOT / "audit.py").is_file()))
     checks.append(_check("secret_redaction", "redact_secrets" in (MCP_ROOT / "audit.py").read_text(encoding="utf-8")))
+    checks.append(_check("git_sha_module_exists", (MCP_ROOT / "git_sha.py").is_file()))
+    health_src = (MCP_ROOT / "tools/health.py").read_text(encoding="utf-8")
+    checks.append(_check("health_uses_git_sha_resolver", "resolve_current_git_sha" in health_src))
+    checks.append(
+        _check(
+            "health_does_not_use_stale_manifest_commit",
+            "build_version_payload" not in health_src,
+        )
+    )
+    install_src = (ROOT / "scripts/install_worldcup_mcp_service.sh").read_text(encoding="utf-8")
+    checks.append(_check("installer_audit_dir_mode_0750", "chmod 0750" in install_src and '0750 -o' in install_src))
+    checks.append(_check("installer_audit_file_mode_0640", "chmod 0640" in install_src))
+    checks.append(_check("installer_audit_append_check", "test -w" in install_src))
 
     from worldcup_predictor.mcp_server.config import load_mcp_config
 

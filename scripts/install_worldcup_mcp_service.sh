@@ -36,7 +36,18 @@ if ! id "${SERVICE_USER}" >/dev/null 2>&1; then
 fi
 
 install -d -m 0750 -o "${SERVICE_USER}" -g "${SERVICE_USER}" "${AUDIT_DIR}"
-chown -R "${SERVICE_USER}:${SERVICE_USER}" "${AUDIT_DIR}"
+AUDIT_FILE="${AUDIT_DIR}/audit.jsonl"
+if [[ -f "${AUDIT_FILE}" ]]; then
+  chown "${SERVICE_USER}:${SERVICE_USER}" "${AUDIT_FILE}"
+  chmod 0640 "${AUDIT_FILE}"
+else
+  install -m 0640 -o "${SERVICE_USER}" -g "${SERVICE_USER}" /dev/null "${AUDIT_FILE}"
+fi
+chown "${SERVICE_USER}:${SERVICE_USER}" "${AUDIT_DIR}"
+chmod 0750 "${AUDIT_DIR}"
+# Verify service account can append audit events.
+sudo -u "${SERVICE_USER}" test -w "${AUDIT_FILE}"
+sudo -u "${SERVICE_USER}" sh -c "printf '%s\n' '{\"timestamp\":\"install-check\",\"request_id\":\"install\",\"tool_name\":\"install_check\",\"caller_mode\":\"install\",\"duration_ms\":0,\"success\":true}' >> '${AUDIT_FILE}'"
 
 "${APP_ROOT}/.venv/bin/pip" install 'mcp>=1.27,<2'
 

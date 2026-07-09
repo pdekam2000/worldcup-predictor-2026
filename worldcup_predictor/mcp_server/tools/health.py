@@ -10,8 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from worldcup_predictor.config.app_version import build_version_payload
 from worldcup_predictor.config.settings import get_settings
+from worldcup_predictor.mcp_server.git_sha import resolve_current_git_sha
 from worldcup_predictor.mcp_server.policies import MCP_VERSION
 
 
@@ -70,7 +70,7 @@ def server_health() -> dict[str, Any]:
     root = Path(db_path).parent if db_path else Path(".")
     disk = shutil.disk_usage(root if root.exists() else Path("."))
 
-    version = build_version_payload()
+    git_sha = resolve_current_git_sha()
     app_health: dict[str, Any] = {"status": "ok"}
     try:
         import httpx
@@ -93,6 +93,7 @@ def server_health() -> dict[str, Any]:
             "free_bytes": disk.free,
         },
         "database": {"exists": db_exists, "size_bytes": db_size},
-        "current_git_sha": version.get("commit") or version.get("git_sha"),
+        "current_git_sha": git_sha.get("current_git_sha"),
+        "git_sha_source": git_sha.get("git_sha_source"),
         "mcp_version": MCP_VERSION,
     }
