@@ -2,8 +2,9 @@
 
 **Date:** 2026-07-09  
 **Phase:** PHASE-1-SSH-SCAFFOLD (local only)  
-**Branch:** `infra/phase1-secure-ssh-scaffold`  
+**Branch:** `infra/phase1-integration` (integrated); original scaffold: `infra/phase1-secure-ssh-scaffold`  
 **Base SHA:** `df93d421bdd03da78b86c5575431699ed7762659`  
+**Integrated HEAD:** `ecc4e3326c6ef21e73bc734ef3dd5dd6504d2dca`  
 **Production touched:** **NO**  
 **SSH connection attempted:** **NO**  
 **Secrets created in repo:** **NO**
@@ -12,7 +13,47 @@
 
 ## Phase status
 
-**COMPLETE** — local scaffolding, validation, and tests only. **STOP** before Phase 2.
+**INTEGRATION GATE PASSED** — Phase 1 scaffold merged with latest `origin/main` in isolated worktree. Ready for PR merge; Phase 2 may branch from integrated SHA.
+
+---
+
+## Latest Main Integration
+
+| Item | Value |
+|------|-------|
+| **origin/main SHA integrated** | `71f4169309ef97acfc0dc733e6bd8d20212dc843` |
+| **Integration method** | `git merge --no-edit origin/main` (ort strategy) |
+| **Integration branch** | `infra/phase1-integration` |
+| **Merge commit** | `ecc4e3326c6ef21e73bc734ef3dd5dd6504d2dca` |
+| **Conflicts found** | **None** |
+| **Conflict resolution** | N/A — clean merge |
+| **Phase 1 commits (chronological)** | `fbb8901` (scaffold files), `de274ce` (owner reports) |
+| **Phase 1 validator** | **PASS** — `all_passed: true` (39 checks) |
+| **Phase 1 tests** | **PASS** — 12/12 (`pytest tests/test_phase1_ssh_scaffold.py -q`) |
+| **strict-live validator** | **PASS** on Linux (`all_passed: true` via WSL); Windows native fails on `NamedTemporaryFile`+sqlite (known OS quirk; CI uses Ubuntu) |
+| **compileall (changed Python)** | **PASS** |
+| **diff vs origin/main** | 12 Phase 1 files only (+1634 lines); no WDE/ECSE formula, freshness threshold, or provider config changes |
+| **Secrets / private keys in diff** | **None** |
+| **`.env.production` in diff** | **No** |
+| **Original dirty worktree preserved** | **YES** — primary worktree at `C:\Users\kaman\Desktop\Footbal` untouched |
+| **Production touched** | **NO** |
+| **SSH attempted** | **NO** |
+
+### Post-integration file verification
+
+| File | Present after merge |
+|------|---------------------|
+| `.github/workflows/validate-strict-live-refresh.yml` | Yes |
+| `scripts/rerun_today_7_strict_live_predictions_20260709.py` | Yes |
+| `worldcup_predictor/odds/strict_live_refresh.py` | Yes |
+| `worldcup_predictor/odds/freshness_refresh.py` | Yes |
+| `scripts/validate_strict_live_odds_refresh_fix.py` | Yes |
+| All Phase 1 scaffold files | Yes |
+
+### PR
+
+Push branch `infra/phase1-integration` and open PR against `main`.
+Manual PR URL: https://github.com/pdekam2000/worldcup-predictor-2026/compare/main...infra/phase1-integration
 
 ---
 
