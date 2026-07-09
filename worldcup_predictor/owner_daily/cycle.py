@@ -195,6 +195,7 @@ def run_daily_owner_cycle(
         settings=settings,
     )
 
+    refreshed_for_prediction = False
     if config.refresh_stale_odds and not config.no_provider_calls:
         from worldcup_predictor.odds.freshness_refresh import run_odds_freshness_refresh
 
@@ -209,6 +210,7 @@ def run_daily_owner_cycle(
             settings=settings,
         )
         result.odds_import["freshness_refresh"] = refresh_out.to_dict()
+        refreshed_for_prediction = bool(refresh_out.refreshed) and not config.dry_run
 
     if config.fetch_missing_odds and not config.no_provider_calls:
         odds_out = import_daily_odds(
@@ -226,7 +228,10 @@ def run_daily_owner_cycle(
             max_sportmonks_calls=config.max_sportmonks_calls,
             no_provider_calls=config.no_provider_calls,
         )
-        result.odds_import = odds_out.to_dict()
+        if "freshness_refresh" in result.odds_import:
+            result.odds_import["daily_import"] = odds_out.to_dict()
+        else:
+            result.odds_import = odds_out.to_dict()
         completeness = check_all_fixtures_completeness(
             conn,
             repo,
@@ -262,7 +267,7 @@ def run_daily_owner_cycle(
     pred_out = run_daily_predictions(
         discovery.fixtures,
         dry_run=config.dry_run,
-        force=config.force_predictions,
+        force=config.force_predictions or refreshed_for_prediction,
         strict_fresh_odds=config.strict_fresh_odds,
         settings=settings,
     )
@@ -300,7 +305,10 @@ def run_daily_owner_cycle(
     completeness_path = ARTIFACTS_DIR / f"daily_data_completeness_{ymd}.json"
     fetched_counts = dict(result.fetch.get("fetched", {}))
     if result.odds_import:
-        fetched_counts["odds_imported"] = result.odds_import.get("imported_count", 0)
+        if "daily_import" in result.odds_import:
+            fetched_counts["odds_imported"] = result.odds_import["daily_import"].get("imported_count", 0)
+        else:
+            fetched_counts["odds_imported"] = result.odds_import.get("imported_count", 0)
     completeness_summary = summarize_completeness(
         completeness,
         provider_calls=call_log.quota.to_dict(),
