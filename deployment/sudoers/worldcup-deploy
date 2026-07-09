@@ -1,0 +1,41 @@
+# Phase 1 — RESTRICTED sudoers PROPOSAL for deploy user (NOT installed automatically).
+#
+# VERIFY binary paths on production before install:
+#   command -v systemctl
+#   command -v journalctl
+#
+# Typical Ubuntu 22.04 paths assumed below — adjust if `command -v` differs.
+#
+# Install (manual, after review):
+#   visudo -cf /etc/sudoers.d/worldcup-deploy
+#   install -o root -g root -m 0440 deployment/sudoers/worldcup-deploy /etc/sudoers.d/worldcup-deploy
+#
+# SECURITY:
+# - No NOPASSWD: ALL
+# - No arbitrary service names
+# - No shell interpreters
+# - journalctl only via approved wrapper script
+
+Defaults:deploy !requiretty
+
+# --- worldcup-api service (fixed name) ---
+deploy ALL=(root) NOPASSWD: /bin/systemctl status worldcup-api
+deploy ALL=(root) NOPASSWD: /bin/systemctl is-active worldcup-api
+deploy ALL=(root) NOPASSWD: /bin/systemctl restart worldcup-api
+
+# --- Approved ops wrappers (fixed paths; no user-supplied arguments beyond numeric log lines) ---
+deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/ops/worldcup_service_status.sh
+deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/ops/worldcup_service_restart.sh
+deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/ops/worldcup_logs.sh
+
+# Future Phase 2 deploy automation (disabled until validated):
+# deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_deploy_safe.sh
+# deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_health_check.sh
+# deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_rollback.sh
+
+# Explicitly NOT granted:
+# - systemctl restart *
+# - journalctl *
+# - bash / sh / python arbitrary scripts
+# - sudo -i / su
+# - nginx reload (Phase 1 — admin-only unless added in later validated phase)
