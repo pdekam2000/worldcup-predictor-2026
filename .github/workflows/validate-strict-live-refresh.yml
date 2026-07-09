@@ -23,6 +23,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install validator dependencies
+        run: python -m pip install --disable-pip-version-check -q "pydantic>=2.0" "pydantic-settings>=2.0"
       - name: Compile changed Python areas
         run: |
           python -m compileall -q \
