@@ -576,6 +576,10 @@ def model_status(*, settings: Settings | None = None) -> dict[str, Any]:
     db_path = settings.sqlite_path
     db_exists = bool(db_path and Path(db_path).exists())
     version = build_version_payload()
+    from worldcup_predictor.providers.oddalerts_provider import OddAlertsClient
+    from worldcup_predictor.providers.sportmonks_provider import SportmonksProvider
+
+    oa = OddAlertsClient()
     return {
         "wde_available": wde_count > 0,
         "ecse_available": ecse_count > 0,
@@ -589,11 +593,7 @@ def model_status(*, settings: Settings | None = None) -> dict[str, Any]:
         "providers": {
             "api_football_configured": diag.get("API_FOOTBALL_KEY_present"),
             "sportmonks_configured": diag.get("SPORTMONKS_API_KEY_present"),
-            "oddalerts_configured": bool(
-                __import__(
-                    "worldcup_predictor.providers.oddalerts_provider", fromlist=["OddAlertsClient"]
-                ).OddAlertsClient(settings=settings).is_configured
-            ),
+            "oddalerts_configured": bool(oa.is_configured),
         },
     }
 
@@ -604,7 +604,7 @@ def provider_status(*, settings: Settings | None = None) -> dict[str, Any]:
     from worldcup_predictor.providers.sportmonks_provider import SportmonksProvider
 
     diag = provider_diagnostic(settings)
-    oa = OddAlertsClient(settings=settings)
+    oa = OddAlertsClient()
     sm = SportmonksProvider(settings=settings)
     return {
         "api_football": {
