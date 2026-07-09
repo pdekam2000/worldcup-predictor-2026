@@ -42,9 +42,17 @@ ensure_user() {
   if ! id worldcup-gpt-actions >/dev/null 2>&1; then
     useradd --system --home /opt/worldcup-predictor --shell /usr/sbin/nologin worldcup-gpt-actions
   fi
+  usermod -aG www-data worldcup-gpt-actions 2>/dev/null || true
   mkdir -p "${LOG_DIR}" "${APP_ROOT}/artifacts/gpt_actions_jobs"
   chown -R worldcup-gpt-actions:worldcup-gpt-actions "${LOG_DIR}" "${APP_ROOT}/artifacts/gpt_actions_jobs"
   chmod 750 "${LOG_DIR}"
+  if command -v setfacl >/dev/null 2>&1; then
+    setfacl -m u:worldcup-gpt-actions:r-- /opt/worldcup-predictor/.env.production 2>/dev/null || true
+    DB="${APP_ROOT}/data/football_intelligence.db"
+    if [[ -f "${DB}" ]]; then
+      setfacl -m u:worldcup-gpt-actions:rw- "${DB}" 2>/dev/null || true
+    fi
+  fi
 }
 
 ensure_env() {

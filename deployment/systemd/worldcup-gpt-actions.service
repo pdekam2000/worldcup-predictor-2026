@@ -8,6 +8,7 @@ Type=simple
 User=worldcup-gpt-actions
 Group=worldcup-gpt-actions
 WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
 EnvironmentFile=/etc/worldcup-gpt-actions/environment
 Environment=PYTHONUNBUFFERED=1
 Environment=APP_ENV=production

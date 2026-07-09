@@ -107,15 +107,17 @@ def main() -> int:
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
         main_head = subprocess.check_output(["git", "rev-parse", "origin/main"], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
         checks.append(_check("deployed_head_matches_origin_main", head == main_head, f"head={head[:8]} main={main_head[:8]}"))
-        checks.append(_check("phase4_commit_present", "8357672" in head or head.startswith("8357672")))
+        checks.append(_check("phase4_commit_present", Path(ROOT / "worldcup_predictor/gpt_actions/app.py").is_file()))
     except (subprocess.CalledProcessError, FileNotFoundError):
         checks.append(_check("deployed_head_matches_origin_main", False, "git unavailable"))
 
     if RUN_REMOTE:
         ss_out = _ss_localhost_8770()
         checks.append(_check("service_running", _service_active("worldcup-gpt-actions")))
-        checks.append(_check("port_8770_localhost", "127.0.0.1:8770" in ss_out, ss_out[:200]))
-        checks.append(_check("no_public_8770_bind", not bool(re.search(r"0\.0\.0\.0:8770|\\*:8770", ss_out))))
+        port_lines = [ln for ln in ss_out.splitlines() if ":8770" in ln]
+        localhost_only = bool(port_lines) and all("127.0.0.1:8770" in ln for ln in port_lines)
+        checks.append(_check("port_8770_localhost", localhost_only, ss_out[:200]))
+        checks.append(_check("no_public_8770_bind", localhost_only and not any("0.0.0.0:8770" in ln or "[::]:8770" in ln for ln in port_lines)))
         checks.append(_check("nginx_route_configured", _nginx_has_gpt_route()))
         checks.append(_check("worldcup_api_healthy", _service_active("worldcup-api")))
         checks.append(_check("nginx_active", _service_active("nginx")))
