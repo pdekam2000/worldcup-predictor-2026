@@ -1,0 +1,149 @@
+name: Deploy production (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: "Git commit SHA on main to deploy (required)"
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  validate-local:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Validate target SHA is on main history
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET="${{ github.event.inputs.target_sha }}"
+          if ! git merge-base --is-ancestor "${TARGET}" origin/main 2>/dev/null; then
+            echo "target_sha must belong to origin/main history"
+            exit 1
+          fi
+          if ! git cat-file -e "${TARGET}^{commit}" 2>/dev/null; then
+            echo "target_sha is not a valid commit"
+            exit 1
+          fi
+          echo "target_sha_ok=${TARGET}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install validator dependencies
+        run: python -m pip install --disable-pip-version-check -q "pydantic>=2.0" "pydantic-settings>=2.0" pytest
+
+      - name: Compile Python
+        run: python -m compileall -q worldcup_predictor scripts
+
+      - name: Validate strict live refresh
+        run: python scripts/validate_strict_live_odds_refresh_fix.py
+
+      - name: Validate Phase 1 SSH scaffold
+        run: python scripts/validate_phase1_ssh_scaffold.py
+
+      - name: Validate Phase 2 deploy static contract
+        run: python scripts/validate_phase2_github_deploy.py
+
+      - name: Phase 2 focused tests
+        run: python -m pytest tests/test_phase2_github_deploy.py -q
+
+  deploy:
+    needs: validate-local
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Configure SSH
+        shell: bash
+        env:
+          HETZNER_SSH_KEY: ${{ secrets.HETZNER_SSH_KEY }}
+          HETZNER_KNOWN_HOSTS: ${{ secrets.HETZNER_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${HETZNER_SSH_KEY}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${HETZNER_KNOWN_HOSTS}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Remote preflight
+        shell: bash
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+          HETZNER_USER: ${{ secrets.HETZNER_USER }}
+          HETZNER_PORT: ${{ secrets.HETZNER_PORT }}
+        run: |
+          set -euo pipefail
+          TARGET="${{ github.event.inputs.target_sha }}"
+          ssh -i ~/.ssh/deploy_key -p "${HETZNER_PORT}" -o BatchMode=yes -o IdentitiesOnly=yes \
+            "${HETZNER_USER}@${HETZNER_HOST}" \
+            "sudo /opt/worldcup-predictor/scripts/production_preflight.sh ${TARGET}"
+
+      - name: Remote deploy
+        id: remote_deploy
+        shell: bash
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+          HETZNER_USER: ${{ secrets.HETZNER_USER }}
+          HETZNER_PORT: ${{ secrets.HETZNER_PORT }}
+        run: |
+          set -euo pipefail
+          TARGET="${{ github.event.inputs.target_sha }}"
+          ssh -i ~/.ssh/deploy_key -p "${HETZNER_PORT}" -o BatchMode=yes -o IdentitiesOnly=yes \
+            "${HETZNER_USER}@${HETZNER_HOST}" \
+            "sudo /opt/worldcup-predictor/scripts/production_deploy_safe.sh ${TARGET}" \
+            | tee deploy-output.txt
+
+      - name: Collect sanitized deploy result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+          raw = Path("deploy-output.txt").read_text(encoding="utf-8", errors="ignore") if Path("deploy-output.txt").exists() else ""
+          sanitized = re.sub(r"(?i)(password|secret|key|token)\s*[:=]\s*\S+", r"\1=***", raw)
+          Path("deploy-result-sanitized.txt").write_text(sanitized[-8000:], encoding="utf-8")
+          print(json.dumps({"lines": len(sanitized.splitlines())}))
+          PY
+
+      - name: Rollback note on failure
+        if: failure() && steps.remote_deploy.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "Remote deploy script attempts controlled code rollback on failure."
+          echo "No automatic DB restore. Review server deploy logs and manifest under artifacts/deploy_manifests/."
+
+      - name: Upload deployment report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-production-report
+          path: deploy-result-sanitized.txt
+          if-no-files-found: warn
+
+      - name: Cleanup SSH key material
+        if: always()
+        shell: bash
+        run: rm -f ~/.ssh/deploy_key

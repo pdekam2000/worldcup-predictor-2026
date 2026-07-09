@@ -28,10 +28,11 @@ deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/ops/worldcup_service
 deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/ops/worldcup_service_restart.sh
 deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/ops/worldcup_logs.sh
 
-# Future Phase 2 deploy automation (disabled until validated):
-# deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_deploy_safe.sh
-# deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_health_check.sh
-# deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_rollback.sh
+# Future Phase 2 deploy automation (enable after owner validates on staging):
+deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_preflight.sh
+deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_deploy_safe.sh
+deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_health_check.sh
+deploy ALL=(root) NOPASSWD: /opt/worldcup-predictor/scripts/production_rollback.sh
 
 # Explicitly NOT granted:
 # - systemctl restart *
