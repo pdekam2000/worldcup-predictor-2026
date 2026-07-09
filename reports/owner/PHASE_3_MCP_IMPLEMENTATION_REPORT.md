@@ -2,8 +2,23 @@
 
 **Branch:** `infra/phase3-mcp-prediction-server`  
 **Base SHA:** `71f4169309ef97acfc0dc733e6bd8d20212dc843` (origin/main)  
-**Final SHA:** `1e4b09c`  
+**Final SHA:** `1e7d638` (Phase 3.1)  
 **Date:** 2026-07-09
+
+## Phase 3.1 update (2026-07-09)
+
+| Status flag | Value |
+|-------------|-------|
+| MCP_SERVER_READY | **YES** |
+| MCP_PROTOCOL_READY | **YES** |
+| CURSOR_MCP_READY | **CURSOR_MCP_CONFIG_READY_BUT_CLIENT_TEST_FAILED** |
+| PRODUCTION_MAIN_ALIGNED | **NO** |
+| SECURE_TUNNEL_READY_TO_INSTALL | **YES** |
+| CHATGPT_PLAN_SUPPORTED | **NOT_CONFIRMED** |
+| CHATGPT_ACTUAL_CONNECTION | **NO** |
+| PR_CREATED | **NO** |
+
+See `PHASE_3_1_MCP_END_TO_END_REPORT.md` for full protocol, parity, and reconciliation details.
 
 ## Files created
 

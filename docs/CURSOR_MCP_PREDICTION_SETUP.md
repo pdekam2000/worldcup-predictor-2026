@@ -28,7 +28,13 @@ Add to Cursor **Settings → MCP** (or `.cursor/mcp.json` in your user config):
 }
 ```
 
-Replace `worldcup-prod` with your SSH host alias.
+Replace `worldcup-prod` with your SSH host alias, or define it in `~/.ssh/config`:
+
+```
+Host worldcup-prod
+  HostName 91.107.188.229
+  User root
+```
 
 ## Smoke test order
 
