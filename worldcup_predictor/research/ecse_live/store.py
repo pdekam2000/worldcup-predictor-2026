@@ -82,9 +82,21 @@ def _hydrate_snapshot(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def insert_snapshot(conn: sqlite3.Connection, payload: dict[str, Any]) -> tuple[int | None, str]:
-    """Insert frozen snapshot once per fixture_id. Never overwrites."""
+    """Insert once, or refresh an unevaluated owner pre-match snapshot on forced rerun.
+
+    Normal ECSE-LIVE snapshots remain immutable. The owner daily pipeline checks
+    for an existing snapshot before calling this function. It reaches this branch
+    only on an explicit forced regeneration after fresh odds were imported.
+    Evaluated snapshots are protected by the audited refresh helper.
+    """
     fixture_id = int(payload["fixture_id"])
     if has_snapshot(conn, fixture_id):
+        if str(payload.get("prediction_source") or "") == "owner_daily_predictions":
+            from worldcup_predictor.research.ecse_live.pre_match_refresh import (
+                refresh_unevaluated_snapshot,
+            )
+
+            return refresh_unevaluated_snapshot(conn, payload)
         return None, "already_exists"
 
     snapshot_key = f"ecse-live:{fixture_id}"

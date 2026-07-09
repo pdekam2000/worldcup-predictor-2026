@@ -1,4 +1,4 @@
-"""Safe cache-first odds refresh runner."""
+"""Safe multi-provider odds freshness audit and refresh runner."""
 
 from __future__ import annotations
 
@@ -21,11 +21,8 @@ from worldcup_predictor.odds.freshness_policy import (
     is_low_priority_match,
     should_refresh_odds,
 )
-from worldcup_predictor.owner_daily.fixture_discovery import discover_daily_fixtures, resolve_target_date
-from worldcup_predictor.owner_daily.odds_import import import_daily_odds, scan_fixture_odds_readiness
-from worldcup_predictor.owner_daily.provider_call_log import DailyProviderCallLog, ProviderQuotaGuard
-from worldcup_predictor.providers.oddalerts_provider import OddAlertsClient
-from worldcup_predictor.providers.sportmonks_provider import SportmonksProvider
+from worldcup_predictor.odds.strict_live_refresh import refresh_fixture_odds_live
+from worldcup_predictor.owner_daily.fixture_discovery import discover_daily_fixtures
 
 ARTIFACT_DIR = Path("artifacts/odds_freshness")
 REPORT_JSON = ARTIFACT_DIR / "odds_freshness_refresh_report.json"
@@ -82,6 +79,13 @@ def run_odds_freshness_refresh(
     source: str = "auto",
     settings: Settings | None = None,
 ) -> RefreshRunResult:
+    """Audit freshness and run the strict live provider fallback chain.
+
+    In refresh mode each stale/missing fixture is tried against the configured
+    provider chain. Only genuinely live, parseable odds are persisted.
+    """
+    del source  # preserved for backward-compatible call signatures
+
     settings = settings or get_settings()
     result = RefreshRunResult(mode=mode, dry_run=dry_run or mode == "audit", date_arg=date_arg)
     now = datetime.now(dt_timezone.utc)
@@ -124,12 +128,12 @@ def run_odds_freshness_refresh(
 
     conn = connect(settings.sqlite_path)
     repo = FootballIntelligenceRepository(settings.sqlite_path or None)
-    sm = SportmonksProvider(settings)
-    oa = OddAlertsClient()
 
     stale_ids: list[int] = []
+    fixtures_by_id: dict[int, Any] = {}
     for fx in fixtures:
-        fid = fx.provider_fixture_id
+        fid = int(fx.provider_fixture_id)
+        fixtures_by_id[fid] = fx
         fx_row = repo.get_fixture_row(fid) or {}
         round_name = fx_row.get("round_name")
         odds = _latest_odds(conn, fid)
@@ -168,38 +172,41 @@ def run_odds_freshness_refresh(
     conn.close()
 
     if mode == "refresh" and not dry_run and stale_ids and max_provider_calls > 0:
-        run_date = resolve_target_date(date_arg, timezone).isoformat()
-        log = DailyProviderCallLog(
-            run_date=run_date,
-            quota=ProviderQuotaGuard(
-                max_api_football=max_provider_calls,
-                max_oddalerts=max_provider_calls,
-                max_sportmonks=max_provider_calls,
-                no_provider_calls=False,
-            ),
-        )
-        try:
-            imp = import_daily_odds(
-                date_arg=date_arg,
-                timezone=timezone,
-                competition_keys=competition_keys,
-                limit=len(stale_ids) + 5,
+        provider_call_budget_used = 0
+        for fid in stale_ids:
+            remaining_budget = max_provider_calls - provider_call_budget_used
+            if remaining_budget <= 0:
+                result.errors.append("provider call budget exhausted")
+                break
+
+            fx = fixtures_by_id.get(fid)
+            if fx is None:
+                result.errors.append(f"fixture {fid}: discovery row missing")
+                continue
+
+            refresh = refresh_fixture_odds_live(
+                fx,
                 settings=settings,
                 dry_run=False,
-                only_missing=False,
-                force=True,
-                call_log=log,
-                max_api_football_calls=max_provider_calls,
-                max_oddalerts_calls=max_provider_calls,
-                max_sportmonks_calls=max_provider_calls,
-                no_provider_calls=False,
+                max_live_calls=remaining_budget,
             )
-            result.refreshed = imp.imported_count
-            result.provider_calls = dict(imp.provider_calls or {})
-            if imp.provider_errors:
-                result.errors.extend(imp.provider_errors[:10])
-        except Exception as exc:
-            result.errors.append(str(exc))
+            for attempt in refresh.get("attempts") or []:
+                if attempt.get("call_made"):
+                    provider = str(attempt.get("provider") or "unknown")
+                    result.provider_calls[provider] = result.provider_calls.get(provider, 0) + 1
+                    provider_call_budget_used += 1
+
+            fixture_entry = next((e for e in result.fixtures if int(e["fixture_id"]) == fid), None)
+            if fixture_entry is not None:
+                fixture_entry["refresh_result"] = refresh
+
+            if refresh.get("imported"):
+                result.refreshed += 1
+            else:
+                result.errors.append(
+                    f"fixture {fid}: {refresh.get('status', 'refresh_failed')}"
+                    + (f" — {refresh.get('error')}" if refresh.get("error") else "")
+                )
     elif mode == "refresh" and dry_run:
         result.dry_run = True
 
