@@ -3,7 +3,7 @@
 Provider order:
 1. API-Football live (forced cache bypass)
 2. Sportmonks live pre-match odds (using the stored fixture crosswalk)
-3. OddAlerts live odds history
+3. OddAlerts live odds history (only with an explicit fixture crosswalk)
 
 A provider is accepted only when it returns parseable, usable odds. Failed or
 partial providers are recorded in the attempt trace and the next provider is
@@ -76,6 +76,22 @@ def _normalize_candidate(
     return normalized, _usable_for_prediction(normalized), _market_quality(normalized)
 
 
+def _table_exists(conn: sqlite3.Connection, table: str) -> bool:
+    row = conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=? LIMIT 1",
+        (table,),
+    ).fetchone()
+    return row is not None
+
+
+def _positive_int(value: Any) -> int | None:
+    try:
+        out = int(value)
+    except (TypeError, ValueError):
+        return None
+    return out if out > 0 else None
+
+
 def _sportmonks_fixture_id(conn: sqlite3.Connection, api_fixture_id: int) -> int | None:
     """Resolve an API-Football fixture ID to a Sportmonks fixture ID."""
     try:
@@ -93,6 +109,136 @@ def _sportmonks_fixture_id(conn: sqlite3.Connection, api_fixture_id: int) -> int
         return None
     if row and row["sportmonks_fixture_id"] is not None:
         return int(row["sportmonks_fixture_id"])
+    return None
+
+
+def _explicit_crosswalk_from_table(
+    conn: sqlite3.Connection,
+    *,
+    table: str,
+    internal_fixture_id: int,
+) -> int | None:
+    if not _table_exists(conn, table):
+        return None
+    columns = {
+        str(row["name"] if isinstance(row, sqlite3.Row) else row[1])
+        for row in conn.execute(f"PRAGMA table_info({table})").fetchall()
+    }
+    internal_candidates = (
+        "internal_fixture_id",
+        "fixture_id",
+        "api_football_fixture_id",
+        "fixture_id_api_football",
+    )
+    provider_candidates = (
+        "oddalerts_fixture_id",
+        "provider_fixture_id",
+    )
+    internal_col = next((c for c in internal_candidates if c in columns), None)
+    provider_col = next((c for c in provider_candidates if c in columns), None)
+    if not internal_col or not provider_col:
+        return None
+
+    provider_filter = ""
+    params: list[Any] = [int(internal_fixture_id)]
+    if "provider" in columns:
+        provider_filter = " AND LOWER(provider) = ?"
+        params.append("oddalerts")
+    elif "provider_name" in columns:
+        provider_filter = " AND LOWER(provider_name) = ?"
+        params.append("oddalerts")
+
+    try:
+        row = conn.execute(
+            f"SELECT {provider_col} AS provider_fixture_id FROM {table} "
+            f"WHERE {internal_col} = ?{provider_filter} ORDER BY rowid DESC LIMIT 1",
+            tuple(params),
+        ).fetchone()
+    except sqlite3.OperationalError:
+        return None
+    if not row:
+        return None
+    return _positive_int(row["provider_fixture_id"])
+
+
+def _oddalerts_fixture_id(conn: sqlite3.Connection, internal_fixture_id: int) -> int | None:
+    """Resolve OddAlerts fixture ID without assuming provider IDs are interchangeable."""
+    # Generic provider feed can hold an explicit provider fixture ID.
+    if _table_exists(conn, "euro_fixture_feed"):
+        try:
+            row = conn.execute(
+                """
+                SELECT provider_fixture_id
+                FROM euro_fixture_feed
+                WHERE fixture_id = ? AND LOWER(provider) = 'oddalerts'
+                ORDER BY updated_at DESC
+                LIMIT 1
+                """,
+                (int(internal_fixture_id),),
+            ).fetchone()
+        except sqlite3.OperationalError:
+            row = None
+        if row:
+            value = _positive_int(row["provider_fixture_id"])
+            if value is not None:
+                return value
+
+    # Support explicit crosswalk tables if/when present in a deployment DB.
+    for table in (
+        "oddalerts_fixture_crosswalk",
+        "provider_fixture_crosswalk",
+        "fixture_provider_crosswalk",
+    ):
+        value = _explicit_crosswalk_from_table(
+            conn,
+            table=table,
+            internal_fixture_id=internal_fixture_id,
+        )
+        if value is not None:
+            return value
+
+    # Historical OddAlerts CSV rows are already crosswalked to internal fixtures.
+    # Use only an explicit OddAlerts fixture-id field from the raw source row;
+    # never reinterpret the internal fixture ID as a provider ID.
+    if _table_exists(conn, "oddalerts_probability_market_rows"):
+        try:
+            rows = conn.execute(
+                """
+                SELECT raw_row_json
+                FROM oddalerts_probability_market_rows
+                WHERE internal_fixture_id = ?
+                  AND raw_row_json IS NOT NULL
+                ORDER BY id DESC
+                LIMIT 50
+                """,
+                (int(internal_fixture_id),),
+            ).fetchall()
+        except sqlite3.OperationalError:
+            rows = []
+
+        candidates: set[int] = set()
+        accepted_keys = {
+            "oddalertsfixtureid",
+            "oddalertsfixture",
+            "oddalertsid",
+        }
+        for row in rows:
+            try:
+                payload = json.loads(row["raw_row_json"])
+            except (json.JSONDecodeError, TypeError, KeyError):
+                continue
+            if not isinstance(payload, dict):
+                continue
+            for key, value in payload.items():
+                normalized_key = "".join(ch for ch in str(key).lower() if ch.isalnum())
+                if normalized_key not in accepted_keys:
+                    continue
+                parsed = _positive_int(value)
+                if parsed is not None:
+                    candidates.add(parsed)
+        if len(candidates) == 1:
+            return next(iter(candidates))
+
     return None
 
 
@@ -267,7 +413,7 @@ def _try_sportmonks(
 
     status_code, payload, error = provider.safe_get(
         f"/odds/pre-match/fixtures/{sportmonks_id}",
-        params={"include": "bookmaker;market"},
+        params={"include": "bookmaker;market", "per_page": 50},
     )
     attempt.update(
         {
@@ -305,7 +451,13 @@ def _try_oddalerts(
         attempt["reason"] = "not_configured"
         return [], None, attempt
 
-    result = fetch_oddalerts_odds_history(fixture_id, conn=conn)
+    oddalerts_id = _oddalerts_fixture_id(conn, fixture_id)
+    attempt["oddalerts_fixture_id"] = oddalerts_id
+    if oddalerts_id is None:
+        attempt["reason"] = "crosswalk_missing"
+        return [], None, attempt
+
+    result = fetch_oddalerts_odds_history(oddalerts_id, conn=conn)
     attempt.update(
         {
             "call_made": bool(result.api_calls),
