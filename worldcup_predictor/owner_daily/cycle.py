@@ -195,6 +195,7 @@ def run_daily_owner_cycle(
         settings=settings,
     )
 
+    refreshed_for_prediction = False
     if config.refresh_stale_odds and not config.no_provider_calls:
         from worldcup_predictor.odds.freshness_refresh import run_odds_freshness_refresh
 
@@ -209,8 +210,12 @@ def run_daily_owner_cycle(
             settings=settings,
         )
         result.odds_import["freshness_refresh"] = refresh_out.to_dict()
+        refreshed_for_prediction = bool(refresh_out.refreshed) and not config.dry_run
 
-    if config.fetch_missing_odds and not config.no_provider_calls:
+    # Strict freshness refresh is intentionally isolated from the general
+    # cache-first import/fetch path. Otherwise a failed live refresh could be
+    # followed by reuse of an old cache entry that is then stamped as fresh.
+    if config.fetch_missing_odds and not config.no_provider_calls and not config.refresh_stale_odds:
         odds_out = import_daily_odds(
             date_arg=config.date_arg,
             timezone=config.timezone,
@@ -235,7 +240,7 @@ def run_daily_owner_cycle(
             sportmonks_configured=sm.is_configured,
             oddalerts_configured=oa.is_configured,
         )
-    elif not config.no_provider_calls:
+    elif not config.no_provider_calls and not config.refresh_stale_odds:
         from worldcup_predictor.owner_daily.provider_fetch import fetch_missing_data_for_fixtures
 
         fetch_out = fetch_missing_data_for_fixtures(
@@ -262,7 +267,7 @@ def run_daily_owner_cycle(
     pred_out = run_daily_predictions(
         discovery.fixtures,
         dry_run=config.dry_run,
-        force=config.force_predictions,
+        force=config.force_predictions or refreshed_for_prediction,
         strict_fresh_odds=config.strict_fresh_odds,
         settings=settings,
     )
@@ -300,7 +305,10 @@ def run_daily_owner_cycle(
     completeness_path = ARTIFACTS_DIR / f"daily_data_completeness_{ymd}.json"
     fetched_counts = dict(result.fetch.get("fetched", {}))
     if result.odds_import:
-        fetched_counts["odds_imported"] = result.odds_import.get("imported_count", 0)
+        refresh_meta = result.odds_import.get("freshness_refresh") or {}
+        fetched_counts["odds_imported"] = int(refresh_meta.get("refreshed") or 0)
+        if not refresh_meta:
+            fetched_counts["odds_imported"] = int(result.odds_import.get("imported_count") or 0)
     completeness_summary = summarize_completeness(
         completeness,
         provider_calls=call_log.quota.to_dict(),

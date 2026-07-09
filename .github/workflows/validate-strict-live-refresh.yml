@@ -1,0 +1,32 @@
+name: Validate strict live refresh fix
+
+on:
+  pull_request:
+    paths:
+      - "worldcup_predictor/odds/**"
+      - "worldcup_predictor/owner_daily/**"
+      - "worldcup_predictor/research/ecse_live/**"
+      - "scripts/validate_strict_live_odds_refresh_fix.py"
+      - ".github/workflows/validate-strict-live-refresh.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile changed Python areas
+        run: |
+          python -m compileall -q \
+            worldcup_predictor/odds \
+            worldcup_predictor/owner_daily \
+            worldcup_predictor/research/ecse_live \
+            scripts/validate_strict_live_odds_refresh_fix.py
+      - name: Validate strict refresh behavior
+        run: python scripts/validate_strict_live_odds_refresh_fix.py
