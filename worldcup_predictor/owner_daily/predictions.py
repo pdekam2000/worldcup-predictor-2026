@@ -257,13 +257,14 @@ def run_daily_ecse(
         prediction["raw_features"] = raw
 
     sid, reason = insert_snapshot(conn, prediction)
-    if reason != "inserted":
+    if reason not in ("inserted", "refreshed"):
         detail["reason"] = reason
         return "skipped", detail
 
     detail.update(
         {
             "snapshot_id": sid,
+            "snapshot_write": reason,
             "top_1_score": prediction.get("top_1_score"),
             "confidence_score": prediction.get("confidence_score"),
         }
