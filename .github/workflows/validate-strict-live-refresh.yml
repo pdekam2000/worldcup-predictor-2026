@@ -31,4 +31,17 @@ jobs:
             worldcup_predictor/research/ecse_live \
             scripts/validate_strict_live_odds_refresh_fix.py
       - name: Validate strict refresh behavior
-        run: python scripts/validate_strict_live_odds_refresh_fix.py
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_strict_live_odds_refresh_fix.py | tee validator-output.json
+          code=${PIPESTATUS[0]}
+          echo "validator_exit_code=${code}" >> "$GITHUB_ENV"
+          exit "$code"
+      - name: Upload validator diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strict-refresh-validator-output
+          path: validator-output.json
+          if-no-files-found: warn
