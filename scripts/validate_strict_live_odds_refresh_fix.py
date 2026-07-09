@@ -3,20 +3,51 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import sqlite3
 import sys
 import tempfile
+import types
 from pathlib import Path
+from types import ModuleType
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
+ECSE_DIR = ROOT / "worldcup_predictor" / "research" / "ecse_live"
 
-from worldcup_predictor.research.ecse_live.store import (  # noqa: E402
-    ensure_ecse_live_tables,
-    insert_evaluation,
-    insert_snapshot,
+
+def _register_namespace(name: str, path: Path) -> None:
+    module = types.ModuleType(name)
+    module.__path__ = [str(path)]  # type: ignore[attr-defined]
+    sys.modules[name] = module
+
+
+def _load_module(name: str, path: Path) -> ModuleType:
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load module {name} from {path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+# Load only the SQLite ECSE store under test. This avoids executing the package
+# __init__, which imports the full production scheduler and unrelated services.
+_register_namespace("worldcup_predictor", ROOT / "worldcup_predictor")
+_register_namespace("worldcup_predictor.research", ROOT / "worldcup_predictor" / "research")
+_register_namespace("worldcup_predictor.research.ecse_live", ECSE_DIR)
+_load_module(
+    "worldcup_predictor.research.ecse_live.ddl",
+    ECSE_DIR / "ddl.py",
 )
+_store = _load_module(
+    "worldcup_predictor.research.ecse_live.store",
+    ECSE_DIR / "store.py",
+)
+ensure_ecse_live_tables = _store.ensure_ecse_live_tables
+insert_evaluation = _store.insert_evaluation
+insert_snapshot = _store.insert_snapshot
 
 
 def check(name: str, ok: bool, details: str = "") -> dict[str, object]:
@@ -56,11 +87,75 @@ def main() -> int:
     refresh_src = (ROOT / "worldcup_predictor/odds/freshness_refresh.py").read_text(encoding="utf-8")
     cycle_src = (ROOT / "worldcup_predictor/owner_daily/cycle.py").read_text(encoding="utf-8")
     pred_src = (ROOT / "worldcup_predictor/owner_daily/predictions.py").read_text(encoding="utf-8")
+    ecse_refresh_src = (
+        ROOT / "worldcup_predictor/research/ecse_live/pre_match_refresh.py"
+    ).read_text(encoding="utf-8")
 
-    checks.append(check("api_force_refresh", "get_odds(fid, force_refresh=True)" in strict_src))
-    checks.append(check("require_live_source", 'odds_result.source != "live"' in strict_src))
+    checks.append(check("api_force_refresh", "get_odds(fixture_id, force_refresh=True)" in strict_src))
+    checks.append(check("api_requires_live_source", 'result.source != "live"' in strict_src))
     checks.append(check("no_cached_restamp", "cache_bypassed" in strict_src))
     checks.append(check("stale_ids_targeted", "refresh_fixture_odds_live" in refresh_src))
+
+    api_pos = strict_src.find('(\"api-football\", lambda: _try_api_football')
+    sm_pos = strict_src.find('(\"sportmonks\", lambda: _try_sportmonks')
+    oa_pos = strict_src.find('(\"oddalerts\", lambda: _try_oddalerts')
+    checks.append(
+        check(
+            "provider_fallback_order",
+            api_pos >= 0 and sm_pos > api_pos and oa_pos > sm_pos,
+            f"positions={api_pos},{sm_pos},{oa_pos}",
+        )
+    )
+    checks.append(check("sportmonks_live_call", "provider.safe_get(" in strict_src))
+    checks.append(
+        check(
+            "sportmonks_prematch_endpoint",
+            '/odds/pre-match/fixtures/{sportmonks_id}' in strict_src,
+        )
+    )
+    checks.append(
+        check(
+            "sportmonks_single_call_max_page",
+            '"per_page": 50' in strict_src,
+        )
+    )
+    checks.append(check("oddalerts_live_call", "fetch_oddalerts_odds_history" in strict_src))
+    checks.append(
+        check(
+            "oddalerts_crosswalk_guard",
+            "def _oddalerts_fixture_id(" in strict_src
+            and 'attempt["reason"] = "crosswalk_missing"' in strict_src
+            and "fetch_oddalerts_odds_history(oddalerts_id" in strict_src
+            and "fetch_oddalerts_odds_history(fixture_id" not in strict_src,
+        )
+    )
+    checks.append(
+        check(
+            "provider_quality_gate",
+            "required_markets_missing_or_invalid" in strict_src
+            and 'quality["match_winner"]' in strict_src
+            and 'quality["over_under_2_5"]' in strict_src,
+        )
+    )
+    checks.append(
+        check(
+            "provider_attempt_trace",
+            'payload["provider_attempts"] = attempts' in strict_src,
+        )
+    )
+    checks.append(
+        check(
+            "per_provider_call_accounting",
+            'provider = str(attempt.get("provider") or "unknown")' in refresh_src,
+        )
+    )
+    checks.append(
+        check(
+            "global_call_budget_forwarded",
+            "max_live_calls=remaining_budget" in refresh_src
+            and "provider_call_budget_exhausted" in strict_src,
+        )
+    )
     checks.append(
         check(
             "strict_path_isolated",
@@ -83,6 +178,12 @@ def main() -> int:
         check(
             "ecse_receives_strict_flag",
             "strict_fresh_odds=strict_fresh_odds" in pred_src,
+        )
+    )
+    checks.append(
+        check(
+            "ecse_audit_timestamp",
+            "created_at" in ecse_refresh_src and "_utc_now()" in ecse_refresh_src,
         )
     )
 
@@ -149,7 +250,9 @@ def main() -> int:
         checks.append(
             check(
                 "evaluated_snapshot_locked",
-                sid3 is None and reason3 == "evaluated_snapshot_locked" and locked_row["top_1_score"] == "3-0",
+                sid3 is None
+                and reason3 == "evaluated_snapshot_locked"
+                and locked_row["top_1_score"] == "3-0",
                 reason3,
             )
         )

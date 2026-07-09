@@ -1,4 +1,4 @@
-"""Safe cache-first odds refresh runner."""
+"""Safe multi-provider odds freshness audit and refresh runner."""
 
 from __future__ import annotations
 
@@ -79,13 +79,10 @@ def run_odds_freshness_refresh(
     source: str = "auto",
     settings: Settings | None = None,
 ) -> RefreshRunResult:
-    """Audit odds freshness and, in refresh mode, force live API-Football refreshes.
+    """Audit freshness and run the strict live provider fallback chain.
 
-    The previous implementation delegated stale refreshes to the general daily
-    cache-first importer. That importer can legitimately reuse old cached odds,
-    which is wrong after the freshness gate has already classified a fixture as
-    stale. This path now targets the exact stale fixture IDs and requires a real
-    API-Football live response before persisting a new snapshot.
+    In refresh mode each stale/missing fixture is tried against the configured
+    provider chain. Only genuinely live, parseable odds are persisted.
     """
     del source  # preserved for backward-compatible call signatures
 
@@ -175,15 +172,29 @@ def run_odds_freshness_refresh(
     conn.close()
 
     if mode == "refresh" and not dry_run and stale_ids and max_provider_calls > 0:
-        for fid in stale_ids[:max_provider_calls]:
+        provider_call_budget_used = 0
+        for fid in stale_ids:
+            remaining_budget = max_provider_calls - provider_call_budget_used
+            if remaining_budget <= 0:
+                result.errors.append("provider call budget exhausted")
+                break
+
             fx = fixtures_by_id.get(fid)
             if fx is None:
                 result.errors.append(f"fixture {fid}: discovery row missing")
                 continue
 
-            refresh = refresh_fixture_odds_live(fx, settings=settings, dry_run=False)
-            if refresh.get("live_call_made"):
-                result.provider_calls["api_football"] = result.provider_calls.get("api_football", 0) + 1
+            refresh = refresh_fixture_odds_live(
+                fx,
+                settings=settings,
+                dry_run=False,
+                max_live_calls=remaining_budget,
+            )
+            for attempt in refresh.get("attempts") or []:
+                if attempt.get("call_made"):
+                    provider = str(attempt.get("provider") or "unknown")
+                    result.provider_calls[provider] = result.provider_calls.get(provider, 0) + 1
+                    provider_call_budget_used += 1
 
             fixture_entry = next((e for e in result.fixtures if int(e["fixture_id"]) == fid), None)
             if fixture_entry is not None:

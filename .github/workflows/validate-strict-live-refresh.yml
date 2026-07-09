@@ -17,10 +17,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          show-progress: false
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install validator dependencies
+        run: python -m pip install --disable-pip-version-check -q "pydantic>=2.0" "pydantic-settings>=2.0"
       - name: Compile changed Python areas
         run: |
           python -m compileall -q \
@@ -29,4 +33,17 @@ jobs:
             worldcup_predictor/research/ecse_live \
             scripts/validate_strict_live_odds_refresh_fix.py
       - name: Validate strict refresh behavior
-        run: python scripts/validate_strict_live_odds_refresh_fix.py
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_strict_live_odds_refresh_fix.py 2>&1 | tee validator-output.txt
+          code=${PIPESTATUS[0]}
+          echo "validator_exit_code=${code}" >> "$GITHUB_ENV"
+          exit "$code"
+      - name: Upload validator diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strict-refresh-validator-output
+          path: validator-output.txt
+          if-no-files-found: warn

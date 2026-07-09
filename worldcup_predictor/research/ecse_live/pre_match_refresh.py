@@ -11,9 +11,14 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from datetime import datetime, timezone
 from typing import Any
 
 from worldcup_predictor.research.ecse_live.store import get_snapshot, has_evaluation
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
 
 def refresh_unevaluated_snapshot(
@@ -44,8 +49,8 @@ def refresh_unevaluated_snapshot(
         conn.execute(
             """
             INSERT INTO ecse_live_api_log (
-                phase, provider, endpoint, entity_key, action, status, details_json
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                phase, provider, endpoint, entity_key, action, status, details_json, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 "ECSE-LIVE-1",
@@ -55,6 +60,7 @@ def refresh_unevaluated_snapshot(
                 "archive_before_refresh",
                 "ok",
                 json.dumps(audit_payload, default=str),
+                _utc_now(),
             ),
         )
         conn.execute(
