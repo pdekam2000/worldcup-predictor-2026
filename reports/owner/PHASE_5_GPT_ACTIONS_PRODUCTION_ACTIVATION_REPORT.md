@@ -10,10 +10,9 @@
 | Phase 4 branch | `feature/phase4-gpt-actions-bridge` |
 | PHASE4_COMMIT | `8357672a1e63ffa2a942a9165d9f9af44940fcd2` |
 | MAIN_BEFORE_MERGE | `0a95eb405c1fd48da5c29ae08219e086120e5dd3` |
-| MAIN_AFTER_MERGE | `78d63aed3b20e2bd39b909fc7bc26dfac708b887` (+ post-activation fix commit pending push) |
-| ORIGIN_MAIN_AFTER_PUSH | `78d63ae` |
-| Production commit before | `0a95eb4` |
-| Production commit after | `78d63ae` |
+| MAIN_AFTER_MERGE | `8b06551` (Phase 5 activation fixes + reports) |
+| ORIGIN_MAIN_AFTER_PUSH | `8b06551` |
+| Production commit after | `8b06551` |
 
 Phase 4 merged to `main` via fast-forward. Phase 5 activation tooling added in follow-up commit.
 
@@ -158,9 +157,7 @@ Owner guide: `PHASE_5_CUSTOM_GPT_CONNECTION_GUIDE.md`
 
 ## Part R — Automated validator
 
-Production run: **30/32 PASS** before validator regex fix; functional checks all passed.
-
-Post-fix expected: **32/32 PASS** (false positives on commit hash substring and ss peer column).
+Production run: **32/32 PASS**
 
 ## Part S — SaaS regression
 
