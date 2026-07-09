@@ -113,7 +113,22 @@ def main() -> int:
             '/odds/pre-match/fixtures/{sportmonks_id}' in strict_src,
         )
     )
+    checks.append(
+        check(
+            "sportmonks_single_call_max_page",
+            '"per_page": 50' in strict_src,
+        )
+    )
     checks.append(check("oddalerts_live_call", "fetch_oddalerts_odds_history" in strict_src))
+    checks.append(
+        check(
+            "oddalerts_crosswalk_guard",
+            "def _oddalerts_fixture_id(" in strict_src
+            and 'attempt["reason"] = "crosswalk_missing"' in strict_src
+            and "fetch_oddalerts_odds_history(oddalerts_id" in strict_src
+            and "fetch_oddalerts_odds_history(fixture_id" not in strict_src,
+        )
+    )
     checks.append(
         check(
             "provider_quality_gate",
