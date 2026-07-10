@@ -2,7 +2,7 @@
 
 Date: 2026-07-10  
 **Final status:** `FINAL_CANONICAL_MAIN_ALIGNED_AUTOMATION_ACTIVE`  
-**Release SHA:** `f7cfd4a1166f6846680c53fec23e1b7e7d794392`
+**Release SHA:** `df57d3a320438776a99eb2c61b72c5e8d6bc158e`
 
 ---
 
@@ -12,10 +12,10 @@ Date: 2026-07-10
 |---|----------|--------|
 | 1 | Recovery safely merged/fast-forwarded to main? | **YES** — fast-forward, no merge commit |
 | 2 | Main before? | `5ddac36` |
-| 3 | Main after? | `f7cfd4a` |
-| 4 | Recovery branch HEAD? | `f7cfd4a` (= main) |
-| 5 | Local canonical HEAD? | `f7cfd4a` |
-| 6 | Production HEAD? | `f7cfd4a` on `main` |
+| 3 | Main after? | `df57d3a` (includes reconciliation docs + baseline) |
+| 4 | Recovery branch HEAD? | `df57d3a` (= main) |
+| 5 | Local canonical HEAD? | `df57d3a` |
+| 6 | Production HEAD? | `df57d3a` on `main` |
 | 7 | All source layers match? | **YES** |
 | 8 | OpenAPI 1.1.0 canonical? | **YES** |
 | 9 | Deployed API matches schema? | **YES** — GPT regression PASS |
@@ -26,7 +26,7 @@ Date: 2026-07-10
 | 14 | Known fixtures preserved? | **YES** — 1494204, 1494205, 1494208 |
 | 15 | Runtime evaluation progress during alignment? | **NO** — counts unchanged |
 | 16 | One-week evidence collection safe? | **YES** |
-| 17 | Final release SHA? | `f7cfd4a` |
+| 17 | Final release SHA? | `df57d3a` |
 | 18 | Main now canonical? | **YES** |
 
 ## Merge
@@ -35,25 +35,25 @@ Date: 2026-07-10
 |-------|-------|
 | MERGE_METHOD | fast-forward |
 | MAIN_BEFORE | `5ddac36` |
-| MAIN_AFTER | `f7cfd4a` |
+| MAIN_AFTER | `df57d3a` |
 
 ## Production alignment
 
-- Checked out `main`, fast-forward pull to `f7cfd4a`
+- Checked out `main`, fast-forward pull to `df57d3a`
 - Timers preserved (enabled/active)
-- GPT Actions active — no restart required (`f7cfd4a` docs-only delta vs `376620b`)
+- GPT Actions active — no restart required (docs-only delta)
 - Evaluation DB checksum unchanged
 
 ## Parity matrix
 
 | Layer | SHA | Match |
 |-------|-----|-------|
-| Local clean worktree | `f7cfd4a` | YES |
-| origin/main | `f7cfd4a` | YES |
-| origin/recovery | `f7cfd4a` | YES |
-| Production | `f7cfd4a` | YES |
+| Local clean worktree | `df57d3a` | YES |
+| origin/main | `df57d3a` | YES |
+| origin/recovery | `df57d3a` | YES |
+| Production | `df57d3a` | YES |
 | OpenAPI | 1.1.0 | YES |
-| Automation source | `f7cfd4a` | YES |
+| Automation source | `df57d3a` | YES |
 
 ## Release baseline
 

@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 FORENSIC = Path(r"C:\Users\kaman\Desktop\Footbal")
 BASELINE = ROOT / "artifacts" / "source_of_truth" / "FORWARD_AUTOMATION_RELEASE_BASELINE.json"
 checks: list[tuple[str, bool, str]] = []
