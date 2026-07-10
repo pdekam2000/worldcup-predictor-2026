@@ -18,6 +18,7 @@ _TIER_B_DISPLAY_NAMES: dict[str, str] = {
     "allsvenskan": "Allsvenskan",
     "superettan": "Superettan",
     "a_lyga": "A Lyga",
+    "one_lyga": "1 Lyga",
     "virsliga": "Virsliga",
     "urvalsdeild": "Úrvalsdeild",
     "eliteserien": "Eliteserien",

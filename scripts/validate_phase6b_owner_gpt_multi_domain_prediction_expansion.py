@@ -41,8 +41,8 @@ def main() -> int:
     failures: list[str] = []
     frozen_mtime = FROZEN.stat().st_mtime if FROZEN.is_file() else None
 
-    _check("exactly seven Tier B domains active", len(TIER_B_SHADOW_DOMAINS) == 7, failures)
-    expected_ids = {113, 114, 362, 365, 164, 103, 244}
+    _check("exactly eight Tier B domains active", len(TIER_B_SHADOW_DOMAINS) == 8, failures)
+    expected_ids = {113, 114, 362, 361, 365, 164, 103, 244}
     actual_ids = {m["provider_league_id"] for m in TIER_B_SHADOW_DOMAINS.values()}
     _check("provider IDs correct", actual_ids == expected_ids, failures)
 
@@ -50,6 +50,7 @@ def main() -> int:
         (113, "allsvenskan"),
         (114, "superettan"),
         (362, "a_lyga"),
+        (361, "one_lyga"),
         (365, "virsliga"),
         (164, "urvalsdeild"),
         (103, "eliteserien"),

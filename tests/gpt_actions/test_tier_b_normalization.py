@@ -18,6 +18,7 @@ from worldcup_predictor.gpt_actions.tier_b_shadow_registry import TIER_B_SHADOW_
         (113, "allsvenskan"),
         (114, "superettan"),
         (362, "a_lyga"),
+        (361, "one_lyga"),
         (365, "virsliga"),
         (164, "urvalsdeild"),
         (103, "eliteserien"),
@@ -29,8 +30,8 @@ def test_league_id_normalization(league_id: int, canonical: str) -> None:
     assert is_tier_b_shadow(f"league_{league_id}") is True
 
 
-def test_exactly_seven_tier_b_domains() -> None:
-    assert len(TIER_B_SHADOW_DOMAINS) == 7
+def test_exactly_eight_tier_b_domains() -> None:
+    assert len(TIER_B_SHADOW_DOMAINS) == 8
 
 
 def test_friendlies_blocked() -> None:

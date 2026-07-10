@@ -35,6 +35,16 @@ TIER_B_SHADOW_DOMAINS: dict[str, dict[str, Any]] = {
         "tier": "B",
         "forward_shadow_required": True,
     },
+    "one_lyga": {
+        "canonical_key": "one_lyga",
+        "provider_league_id": 361,
+        "aliases": ("league_361", "one_lyga", "1 Lyga"),
+        "country": "Lithuania",
+        "owner_shadow_visible": True,
+        "public_prediction_enabled": False,
+        "tier": "B",
+        "forward_shadow_required": True,
+    },
     "virsliga": {
         "canonical_key": "virsliga",
         "provider_league_id": 365,

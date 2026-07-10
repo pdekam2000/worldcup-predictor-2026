@@ -48,6 +48,7 @@ def main() -> int:
         ("league_113", "allsvenskan"),
         ("league_114", "superettan"),
         ("league_362", "a_lyga"),
+        ("league_361", "one_lyga"),
     ]:
         record(
             f"normalize_{raw}",
@@ -56,7 +57,7 @@ def main() -> int:
         )
 
     # 6-7 tier B scope
-    record("tier_b_keys_count_7", len(TIER_B_CANONICAL_KEYS) == 7, str(len(TIER_B_CANONICAL_KEYS)))
+    record("tier_b_keys_count_8", len(TIER_B_CANONICAL_KEYS) == 8, str(len(TIER_B_CANONICAL_KEYS)))
     record("tier_b_discovery_includes_league_aliases", "league_113" in tier_b_discovery_keys(), "")
 
     # 8 friendlies blocked

@@ -304,6 +304,11 @@ def _sync_prediction_candidates_to_db(
                 repo.upsert_competition(comp)
             except KeyError:
                 continue
+        elif tier == "B":
+            from worldcup_predictor.gpt_actions.wde_runtime import register_tier_b_competition_runtime
+
+            if register_tier_b_competition_runtime(comp_key, repo=repo, season=rec.get("season")) is None:
+                continue
         repo.upsert_fixture(
             parsed,
             competition_key=comp_key,
