@@ -41,7 +41,7 @@ def main() -> int:
     failures: list[str] = []
     frozen_mtime = FROZEN.stat().st_mtime if FROZEN.is_file() else None
 
-    _check("exactly eight Tier B domains active", len(TIER_B_SHADOW_DOMAINS) == 8, failures)
+    _check("exactly nine Tier B domains active", len(TIER_B_SHADOW_DOMAINS) == 9, failures)
     expected_ids = {113, 114, 362, 361, 365, 164, 103, 244}
     actual_ids = {m["provider_league_id"] for m in TIER_B_SHADOW_DOMAINS.values()}
     _check("provider IDs correct", actual_ids == expected_ids, failures)

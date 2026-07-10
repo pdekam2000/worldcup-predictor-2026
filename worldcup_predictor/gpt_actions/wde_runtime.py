@@ -21,6 +21,7 @@ _TIER_B_DISPLAY_NAMES: dict[str, str] = {
     "one_lyga": "1 Lyga",
     "virsliga": "Virsliga",
     "urvalsdeild": "Úrvalsdeild",
+    "one_deild": "1. Deild",
     "eliteserien": "Eliteserien",
     "veikkausliiga": "Veikkausliiga",
 }

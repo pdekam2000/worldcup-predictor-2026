@@ -65,6 +65,16 @@ TIER_B_SHADOW_DOMAINS: dict[str, dict[str, Any]] = {
         "tier": "B",
         "forward_shadow_required": True,
     },
+    "one_deild": {
+        "canonical_key": "one_deild",
+        "provider_league_id": 165,
+        "aliases": ("league_165", "one_deild", "1. Deild"),
+        "country": "Iceland",
+        "owner_shadow_visible": True,
+        "public_prediction_enabled": False,
+        "tier": "B",
+        "forward_shadow_required": True,
+    },
     "eliteserien": {
         "canonical_key": "eliteserien",
         "provider_league_id": 103,
