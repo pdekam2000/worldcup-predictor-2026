@@ -3,7 +3,8 @@
 **Generated:** 2026-07-10 20:40 CEST  
 **Pilot league:** 1 Lyga — provider league ID **361**  
 **Canonical key:** `one_lyga`  
-**Baseline:** `3c3f6415d516b0c5f5bde9f228131fda0e93f730` → new pilot commit (see §22)  
+**Baseline:** `3c3f6415d516b0c5f5bde9f228131fda0e93f730`  
+**Pilot commit:** `269616445fbd7f694bd6816c467573f565059b1e`  
 **Final status:** `ONE_LYGA_TIER_B_PILOT_READY_BUT_NO_ODDS_QUALIFIED_FIXTURE`
 
 ---
@@ -38,8 +39,8 @@ Only **1 Lyga (361)** was onboarded to the Tier B shadow registry. Broad listing
 | 18 | Automatic promotion disabled? | **Yes** |
 | 19 | Timers still active? | **Yes** — `AUTOMATION_ENABLED=true` |
 | 20 | Cadence unchanged? | **Yes** — no new scheduler |
-| 21 | All layers aligned? | **Post-deploy verification required** (see parity matrix) |
-| 22 | Final canonical commit SHA? | *Recorded at deploy completion* |
+| 21 | All layers aligned? | **Yes** — local/origin/production @ `2696164`; HTTPS E2E PASS |
+| 22 | Final canonical commit SHA? | **`269616445fbd7f694bd6816c467573f565059b1e`** |
 | 23 | Ready for forward Test Phase observation? | **Yes** — quarantine pilot active |
 
 ---
@@ -87,13 +88,23 @@ Labels: `CONTINUE_TEST_PHASE` until owner requests `READY_FOR_MANUAL_REVIEW`.
 
 | Layer | Status |
 |-------|--------|
-| Local canonical | ☐ verify HEAD |
-| origin/main | ☐ verify HEAD |
-| Production server | ☐ verify HEAD |
-| GPT Actions HTTPS | ☐ E2E |
-| OpenAPI | ☐ unchanged contract |
-| Custom GPT instructions | ☐ generic Tier B covers 1 Lyga |
-| Forward automation | ☐ regression |
+| Local canonical | ✅ `2696164` |
+| origin/main | ✅ `2696164` |
+| Production server | ✅ `2696164` |
+| GPT Actions HTTPS | ✅ E2E PASS 2026-07-18 |
+| OpenAPI | ✅ unchanged contract |
+| Custom GPT instructions | ✅ generic Tier B covers 1 Lyga |
+| Forward automation | ✅ `AUTOMATION_ENABLED=true` |
+
+### Production HTTPS E2E (2026-07-18)
+
+| Check | Result |
+|-------|--------|
+| `listTodayMatches` shows 1 Lyga | ✅ fixture 1556381 Minija vs Jonava |
+| `display_status` | TEST_PHASE |
+| `listing_status` | ODDS_MISSING (visible, not prediction-forced) |
+| `discoverTodayMatches(scope=owner)` tier B | ✅ included |
+| `discoverTodayMatches(scope=production)` | ✅ 0 — excludes 1 Lyga |
 
 ---
 
