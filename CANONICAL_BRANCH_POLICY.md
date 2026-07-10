@@ -10,7 +10,7 @@ DEPLOYMENT_SOURCE_BRANCH = recovery/source-of-truth-phase6d
 DEVELOPMENT_BASE_BRANCH = recovery/source-of-truth-phase6d
 ```
 
-Approved release HEAD for forward evaluation automation: **`94456b7`**
+Approved release HEAD for forward evaluation automation: **`376620b`**
 
 ## Rationale
 
