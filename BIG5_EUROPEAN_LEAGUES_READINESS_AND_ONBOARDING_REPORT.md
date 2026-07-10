@@ -2,6 +2,7 @@
 
 **Generated:** 2026-07-10 22:10 CEST  
 **Baseline:** `e21ca7fcc3a0003ed7c7ffa694d950c670c7088d`  
+**Deploy commit:** `5b8739a3010671d5ca3a375ea286e2f4ca21b387`  
 **Final status:** `BIG5_PARTIAL_ONBOARDING_ALL_LAYERS_ALIGNED`
 
 ---
@@ -72,12 +73,22 @@ Pre-season odds are 0% at audit time (fixtures 2–6 weeks out) — onboarded un
 
 ---
 
-## Parity (updated post-deploy)
+## Parity (post-deploy)
+
+| Layer | SHA / status |
+|-------|----------------|
+| Local / origin/main / production | `5b8739a` |
+| GPT Actions HTTPS E2E | ✅ PASS — la_liga (10), serie_a (4), ligue_1 (9) on pilot dates |
+| Validator | 82/82 PASS |
+| Tier B count | **12** |
 
 ```
-LOCAL = ORIGIN MAIN = PRODUCTION = <deploy SHA>
+LOCAL = ORIGIN MAIN = PRODUCTION = 5b8739a
 GPT_ACTIONS_BEHAVIOR_PARITY = PASS
 AUTOMATION_DOMAIN_POLICY_PARITY = PASS
+OPENAPI_CONTRACT_PARITY = PASS
+CUSTOM_GPT_BEHAVIOR_PARITY = PASS
+FORWARD_EVALUATION_POLICY_PARITY = PASS
 ```
 
 ---
