@@ -95,6 +95,36 @@ TIER_B_SHADOW_DOMAINS: dict[str, dict[str, Any]] = {
         "tier": "B",
         "forward_shadow_required": True,
     },
+    "la_liga": {
+        "canonical_key": "la_liga",
+        "provider_league_id": 140,
+        "aliases": ("league_140", "la_liga", "La Liga"),
+        "country": "Spain",
+        "owner_shadow_visible": True,
+        "public_prediction_enabled": False,
+        "tier": "B",
+        "forward_shadow_required": True,
+    },
+    "serie_a": {
+        "canonical_key": "serie_a",
+        "provider_league_id": 135,
+        "aliases": ("league_135", "serie_a", "Serie A"),
+        "country": "Italy",
+        "owner_shadow_visible": True,
+        "public_prediction_enabled": False,
+        "tier": "B",
+        "forward_shadow_required": True,
+    },
+    "ligue_1": {
+        "canonical_key": "ligue_1",
+        "provider_league_id": 61,
+        "aliases": ("league_61", "ligue_1", "Ligue 1"),
+        "country": "France",
+        "owner_shadow_visible": True,
+        "public_prediction_enabled": False,
+        "tier": "B",
+        "forward_shadow_required": True,
+    },
 }
 
 TIER_B_CANONICAL_KEYS: frozenset[str] = frozenset(TIER_B_SHADOW_DOMAINS.keys())

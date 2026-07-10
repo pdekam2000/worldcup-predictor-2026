@@ -203,7 +203,7 @@ def main() -> int:
     record("local_head_present", bool(local_head), local_head[:12] if local_head else "")
     record("origin_main_present", bool(origin_head), origin_head[:12] if origin_head else "")
     record("local_equals_origin_main", local_head == origin_head if origin_head else True, f"local={local_head[:8] if local_head else ''} origin={origin_head[:8] if origin_head else 'n/a'}")
-    record("tier_b_domain_count_nine", len(TIER_B_SHADOW_DOMAINS) == 9, str(len(TIER_B_SHADOW_DOMAINS)))
+    record("tier_b_domain_count_twelve", len(TIER_B_SHADOW_DOMAINS) == 12, str(len(TIER_B_SHADOW_DOMAINS)))
     record("pilot_evidence_exists", EVIDENCE.is_file(), str(EVIDENCE))
     record("final_report_exists", FINAL_REPORT.is_file(), str(FINAL_REPORT))
     record("one_lyga_still_registered", get_tier_b_domain(ONE_LYGA_KEY) is not None, "")

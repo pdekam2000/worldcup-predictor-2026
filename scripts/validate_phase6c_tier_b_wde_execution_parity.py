@@ -57,7 +57,7 @@ def main() -> int:
         )
 
     # 6-7 tier B scope
-    record("tier_b_keys_count_9", len(TIER_B_CANONICAL_KEYS) == 9, str(len(TIER_B_CANONICAL_KEYS)))
+    record("tier_b_keys_count_12", len(TIER_B_CANONICAL_KEYS) == 12, str(len(TIER_B_CANONICAL_KEYS)))
     record("tier_b_discovery_includes_league_aliases", "league_113" in tier_b_discovery_keys(), "")
 
     # 8 friendlies blocked
