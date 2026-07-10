@@ -1,12 +1,13 @@
 openapi: 3.1.0
 info:
   title: WorldCup Predictor GPT Actions
-  version: 1.1.0
+  version: 1.1.1
   description: |
     Owner-only narrow REST bridge for ChatGPT Plus Custom GPT Actions.
     Returns structured model evidence (WDE, BTTS, O/U 2.5, ECSE Top1–Top5).
     Long predictions use async jobs — poll until completed.
     Tier A fixtures: display_status=TRUSTED. Tier B: TEST PHASE — UNDER FORWARD EVALUATION.
+    listTodayMatches performs broad provider+DB fixture discovery with classification (not prediction-gated).
 servers:
   - url: https://footballpredictor.it.com
     description: Production HTTPS (443)
@@ -613,6 +614,14 @@ components:
           type: integer
         unsupported_count:
           type: integer
+        friendly_count:
+          type: integer
+        prediction_candidate_count:
+          type: integer
+        audit:
+          type: object
+          additionalProperties: true
+          description: Broad discovery audit (provider raw count, dedupe, source order)
         matches:
           type: array
           maxItems: 1000

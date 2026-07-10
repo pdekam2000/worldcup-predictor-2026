@@ -49,38 +49,15 @@ def discover_today_matches(
     timezone: str = DEFAULT_TIMEZONE,
     scope: str = "production",
 ) -> dict[str, Any]:
+    """Prediction candidate discovery — supported Tier A/B per scope (after broad classification)."""
+    from worldcup_predictor.gpt_actions.broad_fixture_discovery import discover_prediction_candidates_from_broad
+
     discovery_scope: DiscoveryScope = validate_discovery_scope(scope)
-    settings = get_settings()
-    conn = connect(settings.sqlite_path)
-    try:
-        d = date.fromisoformat(target_date)
-        start_utc, end_utc = vienna_day_utc_bounds(d, timezone)
-        comp_keys = competition_keys_for_scope(discovery_scope)
-        fixtures = discover_fixtures_from_db(
-            conn,
-            competition_keys=comp_keys,
-            start_utc=start_utc,
-            end_utc=end_utc,
-            limit=500,
-        )
-        matches = [
-            enrich_discovered_fixture(f, scope=discovery_scope)
-            for f in fixtures
-            if fixture_allowed_for_discovery(f, discovery_scope)
-        ]
-        tier_a = sum(1 for m in matches if m.get("validation_tier") == "A" or m.get("tier") == "A")
-        tier_b = sum(1 for m in matches if m.get("validation_tier") == "B" or m.get("tier") == "B")
-        return {
-            "date": target_date,
-            "timezone": timezone,
-            "scope": discovery_scope,
-            "count": len(matches),
-            "tier_a_count": tier_a,
-            "tier_b_count": tier_b,
-            "matches": matches,
-        }
-    finally:
-        conn.close()
+    return discover_prediction_candidates_from_broad(
+        target_date=target_date,
+        timezone=timezone,
+        scope=discovery_scope,
+    )
 
 
 def list_today_matches_broad(
@@ -89,67 +66,50 @@ def list_today_matches_broad(
     timezone: str = DEFAULT_TIMEZONE,
     listing_filter: str = "all",
 ) -> dict[str, Any]:
-    """Broad fixture listing — all discoverable fixtures with classification (not prediction-gated)."""
-    settings = get_settings()
-    conn = connect(settings.sqlite_path)
-    try:
-        d = date.fromisoformat(target_date)
-        start_utc, end_utc = vienna_day_utc_bounds(d, timezone)
-        rows = conn.execute(
-            """
-            SELECT fixture_id, competition_key, home_team, away_team, kickoff_utc, status, season
-            FROM fixtures
-            WHERE is_placeholder = 0
-              AND kickoff_utc IS NOT NULL
-              AND kickoff_utc >= ?
-              AND kickoff_utc <= ?
-            ORDER BY kickoff_utc ASC
-            LIMIT 1000
-            """,
-            (start_utc, end_utc),
-        ).fetchall()
-        matches: list[dict[str, Any]] = []
-        for raw in rows:
-            row = dict(raw)
-            fid = int(row["fixture_id"])
-            comp = str(row["competition_key"])
-            odds = _match_odds(conn, fid)
-            odds_available = int(odds.get("bookmaker_count") or 0) > 0
-            unified = enrich_unified_fixture(
-                fixture_id=fid,
-                home_team=str(row["home_team"]),
-                away_team=str(row["away_team"]),
-                competition_key=comp,
-                kickoff_utc=str(row["kickoff_utc"]),
-                status=str(row.get("status") or "NS"),
-                scope="owner",
-                listing_only=True,
-                odds_available=odds_available,
-            )
-            unified["listing_status"] = listing_status(comp, odds_available=odds_available)
-            matches.append(unified)
+    """
+    Broad fixture listing — provider + DB discovery with classification.
 
-        filt = (listing_filter or "all").strip().lower()
-        if filt == "trusted":
-            matches = [m for m in matches if m.get("validation_tier") == "A"]
-        elif filt in ("test_phase", "test-phase", "b"):
-            matches = [m for m in matches if m.get("validation_tier") == "B"]
-        elif filt == "prediction_eligible":
-            matches = [m for m in matches if m.get("prediction_allowed") and m.get("listing_status") not in ("FRIENDLY", "UNSUPPORTED", "ODDS_MISSING")]
+    Not prediction-gated. Does not require odds or model availability for visibility.
+    """
+    from worldcup_predictor.gpt_actions.broad_fixture_discovery import discover_broad_fixtures
 
-        return {
-            "date": target_date,
-            "timezone": timezone,
-            "mode": "broad_listing",
-            "listing_filter": filt,
-            "count": len(matches),
-            "tier_a_count": sum(1 for m in matches if m.get("validation_tier") == "A"),
-            "tier_b_count": sum(1 for m in matches if m.get("validation_tier") == "B"),
-            "unsupported_count": sum(1 for m in matches if m.get("listing_status") == "UNSUPPORTED"),
-            "matches": matches,
-        }
-    finally:
-        conn.close()
+    payload = discover_broad_fixtures(target_date=target_date, timezone=timezone)
+    matches: list[dict[str, Any]] = list(payload.get("matches") or [])
+    filt = (listing_filter or "all").strip().lower()
+    if filt == "trusted":
+        matches = [m for m in matches if m.get("validation_tier") == "A"]
+    elif filt in ("test_phase", "test-phase", "b"):
+        matches = [m for m in matches if m.get("validation_tier") == "B"]
+    elif filt == "prediction_eligible":
+        matches = [
+            m
+            for m in matches
+            if m.get("validation_tier") in ("A", "B")
+            and m.get("listing_status") not in ("FRIENDLY", "UNSUPPORTED", "ODDS_MISSING")
+        ]
+    return {
+        "date": target_date,
+        "timezone": timezone,
+        "mode": "broad_listing",
+        "listing_filter": filt,
+        "audit": payload.get("audit"),
+        "count": len(matches),
+        "tier_a_count": sum(1 for m in matches if m.get("validation_tier") == "A"),
+        "tier_b_count": sum(1 for m in matches if m.get("validation_tier") == "B"),
+        "friendly_count": sum(
+            1
+            for m in matches
+            if m.get("listing_status") == "FRIENDLY" or m.get("prediction_support_status") == "FRIENDLY"
+        ),
+        "unsupported_count": sum(
+            1
+            for m in matches
+            if m.get("listing_status") == "UNSUPPORTED"
+            or m.get("prediction_support_status") == "NO_PREDICTION_SUPPORT"
+        ),
+        "prediction_candidate_count": sum(1 for m in matches if m.get("validation_tier") in ("A", "B")),
+        "matches": matches,
+    }
 
 
 def _fixture_from_db(conn, fixture_id: int) -> DailyFixture | None:

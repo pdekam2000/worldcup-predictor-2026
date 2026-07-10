@@ -129,6 +129,7 @@ def execute_prediction_job(
                 if not daily:
                     rejected.append({"fixture_id": fixture_id, "reason": "fixture_not_found"})
                     continue
+                tier = fixture_tier(daily.competition_key)
                 allowed, reason = fixture_allowed_for_prediction(
                     daily.competition_key,
                     prediction_scope=_per_fixture_prediction_scope(prediction_scope, tier),
@@ -136,7 +137,6 @@ def execute_prediction_job(
                 if not allowed:
                     rejected.append({"fixture_id": fixture_id, "reason": reason})
                     continue
-                tier = fixture_tier(daily.competition_key)
                 if tier == "B":
                     odds_meta = controlled_owner_odds_lookup(
                         daily, tier="B", settings=settings, budget=budget, allow_provider=True
