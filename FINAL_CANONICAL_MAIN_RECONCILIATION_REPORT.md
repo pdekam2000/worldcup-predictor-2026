@@ -2,7 +2,7 @@
 
 Date: 2026-07-10  
 **Final status:** `FINAL_CANONICAL_MAIN_ALIGNED_AUTOMATION_ACTIVE`  
-**Release SHA:** `f082091e755534e0e4dbe13867fe103d27568497`
+**Release SHA:** `3367d8746040ab470507637efbdab6f68f14dd8d`
 
 ---
 
@@ -12,10 +12,10 @@ Date: 2026-07-10
 |---|----------|--------|
 | 1 | Recovery safely merged/fast-forwarded to main? | **YES** — fast-forward, no merge commit |
 | 2 | Main before? | `5ddac36` |
-| 3 | Main after? | `f082091` (reconciliation docs + baseline + validator) |
-| 4 | Recovery branch HEAD? | `f082091` (= main) |
-| 5 | Local canonical HEAD? | `f082091` |
-| 6 | Production HEAD? | `f082091` on `main` |
+| 3 | Main after? | `3367d87` |
+| 4 | Recovery branch HEAD? | `3367d87` (= main) |
+| 5 | Local canonical HEAD? | `3367d87` |
+| 6 | Production HEAD? | `3367d87` on `main` |
 | 7 | All source layers match? | **YES** |
 | 8 | OpenAPI 1.1.0 canonical? | **YES** |
 | 9 | Deployed API matches schema? | **YES** — GPT regression PASS |
@@ -26,7 +26,7 @@ Date: 2026-07-10
 | 14 | Known fixtures preserved? | **YES** — 1494204, 1494205, 1494208 |
 | 15 | Runtime evaluation progress during alignment? | **NO** — counts unchanged |
 | 16 | One-week evidence collection safe? | **YES** |
-| 17 | Final release SHA? | `f082091` |
+| 17 | Final release SHA? | `3367d87` |
 | 18 | Main now canonical? | **YES** |
 
 ## Merge
@@ -35,11 +35,11 @@ Date: 2026-07-10
 |-------|-------|
 | MERGE_METHOD | fast-forward |
 | MAIN_BEFORE | `5ddac36` |
-| MAIN_AFTER | `f082091` |
+| MAIN_AFTER | `3367d87` |
 
 ## Production alignment
 
-- Checked out `main`, fast-forward pull to `f082091`
+- Checked out `main`, fast-forward pull to `3367d87`
 - Timers preserved (enabled/active)
 - GPT Actions active — no restart required (docs-only delta)
 - Evaluation DB checksum unchanged
@@ -48,12 +48,12 @@ Date: 2026-07-10
 
 | Layer | SHA | Match |
 |-------|-----|-------|
-| Local clean worktree | `f082091` | YES |
-| origin/main | `f082091` | YES |
-| origin/recovery | `f082091` | YES |
-| Production | `f082091` | YES |
+| Local clean worktree | `3367d87` | YES |
+| origin/main | `3367d87` | YES |
+| origin/recovery | `3367d87` | YES |
+| Production | `3367d87` | YES |
 | OpenAPI | 1.1.0 | YES |
-| Automation source | `f082091` | YES |
+| Automation source | `3367d87` | YES |
 
 ## Release baseline
 
@@ -65,7 +65,7 @@ Date: 2026-07-10
 
 ## Validator
 
-`scripts/validate_final_canonical_main_reconciliation.py` — run after commit.
+`scripts/validate_final_canonical_main_reconciliation.py` — **31/31 PASS** (local, 2026-07-10).
 
 ## Explicitly not changed
 
