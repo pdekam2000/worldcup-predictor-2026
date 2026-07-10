@@ -1,52 +1,46 @@
 # Canonical Branch Policy
 
-Effective: 2026-07-10
+Effective: 2026-07-10 (updated after main reconciliation)
 
-## Current source-of-truth (activation phase)
-
-```
-CANONICAL_BRANCH = recovery/source-of-truth-phase6d
-DEPLOYMENT_SOURCE_BRANCH = recovery/source-of-truth-phase6d
-DEVELOPMENT_BASE_BRANCH = recovery/source-of-truth-phase6d
-```
-
-Approved release HEAD for forward evaluation automation: **`376620b`**
-
-## Rationale
-
-Unified forward evaluation canonicalization (commits `ffffcae` → `94456b7`) exists on `recovery/source-of-truth-phase6d` and is deployed to production on that branch.
-
-`origin/main` is at `5ddac36` and does **not** yet contain `94456b7`.
+## Source of truth
 
 ```
-IS_ORIGIN_MAIN_94456B7 = NO
+CANONICAL_BRANCH = main
+DEPLOYMENT_SOURCE_BRANCH = main
+DEVELOPMENT_BASE_BRANCH = main
 ```
 
-## Migration to main (required for long-term policy)
+## Release baseline
 
-When `origin/main` is the project-wide canonical source of truth:
+```
+CANONICAL_COMMIT_SHA = f7cfd4a1166f6846680c53fec23e1b7e7d794392
+```
 
-1. Fast-forward merge: `recovery/source-of-truth-phase6d` → `main` (no force push)
-2. Verify: `origin/main HEAD = production HEAD`
-3. Update this document: set all three branch fields to `main`
-4. Production deploys from `main` only thereafter
+## Branch roles
 
-**Interim rule for this activation:** automation runs against the **deployment branch** (`recovery/source-of-truth-phase6d`) with aligned HEAD across local canonical worktree, origin recovery, and production.
+| Branch | Role |
+|--------|------|
+| `main` | Canonical source, deployment, and development base |
+| `recovery/source-of-truth-phase6d` | Historical integration branch; HEAD equals `main` after fast-forward |
+| `Footbal/` workspace | Forensic reference only — never deployment base |
 
 ## Parity requirement
 
-Before timer activation:
-
 ```
-LOCAL_CANONICAL_HEAD = APPROVED_GITHUB_CANONICAL_HEAD = PRODUCTION_HEAD
+LOCAL_CLEAN_HEAD = origin/main HEAD = PRODUCTION_HEAD = f7cfd4a
 ```
-
-Main alignment is tracked separately; main lag does not block deployment-branch automation when deployment branch is explicitly canonical for this phase.
 
 ## Worktrees
 
 | Path | Role |
 |------|------|
-| `C:\Users\kaman\Desktop\worldcup-predictor-source-recovery` | Clean canonical development |
-| `C:\Users\kaman\Desktop\Footbal` | Forensic reference only (not deployment base) |
-| `/opt/worldcup-predictor` | Production runtime |
+| `C:\Users\kaman\Desktop\worldcup-predictor-source-recovery` | Clean canonical development (track `main`) |
+| `C:\Users\kaman\Desktop\Footbal` | Forensic only |
+| `/opt/worldcup-predictor` | Production runtime on `main` |
+
+## Rules
+
+- No force push to `main`
+- Runtime DB, secrets, caches, logs never committed
+- Forward evaluation authority: `data/evaluation/forward_prediction_tracking.db` (runtime only)
+- Automation timers remain enabled per activation phase
