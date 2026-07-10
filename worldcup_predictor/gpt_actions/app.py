@@ -18,6 +18,7 @@ from worldcup_predictor.gpt_actions.delegation import (
     get_latest_prediction_report,
     get_prediction_report_by_date,
     get_system_status,
+    list_today_matches_broad,
 )
 from worldcup_predictor.gpt_actions.jobs import JobStore
 from worldcup_predictor.gpt_actions.policies import validate_iso_date
@@ -27,6 +28,7 @@ from worldcup_predictor.gpt_actions.schemas import (
     FilterMatchesRequest,
     JobCreateResponse,
     JobStatusResponse,
+    ListMatchesQuery,
     StartPredictionJobRequest,
 )
 from worldcup_predictor.gpt_actions.worker import enqueue_prediction_job
@@ -118,6 +120,24 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
         except Exception as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         return discover_today_matches(target_date=date, timezone=timezone, scope=scope)
+
+    @app.get(
+        f"{API_PREFIX}/matches/list",
+        operation_id="listTodayMatches",
+        dependencies=auth_dep,
+    )
+    def list_today_matches_route(
+        date: str,
+        timezone: str = "Europe/Vienna",
+        listing_filter: str = "all",
+    ) -> dict[str, Any]:
+        try:
+            ListMatchesQuery(date=date, timezone=timezone, listing_filter=listing_filter)  # type: ignore[arg-type]
+        except Exception as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return list_today_matches_broad(
+            target_date=date, timezone=timezone, listing_filter=listing_filter
+        )
 
     @app.post(
         f"{API_PREFIX}/matches/filter-odds",

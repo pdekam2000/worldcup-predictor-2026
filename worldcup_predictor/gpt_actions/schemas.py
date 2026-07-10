@@ -24,6 +24,23 @@ class OddsFilter(BaseModel):
         return validate_odds_threshold(value, field=info.field_name)
 
 
+class ListMatchesQuery(BaseModel):
+    date: str
+    timezone: str = "Europe/Vienna"
+    listing_filter: Literal["all", "trusted", "test_phase", "prediction_eligible"] = "all"
+
+    @field_validator("date")
+    @classmethod
+    def _date(cls, value: str) -> str:
+        validate_iso_date(value)
+        return value
+
+    @field_validator("timezone")
+    @classmethod
+    def _tz(cls, value: str) -> str:
+        return validate_timezone(value)
+
+
 class DiscoverMatchesQuery(BaseModel):
     date: str
     timezone: str = "Europe/Vienna"

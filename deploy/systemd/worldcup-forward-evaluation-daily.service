@@ -1,0 +1,15 @@
+[Unit]
+Description=WorldCup Forward Evaluation Daily Cycle (DISABLED — do not enable without owner approval)
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/worldcup-predictor
+Environment=PYTHONPATH=/opt/worldcup-predictor
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/run_forward_evaluation_automation_cycle.py
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

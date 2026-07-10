@@ -14,14 +14,26 @@ from worldcup_predictor.gpt_actions.tier_b_shadow_registry import tier_b_discove
 from worldcup_predictor.owner_daily.constants import DAILY_SUPPORTED_COMPETITIONS
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
 
-DiscoveryScope = Literal["production", "owner", "shadow"]
+DiscoveryScope = Literal["production", "owner", "shadow", "trusted", "test_phase"]
 PredictionScope = Literal["production", "owner_shadow", "owner"]
+ListingFilter = Literal["all", "trusted", "test_phase", "prediction_eligible"]
+
+TRUSTED_NOTE = "Validated competition/domain under current production policy."
+TEST_PHASE_NOTE = (
+    "Competition/domain is under forward evaluation. Full model output is available, "
+    "but trust status is still being validated."
+)
+TEST_PHASE_DISPLAY = "TEST PHASE — UNDER FORWARD EVALUATION"
 
 
 def validate_discovery_scope(scope: str) -> DiscoveryScope:
     s = (scope or "production").strip().lower()
+    if s == "trusted":
+        return "production"
+    if s == "test_phase":
+        return "shadow"
     if s not in ("production", "owner", "shadow"):
-        raise ValueError("scope must be production, owner, or shadow")
+        raise ValueError("scope must be production, owner, shadow, trusted, or test_phase")
     return s  # type: ignore[return-value]
 
 
@@ -70,27 +82,38 @@ def fixture_allowed_for_discovery(f: DailyFixture, scope: DiscoveryScope) -> boo
     return tier in ("A", "B")
 
 
+def validation_note_for_tier(tier: str | None) -> str | None:
+    if tier == "A":
+        return TRUSTED_NOTE
+    if tier == "B":
+        return TEST_PHASE_NOTE
+    return None
+
+
 def enrich_discovered_fixture(f: DailyFixture, *, scope: DiscoveryScope) -> dict[str, Any]:
-    canon = normalize_competition_key(f.competition_key) or f.competition_key
-    tier = fixture_tier(f.competition_key)
-    is_shadow = tier == "B"
-    return {
-        "fixture_id": f.fixture_id,
-        "home_team": f.home_team,
-        "away_team": f.away_team,
-        "competition": canon,
-        "competition_raw": f.competition_key,
-        "kickoff": f.kickoff_utc,
-        "kickoff_utc": f.kickoff_utc,
-        "status": f.status,
-        "tier": tier,
-        "prediction_mode": "TIER_B_SHADOW" if is_shadow else "TIER_A_PRODUCTION",
-        "owner_shadow": is_shadow,
-        "public_visible": tier == "A" and not is_shadow,
-        "mapping_quality": mapping_quality(f.competition_key),
-        "data_status": "discovered",
-        "scope": scope,
-    }
+    from worldcup_predictor.forward_evaluation.fixture_model import enrich_unified_fixture
+
+    return enrich_unified_fixture(
+        fixture_id=f.fixture_id,
+        home_team=f.home_team,
+        away_team=f.away_team,
+        competition_key=f.competition_key,
+        kickoff_utc=f.kickoff_utc,
+        status=f.status,
+        scope=scope,
+    )
+
+
+def display_labels_for_tier(tier: str | None) -> dict[str, str | None]:
+    if tier == "A":
+        return {"display_status": "TRUSTED", "display_label": "TRUSTED", "validation_note": validation_note_for_tier("A")}
+    if tier == "B":
+        return {
+            "display_status": "TEST_PHASE",
+            "display_label": TEST_PHASE_DISPLAY,
+            "validation_note": validation_note_for_tier("B"),
+        }
+    return {"display_status": "UNSUPPORTED", "display_label": "UNSUPPORTED", "validation_note": None}
 
 
 def fixture_allowed_for_prediction(

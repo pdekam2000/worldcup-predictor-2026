@@ -10,6 +10,7 @@ APPROVED_OPERATION_IDS: frozenset[str] = frozenset(
     {
         "getSystemStatus",
         "discoverTodayMatches",
+        "listTodayMatches",
         "filterMatchesByOdds",
         "startPredictionJob",
         "getPredictionJob",
@@ -22,6 +23,7 @@ APPROVED_ROUTES: frozenset[str] = frozenset(
     {
         "GET /api/gpt-actions/v1/system/status",
         "GET /api/gpt-actions/v1/matches/discover",
+        "GET /api/gpt-actions/v1/matches/list",
         "POST /api/gpt-actions/v1/matches/filter-odds",
         "POST /api/gpt-actions/v1/prediction-jobs",
         "GET /api/gpt-actions/v1/prediction-jobs/{job_id}",

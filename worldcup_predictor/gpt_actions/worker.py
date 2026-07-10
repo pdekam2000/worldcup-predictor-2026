@@ -18,8 +18,10 @@ from worldcup_predictor.gpt_actions.jobs import JobStore
 from worldcup_predictor.gpt_actions.owner_odds import OwnerOddsBudget, controlled_owner_odds_lookup
 from worldcup_predictor.gpt_actions.owner_scope import (
     PredictionScope,
+    display_labels_for_tier,
     fixture_allowed_for_prediction,
     fixture_tier,
+    validate_discovery_scope,
     validate_prediction_scope,
 )
 from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
@@ -33,15 +35,33 @@ def _resolve_fixture_ids(request: dict[str, Any], *, max_count: int) -> list[int
     if explicit:
         return validate_fixture_id_list(list(explicit), max_count=max_count)
 
+    scope = str(request.get("scope") or "production")
+    discovery_scope = validate_discovery_scope(scope)
     filtered = filter_matches_by_odds(
         target_date=str(request["date"]),
         timezone=str(request.get("timezone") or "Europe/Vienna"),
         home_odds_gt=(request.get("filter") or {}).get("home_odds_gt"),
         away_odds_gt=(request.get("filter") or {}).get("away_odds_gt"),
-        scope=str(request.get("scope") or "production"),
+        scope=discovery_scope,
     )
     ids = [int(m["fixture_id"]) for m in filtered.get("matches") or []]
     return ids[:max_count]
+
+
+def _effective_prediction_scope(request: dict[str, Any]) -> PredictionScope:
+    explicit = request.get("prediction_scope")
+    if explicit:
+        return validate_prediction_scope(str(explicit))
+    scope = str(request.get("scope") or "production").strip().lower()
+    if scope in ("owner", "trusted", "test_phase"):
+        return "owner"
+    return "production"
+
+
+def _per_fixture_prediction_scope(global_scope: PredictionScope, tier: str | None) -> PredictionScope:
+    if global_scope == "owner":
+        return "owner_shadow" if tier == "B" else "production"
+    return global_scope
 
 
 def _aggregate_status(predictions: list[dict[str, Any]]) -> str:
@@ -58,12 +78,15 @@ def _aggregate_status(predictions: list[dict[str, Any]]) -> str:
 def _build_tier_meta(fixture_id: int, competition_key: str, prediction_scope: PredictionScope) -> dict[str, Any]:
     canon = normalize_competition_key(competition_key) or competition_key
     tier = fixture_tier(competition_key)
+    labels = display_labels_for_tier(tier)
     return {
         "tier": tier,
+        "validation_tier": tier,
         "competition": canon,
         "owner_shadow": tier == "B",
         "prediction_scope": prediction_scope,
         "mapping_quality": "canonical" if canon == competition_key else "alias_resolved",
+        **labels,
     }
 
 
@@ -79,7 +102,7 @@ def execute_prediction_job(
     store.update(job_id, status="running")
     request = record.get("request") or {}
     try:
-        prediction_scope = validate_prediction_scope(str(request.get("prediction_scope") or "production"))
+        prediction_scope = _effective_prediction_scope(request)
         fixture_ids = _resolve_fixture_ids(request, max_count=config.max_fixture_ids_per_job)
         if not fixture_ids:
             store.update(
@@ -107,7 +130,8 @@ def execute_prediction_job(
                     rejected.append({"fixture_id": fixture_id, "reason": "fixture_not_found"})
                     continue
                 allowed, reason = fixture_allowed_for_prediction(
-                    daily.competition_key, prediction_scope=prediction_scope
+                    daily.competition_key,
+                    prediction_scope=_per_fixture_prediction_scope(prediction_scope, tier),
                 )
                 if not allowed:
                     rejected.append({"fixture_id": fixture_id, "reason": reason})
@@ -125,7 +149,11 @@ def execute_prediction_job(
                             }
                         )
                         continue
-                meta = _build_tier_meta(fixture_id, daily.competition_key, prediction_scope)
+                meta = _build_tier_meta(
+                    fixture_id,
+                    daily.competition_key,
+                    _per_fixture_prediction_scope(prediction_scope, tier),
+                )
                 raw = mcp_runtime.run_fixture_prediction(
                     int(fixture_id),
                     refresh_if_stale=refresh and tier != "B",
@@ -148,9 +176,11 @@ def execute_prediction_job(
             conn.close()
 
         ranking = rank_best_matches(predictions, select_best=select_best)
+        contains_test = any((p.get("validation_tier") or p.get("tier")) == "B" for p in predictions)
         result = {
             "date": request.get("date"),
             "timezone": timezone,
+            "scope": request.get("scope") or "production",
             "prediction_scope": prediction_scope,
             "fixture_count": len(fixture_ids),
             "fixture_ids": fixture_ids,
@@ -160,6 +190,12 @@ def execute_prediction_job(
             "predictions": predictions if include_all else [],
             "all_match_ranking": ranking["all_match_ranking"],
             "best_3": ranking["best_3"][: min(3, select_best)],
+            "contains_test_phase_fixture": contains_test,
+            "test_phase_warning": (
+                "This package contains one or more Test Phase competitions under forward evaluation."
+                if contains_test
+                else None
+            ),
         }
         status = _aggregate_status(predictions) if predictions else "failed"
         if not predictions and rejected:

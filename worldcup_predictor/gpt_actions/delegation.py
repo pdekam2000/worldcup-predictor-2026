@@ -24,7 +24,9 @@ from worldcup_predictor.gpt_actions.owner_scope import (
     enrich_discovered_fixture,
     fixture_allowed_for_discovery,
     validate_discovery_scope,
+    display_labels_for_tier,
 )
+from worldcup_predictor.forward_evaluation.fixture_model import enrich_unified_fixture, listing_status
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture, discover_fixtures_from_db, vienna_day_utc_bounds
 
 
@@ -66,8 +68,8 @@ def discover_today_matches(
             for f in fixtures
             if fixture_allowed_for_discovery(f, discovery_scope)
         ]
-        tier_a = sum(1 for m in matches if m.get("tier") == "A")
-        tier_b = sum(1 for m in matches if m.get("tier") == "B")
+        tier_a = sum(1 for m in matches if m.get("validation_tier") == "A" or m.get("tier") == "A")
+        tier_b = sum(1 for m in matches if m.get("validation_tier") == "B" or m.get("tier") == "B")
         return {
             "date": target_date,
             "timezone": timezone,
@@ -75,6 +77,75 @@ def discover_today_matches(
             "count": len(matches),
             "tier_a_count": tier_a,
             "tier_b_count": tier_b,
+            "matches": matches,
+        }
+    finally:
+        conn.close()
+
+
+def list_today_matches_broad(
+    *,
+    target_date: str,
+    timezone: str = DEFAULT_TIMEZONE,
+    listing_filter: str = "all",
+) -> dict[str, Any]:
+    """Broad fixture listing — all discoverable fixtures with classification (not prediction-gated)."""
+    settings = get_settings()
+    conn = connect(settings.sqlite_path)
+    try:
+        d = date.fromisoformat(target_date)
+        start_utc, end_utc = vienna_day_utc_bounds(d, timezone)
+        rows = conn.execute(
+            """
+            SELECT fixture_id, competition_key, home_team, away_team, kickoff_utc, status, season
+            FROM fixtures
+            WHERE is_placeholder = 0
+              AND kickoff_utc IS NOT NULL
+              AND kickoff_utc >= ?
+              AND kickoff_utc <= ?
+            ORDER BY kickoff_utc ASC
+            LIMIT 1000
+            """,
+            (start_utc, end_utc),
+        ).fetchall()
+        matches: list[dict[str, Any]] = []
+        for raw in rows:
+            row = dict(raw)
+            fid = int(row["fixture_id"])
+            comp = str(row["competition_key"])
+            odds = _match_odds(conn, fid)
+            odds_available = int(odds.get("bookmaker_count") or 0) > 0
+            unified = enrich_unified_fixture(
+                fixture_id=fid,
+                home_team=str(row["home_team"]),
+                away_team=str(row["away_team"]),
+                competition_key=comp,
+                kickoff_utc=str(row["kickoff_utc"]),
+                status=str(row.get("status") or "NS"),
+                scope="owner",
+                listing_only=True,
+                odds_available=odds_available,
+            )
+            unified["listing_status"] = listing_status(comp, odds_available=odds_available)
+            matches.append(unified)
+
+        filt = (listing_filter or "all").strip().lower()
+        if filt == "trusted":
+            matches = [m for m in matches if m.get("validation_tier") == "A"]
+        elif filt in ("test_phase", "test-phase", "b"):
+            matches = [m for m in matches if m.get("validation_tier") == "B"]
+        elif filt == "prediction_eligible":
+            matches = [m for m in matches if m.get("prediction_allowed") and m.get("listing_status") not in ("FRIENDLY", "UNSUPPORTED", "ODDS_MISSING")]
+
+        return {
+            "date": target_date,
+            "timezone": timezone,
+            "mode": "broad_listing",
+            "listing_filter": filt,
+            "count": len(matches),
+            "tier_a_count": sum(1 for m in matches if m.get("validation_tier") == "A"),
+            "tier_b_count": sum(1 for m in matches if m.get("validation_tier") == "B"),
+            "unsupported_count": sum(1 for m in matches if m.get("listing_status") == "UNSUPPORTED"),
             "matches": matches,
         }
     finally:
@@ -258,8 +329,9 @@ def format_fixture_evidence(
 
     raw_pick = wde.get("decision_pick") or wde.get("prediction")
     effective_pick = wde.get("effective_pick") or raw_pick
-    tier = (tier_meta or {}).get("tier")
+    tier = (tier_meta or {}).get("tier") or (tier_meta or {}).get("validation_tier")
     is_shadow = tier == "B" or (tier_meta or {}).get("owner_shadow") is True
+    labels = display_labels_for_tier(tier)
     out = {
         "match": f"{fixture.get('home_team')} vs {fixture.get('away_team')}",
         "fixture_id": fixture_id or None,
@@ -267,7 +339,11 @@ def format_fixture_evidence(
         "kickoff": fixture.get("kickoff_utc"),
         "timezone": timezone,
         "tier": tier,
-        "prediction_mode": "TIER_B_SHADOW" if is_shadow else "TIER_A_PRODUCTION",
+        "validation_tier": tier,
+        "display_status": labels.get("display_status"),
+        "display_label": labels.get("display_label"),
+        "validation_note": labels.get("validation_note"),
+        "prediction_mode": "TIER_B_OWNER_SHADOW" if is_shadow else "TIER_A_PRODUCTION",
         "public_visible": False if is_shadow else True,
         "owner_visible": True,
         "owner_shadow": is_shadow,

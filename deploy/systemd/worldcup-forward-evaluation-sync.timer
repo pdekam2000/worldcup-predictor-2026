@@ -1,0 +1,11 @@
+[Unit]
+Description=WorldCup Forward Evaluation Result Sync Timer (DISABLED)
+Requires=worldcup-forward-evaluation-sync.service
+
+[Timer]
+OnCalendar=*-*-* 21:30:00
+Timezone=Europe/Vienna
+Persistent=false
+
+[Install]
+WantedBy=timers.target

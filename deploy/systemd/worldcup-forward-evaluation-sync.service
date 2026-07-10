@@ -1,0 +1,15 @@
+[Unit]
+Description=WorldCup Forward Evaluation Result Sync (DISABLED)
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/worldcup-predictor
+Environment=PYTHONPATH=/opt/worldcup-predictor
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/sync_forward_evaluation_results.py
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

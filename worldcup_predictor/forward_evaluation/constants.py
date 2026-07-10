@@ -1,0 +1,35 @@
+"""Unified forward evaluation constants — Tier A + Tier B."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+PHASE = "UNIFIED-FORWARD-EVAL-A-B"
+DEFAULT_TIMEZONE = "Europe/Vienna"
+EVAL_DB_RELATIVE = Path("data") / "evaluation" / "forward_prediction_tracking.db"
+ARTIFACTS_DIR = Path("artifacts") / "daily_forward_evaluation"
+REPORTS_DIR = Path("reports") / "owner"
+
+ELIGIBLE = "PREDICTION_ELIGIBLE"
+ODDS_MISSING = "ODDS_MISSING"
+ODDS_STALE = "ODDS_STALE"
+WDE_UNAVAILABLE = "WDE_UNAVAILABLE"
+ECSE_UNAVAILABLE = "ECSE_UNAVAILABLE"
+DATA_QUALITY_BLOCKED = "DATA_QUALITY_BLOCKED"
+UNSUPPORTED = "UNSUPPORTED"
+
+EVAL_PENDING = "PENDING"
+EVAL_COMPLETE = "EVALUATED"
+EVAL_SKIPPED = "SKIPPED"
+
+TERMINAL_STATUSES = frozenset({"FT", "AET", "PEN", "FINISHED", "COMPLETED"})
+NON_TERMINAL_STATUSES = frozenset(
+    {"NS", "TBD", "PST", "CANC", "ABD", "1H", "HT", "2H", "ET", "BT", "LIVE", "INT", "SUSP"}
+)
+
+HIT = "HIT"
+MISS = "MISS"
+UNAVAILABLE = "UNAVAILABLE"
+NOT_APPLICABLE = "NOT_APPLICABLE"
+
+BATCH_PREFIX = "DAILY_FORWARD_EVAL"
