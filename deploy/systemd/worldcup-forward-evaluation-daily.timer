@@ -1,12 +1,13 @@
 [Unit]
-Description=WorldCup Forward Evaluation Daily Timer (DISABLED)
+Description=WorldCup Forward Evaluation Automation Timer
 Requires=worldcup-forward-evaluation-daily.service
 
 [Timer]
-OnCalendar=*-*-* 07:00:00
+# 07:00 and 17:00 Europe/Vienna — discovery, prematch freeze, result sync, evaluation
+OnCalendar=*-*-* 07,17:00:00
 Timezone=Europe/Vienna
-Persistent=false
-# TIMERS_ENABLED = NO — do not enable this unit in production during this phase
+Persistent=true
+AccuracySec=1min
 
 [Install]
 WantedBy=timers.target

@@ -1,33 +1,25 @@
-"""Phase 7B Part N — Automation schedule design (timers disabled until approval)."""
+"""Forward evaluation automation schedule — enabled after activation gate."""
 
 from __future__ import annotations
 
-AUTOMATION_ENABLED = False
+AUTOMATION_ENABLED = True
 
+# Cadence (Europe/Vienna reporting context; systemd timers use same timezone)
+# - Full orchestrator cycle: 07:00 and 17:00 daily (discovery, freeze, sync, evaluate)
+# - Weekly report: Monday 08:00
 SCHEDULE = {
-    "discovery": {
-        "enabled": False,
-        "cron_hint": "0 7 * * *",
+    "orchestrator_cycle": {
+        "enabled": True,
+        "cron_hint": "0 7,17 * * *",
         "timezone": "Europe/Vienna",
-        "description": "Morning discovery of Tier A + Tier B owner fixtures",
-    },
-    "prematch_freeze": {
-        "enabled": False,
-        "cron_hint": "0 */2 * * *",
-        "timezone": "Europe/Vienna",
-        "description": "Rolling prematch freeze window (2h) when odds fresh and kickoff not passed",
-    },
-    "result_sync": {
-        "enabled": False,
-        "cron_hint": "30 21,23 * * *",
-        "timezone": "Europe/Vienna",
-        "description": "Post-match result sync after likely FT windows",
+        "utc_equivalent_hint": "05:00 and 15:00 UTC (CEST)",
+        "description": "Unified A+B cycle — discover, classify, freeze, sync, evaluate",
     },
     "weekly_report": {
-        "enabled": False,
+        "enabled": True,
         "cron_hint": "0 8 * * 1",
         "timezone": "Europe/Vienna",
-        "description": "Monday morning weekly owner analysis report",
+        "description": "Monday weekly owner analysis report",
     },
 }
 

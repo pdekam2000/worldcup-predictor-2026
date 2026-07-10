@@ -1,11 +1,12 @@
 openapi: 3.1.0
 info:
   title: WorldCup Predictor GPT Actions
-  version: 1.0.2
+  version: 1.1.0
   description: |
     Owner-only narrow REST bridge for ChatGPT Plus Custom GPT Actions.
     Returns structured model evidence (WDE, BTTS, O/U 2.5, ECSE Top1–Top5).
     Long predictions use async jobs — poll until completed.
+    Tier A fixtures: display_status=TRUSTED. Tier B: TEST PHASE — UNDER FORWARD EVALUATION.
 servers:
   - url: https://footballpredictor.it.com
     description: Production HTTPS (443)
@@ -50,9 +51,9 @@ paths:
           required: false
           schema:
             type: string
-            enum: [production, owner, shadow]
+            enum: [production, owner, shadow, trusted, test_phase]
             default: production
-          description: production=Tier A only; owner=Tier A+B shadow; shadow=Tier B only
+          description: production/trusted=Tier A; owner=Tier A+B; shadow/test_phase=Tier B only
       responses:
         "200":
           description: Discovered matches
@@ -60,6 +61,46 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DiscoverMatchesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/gpt-actions/v1/matches/list:
+    get:
+      operationId: listTodayMatches
+      summary: Broad fixture listing with classification (not prediction-gated)
+      description: |
+        Returns all discoverable fixtures for a date with listing_status classification.
+        Listing does not imply prediction eligibility. Use discoverTodayMatches for prediction discovery.
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+        - name: timezone
+          in: query
+          required: false
+          schema:
+            type: string
+            default: Europe/Vienna
+        - name: listing_filter
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [all, trusted, test_phase, prediction_eligible]
+            default: all
+          description: trusted=Tier A only; test_phase=Tier B only; prediction_eligible=gated subset
+      responses:
+        "200":
+          description: Broad classified match list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListMatchesResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -320,6 +361,12 @@ components:
           maxItems: 3
           items:
             $ref: "#/components/schemas/FixtureEvidence"
+        contains_test_phase_fixture:
+          type: boolean
+          nullable: true
+        test_phase_warning:
+          type: string
+          nullable: true
         truncated:
           type: boolean
     OddsEvidence:
@@ -464,6 +511,23 @@ components:
           nullable: true
         timezone:
           type: string
+        validation_tier:
+          type: string
+          enum: [A, B]
+          nullable: true
+        display_status:
+          type: string
+          enum: [TRUSTED, TEST_PHASE]
+          nullable: true
+        display_label:
+          type: string
+          nullable: true
+        validation_note:
+          type: string
+          nullable: true
+        owner_shadow:
+          type: boolean
+          nullable: true
         odds:
           $ref: "#/components/schemas/OddsEvidence"
         provider:
@@ -510,20 +574,50 @@ components:
         ecse_top1:
           $ref: "#/components/schemas/EcseScore"
     DiscoveredMatch:
+      allOf:
+        - $ref: "#/components/schemas/FixtureTierMetadata"
+        - type: object
+          properties:
+            fixture_id:
+              type: integer
+            home_team:
+              type: string
+            away_team:
+              type: string
+            kickoff_utc:
+              type: string
+            competition:
+              type: string
+            status:
+              type: string
+            tier:
+              type: string
+              nullable: true
+    ListMatchesResponse:
       type: object
       properties:
-        fixture_id:
+        date:
+          type: string
+        timezone:
+          type: string
+        mode:
+          type: string
+          enum: [broad_listing]
+        listing_filter:
+          type: string
+        count:
           type: integer
-        home_team:
-          type: string
-        away_team:
-          type: string
-        kickoff_utc:
-          type: string
-        competition:
-          type: string
-        status:
-          type: string
+        tier_a_count:
+          type: integer
+        tier_b_count:
+          type: integer
+        unsupported_count:
+          type: integer
+        matches:
+          type: array
+          maxItems: 1000
+          items:
+            $ref: "#/components/schemas/DiscoveredMatch"
     FilteredMatch:
       type: object
       properties:
@@ -548,7 +642,13 @@ components:
           type: string
         timezone:
           type: string
+        scope:
+          type: string
         count:
+          type: integer
+        tier_a_count:
+          type: integer
+        tier_b_count:
           type: integer
         matches:
           type: array

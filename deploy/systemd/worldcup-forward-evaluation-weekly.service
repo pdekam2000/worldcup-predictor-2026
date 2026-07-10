@@ -1,5 +1,5 @@
 [Unit]
-Description=WorldCup Forward Evaluation Weekly Report (DISABLED)
+Description=WorldCup Forward Evaluation Weekly Report
 After=network.target
 
 [Service]
@@ -8,6 +8,7 @@ User=root
 WorkingDirectory=/opt/worldcup-predictor
 Environment=PYTHONPATH=/opt/worldcup-predictor
 ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/generate_weekly_forward_evaluation_report.py
+TimeoutStartSec=300
 StandardOutput=journal
 StandardError=journal
 

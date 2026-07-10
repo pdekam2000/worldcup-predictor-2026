@@ -1,5 +1,5 @@
 [Unit]
-Description=WorldCup Forward Evaluation Daily Cycle (DISABLED — do not enable without owner approval)
+Description=WorldCup Forward Evaluation Automation Cycle (Tier A + Tier B)
 After=network.target
 
 [Service]
@@ -8,6 +8,7 @@ User=root
 WorkingDirectory=/opt/worldcup-predictor
 Environment=PYTHONPATH=/opt/worldcup-predictor
 ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/run_forward_evaluation_automation_cycle.py
+TimeoutStartSec=600
 StandardOutput=journal
 StandardError=journal
 
