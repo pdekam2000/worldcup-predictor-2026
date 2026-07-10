@@ -19,7 +19,12 @@ from worldcup_predictor.database.repository import FootballIntelligenceRepositor
 from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata
 from worldcup_predictor.odds.freshness_policy import FreshnessStatus
 from worldcup_predictor.odds.strict_live_refresh import refresh_fixture_odds_live
-from worldcup_predictor.owner_daily.constants import DAILY_SUPPORTED_COMPETITIONS, DEFAULT_TIMEZONE, REPORTS_DIR
+from worldcup_predictor.gpt_actions.bridge_semantics import (
+    extract_wde_semantics,
+    latest_prediction_report_payload,
+    prediction_report_by_date_payload,
+)
+from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture, discover_fixtures_from_db, vienna_day_utc_bounds
 from worldcup_predictor.owner_daily.predictions import run_daily_ecse, run_daily_wde
 from worldcup_predictor.owner_daily.report import _load_ecse, _load_wde, _owner_label
@@ -46,26 +51,19 @@ def _pct(value: Any) -> float | None:
 
 
 def _market_block(payload: dict[str, Any]) -> dict[str, Any]:
-    probs = payload.get("probabilities") or {}
-    btts = probs.get("btts") or (payload.get("extended_markets") or {}).get("btts") or {}
-    ou25 = probs.get("over_under_2_5") or (payload.get("detailed_markets") or {}).get("over_under_25") or {}
-    h = probs.get("home_win") or probs.get("home")
-    d = probs.get("draw")
-    a = probs.get("away_win") or probs.get("away")
-    pick = payload.get("predicted_1x2") or (payload.get("one_x_two") or {}).get("selection")
-    if not pick and h is not None and d is not None and a is not None:
-        sides = {"home_win": float(h), "draw": float(d), "away_win": float(a)}
-        pick = max(sides, key=sides.get)
-    conf = payload.get("confidence_score") or payload.get("confidence")
+    sem = extract_wde_semantics(payload)
     return {
-        "home_prob": _pct(h),
-        "draw_prob": _pct(d),
-        "away_prob": _pct(a),
-        "pick": pick,
-        "confidence": conf if conf and conf > 1 else _pct(conf),
-        "btts": btts,
-        "ou25": ou25,
-        "model_version": payload.get("model_version") or payload.get("wde_version"),
+        "home_prob": sem["home_prob"],
+        "draw_prob": sem["draw_prob"],
+        "away_prob": sem["away_prob"],
+        "pick": sem["decision_pick"],
+        "effective_pick": sem["effective_pick"],
+        "probability_argmax": sem["probability_argmax"],
+        "decision_source": sem["decision_source"],
+        "confidence": sem["confidence"],
+        "btts": sem["btts"],
+        "ou25": sem["ou25"],
+        "model_version": sem["model_version"],
     }
 
 
@@ -89,10 +87,12 @@ def _fixture_row(conn: sqlite3.Connection, fixture_id: int) -> dict[str, Any] | 
 
 
 def _to_daily_fixture(row: dict[str, Any]) -> DailyFixture:
+    raw_key = str(row["competition_key"])
+    canon = normalize_competition_key(raw_key) or raw_key
     return DailyFixture(
         fixture_id=int(row["fixture_id"]),
         provider_fixture_id=int(row["fixture_id"]),
-        competition_key=str(row["competition_key"]),
+        competition_key=canon,
         home_team=str(row["home_team"]),
         away_team=str(row["away_team"]),
         kickoff_utc=str(row.get("kickoff_utc") or ""),
@@ -320,6 +320,10 @@ def _format_prediction_result(
     ecse_snap: dict[str, Any] | None,
     status: str,
     warnings: list[str],
+    wde_execution_status: str | None = None,
+    wde_result_source: str | None = None,
+    wde_failure_code: str | None = None,
+    wde_failure_stage: str | None = None,
 ) -> dict[str, Any]:
     wde_block = _market_block(payload) if payload else {}
     btts = wde_block.get("btts") or {}
@@ -335,6 +339,13 @@ def _format_prediction_result(
         else None,
         ecse_loaded,
     )
+    wde_warning = None
+    for w in warnings:
+        if w.startswith("wde_skipped:"):
+            wde_warning = w.split(":", 1)[1]
+            if not wde_failure_code:
+                wde_failure_code = wde_warning
+            break
     return {
         "fixture": {
             "fixture_id": int(row["fixture_id"]),
@@ -354,8 +365,17 @@ def _format_prediction_result(
             "draw_probability": wde_block.get("draw_prob"),
             "away_probability": wde_block.get("away_prob"),
             "prediction": wde_block.get("pick"),
+            "decision_pick": wde_block.get("pick"),
+            "effective_pick": wde_block.get("effective_pick"),
+            "probability_argmax": wde_block.get("probability_argmax"),
+            "decision_source": wde_block.get("decision_source"),
             "confidence": wde_block.get("confidence"),
             "model_version": wde_block.get("model_version"),
+            "wde_execution_status": wde_execution_status,
+            "wde_result_source": wde_result_source,
+            "wde_warning": wde_warning,
+            "wde_failure_code": wde_failure_code,
+            "wde_failure_stage": wde_failure_stage,
         },
         "btts": {
             "prediction": btts.get("selection") or btts.get("pick"),
@@ -429,6 +449,7 @@ def run_fixture_prediction(
                     }
 
             daily = _to_daily_fixture(row)
+            payload_before = _load_stored_payload(repo, fixture_id)
             wde_status, wde_detail = run_daily_wde(
                 daily,
                 settings=settings,
@@ -439,7 +460,8 @@ def run_fixture_prediction(
                 strict_fresh_odds=True,
             )
             if wde_status == "skipped":
-                warnings.append(f"wde_skipped:{wde_detail.get('reason')}")
+                code = wde_detail.get("wde_failure_code") or wde_detail.get("reason")
+                warnings.append(f"wde_skipped:{code}")
 
             ecse_status, ecse_detail = run_daily_ecse(
                 daily, settings=settings, conn=conn, dry_run=False, force=True
@@ -457,6 +479,16 @@ def run_fixture_prediction(
                 status = "PARTIAL" if payload else "FAILED"
                 warnings.append("ecse_snapshot_missing")
 
+            if wde_status == "generated":
+                wde_execution_status = "executed"
+                wde_result_source = "fresh_engine"
+            elif wde_status == "skipped":
+                wde_execution_status = "skipped"
+                wde_result_source = "stored_prediction" if (payload or payload_before) else "none"
+            else:
+                wde_execution_status = str(wde_status)
+                wde_result_source = "stored_prediction" if payload else "none"
+
             freshness = _freshness_record(conn, row)
             freshness.pop("_meta", None)
             return _format_prediction_result(
@@ -466,6 +498,10 @@ def run_fixture_prediction(
                 ecse_snap=ecse_snap,
                 status=status,
                 warnings=warnings,
+                wde_execution_status=wde_execution_status,
+                wde_result_source=wde_result_source,
+                wde_failure_code=wde_detail.get("wde_failure_code") if wde_status == "skipped" else None,
+                wde_failure_stage=wde_detail.get("wde_failure_stage") if wde_status == "skipped" else None,
             )
         finally:
             conn.close()
@@ -511,46 +547,12 @@ def run_batch_predictions(
     }
 
 
-def _approved_report_files() -> list[Path]:
-    root = REPORTS_DIR.resolve()
-    if not root.is_dir():
-        return []
-    return sorted(root.glob("*.md"), key=lambda p: p.stat().st_mtime, reverse=True)
-
-
 def latest_prediction_report(*, max_bytes: int) -> dict[str, Any]:
-    files = _approved_report_files()
-    if not files:
-        return {"found": False, "report_name": None, "content": "", "generated_at": None}
-    path = files[0]
-    content = path.read_text(encoding="utf-8", errors="replace")
-    if len(content.encode("utf-8")) > max_bytes:
-        content = content.encode("utf-8")[:max_bytes].decode("utf-8", errors="ignore") + "\n...[truncated]"
-    return {
-        "found": True,
-        "report_name": path.name,
-        "report_date": path.stem,
-        "content": content,
-        "generated_at": datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat(),
-    }
+    return latest_prediction_report_payload(max_bytes=max_bytes)
 
 
 def prediction_report_by_date(target: date, *, max_bytes: int) -> dict[str, Any]:
-    files = _approved_report_files()
-    tag = target.isoformat()
-    for path in files:
-        if tag in path.name or tag.replace("-", "") in path.name:
-            content = path.read_text(encoding="utf-8", errors="replace")
-            if len(content.encode("utf-8")) > max_bytes:
-                content = content.encode("utf-8")[:max_bytes].decode("utf-8", errors="ignore") + "\n...[truncated]"
-            return {
-                "found": True,
-                "report_name": path.name,
-                "report_date": tag,
-                "content": content,
-                "generated_at": datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat(),
-            }
-    return {"found": False, "report_date": tag, "report_name": None, "content": ""}
+    return prediction_report_by_date_payload(target, max_bytes=max_bytes)
 
 
 def model_status(*, settings: Settings | None = None) -> dict[str, Any]:

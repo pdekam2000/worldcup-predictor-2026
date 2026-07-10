@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: WorldCup Predictor GPT Actions
-  version: 1.0.0
+  version: 1.0.2
   description: |
     Owner-only narrow REST bridge for ChatGPT Plus Custom GPT Actions.
     Returns structured model evidence (WDE, BTTS, O/U 2.5, ECSE Top1–Top5).
@@ -45,6 +45,14 @@ paths:
           schema:
             type: string
             default: Europe/Vienna
+        - name: scope
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [production, owner, shadow]
+            default: production
+          description: production=Tier A only; owner=Tier A+B shadow; shadow=Tier B only
       responses:
         "200":
           description: Discovered matches
@@ -202,6 +210,10 @@ components:
         timezone:
           type: string
           default: Europe/Vienna
+        scope:
+          type: string
+          enum: [production, owner, shadow]
+          default: production
         filter:
           $ref: "#/components/schemas/OddsFilter"
     StartPredictionJobRequest:
@@ -215,6 +227,14 @@ components:
         timezone:
           type: string
           default: Europe/Vienna
+        scope:
+          type: string
+          enum: [production, owner, shadow]
+          default: production
+        prediction_scope:
+          type: string
+          enum: [production, owner_shadow, owner]
+          default: production
         filter:
           $ref: "#/components/schemas/OddsFilter"
         fixture_ids:
@@ -300,6 +320,134 @@ components:
           maxItems: 3
           items:
             $ref: "#/components/schemas/FixtureEvidence"
+        truncated:
+          type: boolean
+    OddsEvidence:
+      type: object
+      properties:
+        home:
+          type: number
+          nullable: true
+        draw:
+          type: number
+          nullable: true
+        away:
+          type: number
+          nullable: true
+        bookmaker_count:
+          type: integer
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        freshness:
+          type: string
+          nullable: true
+        age_minutes:
+          type: number
+          nullable: true
+    WdeEvidence:
+      type: object
+      properties:
+        home_probability:
+          type: number
+          nullable: true
+        draw_probability:
+          type: number
+          nullable: true
+        away_probability:
+          type: number
+          nullable: true
+        prediction:
+          type: string
+          nullable: true
+          description: Canonical WDE decision pick (same as decision_pick)
+        decision_pick:
+          type: string
+          nullable: true
+          description: Canonical WDE decision layer pick
+        effective_pick:
+          type: string
+          nullable: true
+        probability_argmax:
+          type: string
+          nullable: true
+          description: FT marginal direction from H/D/A probability argmax
+        decision_source:
+          type: string
+          nullable: true
+        raw_pick:
+          type: string
+          nullable: true
+        confidence:
+          type: number
+          nullable: true
+        wde_execution_status:
+          type: string
+          nullable: true
+          enum: [executed, skipped, generated, none]
+        wde_result_source:
+          type: string
+          nullable: true
+          enum: [fresh_engine, stored_prediction, none]
+        wde_warning:
+          type: string
+          nullable: true
+    BttsEvidence:
+      type: object
+      properties:
+        prediction:
+          type: string
+          nullable: true
+        yes_probability:
+          type: number
+          nullable: true
+        no_probability:
+          type: number
+          nullable: true
+    OverUnder25Evidence:
+      type: object
+      properties:
+        prediction:
+          type: string
+          nullable: true
+        over_probability:
+          type: number
+          nullable: true
+        under_probability:
+          type: number
+          nullable: true
+    EcseScore:
+      type: object
+      properties:
+        rank:
+          type: integer
+          nullable: true
+        score:
+          type: string
+          nullable: true
+        probability:
+          type: number
+          nullable: true
+    EcseEvidence:
+      type: object
+      properties:
+        top1:
+          $ref: "#/components/schemas/EcseScore"
+        top2:
+          $ref: "#/components/schemas/EcseScore"
+        top3:
+          $ref: "#/components/schemas/EcseScore"
+        top4:
+          $ref: "#/components/schemas/EcseScore"
+        top5:
+          $ref: "#/components/schemas/EcseScore"
+        top3_mass:
+          type: number
+          nullable: true
+        top5_mass:
+          type: number
+          nullable: true
     FixtureEvidence:
       type: object
       properties:
@@ -307,25 +455,38 @@ components:
           type: string
         fixture_id:
           type: integer
+          nullable: true
         competition:
           type: string
+          nullable: true
         kickoff:
           type: string
+          nullable: true
         timezone:
           type: string
         odds:
-          type: object
+          $ref: "#/components/schemas/OddsEvidence"
+        provider:
+          type: string
+          nullable: true
+        freshness:
+          type: string
+          nullable: true
         wde:
-          type: object
+          $ref: "#/components/schemas/WdeEvidence"
         btts:
-          type: object
+          $ref: "#/components/schemas/BttsEvidence"
         over_under_2_5:
-          type: object
+          $ref: "#/components/schemas/OverUnder25Evidence"
         ecse:
-          type: object
+          $ref: "#/components/schemas/EcseEvidence"
+        consensus:
+          type: string
+          nullable: true
         quality:
           type: string
           enum: [OK, PARTIAL, FAILED, BLOCKED]
+          nullable: true
         warnings:
           type: array
           maxItems: 20
@@ -336,14 +497,50 @@ components:
       properties:
         fixture_id:
           type: integer
+          nullable: true
         match:
           type: string
+          nullable: true
         wde_confidence:
           type: number
+          nullable: true
         wde_pick:
           type: string
+          nullable: true
         ecse_top1:
-          type: object
+          $ref: "#/components/schemas/EcseScore"
+    DiscoveredMatch:
+      type: object
+      properties:
+        fixture_id:
+          type: integer
+        home_team:
+          type: string
+        away_team:
+          type: string
+        kickoff_utc:
+          type: string
+        competition:
+          type: string
+        status:
+          type: string
+    FilteredMatch:
+      type: object
+      properties:
+        fixture_id:
+          type: integer
+        home_team:
+          type: string
+        away_team:
+          type: string
+        kickoff_utc:
+          type: string
+        competition:
+          type: string
+        status:
+          type: string
+        odds:
+          $ref: "#/components/schemas/OddsEvidence"
     DiscoverMatchesResponse:
       type: object
       properties:
@@ -357,7 +554,7 @@ components:
           type: array
           maxItems: 500
           items:
-            type: object
+            $ref: "#/components/schemas/DiscoveredMatch"
     FilterMatchesResponse:
       type: object
       properties:
@@ -365,15 +562,165 @@ components:
           type: string
         timezone:
           type: string
+        filter:
+          $ref: "#/components/schemas/OddsFilter"
         count:
           type: integer
         matches:
           type: array
           maxItems: 500
           items:
-            type: object
+            $ref: "#/components/schemas/FilteredMatch"
+    ApplicationHealth:
+      type: object
+      properties:
+        status:
+          type: string
+        http_status:
+          type: integer
+          nullable: true
+    CpuSnapshot:
+      type: object
+      properties:
+        load_1m:
+          type: number
+          nullable: true
+        load_5m:
+          type: number
+          nullable: true
+        load_15m:
+          type: number
+          nullable: true
+    MemorySnapshot:
+      type: object
+      properties:
+        total_bytes:
+          type: integer
+          nullable: true
+        available_bytes:
+          type: integer
+          nullable: true
+        percent_used:
+          type: number
+          nullable: true
+        meminfo:
+          $ref: "#/components/schemas/MeminfoSnapshot"
+    MeminfoSnapshot:
+      type: object
+      properties:
+        MemTotal:
+          type: string
+          nullable: true
+        MemFree:
+          type: string
+          nullable: true
+        MemAvailable:
+          type: string
+          nullable: true
+        Buffers:
+          type: string
+          nullable: true
+        Cached:
+          type: string
+          nullable: true
+    DiskSnapshot:
+      type: object
+      properties:
+        total_bytes:
+          type: integer
+        used_bytes:
+          type: integer
+        free_bytes:
+          type: integer
+    DatabaseSnapshot:
+      type: object
+      properties:
+        exists:
+          type: boolean
+        size_bytes:
+          type: integer
+    HealthPayload:
+      type: object
+      properties:
+        timestamp_utc:
+          type: string
+        hostname:
+          type: string
+        service_worldcup_api:
+          type: string
+        application_health:
+          $ref: "#/components/schemas/ApplicationHealth"
+        cpu:
+          $ref: "#/components/schemas/CpuSnapshot"
+        memory:
+          $ref: "#/components/schemas/MemorySnapshot"
+        disk:
+          $ref: "#/components/schemas/DiskSnapshot"
+        database:
+          $ref: "#/components/schemas/DatabaseSnapshot"
+        current_git_sha:
+          type: string
+          nullable: true
+        git_sha_source:
+          type: string
+          nullable: true
+        mcp_version:
+          type: string
+    ProviderFlags:
+      type: object
+      properties:
+        api_football_configured:
+          type: boolean
+          nullable: true
+        sportmonks_configured:
+          type: boolean
+          nullable: true
+        oddalerts_configured:
+          type: boolean
+          nullable: true
+    ModelStatusPayload:
+      type: object
+      properties:
+        wde_available:
+          type: boolean
+        ecse_available:
+          type: boolean
+        wde_model_version:
+          type: string
+          nullable: true
+        ecse_model_version:
+          type: string
+          nullable: true
+        canonical_pipeline_ready:
+          type: boolean
+          nullable: true
+        db_connectivity:
+          type: boolean
+        latest_prediction_timestamp:
+          type: string
+          nullable: true
+        odds_freshness_subsystem:
+          type: string
+        strict_live_refresh:
+          type: string
+        providers:
+          $ref: "#/components/schemas/ProviderFlags"
     SystemStatusResponse:
       type: object
+      properties:
+        service:
+          type: string
+        mcp_bridge:
+          type: string
+        health:
+          $ref: "#/components/schemas/HealthPayload"
+        model_status:
+          $ref: "#/components/schemas/ModelStatusPayload"
+        git_sha:
+          type: string
+          nullable: true
+        reports_dir:
+          type: string
     ReportResponse:
       type: object
       properties:
@@ -381,10 +728,24 @@ components:
           type: boolean
         report_name:
           type: string
+          nullable: true
         report_date:
           type: string
+          nullable: true
         content:
           type: string
           maxLength: 95000
         generated_at:
           type: string
+          nullable: true
+        report_type:
+          type: string
+          nullable: true
+          enum:
+            - PREDICTION_DAILY
+            - PREDICTION_MATCH
+            - PREDICTION_COMBO
+            - PREDICTION_OWNER
+        source:
+          type: string
+          nullable: true

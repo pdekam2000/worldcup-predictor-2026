@@ -110,12 +110,14 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
         operation_id="discoverTodayMatches",
         dependencies=auth_dep,
     )
-    def discover_today_matches_route(date: str, timezone: str = "Europe/Vienna") -> dict[str, Any]:
+    def discover_today_matches_route(
+        date: str, timezone: str = "Europe/Vienna", scope: str = "production"
+    ) -> dict[str, Any]:
         try:
-            DiscoverMatchesQuery(date=date, timezone=timezone)
+            DiscoverMatchesQuery(date=date, timezone=timezone, scope=scope)
         except Exception as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
-        return discover_today_matches(target_date=date, timezone=timezone)
+        return discover_today_matches(target_date=date, timezone=timezone, scope=scope)
 
     @app.post(
         f"{API_PREFIX}/matches/filter-odds",
@@ -128,6 +130,7 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
             timezone=body.timezone,
             home_odds_gt=body.filter.home_odds_gt,
             away_odds_gt=body.filter.away_odds_gt,
+            scope=body.scope,
         )
 
     @app.post(

@@ -27,6 +27,7 @@ class OddsFilter(BaseModel):
 class DiscoverMatchesQuery(BaseModel):
     date: str
     timezone: str = "Europe/Vienna"
+    scope: Literal["production", "owner", "shadow"] = "production"
 
     @field_validator("date")
     @classmethod
@@ -43,6 +44,7 @@ class DiscoverMatchesQuery(BaseModel):
 class FilterMatchesRequest(BaseModel):
     date: str
     timezone: str = "Europe/Vienna"
+    scope: Literal["production", "owner", "shadow"] = "production"
     filter: OddsFilter = Field(default_factory=OddsFilter)
 
     @field_validator("date")
@@ -60,6 +62,8 @@ class FilterMatchesRequest(BaseModel):
 class StartPredictionJobRequest(BaseModel):
     date: str
     timezone: str = "Europe/Vienna"
+    scope: Literal["production", "owner", "shadow"] = "production"
+    prediction_scope: Literal["production", "owner_shadow", "owner"] = "production"
     filter: OddsFilter = Field(default_factory=OddsFilter)
     fixture_ids: list[int] = Field(default_factory=list, max_length=20)
     select_best: int = 3

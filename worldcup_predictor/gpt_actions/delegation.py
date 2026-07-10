@@ -16,7 +16,16 @@ from worldcup_predictor.mcp_server import runtime as mcp_runtime
 from worldcup_predictor.mcp_server.tools import health as health_tools
 from worldcup_predictor.owner.euro_c_odds_import import _latest_odds_snapshot, is_fake_odds_payload
 from worldcup_predictor.owner_daily.constants import DEFAULT_TIMEZONE, REPORTS_DIR
-from worldcup_predictor.owner_daily.fixture_discovery import discover_fixtures_from_db, vienna_day_utc_bounds
+from worldcup_predictor.gpt_actions.owner_odds import OwnerOddsBudget, controlled_owner_odds_lookup
+from worldcup_predictor.gpt_actions.owner_scope import (
+    DiscoveryScope,
+    PredictionScope,
+    competition_keys_for_scope,
+    enrich_discovered_fixture,
+    fixture_allowed_for_discovery,
+    validate_discovery_scope,
+)
+from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture, discover_fixtures_from_db, vienna_day_utc_bounds
 
 
 def get_system_status() -> dict[str, Any]:
@@ -32,35 +41,65 @@ def get_system_status() -> dict[str, Any]:
     }
 
 
-def discover_today_matches(*, target_date: str, timezone: str = DEFAULT_TIMEZONE) -> dict[str, Any]:
+def discover_today_matches(
+    *,
+    target_date: str,
+    timezone: str = DEFAULT_TIMEZONE,
+    scope: str = "production",
+) -> dict[str, Any]:
+    discovery_scope: DiscoveryScope = validate_discovery_scope(scope)
     settings = get_settings()
     conn = connect(settings.sqlite_path)
     try:
         d = date.fromisoformat(target_date)
         start_utc, end_utc = vienna_day_utc_bounds(d, timezone)
-        from worldcup_predictor.owner_daily.constants import DAILY_SUPPORTED_COMPETITIONS
-
+        comp_keys = competition_keys_for_scope(discovery_scope)
         fixtures = discover_fixtures_from_db(
             conn,
-            competition_keys=list(DAILY_SUPPORTED_COMPETITIONS),
+            competition_keys=comp_keys,
             start_utc=start_utc,
             end_utc=end_utc,
             limit=500,
         )
         matches = [
-            {
-                "fixture_id": f.fixture_id,
-                "home_team": f.home_team,
-                "away_team": f.away_team,
-                "kickoff_utc": f.kickoff_utc,
-                "competition": f.competition_key,
-                "status": f.status,
-            }
+            enrich_discovered_fixture(f, scope=discovery_scope)
             for f in fixtures
+            if fixture_allowed_for_discovery(f, discovery_scope)
         ]
-        return {"date": target_date, "timezone": timezone, "count": len(matches), "matches": matches}
+        tier_a = sum(1 for m in matches if m.get("tier") == "A")
+        tier_b = sum(1 for m in matches if m.get("tier") == "B")
+        return {
+            "date": target_date,
+            "timezone": timezone,
+            "scope": discovery_scope,
+            "count": len(matches),
+            "tier_a_count": tier_a,
+            "tier_b_count": tier_b,
+            "matches": matches,
+        }
     finally:
         conn.close()
+
+
+def _fixture_from_db(conn, fixture_id: int) -> DailyFixture | None:
+    row = conn.execute(
+        """SELECT fixture_id, competition_key, home_team, away_team, kickoff_utc, status, season
+           FROM fixtures WHERE fixture_id=? AND is_placeholder=0 LIMIT 1""",
+        (int(fixture_id),),
+    ).fetchone()
+    if not row:
+        return None
+    data = dict(row)
+    return DailyFixture(
+        fixture_id=int(data["fixture_id"]),
+        provider_fixture_id=int(data["fixture_id"]),
+        competition_key=str(data["competition_key"]),
+        home_team=str(data["home_team"]),
+        away_team=str(data["away_team"]),
+        kickoff_utc=str(data.get("kickoff_utc") or ""),
+        status=str(data.get("status") or "NS"),
+        season=int(data["season"]) if data.get("season") is not None else None,
+    )
 
 
 def _median_decimal_odds(lines: list[NormalizedOddsLine]) -> dict[str, float | None]:
@@ -101,15 +140,43 @@ def filter_matches_by_odds(
     timezone: str,
     home_odds_gt: float | None = None,
     away_odds_gt: float | None = None,
+    scope: str = "production",
 ) -> dict[str, Any]:
-    discovered = discover_today_matches(target_date=target_date, timezone=timezone)
+    discovery_scope = validate_discovery_scope(scope)
+    discovered = discover_today_matches(target_date=target_date, timezone=timezone, scope=discovery_scope)
     settings = get_settings()
     conn = connect(settings.sqlite_path)
+    budget = OwnerOddsBudget()
     filtered: list[dict[str, Any]] = []
+    odds_audit: list[dict[str, Any]] = []
     try:
         for match in discovered.get("matches") or []:
             fid = int(match["fixture_id"])
-            odds = _match_odds(conn, fid)
+            tier = match.get("tier")
+            daily = _fixture_from_db(conn, fid)
+            if daily and tier == "B":
+                odds_meta = controlled_owner_odds_lookup(
+                    daily, tier="B", settings=settings, budget=budget, allow_provider=True
+                )
+                odds = {
+                    "home": odds_meta.get("home"),
+                    "draw": odds_meta.get("draw"),
+                    "away": odds_meta.get("away"),
+                    "bookmaker_count": odds_meta.get("bookmaker_count"),
+                }
+                odds_audit.append(odds_meta)
+            else:
+                odds = _match_odds(conn, fid)
+                odds_audit.append(
+                    {
+                        "fixture_id": fid,
+                        "tier": tier,
+                        "cache_hit": odds.get("bookmaker_count", 0) > 0,
+                        "provider_called": False,
+                        "odds_found": odds.get("bookmaker_count", 0) > 0,
+                        "bookmaker_count": odds.get("bookmaker_count"),
+                    }
+                )
             if home_odds_gt is not None and (odds["home"] is None or odds["home"] <= home_odds_gt):
                 continue
             if away_odds_gt is not None and (odds["away"] is None or odds["away"] <= away_odds_gt):
@@ -118,8 +185,11 @@ def filter_matches_by_odds(
         return {
             "date": target_date,
             "timezone": timezone,
+            "scope": discovery_scope,
             "filter": {"home_odds_gt": home_odds_gt, "away_odds_gt": away_odds_gt},
             "count": len(filtered),
+            "provider_calls": budget.provider_calls,
+            "odds_audit": odds_audit,
             "matches": filtered,
         }
     finally:
@@ -147,7 +217,12 @@ def _enrich_odds_block(mcp_result: dict[str, Any], conn, fixture_id: int) -> dic
     }
 
 
-def format_fixture_evidence(mcp_result: dict[str, Any], *, timezone: str) -> dict[str, Any]:
+def format_fixture_evidence(
+    mcp_result: dict[str, Any],
+    *,
+    timezone: str,
+    tier_meta: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     fixture = mcp_result.get("fixture") or {}
     fixture_id = int(fixture.get("fixture_id") or 0)
     wde = mcp_result.get("wde") or {}
@@ -181,13 +256,23 @@ def format_fixture_evidence(mcp_result: dict[str, Any], *, timezone: str) -> dic
     finally:
         conn.close()
 
-    raw_pick = wde.get("prediction")
-    return {
+    raw_pick = wde.get("decision_pick") or wde.get("prediction")
+    effective_pick = wde.get("effective_pick") or raw_pick
+    tier = (tier_meta or {}).get("tier")
+    is_shadow = tier == "B" or (tier_meta or {}).get("owner_shadow") is True
+    out = {
         "match": f"{fixture.get('home_team')} vs {fixture.get('away_team')}",
         "fixture_id": fixture_id or None,
-        "competition": fixture.get("competition"),
+        "competition": (tier_meta or {}).get("competition") or fixture.get("competition"),
         "kickoff": fixture.get("kickoff_utc"),
         "timezone": timezone,
+        "tier": tier,
+        "prediction_mode": "TIER_B_SHADOW" if is_shadow else "TIER_A_PRODUCTION",
+        "public_visible": False if is_shadow else True,
+        "owner_visible": True,
+        "owner_shadow": is_shadow,
+        "mapping_quality": (tier_meta or {}).get("mapping_quality"),
+        "data_quality": quality.get("status"),
         "odds": odds_block,
         "provider": odds_block.get("provider"),
         "freshness": odds_block.get("freshness"),
@@ -195,9 +280,18 @@ def format_fixture_evidence(mcp_result: dict[str, Any], *, timezone: str) -> dic
             "home_probability": wde.get("home_probability"),
             "draw_probability": wde.get("draw_probability"),
             "away_probability": wde.get("away_probability"),
-            "raw_pick": raw_pick,
-            "effective_pick": raw_pick,
+            "prediction": raw_pick,
+            "decision_pick": raw_pick,
+            "effective_pick": effective_pick,
+            "probability_argmax": wde.get("probability_argmax"),
+            "decision_source": wde.get("decision_source"),
             "confidence": wde.get("confidence"),
+            "wde_execution_status": wde.get("wde_execution_status"),
+            "wde_result_source": wde.get("wde_result_source"),
+            "wde_warning": wde.get("wde_warning"),
+            "wde_failure_code": wde.get("wde_failure_code"),
+            "wde_failure_stage": wde.get("wde_failure_stage"),
+            "raw_pick": raw_pick,
         },
         "btts": {
             "prediction": btts.get("prediction"),
@@ -218,10 +312,13 @@ def format_fixture_evidence(mcp_result: dict[str, Any], *, timezone: str) -> dic
             "top3_mass": _ecse_mass(ecse_scores, 3),
             "top5_mass": _ecse_mass(ecse_scores, 5),
         },
-        "consensus": None,
+        "consensus": quality.get("owner_label"),
         "quality": quality.get("status"),
         "warnings": quality.get("warnings") or [],
     }
+    if tier_meta:
+        out["prediction_scope"] = tier_meta.get("prediction_scope")
+    return out
 
 
 def run_predictions_for_fixtures(
@@ -229,11 +326,18 @@ def run_predictions_for_fixtures(
     *,
     refresh_if_stale: bool = False,
     timezone: str = DEFAULT_TIMEZONE,
+    prediction_scope: str = "production",
+    tier_meta_by_fixture: dict[int, dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     for fixture_id in fixture_ids:
-        raw = mcp_runtime.run_fixture_prediction(int(fixture_id), refresh_if_stale=refresh_if_stale)
-        results.append(format_fixture_evidence(raw, timezone=timezone))
+        meta = (tier_meta_by_fixture or {}).get(int(fixture_id))
+        is_tier_b = (meta or {}).get("tier") == "B"
+        raw = mcp_runtime.run_fixture_prediction(
+            int(fixture_id),
+            refresh_if_stale=refresh_if_stale and not is_tier_b,
+        )
+        results.append(format_fixture_evidence(raw, timezone=timezone, tier_meta=meta))
     return results
 
 
@@ -253,7 +357,7 @@ def rank_best_matches(predictions: list[dict[str, Any]], *, select_best: int = 3
             "fixture_id": p.get("fixture_id"),
             "match": p.get("match"),
             "wde_confidence": (p.get("wde") or {}).get("confidence"),
-            "wde_pick": (p.get("wde") or {}).get("effective_pick"),
+            "wde_pick": (p.get("wde") or {}).get("decision_pick") or (p.get("wde") or {}).get("effective_pick"),
             "ecse_top1": (p.get("ecse") or {}).get("top1"),
         }
         for p in predictions

@@ -10,6 +10,7 @@ import uvicorn
 from worldcup_predictor.gpt_actions.app import create_app
 from worldcup_predictor.gpt_actions.config import load_gpt_actions_config
 from worldcup_predictor.gpt_actions.policies import APPROVED_OPERATION_IDS, APPROVED_ROUTES
+from worldcup_predictor.gpt_actions.runtime_bootstrap import bootstrap_gpt_actions_runtime
 
 
 def dry_test() -> dict[str, object]:
@@ -34,6 +35,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(dry_test(), indent=2))
         return 0
 
+    bootstrap_gpt_actions_runtime()
     config = load_gpt_actions_config()
     if not config.bind_localhost_only:
         raise SystemExit("GPT Actions bridge must bind to localhost only")

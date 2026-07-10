@@ -17,6 +17,11 @@ from worldcup_predictor.owner.euro_b_fixture_selector import UefaFixtureSelectio
 from worldcup_predictor.owner_daily.constants import GENERATED_BY, PHASE
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
 from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata, stamp_payload_odds_freshness
+from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
+from worldcup_predictor.gpt_actions.wde_runtime import (
+    classify_wde_exception,
+    prepare_daily_fixture_for_wde,
+)
 from worldcup_predictor.research.ecse_live.prediction_builder import build_ecse_live_prediction
 from worldcup_predictor.research.ecse_live.store import ensure_ecse_live_tables, has_snapshot, insert_snapshot
 
@@ -102,13 +107,22 @@ def run_daily_wde(
     force: bool,
     strict_fresh_odds: bool = False,
 ) -> tuple[str, dict[str, Any]]:
+    fixture = prepare_daily_fixture_for_wde(fixture, repo=repo, settings=settings)
     sel = _to_selection(fixture)
     fid = sel.provider_fixture_id
-    comp_key = sel.competition_key
-    detail: dict[str, Any] = {"fixture_id": fid, "competition_key": comp_key, "engine": "wde"}
+    comp_key = normalize_competition_key(sel.competition_key) or sel.competition_key
+    detail: dict[str, Any] = {
+        "fixture_id": fid,
+        "competition_key": comp_key,
+        "competition_raw": fixture.competition_key if fixture.competition_key != comp_key else None,
+        "engine": "wde",
+    }
 
     if not settings.api_football_configured:
         detail["reason"] = "missing_fixture_context"
+        detail["wde_failure_code"] = "WDE_DEPENDENCY_FAILED"
+        detail["wde_failure_stage"] = "api_credentials"
+        detail["error"] = "API_FOOTBALL_KEY not configured"
         return "skipped", detail
 
     fixture_row = repo.get_fixture_row(fid)
@@ -137,8 +151,11 @@ def run_daily_wde(
         pipeline = PredictPipeline(settings, competition_key=comp_key, locale="en")
         result = pipeline.run(fixture_id=fid, record_history=False)
     except Exception as exc:
+        failure_code, failure_stage = classify_wde_exception(exc)
         detail["reason"] = "engine_error"
-        detail["error"] = str(exc)
+        detail["wde_failure_code"] = failure_code
+        detail["wde_failure_stage"] = failure_stage
+        detail["error"] = f"{type(exc).__name__}: {exc}"
         return "skipped", detail
 
     if not result.success:
@@ -192,9 +209,23 @@ def run_daily_ecse(
     force: bool,
     strict_fresh_odds: bool = False,
 ) -> tuple[str, dict[str, Any]]:
-    sel = _to_selection(fixture)
+    canon_key = normalize_competition_key(fixture.competition_key) or fixture.competition_key
+    sel = _to_selection(
+        DailyFixture(
+            fixture_id=fixture.fixture_id,
+            provider_fixture_id=fixture.provider_fixture_id,
+            competition_key=canon_key,
+            home_team=fixture.home_team,
+            away_team=fixture.away_team,
+            kickoff_utc=fixture.kickoff_utc,
+            status=fixture.status,
+            season=fixture.season,
+            coverage_sources=list(fixture.coverage_sources),
+            provider_ids=dict(fixture.provider_ids),
+        )
+    )
     fid = sel.provider_fixture_id
-    comp_key = sel.competition_key
+    comp_key = canon_key
     detail: dict[str, Any] = {"fixture_id": fid, "competition_key": comp_key, "engine": "ecse"}
 
     repo = FootballIntelligenceRepository(settings.sqlite_path or None)
