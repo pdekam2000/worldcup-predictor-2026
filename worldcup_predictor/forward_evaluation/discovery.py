@@ -9,7 +9,6 @@ from worldcup_predictor.config.settings import get_settings
 from worldcup_predictor.database.connection import connect
 from worldcup_predictor.forward_evaluation.constants import DEFAULT_TIMEZONE
 from worldcup_predictor.forward_evaluation.fixture_model import enrich_unified_fixture
-from worldcup_predictor.gpt_actions.delegation import discover_today_matches, list_today_matches_broad
 
 
 def discover_forward_evaluation_fixtures(
@@ -18,6 +17,8 @@ def discover_forward_evaluation_fixtures(
     timezone: str = DEFAULT_TIMEZONE,
 ) -> dict[str, Any]:
     """Discover Tier A + Tier B owner-eligible fixtures (no friendlies)."""
+    from worldcup_predictor.gpt_actions.delegation import discover_today_matches
+
     d = target_date.isoformat() if isinstance(target_date, date) else str(target_date)
     payload = discover_today_matches(target_date=d, timezone=timezone, scope="owner")
     fixtures: list[dict[str, Any]] = []
@@ -51,6 +52,8 @@ def discover_broad_listing_fixtures(
     timezone: str = DEFAULT_TIMEZONE,
 ) -> dict[str, Any]:
     """Broad listing discovery — all fixtures with classification, not prediction-gated."""
+    from worldcup_predictor.gpt_actions.delegation import list_today_matches_broad
+
     d = target_date.isoformat() if isinstance(target_date, date) else str(target_date)
     return list_today_matches_broad(target_date=d, timezone=timezone)
 
