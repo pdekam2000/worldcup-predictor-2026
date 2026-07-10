@@ -2,8 +2,10 @@
 
 Date: 2026-07-10  
 Base SHA: `5ddac363c524f1e5737645328412d1f47cecc804`  
-Commit SHA: _(see git log after push)_  
-Final status: **UNIFIED_FORWARD_SYSTEM_CANONICAL_READY_AUTOMATION_DISABLED**
+Commit SHA: `4f08040bfd547bb71bcec7eeefd1b04078efb70e` (includes hotfix `1bbbffb`, canonicalization `ffffcae`)  
+origin/recovery/source-of-truth-phase6d: `4f08040`  
+Production deploy: `/opt/worldcup-predictor` @ `4f08040`, GPT Actions **active**  
+Evidence migration: 3 frozen + 15 rank rows imported (idempotent)
 
 ## Answers (Part Z)
 
