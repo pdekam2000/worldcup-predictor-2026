@@ -442,9 +442,16 @@ def run_fixture_prediction(
             )
             if not gate.get("allowed"):
                 diag = gate.get("diagnostics") or {}
-                freshness = gate.get("freshness") or _freshness_record(conn, row)
+                freshness = _freshness_record(conn, row)
+                if gate.get("freshness"):
+                    gate_meta = gate["freshness"]
+                    freshness["odds_freshness_class"] = gate_meta.get("odds_freshness_class")
+                    freshness["timestamp_source_field"] = gate_meta.get("timestamp_source_field")
                 freshness.pop("_meta", None)
                 block_reason = gate.get("final_block_reason") or "odds_freshness_invalid"
+                age_minutes = freshness.get("age_minutes")
+                if age_minutes is None:
+                    age_minutes = diag.get("odds_age_minutes")
                 return {
                     "quality": {
                         "status": "BLOCKED",
@@ -453,7 +460,7 @@ def run_fixture_prediction(
                     "odds": {
                         "provider": diag.get("provider_used") or freshness.get("last_provider"),
                         "freshness": freshness.get("odds_status") or diag.get("freshness_status"),
-                        "age_minutes": freshness.get("age_minutes"),
+                        "age_minutes": age_minutes,
                         "block_diagnostics": diag,
                     },
                     "fixture": {
