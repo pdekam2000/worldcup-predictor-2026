@@ -13,15 +13,15 @@ Date: 2026-07-12 (Europe/Vienna)
 | Stage | SHA |
 |-------|-----|
 | Canonical odds bridge hotfix | `98a306c` |
-| Pre-kickoff acceptance additions (this phase) | pending commit |
+| Pre-kickoff acceptance phase | `b69b83f` |
 
 ## 2. Local / Origin / Production
 
 | Stage | SHA |
 |-------|-----|
-| LOCAL HEAD | `98a306c` (+ uncommitted runtime age display + acceptance validator) |
-| ORIGIN/main | `98a306c` |
-| PRODUCTION HEAD | `98a306c` |
+| LOCAL HEAD | `b69b83f` |
+| ORIGIN/main | `b69b83f` |
+| PRODUCTION HEAD | `b69b83f` |
 
 ---
 
