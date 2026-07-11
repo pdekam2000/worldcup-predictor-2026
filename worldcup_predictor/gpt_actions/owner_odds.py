@@ -16,7 +16,9 @@ from worldcup_predictor.gpt_actions.competition_normalize import normalize_compe
 from worldcup_predictor.gpt_actions.tier_b_shadow_registry import get_tier_b_domain
 from worldcup_predictor.owner.euro_c_odds_import import _latest_odds_snapshot, is_fake_odds_payload
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
-from worldcup_predictor.owner_daily.odds_import import import_odds_for_single_fixture, scan_fixture_odds_readiness
+from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata
+from worldcup_predictor.odds.refresh_gate import refresh_live_odds, validate_legitimate_1x2_snapshot
+from worldcup_predictor.odds.freshness_policy import FreshnessStatus
 
 MAX_TIER_B_PROVIDER_CALLS_PER_REQUEST = 5
 _PREMATCH_WINDOW_HOURS = 48.0
@@ -121,26 +123,41 @@ def controlled_owner_odds_lookup(
     try:
         cached = _odds_from_snapshot(conn, fid)
         record["cache_hit"] = bool(cached.get("cache_hit"))
+        meta = build_fixture_freshness_metadata(
+            conn,
+            fixture_id=fid,
+            kickoff_utc=fixture.kickoff_utc,
+            round_name=None,
+            status=fixture.status,
+        )
+        record["freshness_status"] = meta.get("odds_freshness_status") or "missing"
         if cached.get("bookmaker_count", 0) > 0:
             record.update(
                 {
                     "odds_found": True,
                     "bookmaker_count": cached.get("bookmaker_count"),
                     "odds_timestamp": cached.get("odds_timestamp"),
-                    "freshness_status": cached.get("freshness_status") or "cached",
                     "home": cached.get("home"),
                     "draw": cached.get("draw"),
                     "away": cached.get("away"),
                 }
             )
-            readiness = scan_fixture_odds_readiness(conn, fixture, settings=settings)
-            if readiness.get("odds_freshness") == "fresh" and readiness.get("has_1x2"):
-                record["freshness_status"] = "fresh"
-                return record
+        legit_ok, legit_reason, _ = validate_legitimate_1x2_snapshot(conn, fid)
+        if (
+            legit_ok
+            and meta.get("odds_freshness_status") == FreshnessStatus.FRESH_ODDS.value
+            and not meta.get("requires_fresh_odds")
+        ):
+            record["freshness_status"] = FreshnessStatus.FRESH_ODDS.value
+            return record
 
         if tier != "B":
             if not record["odds_found"]:
                 record["failure_reason"] = "no_cached_odds"
+            elif not legit_ok:
+                record["failure_reason"] = legit_reason or "no_legitimate_odds"
+            elif meta.get("requires_fresh_odds"):
+                record["failure_reason"] = "odds_freshness_invalid"
             return record
 
         domain = get_tier_b_domain(canon) if canon else None
@@ -158,25 +175,45 @@ def controlled_owner_odds_lookup(
 
         budget.provider_calls += 1
         record["provider_called"] = True
-        import_result = import_odds_for_single_fixture(fixture, settings=settings, force=False, dry_run=False)
-        record["import_status"] = import_result.get("status")
+        refresh = refresh_live_odds(fixture, settings=settings)
+        record["refresh_attempted"] = True
+        record["refresh_success"] = bool(refresh.get("success"))
+        record["import_status"] = refresh.get("status")
+        if refresh.get("provider"):
+            record["provider_used"] = refresh.get("provider")
 
         after = _odds_from_snapshot(conn, fid)
-        if after.get("bookmaker_count", 0) > 0:
+        meta_after = build_fixture_freshness_metadata(
+            conn,
+            fixture_id=fid,
+            kickoff_utc=fixture.kickoff_utc,
+            round_name=None,
+            status=fixture.status,
+            odds_refresh_attempted=True,
+            odds_refresh_success=record["refresh_success"],
+            odds_refresh_reason=str(refresh.get("status") or ""),
+        )
+        legit_ok, legit_reason, _ = validate_legitimate_1x2_snapshot(conn, fid)
+        if after.get("bookmaker_count", 0) > 0 and legit_ok and not meta_after.get("requires_fresh_odds"):
             record.update(
                 {
                     "odds_found": True,
                     "cache_hit": record["cache_hit"] or bool(after.get("cache_hit")),
                     "bookmaker_count": after.get("bookmaker_count"),
                     "odds_timestamp": after.get("odds_timestamp"),
-                    "freshness_status": after.get("freshness_status") or "provider_imported",
+                    "freshness_status": FreshnessStatus.FRESH_ODDS.value,
                     "home": after.get("home"),
                     "draw": after.get("draw"),
                     "away": after.get("away"),
                 }
             )
         else:
-            record["failure_reason"] = str(import_result.get("status") or "no_legitimate_odds")
+            if not refresh.get("success"):
+                record["failure_reason"] = "STALE_ODDS_REFRESH_FAILED"
+            elif meta_after.get("requires_fresh_odds"):
+                record["failure_reason"] = "STALE_ODDS_AFTER_REFRESH"
+            else:
+                record["failure_reason"] = legit_reason or "NO_LEGITIMATE_1X2_ODDS_AFTER_REFRESH"
     finally:
         conn.close()
 

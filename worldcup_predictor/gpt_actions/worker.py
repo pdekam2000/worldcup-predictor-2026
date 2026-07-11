@@ -146,6 +146,12 @@ def execute_prediction_job(
                             {
                                 "fixture_id": fixture_id,
                                 "reason": odds_meta.get("failure_reason") or "no_legitimate_odds",
+                                "odds_diagnostics": {
+                                    "refresh_attempted": odds_meta.get("refresh_attempted"),
+                                    "refresh_success": odds_meta.get("refresh_success"),
+                                    "provider_used": odds_meta.get("provider_used"),
+                                    "freshness_status": odds_meta.get("freshness_status"),
+                                },
                             }
                         )
                         continue
@@ -156,7 +162,7 @@ def execute_prediction_job(
                 )
                 raw = mcp_runtime.run_fixture_prediction(
                     int(fixture_id),
-                    refresh_if_stale=refresh and tier != "B",
+                    refresh_if_stale=refresh,
                 )
                 evidence = format_fixture_evidence(raw, timezone=timezone, tier_meta=meta)
                 predictions.append(evidence)

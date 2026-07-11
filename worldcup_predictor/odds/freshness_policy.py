@@ -51,12 +51,53 @@ def stale_threshold_hours(
     *,
     knockout: bool = False,
     low_priority: bool = False,
+    kickoff_utc: str | None = None,
+    reference_at: datetime | None = None,
+    allow_post_kickoff_live: bool = False,
 ) -> float:
+    """Hours threshold; prefers kickoff-aware TTL when kickoff_utc is provided."""
+    if kickoff_utc:
+        ttl_sec = get_allowed_odds_ttl_seconds(
+            kickoff_utc,
+            reference_at,
+            allow_post_kickoff_live=allow_post_kickoff_live,
+        )
+        if ttl_sec is None:
+            return 0.0
+        return ttl_sec / 3600.0
     if knockout:
         return KNOCKOUT_STALE_HOURS
     if low_priority:
         return LOW_PRIORITY_STALE_HOURS
     return NORMAL_STALE_HOURS
+
+
+def get_allowed_odds_ttl_seconds(
+    kickoff_utc: str | None,
+    now_utc: datetime | str | None = None,
+    *,
+    allow_post_kickoff_live: bool = False,
+) -> int | None:
+    """Dynamic prematch TTL by time-to-kickoff. None => odds invalid (post-kickoff)."""
+    ko = parse_timestamp_utc(kickoff_utc)
+    if ko is None:
+        return int(NORMAL_STALE_HOURS * 3600)
+    if isinstance(now_utc, datetime):
+        ref = now_utc.astimezone(timezone.utc)
+    else:
+        ref = parse_timestamp_utc(now_utc) if now_utc else datetime.now(timezone.utc)
+    if ref is None:
+        ref = datetime.now(timezone.utc)
+    hours_to_ko = (ko - ref).total_seconds() / 3600.0
+    if hours_to_ko < 0:
+        return 600 if allow_post_kickoff_live else None
+    if hours_to_ko > 24:
+        return 6 * 3600
+    if hours_to_ko > 6:
+        return 2 * 3600
+    if hours_to_ko > 1:
+        return 30 * 60
+    return 10 * 60
 
 
 def calculate_odds_age_hours(
@@ -104,13 +145,39 @@ def classify_odds_freshness(
     *,
     odds_snapshot_at: str | None,
     reference_at: str | datetime | None = None,
+    kickoff_utc: str | None = None,
     knockout: bool = False,
     low_priority: bool = False,
     odds_source: str | None = None,
     has_odds: bool | None = None,
+    allow_post_kickoff_live: bool = False,
+    freshness_reason: str | None = None,
 ) -> FreshnessClassification:
-    threshold = stale_threshold_hours(knockout=knockout, low_priority=low_priority)
+    ref_dt = reference_at if isinstance(reference_at, datetime) else parse_timestamp_utc(reference_at)
+    if ref_dt is None and reference_at is None:
+        ref_dt = datetime.now(timezone.utc)
+    threshold = stale_threshold_hours(
+        knockout=knockout,
+        low_priority=low_priority,
+        kickoff_utc=kickoff_utc,
+        reference_at=ref_dt,
+        allow_post_kickoff_live=allow_post_kickoff_live,
+    )
     tier = "knockout" if knockout else ("low_priority" if low_priority else "normal")
+    if kickoff_utc and get_allowed_odds_ttl_seconds(
+        kickoff_utc, ref_dt, allow_post_kickoff_live=allow_post_kickoff_live
+    ) is None:
+        return FreshnessClassification(
+            status=FreshnessStatus.ODDS_MISSING,
+            odds_age_hours=None,
+            stale_threshold_hours=0.0,
+            requires_fresh_odds=True,
+            stale_odds=True,
+            odds_snapshot_at=odds_snapshot_at,
+            reference_at=str(reference_at) if reference_at else None,
+            odds_source=odds_source,
+            priority_tier=tier,
+        )
 
     if has_odds is False or (has_odds is None and not odds_snapshot_at):
         return FreshnessClassification(

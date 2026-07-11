@@ -16,6 +16,7 @@ from worldcup_predictor.config.provider_readiness import provider_diagnostic
 from worldcup_predictor.config.settings import Settings, get_settings
 from worldcup_predictor.database.connection import connect
 from worldcup_predictor.database.repository import FootballIntelligenceRepository
+from worldcup_predictor.odds.refresh_gate import ensure_fresh_odds_before_prediction
 from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata
 from worldcup_predictor.odds.freshness_policy import FreshnessStatus
 from worldcup_predictor.odds.strict_live_refresh import refresh_fixture_odds_live
@@ -425,30 +426,40 @@ def run_fixture_prediction(
             if not row:
                 return {"quality": {"status": "FAILED", "warnings": ["fixture_not_found"]}}
 
-            freshness = _freshness_record(conn, row)
-            if freshness.get("requires_fresh_odds"):
-                if refresh_if_stale:
-                    refresh_stale_odds([fixture_id], settings=settings)
-                    row = _fixture_row(conn, fixture_id) or row
-                    freshness = _freshness_record(conn, row)
-                if freshness.get("requires_fresh_odds"):
-                    rec = _freshness_record(conn, row)
-                    rec.pop("_meta", None)
-                    return {
-                        "quality": {"status": "BLOCKED", "warnings": ["odds_freshness_invalid"]},
-                        "odds": {
-                            "provider": rec.get("last_provider"),
-                            "freshness": rec.get("odds_status"),
-                            "age_minutes": rec.get("age_minutes"),
-                        },
-                        "fixture": {
-                            "fixture_id": fixture_id,
-                            "home_team": row.get("home_team"),
-                            "away_team": row.get("away_team"),
-                        },
-                    }
-
             daily = _to_daily_fixture(row)
+            gate = ensure_fresh_odds_before_prediction(
+                conn,
+                row,
+                daily,
+                settings=settings,
+                refresh_if_needed=refresh_if_stale,
+            )
+            if not gate.get("allowed"):
+                diag = gate.get("diagnostics") or {}
+                freshness = gate.get("freshness") or _freshness_record(conn, row)
+                freshness.pop("_meta", None)
+                block_reason = gate.get("final_block_reason") or "odds_freshness_invalid"
+                return {
+                    "quality": {
+                        "status": "BLOCKED",
+                        "warnings": ["odds_freshness_invalid", block_reason],
+                    },
+                    "odds": {
+                        "provider": diag.get("provider_used") or freshness.get("last_provider"),
+                        "freshness": freshness.get("odds_status") or diag.get("freshness_status"),
+                        "age_minutes": freshness.get("age_minutes"),
+                        "block_diagnostics": diag,
+                    },
+                    "fixture": {
+                        "fixture_id": fixture_id,
+                        "home_team": row.get("home_team"),
+                        "away_team": row.get("away_team"),
+                        "kickoff_utc": row.get("kickoff_utc"),
+                        "competition": row.get("competition_key"),
+                    },
+                }
+
+            freshness = _freshness_record(conn, row)
             payload_before = _load_stored_payload(repo, fixture_id)
             wde_status, wde_detail = run_daily_wde(
                 daily,

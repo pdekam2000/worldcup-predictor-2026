@@ -142,6 +142,7 @@ def run_odds_freshness_refresh(
         cls = classify_odds_freshness(
             odds_snapshot_at=odds["snapshot_at"] if odds else None,
             reference_at=now.isoformat(),
+            kickoff_utc=fx.kickoff_utc,
             knockout=knockout,
             low_priority=low_pri,
             odds_source=odds.get("source") if odds else None,

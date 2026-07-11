@@ -33,6 +33,7 @@ from worldcup_predictor.owner_daily.odds_import import (
     _oddalerts_lines_to_bookmakers,
     _probabilities_valid,
 )
+from worldcup_predictor.odds.freshness_metadata import enrich_snapshot_payload_metadata
 from worldcup_predictor.providers.oddalerts_provider import OddAlertsClient
 from worldcup_predictor.providers.sportmonks_provider import SportmonksProvider
 from worldcup_predictor.research.safe_bets.providers import fetch_oddalerts_odds_history
@@ -572,6 +573,20 @@ def refresh_fixture_odds_live(
         api_source="live",
         raw_path=selected_raw_path,
         freshness="fresh",
+    )
+    mw = getattr(selected_normalized, "match_winner", None) or {}
+    payload = enrich_snapshot_payload_metadata(
+        payload,
+        fixture_id=fid,
+        kickoff_utc=fixture.kickoff_utc,
+        provider=selected_provider or "unknown",
+        bookmaker=(selected_bookmakers[0].get("name") if selected_bookmakers else None),
+        home_odds=mw.get("home"),
+        draw_odds=mw.get("draw"),
+        away_odds=mw.get("away"),
+        freshness_status="FRESH_ODDS",
+        freshness_reason="strict_live_refresh",
+        raw_payload=selected_normalized,
     )
     payload["strict_live_refresh"] = True
     payload["cache_bypassed"] = True
