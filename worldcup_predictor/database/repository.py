@@ -1711,6 +1711,18 @@ class FootballIntelligenceRepository:
         ).fetchone()
         return int(row["c"]) if row else 0
 
+    def count_fixtures_for_league_season(
+        self,
+        *,
+        competition_key: str,
+        season: int,
+    ) -> int:
+        """Backward-compatible alias used by league import and rescue scripts."""
+        return self.count_fixtures_for_competition_season(
+            competition_key=competition_key,
+            season=season,
+        )
+
     def count_competition_coverage(self, competition_key: str) -> dict[str, int]:
         """Read-only counts for EURO-A audit summaries."""
         fx = self._conn.execute(

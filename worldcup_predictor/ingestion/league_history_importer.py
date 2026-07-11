@@ -259,6 +259,21 @@ class LeagueHistoryImporter:
             try:
                 return get_competition(competition_key)
             except KeyError:
+                from worldcup_predictor.gpt_actions.tier_b_shadow_registry import TIER_B_SHADOW_DOMAINS
+
+                meta = TIER_B_SHADOW_DOMAINS.get(competition_key)
+                if meta:
+                    return CompetitionConfig(
+                        key=competition_key,
+                        name=str(meta.get("aliases", (competition_key,))[0]),
+                        league_id=int(meta["provider_league_id"]),
+                        season=2025,
+                        country=str(meta.get("country") or ""),
+                        enabled=True,
+                        learning_profile_key=competition_key,
+                        compensation_type="league",
+                        default_seasons=(2023, 2024, 2025, 2026),
+                    )
                 return None
         if league_id is not None:
             return resolve_competition_by_league_id(league_id)

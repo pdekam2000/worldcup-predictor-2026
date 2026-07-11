@@ -134,7 +134,7 @@ def list_missing_result_fixtures(
 
 class _DateApiCache:
     def __init__(self) -> None:
-        self._cache: dict[tuple[int, str], list[dict[str, Any]]] = {}
+        self._cache: dict[tuple[int, str, int | None], list[dict[str, Any]]] = {}
 
     def get(
         self,
@@ -142,14 +142,22 @@ class _DateApiCache:
         *,
         league_id: int,
         date_part: str,
+        season: int | None = None,
+        force_refresh: bool = False,
     ) -> tuple[list[dict[str, Any]], int]:
-        key = (league_id, date_part)
-        if key in self._cache:
+        key = (league_id, date_part, season)
+        if key in self._cache and not force_refresh:
             return self._cache[key], 0
-        api = client.get_historical_fixtures(
-            league_id=league_id,
-            from_date=date_part,
-            to_date=date_part,
+        api = client._safe_get(  # noqa: SLF001
+            "fixtures",
+            {
+                "league": league_id,
+                "season": season,
+                "from": date_part,
+                "to": date_part,
+            },
+            placeholder_factory=lambda: [],
+            force_refresh=force_refresh,
         )
         calls = 1 if getattr(api, "source", None) == "live" else 0
         items = api.data if api.ok and isinstance(api.data, list) else []
@@ -242,8 +250,15 @@ def resolve_provider_match(
 
         kickoff = str(row.get("kickoff_utc") or "")
         date_part = kickoff[:10]
+        season_year = _api_football_season(row)
         if date_part:
-            items, date_calls = date_cache.get(client, league_id=league_id, date_part=date_part)
+            items, date_calls = date_cache.get(
+                client,
+                league_id=league_id,
+                date_part=date_part,
+                season=season_year,
+                force_refresh=force_refresh,
+            )
             calls += date_calls
             candidates.extend(
                 score_api_candidates(row, items, method_prefix="league_date", require_goals=True)
@@ -255,13 +270,37 @@ def resolve_provider_match(
                 if extra_date == date_part:
                     continue
                 extra_items, extra_calls = date_cache.get(
-                    client, league_id=league_id, date_part=extra_date
+                    client,
+                    league_id=league_id,
+                    date_part=extra_date,
+                    season=season_year,
+                    force_refresh=force_refresh,
                 )
                 calls += extra_calls
                 candidates.extend(
                     score_api_candidates(
                         row, extra_items, method_prefix="league_adjacent_date", require_goals=True
                     )
+                )
+
+        if date_part and not candidates:
+            api = client._safe_get(  # noqa: SLF001
+                "fixtures",
+                {"date": date_part},
+                placeholder_factory=lambda: [],
+                force_refresh=force_refresh,
+            )
+            if getattr(api, "source", None) == "live":
+                calls += 1
+            if api.ok and isinstance(api.data, list):
+                league_items = [
+                    it
+                    for it in api.data
+                    if int((it.get("league") or {}).get("id") or 0) == int(league_id)
+                ]
+                pool = league_items or list(api.data)
+                candidates.extend(
+                    score_api_candidates(row, pool, method_prefix="date_only", require_goals=True)
                 )
 
         season = _api_football_season(row)
