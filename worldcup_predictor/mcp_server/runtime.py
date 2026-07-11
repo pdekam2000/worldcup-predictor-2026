@@ -198,7 +198,10 @@ def _freshness_record(conn: sqlite3.Connection, row: dict[str, Any]) -> dict[str
     status = str(meta.get("odds_freshness_status") or "")
     age_hours = meta.get("odds_age_hours")
     threshold = meta.get("stale_threshold_hours")
-    age_minutes = round(float(age_hours) * 60, 1) if age_hours is not None else None
+    canonical = meta.get("canonical_odds_snapshot") or {}
+    age_minutes = canonical.get("odds_age_minutes")
+    if age_minutes is None and age_hours is not None:
+        age_minutes = round(float(age_hours) * 60, 1)
     threshold_minutes = round(float(threshold) * 60, 1) if threshold is not None else None
     is_fresh = status == FreshnessStatus.FRESH_ODDS.value
     return {
@@ -209,7 +212,10 @@ def _freshness_record(conn: sqlite3.Connection, row: dict[str, Any]) -> dict[str
         "fresh": is_fresh,
         "stale": status in (FreshnessStatus.STALE_ODDS.value, FreshnessStatus.REQUIRES_FRESH_ODDS.value),
         "markets_available": meta.get("markets_available"),
-        "last_provider": meta.get("odds_source"),
+        "last_provider": meta.get("odds_source") or canonical.get("provider"),
+        "canonical_odds_snapshot": canonical,
+        "odds_freshness_class": meta.get("odds_freshness_class"),
+        "timestamp_source_field": meta.get("timestamp_source_field"),
         "warning": meta.get("freshness_warning"),
         "requires_fresh_odds": bool(meta.get("requires_fresh_odds")),
         "_meta": meta,

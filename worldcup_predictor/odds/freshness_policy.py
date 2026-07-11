@@ -166,10 +166,24 @@ def classify_odds_freshness(
     tier = "knockout" if knockout else ("low_priority" if low_priority else "normal")
     if kickoff_utc and get_allowed_odds_ttl_seconds(
         kickoff_utc, ref_dt, allow_post_kickoff_live=allow_post_kickoff_live
-    ) is None:
+    ) is None and not (has_odds or odds_snapshot_at):
         return FreshnessClassification(
             status=FreshnessStatus.ODDS_MISSING,
             odds_age_hours=None,
+            stale_threshold_hours=0.0,
+            requires_fresh_odds=True,
+            stale_odds=True,
+            odds_snapshot_at=odds_snapshot_at,
+            reference_at=str(reference_at) if reference_at else None,
+            odds_source=odds_source,
+            priority_tier=tier,
+        )
+    if kickoff_utc and get_allowed_odds_ttl_seconds(
+        kickoff_utc, ref_dt, allow_post_kickoff_live=allow_post_kickoff_live
+    ) is None and (has_odds or odds_snapshot_at):
+        return FreshnessClassification(
+            status=FreshnessStatus.STALE_ODDS,
+            odds_age_hours=calculate_odds_age_hours(odds_snapshot_at, reference_at=reference_at),
             stale_threshold_hours=0.0,
             requires_fresh_odds=True,
             stale_odds=True,

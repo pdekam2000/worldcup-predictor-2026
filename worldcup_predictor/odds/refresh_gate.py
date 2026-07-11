@@ -12,6 +12,7 @@ from worldcup_predictor.egie.provider_features.odds_snapshot_parser import (
     _is_match_winner_market,
     normalize_snapshot_odds_lines,
 )
+from worldcup_predictor.odds.canonical_snapshot import get_latest_valid_1x2_odds_snapshot
 from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata
 from worldcup_predictor.odds.freshness_policy import (
     FreshnessStatus,
@@ -73,24 +74,35 @@ def _median_1x2_decimal(lines: list[NormalizedOddsLine]) -> dict[str, Any]:
 def validate_legitimate_1x2_snapshot(
     conn: sqlite3.Connection,
     fixture_id: int,
+    *,
+    kickoff_utc: str | None = None,
 ) -> tuple[bool, str | None, dict[str, Any]]:
-    snap = _latest_odds_snapshot(conn, int(fixture_id))
-    if not snap:
-        return False, "NO_LEGITIMATE_1X2_ODDS", {}
-    snap_at = snap.get("snapshot_at")
-    if not snap_at:
-        return False, "ODDS_TIMESTAMP_MISSING", {}
-    payload = snap.get("payload")
-    source = None
-    if isinstance(payload, dict):
-        source = str(payload.get("provider") or payload.get("source") or "")
-    if is_fake_odds_payload(payload, source=source):
-        return False, "NO_LEGITIMATE_1X2_ODDS", {}
-    lines = normalize_snapshot_odds_lines(payload, fixture_id=int(fixture_id))
-    odds = _median_1x2_decimal(lines)
-    if not odds.get("valid"):
-        return False, "NO_LEGITIMATE_1X2_ODDS", {"snapshot_at": snap_at}
-    return True, None, {**odds, "snapshot_at": snap_at, "provider": source}
+    canonical = get_latest_valid_1x2_odds_snapshot(conn, int(fixture_id), kickoff_utc=kickoff_utc)
+    meta = canonical.to_dict()
+    if canonical.freshness_class == "ODDS_MISSING":
+        return False, "NO_LEGITIMATE_1X2_ODDS", meta
+    if canonical.freshness_class == "ODDS_TIMESTAMP_MISSING":
+        return False, "ODDS_TIMESTAMP_MISSING", meta
+    if canonical.freshness_class == "ODDS_PROVIDER_MISSING":
+        return False, "ODDS_PROVIDER_MISSING", meta
+    if canonical.freshness_class == "ODDS_MARKET_NOT_SUPPORTED":
+        return False, "ODDS_MARKET_NOT_SUPPORTED", meta
+    if canonical.freshness_class == "ODDS_INCOMPLETE":
+        return False, "NO_LEGITIMATE_1X2_ODDS", meta
+    return (
+        True,
+        None,
+        {
+            **meta,
+            "valid": True,
+            "snapshot_at": canonical.fetched_at_utc,
+            "home_odds": canonical.home_odds,
+            "draw_odds": canonical.draw_odds,
+            "away_odds": canonical.away_odds,
+            "bookmaker": canonical.bookmaker,
+            "provider": canonical.provider,
+        },
+    )
 
 
 def _freshness_for_row(
@@ -124,7 +136,7 @@ def _build_block_diagnostics(
     now = _utc_now_iso()
     kickoff = row.get("kickoff_utc")
     allowed_ttl = get_allowed_odds_ttl_seconds(kickoff)
-    snap_at = freshness.get("odds_snapshot_at") or (legitimate or {}).get("snapshot_at")
+    snap_at = freshness.get("odds_snapshot_at") or (legitimate or {}).get("snapshot_at") or (legitimate or {}).get("fetched_at_utc")
     age_hours = freshness.get("odds_age_hours")
     odds_age_seconds = round(float(age_hours) * 3600, 1) if age_hours is not None else None
     refresh = refresh_result or {}
@@ -158,8 +170,36 @@ def _build_block_diagnostics(
         "bookmaker": (legitimate or {}).get("bookmaker"),
         "home_odds": (legitimate or {}).get("home_odds"),
         "draw_odds": (legitimate or {}).get("draw_odds"),
+        "canonical_snapshot_source": (legitimate or {}).get("canonical_snapshot_source") or CANONICAL_SOURCE,
+        "timestamp_source_field": (legitimate or {}).get("timestamp_source_field") or freshness.get("timestamp_source_field"),
+        "provider_request_success": refresh.get("provider_request_success"),
+        "refresh_imported_rows": refresh.get("refresh_imported_rows"),
+        "refresh_complete_1x2_rows": refresh.get("refresh_complete_1x2_rows"),
+        "refresh_persisted": refresh.get("refresh_persisted"),
+        "odds_age_minutes": round(float(age_hours) * 60, 1) if age_hours is not None else (legitimate or {}).get("odds_age_minutes"),
+        "freshness_class": freshness.get("odds_freshness_class") or (legitimate or {}).get("freshness_class"),
         "away_odds": (legitimate or {}).get("away_odds"),
     }
+
+
+CANONICAL_SOURCE = "odds_snapshots"
+
+_AFTER_REFRESH_BLOCK = {
+    "ODDS_STALE": "STALE_ODDS_AFTER_REFRESH",
+    "ODDS_TIMESTAMP_MISSING": "ODDS_TIMESTAMP_MISSING_AFTER_REFRESH",
+    "ODDS_PROVIDER_MISSING": "ODDS_PROVIDER_MISSING_AFTER_REFRESH",
+    "ODDS_MARKET_NOT_SUPPORTED": "ODDS_MARKET_NOT_SUPPORTED_AFTER_REFRESH",
+    "ODDS_INCOMPLETE": "ODDS_INCOMPLETE_AFTER_REFRESH",
+}
+
+
+def _after_refresh_block_reason(freshness: dict[str, Any], legit_reason: str | None) -> str:
+    fc = freshness.get("odds_freshness_class")
+    if fc in _AFTER_REFRESH_BLOCK:
+        return _AFTER_REFRESH_BLOCK[fc]
+    if legit_reason:
+        return f"{legit_reason}_AFTER_REFRESH"
+    return "STALE_ODDS_AFTER_REFRESH"
 
 
 def refresh_live_odds(fixture: DailyFixture, *, settings: Settings | None = None) -> dict[str, Any]:
@@ -169,8 +209,12 @@ def refresh_live_odds(fixture: DailyFixture, *, settings: Settings | None = None
     attempts = result.get("attempts") or []
     return {
         "success": bool(result.get("imported")),
+        "provider_request_success": bool(result.get("imported")),
         "refresh_attempted": True,
         "refresh_success": bool(result.get("imported")),
+        "refresh_imported_rows": 1 if result.get("imported") else 0,
+        "refresh_complete_1x2_rows": 1 if result.get("imported") else 0,
+        "refresh_persisted": bool(result.get("imported")),
         "provider": result.get("provider") or result.get("selected_live_provider"),
         "providers_tried": result.get("providers_tried") or [a.get("provider") for a in attempts],
         "attempts": attempts,
@@ -198,7 +242,9 @@ def ensure_fresh_odds_before_prediction(
     cls_status = freshness.get("odds_freshness_status")
     refresh_result: dict[str, Any] | None = None
 
-    legit_ok, legit_reason, legit_meta = validate_legitimate_1x2_snapshot(conn, int(row["fixture_id"]))
+    legit_ok, legit_reason, legit_meta = validate_legitimate_1x2_snapshot(
+        conn, int(row["fixture_id"]), kickoff_utc=row.get("kickoff_utc")
+    )
     pre_refresh_legit_ok = legit_ok
     pre_refresh_legit_reason = legit_reason
     needs_refresh = (
@@ -231,7 +277,9 @@ def ensure_fresh_odds_before_prediction(
             refresh_success=refresh_result.get("refresh_success"),
             refresh_reason=str(refresh_result.get("status") or ""),
         )
-        legit_ok, legit_reason, legit_meta = validate_legitimate_1x2_snapshot(conn, int(row["fixture_id"]))
+        legit_ok, legit_reason, legit_meta = validate_legitimate_1x2_snapshot(
+            conn, int(row["fixture_id"]), kickoff_utc=row.get("kickoff_utc")
+        )
 
     if not refresh_if_needed or not refresh_result:
         reason = legit_reason or "STALE_ODDS"
@@ -278,7 +326,7 @@ def ensure_fresh_odds_before_prediction(
         }
 
     if freshness.get("requires_fresh_odds"):
-        reason = "STALE_ODDS_AFTER_REFRESH"
+        reason = _after_refresh_block_reason(freshness, legit_reason)
         return {
             "allowed": False,
             "final_block_reason": reason,
@@ -295,7 +343,7 @@ def ensure_fresh_odds_before_prediction(
         }
 
     if not legit_ok:
-        reason = legit_reason or "NO_LEGITIMATE_1X2_ODDS_AFTER_REFRESH"
+        reason = _after_refresh_block_reason(freshness, legit_reason or "NO_LEGITIMATE_1X2_ODDS")
         return {
             "allowed": False,
             "final_block_reason": reason,

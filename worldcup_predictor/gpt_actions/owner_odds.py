@@ -14,7 +14,7 @@ from worldcup_predictor.egie.provider_features.odds_snapshot_parser import (
 )
 from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
 from worldcup_predictor.gpt_actions.tier_b_shadow_registry import get_tier_b_domain
-from worldcup_predictor.owner.euro_c_odds_import import _latest_odds_snapshot, is_fake_odds_payload
+from worldcup_predictor.odds.canonical_snapshot import get_latest_valid_1x2_odds_snapshot
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
 from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata
 from worldcup_predictor.odds.refresh_gate import refresh_live_odds, validate_legitimate_1x2_snapshot
@@ -64,22 +64,20 @@ def _within_operational_window(kickoff_utc: str | None) -> bool:
 
 
 def _odds_from_snapshot(conn, fixture_id: int) -> dict[str, Any]:
-    snap = _latest_odds_snapshot(conn, int(fixture_id))
-    if not snap:
+    snap = get_latest_valid_1x2_odds_snapshot(conn, int(fixture_id))
+    if snap.freshness_class in {"ODDS_MISSING", "ODDS_MARKET_NOT_SUPPORTED", "ODDS_INCOMPLETE"}:
         return {"home": None, "draw": None, "away": None, "bookmaker_count": 0, "cache_hit": False}
-    payload = snap.get("payload")
-    source = None
-    if isinstance(payload, dict):
-        source = str(payload.get("provider") or payload.get("source") or "")
-    if is_fake_odds_payload(payload, source=source):
-        return {"home": None, "draw": None, "away": None, "bookmaker_count": 0, "cache_hit": False}
-    lines = normalize_snapshot_odds_lines(payload, fixture_id=int(fixture_id))
-    decimals = _median_decimal_odds(lines)
     return {
-        **decimals,
-        "cache_hit": decimals.get("bookmaker_count", 0) > 0,
-        "odds_timestamp": snap.get("snapshot_at"),
-        "freshness_status": snap.get("freshness") or "cached",
+        "home": snap.home_odds,
+        "draw": snap.draw_odds,
+        "away": snap.away_odds,
+        "bookmaker_count": snap.bookmaker_count,
+        "cache_hit": snap.bookmaker_count > 0,
+        "odds_timestamp": snap.fetched_at_utc,
+        "freshness_status": snap.freshness_class,
+        "provider": snap.provider,
+        "canonical_row_id": snap.row_id,
+        "timestamp_source_field": snap.timestamp_source_field,
     }
 
 

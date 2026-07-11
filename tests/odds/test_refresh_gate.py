@@ -195,8 +195,26 @@ def test_incomplete_1x2_rejected():
 
 def test_odds_timestamp_missing_blocks():
     conn = MagicMock()
-    with patch("worldcup_predictor.odds.refresh_gate._latest_odds_snapshot") as snap:
-        snap.return_value = {"payload": {"bookmakers": []}, "snapshot_at": None}
+    with patch("worldcup_predictor.odds.refresh_gate.get_latest_valid_1x2_odds_snapshot") as snap_fn:
+        from worldcup_predictor.odds.canonical_snapshot import CanonicalOddsSnapshot
+
+        snap_fn.return_value = CanonicalOddsSnapshot(
+            fixture_id=99,
+            row_id=1,
+            canonical_snapshot_source="odds_snapshots",
+            freshness_class="ODDS_TIMESTAMP_MISSING",
+            freshness_reason="complete_odds_without_timestamp",
+            provider="api-football",
+            bookmaker="bk1",
+            bookmaker_count=2,
+            normalized_market="FULL_TIME_1X2",
+            raw_market="Match Winner",
+            home_odds=2.0,
+            draw_odds=3.0,
+            away_odds=4.0,
+            fetched_at_utc=None,
+            timestamp_source_field=None,
+        )
         ok, reason, _ = validate_legitimate_1x2_snapshot(conn, 99)
         assert ok is False
         assert reason == "ODDS_TIMESTAMP_MISSING"

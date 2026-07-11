@@ -14,7 +14,7 @@ from worldcup_predictor.egie.provider_features.odds_snapshot_parser import (
 )
 from worldcup_predictor.mcp_server import runtime as mcp_runtime
 from worldcup_predictor.mcp_server.tools import health as health_tools
-from worldcup_predictor.owner.euro_c_odds_import import _latest_odds_snapshot, is_fake_odds_payload
+from worldcup_predictor.odds.canonical_snapshot import get_latest_valid_1x2_odds_snapshot
 from worldcup_predictor.owner_daily.constants import DEFAULT_TIMEZONE, REPORTS_DIR
 from worldcup_predictor.gpt_actions.owner_odds import OwnerOddsBudget, controlled_owner_odds_lookup
 from worldcup_predictor.gpt_actions.owner_scope import (
@@ -152,17 +152,19 @@ def _median_decimal_odds(lines: list[NormalizedOddsLine]) -> dict[str, float | N
 
 
 def _match_odds(conn, fixture_id: int) -> dict[str, float | int | None]:
-    snap = _latest_odds_snapshot(conn, int(fixture_id))
-    if not snap:
+    snap = get_latest_valid_1x2_odds_snapshot(conn, int(fixture_id))
+    if snap.freshness_class in {"ODDS_MISSING", "ODDS_MARKET_NOT_SUPPORTED", "ODDS_INCOMPLETE"}:
         return {"home": None, "draw": None, "away": None, "bookmaker_count": 0}
-    payload = snap.get("payload")
-    source = None
-    if isinstance(payload, dict):
-        source = str(payload.get("provider") or payload.get("source") or "")
-    if is_fake_odds_payload(payload, source=source):
-        return {"home": None, "draw": None, "away": None, "bookmaker_count": 0}
-    lines = normalize_snapshot_odds_lines(payload, fixture_id=int(fixture_id))
-    return _median_decimal_odds(lines)
+    return {
+        "home": snap.home_odds,
+        "draw": snap.draw_odds,
+        "away": snap.away_odds,
+        "bookmaker_count": snap.bookmaker_count,
+        "provider": snap.provider,
+        "fetched_at_utc": snap.fetched_at_utc,
+        "canonical_row_id": snap.row_id,
+        "freshness_class": snap.freshness_class,
+    }
 
 
 def filter_matches_by_odds(
