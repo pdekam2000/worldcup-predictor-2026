@@ -46,6 +46,8 @@ from worldcup_predictor.providers.sportmonks_provider import SportmonksProvider
 from worldcup_predictor.research.ecse_live.prediction_builder import build_ecse_live_prediction
 from worldcup_predictor.research.ecse_live.store import ensure_ecse_live_tables, get_snapshot, has_snapshot
 
+from worldcup_predictor.gpt_actions.tier_b_shadow_registry import TIER_B_SHADOW_DOMAINS
+
 PHASE = "DOMESTIC-LEAGUE-CONTROL-BATCH"
 BATCH_PREFIX = "domestic_league_control"
 UEFA_REFERENCE_BATCH = "tomorrow_4_league_20260707"
@@ -54,21 +56,19 @@ SCAN_DAYS = 30
 PREFERRED_BOOKMAKERS = 5
 NOT_STARTED = {"NS", "TBD", "SCHEDULED", "TIMED"}
 
-# Leagues with verified production support in this repository.
+# Tier B owner/shadow domains — shared with tier_b_shadow_registry (not DAILY_SUPPORTED_COMPETITIONS).
 PROVEN_DOMESTIC_LEAGUE_IDS: dict[int, str] = {
-    113: "allsvenskan",
-    114: "superettan",
-    362: "a_lyga",
-    365: "virsliga",
-    164: "urvalsdeild",
+    int(meta["provider_league_id"]): key for key, meta in TIER_B_SHADOW_DOMAINS.items()
 }
 
 PROVEN_DOMESTIC_LEAGUES: dict[str, dict[str, Any]] = {
-    "allsvenskan": {"name": "Allsvenskan", "league_id": 113, "country": "Sweden", "season": 2026},
-    "superettan": {"name": "Superettan", "league_id": 114, "country": "Sweden", "season": 2026},
-    "a_lyga": {"name": "A Lyga", "league_id": 362, "country": "Lithuania", "season": 2026},
-    "virsliga": {"name": "Virsliga", "league_id": 365, "country": "Latvia", "season": 2026},
-    "urvalsdeild": {"name": "Úrvalsdeild", "league_id": 164, "country": "Iceland", "season": 2026},
+    key: {
+        "name": key.replace("_", " ").title(),
+        "league_id": int(meta["provider_league_id"]),
+        "country": meta.get("country", ""),
+        "season": 2026,
+    }
+    for key, meta in TIER_B_SHADOW_DOMAINS.items()
 }
 
 
