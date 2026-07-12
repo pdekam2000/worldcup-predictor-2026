@@ -889,6 +889,14 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
     except ModuleNotFoundError:
         pass
 
+    try:
+        from worldcup_predictor.provider_features.ddl import PREMATCH_FEATURE_DDL
+
+        for ddl in PREMATCH_FEATURE_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
     conn.execute(
         "INSERT OR REPLACE INTO schema_meta(key, value) VALUES (?, ?)",
         ("schema_version", str(SCHEMA_VERSION)),
