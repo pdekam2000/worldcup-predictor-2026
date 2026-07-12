@@ -1,0 +1,11 @@
+[Unit]
+Description=Run WorldCup odds refresh every 30 minutes
+
+[Timer]
+OnCalendar=*:0/30
+RandomizedDelaySec=120
+Persistent=true
+Unit=worldcup-odds-refresh.service
+
+[Install]
+WantedBy=timers.target

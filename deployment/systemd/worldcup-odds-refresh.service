@@ -1,0 +1,26 @@
+[Unit]
+Description=WorldCup scheduled 1X2 odds refresh (odds only, no predictions)
+After=network.target
+ConditionPathExists=/opt/worldcup-predictor/.venv/bin/python
+
+[Service]
+Type=oneshot
+User=worldcup-gpt-actions
+Group=worldcup-gpt-actions
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=PYTHONUNBUFFERED=1
+Environment=APP_ENV=production
+Environment=WORLDCUP_LOCK_DIR=/opt/worldcup-predictor/artifacts/locks
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/run_scheduled_odds_refresh.py --max-api-calls 20
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-odds-refresh
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/worldcup-predictor/data /opt/worldcup-predictor/artifacts /opt/worldcup-predictor/reports /opt/worldcup-predictor/.cache
+
+[Install]
+WantedBy=multi-user.target
