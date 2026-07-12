@@ -9,9 +9,9 @@ from typing import TypeVar
 
 T = TypeVar("T")
 
-DEFAULT_MAX_ATTEMPTS = 6
+DEFAULT_MAX_ATTEMPTS = 5
 DEFAULT_BASE_DELAY_S = 0.5
-DEFAULT_MAX_DELAY_S = 8.0
+DEFAULT_MAX_DELAY_S = 4.0
 
 
 def is_sqlite_lock_error(exc: BaseException) -> bool:

@@ -16,6 +16,7 @@ from worldcup_predictor.data_import.european_result_backfill import (
     audit_missing_uefa_results,
     run_uefa_result_backfill,
 )
+from worldcup_predictor.database.process_lock import ProcessLockError, single_instance_lock
 
 AUDIT_PATH = ROOT / "artifacts" / "euro_a2_missing_uefa_results_audit.json"
 SUMMARY_PATH = ROOT / "artifacts" / "euro_a2_result_backfill_repair_summary.json"
@@ -54,13 +55,28 @@ def main() -> int:
         print(json.dumps({"audit_path": str(audit_path), "missing_count": audit["missing_count"]}, indent=2))
         return 0
 
-    report = run_uefa_result_backfill(
-        competition_keys=args.competitions,
-        force=args.force,
-        dry_run=args.dry_run,
-        explain=args.explain_matches or args.dry_run,
-        limit=args.limit,
-    )
+    try:
+        with single_instance_lock("worldcup-uefa-result-backfill", blocking=False):
+            report = run_uefa_result_backfill(
+                competition_keys=args.competitions,
+                force=args.force,
+                dry_run=args.dry_run,
+                explain=args.explain_matches or args.dry_run,
+                limit=args.limit,
+            )
+    except ProcessLockError:
+        print(
+            json.dumps(
+                {
+                    "phase": "EURO-A2",
+                    "status": "skipped_overlap",
+                    "reason": "another_backfill_instance_active",
+                },
+                indent=2,
+            )
+        )
+        return 0
+
     report["audit_path"] = str(audit_path)
     report["audit_missing_count"] = audit["missing_count"]
 

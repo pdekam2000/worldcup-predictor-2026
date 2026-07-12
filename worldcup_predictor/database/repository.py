@@ -459,29 +459,35 @@ class FootballIntelligenceRepository:
         team_name: str | None = None,
         agent_name: str | None = None,
     ) -> None:
+        from worldcup_predictor.database.sqlite_retry import run_with_sqlite_retry
+
         stamp = snapshot_at or _utc_now()
         payload_json = json.dumps(payload, ensure_ascii=False)
-        if table == "odds_snapshots":
-            self._conn.execute(
-                "INSERT INTO odds_snapshots(fixture_id, competition_key, snapshot_at, payload_json) VALUES (?, ?, ?, ?)",
-                (fixture_id, competition_key, stamp, payload_json),
-            )
-        elif table == "xg_snapshots":
-            self._conn.execute(
-                "INSERT INTO xg_snapshots(fixture_id, competition_key, snapshot_at, payload_json) VALUES (?, ?, ?, ?)",
-                (fixture_id, competition_key, stamp, payload_json),
-            )
-        elif table == "player_stats_snapshots":
-            self._conn.execute(
-                "INSERT INTO player_stats_snapshots(fixture_id, competition_key, snapshot_at, payload_json) VALUES (?, ?, ?, ?)",
-                (fixture_id, competition_key, stamp, payload_json),
-            )
-        elif table == "agent_signals":
-            self._conn.execute(
-                "INSERT INTO agent_signals(fixture_id, competition_key, agent_name, signal_at, payload_json) VALUES (?, ?, ?, ?, ?)",
-                (fixture_id, competition_key, agent_name or "unknown", stamp, payload_json),
-            )
-        self._conn.commit()
+
+        def _write() -> None:
+            if table == "odds_snapshots":
+                self._conn.execute(
+                    "INSERT INTO odds_snapshots(fixture_id, competition_key, snapshot_at, payload_json) VALUES (?, ?, ?, ?)",
+                    (fixture_id, competition_key, stamp, payload_json),
+                )
+            elif table == "xg_snapshots":
+                self._conn.execute(
+                    "INSERT INTO xg_snapshots(fixture_id, competition_key, snapshot_at, payload_json) VALUES (?, ?, ?, ?)",
+                    (fixture_id, competition_key, stamp, payload_json),
+                )
+            elif table == "player_stats_snapshots":
+                self._conn.execute(
+                    "INSERT INTO player_stats_snapshots(fixture_id, competition_key, snapshot_at, payload_json) VALUES (?, ?, ?, ?)",
+                    (fixture_id, competition_key, stamp, payload_json),
+                )
+            elif table == "agent_signals":
+                self._conn.execute(
+                    "INSERT INTO agent_signals(fixture_id, competition_key, agent_name, signal_at, payload_json) VALUES (?, ?, ?, ?, ?)",
+                    (fixture_id, competition_key, agent_name or "unknown", stamp, payload_json),
+                )
+            self._conn.commit()
+
+        run_with_sqlite_retry(_write, max_attempts=5)
 
     def save_coach_report(self, report: dict[str, Any], *, competition_key: str | None = None) -> None:
         self._conn.execute(

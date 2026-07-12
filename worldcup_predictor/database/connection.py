@@ -19,31 +19,44 @@ def connect(path: str | Path | None = None) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA busy_timeout = 30000")
+    try:
+        conn.execute("PRAGMA journal_mode = WAL")
+    except sqlite3.OperationalError:
+        pass
     if db_path.exists() and db_path.stat().st_size > 0:
         from worldcup_predictor.database.migrations import ensure_schema_compat
 
-        ensure_schema_compat(conn)
+        has_schema = conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='schema_meta' LIMIT 1"
+        ).fetchone()
+        if has_schema:
+            ensure_schema_compat(conn)
     return conn
 
 
 def init_database(path: str | Path | None = None) -> sqlite3.Connection:
-    from worldcup_predictor.access.schema import ACCESS_DDL_STATEMENTS, ACCESS_SCHEMA_VERSION
+    from worldcup_predictor.database.sqlite_retry import run_with_sqlite_retry
 
-    conn = connect(path)
-    for ddl in DDL_STATEMENTS:
-        conn.execute(ddl)
-    for ddl in ACCESS_DDL_STATEMENTS:
-        conn.execute(ddl)
-    from worldcup_predictor.database.migrations import apply_migrations
+    def _init() -> sqlite3.Connection:
+        from worldcup_predictor.access.schema import ACCESS_DDL_STATEMENTS, ACCESS_SCHEMA_VERSION
 
-    apply_migrations(conn)
-    version = max(SCHEMA_VERSION, ACCESS_SCHEMA_VERSION)
-    conn.execute(
-        "INSERT OR REPLACE INTO schema_meta(key, value) VALUES (?, ?)",
-        ("schema_version", str(version)),
-    )
-    conn.commit()
-    return conn
+        conn = connect(path)
+        for ddl in DDL_STATEMENTS:
+            conn.execute(ddl)
+        for ddl in ACCESS_DDL_STATEMENTS:
+            conn.execute(ddl)
+        from worldcup_predictor.database.migrations import apply_migrations
+
+        apply_migrations(conn)
+        version = max(SCHEMA_VERSION, ACCESS_SCHEMA_VERSION)
+        conn.execute(
+            "INSERT OR REPLACE INTO schema_meta(key, value) VALUES (?, ?)",
+            ("schema_version", str(version)),
+        )
+        conn.commit()
+        return conn
+
+    return run_with_sqlite_retry(_init, max_attempts=5)
 
 
 def is_connected(path: str | Path | None = None) -> bool:
