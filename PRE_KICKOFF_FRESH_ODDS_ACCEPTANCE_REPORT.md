@@ -19,9 +19,9 @@ Date: 2026-07-12 (Europe/Vienna)
 
 | Stage | SHA |
 |-------|-----|
-| LOCAL HEAD | `b69b83f` |
-| ORIGIN/main | `b69b83f` |
-| PRODUCTION HEAD | `b69b83f` |
+| LOCAL HEAD | `2a086cf` |
+| ORIGIN/main | `2a086cf` |
+| PRODUCTION HEAD | `2a086cf` |
 
 ---
 
@@ -82,6 +82,35 @@ See `PRE_KICKOFF_ODDS_ACCEPTANCE_FIXTURE_SELECTION.md`.
 | ECSE | Yes | Top1–Top5: 2-0, 3-0, 1-0, 4-0, 2-1 |
 
 Tier B: `prediction_scope=owner_shadow`, `public_visible=false` (shadow storage path).
+
+---
+
+## 4b. Owner workflow (PART C) — job execution
+
+Exact workflow on production (2026-07-12 ~01:50 UTC):
+
+1. `discoverTodayMatches(scope=owner)` — today’s owner fixtures
+2. `filterMatchesByOdds(scope=owner)` — odds filter applied
+3. `startPredictionJob(prediction_scope=owner_shadow)` for Tier B fixture **1494204**
+4. Job polled to completion (synchronous worker execution)
+
+| Field | Value |
+|-------|-------|
+| job_id | `6aec46d5-4875-440a-8abe-16a1cf1011a2` |
+| idempotency_key | `pre-kickoff-1494204` |
+| job_status | **completed** |
+| prediction_scope | owner_shadow |
+| data_quality | OK |
+| odds freshness | FRESH_ODDS |
+| age_minutes | 0.0 |
+| public_visible | false |
+| owner_shadow | true |
+| WDE | home_win, H 83.7% / D 11.6% / A 4.7% |
+| BTTS | no |
+| O/U 2.5 | over_2_5 |
+| ECSE Top1–Top5 | 2-0, 3-0, 1-0, 4-0, 2-1 |
+
+Tier A production job for 1554381 deferred — no canonical 1X2 odds in DB (provider-coverage gap for CL qualifier).
 
 ---
 
