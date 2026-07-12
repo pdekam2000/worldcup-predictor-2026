@@ -132,3 +132,39 @@ def wde_skip_detail(
     if extra:
         detail.update(extra)
     return detail
+
+
+def attach_wde_execution_diagnostics(
+    detail: dict[str, Any],
+    *,
+    wde_execution_status: str,
+    failure_code: str | None = None,
+    failure_stage: str | None = None,
+    failure_dependency: str | None = None,
+    failure_module: str | None = None,
+    failure_message_sanitized: str | None = None,
+    inputs_available: list[str] | None = None,
+    inputs_missing: list[str] | None = None,
+    fallback_attempted: bool = False,
+    fallback_result: str | None = None,
+) -> dict[str, Any]:
+    """Structured sanitized WDE provenance (no secrets)."""
+    detail["wde_execution_status"] = wde_execution_status
+    if failure_code:
+        detail["wde_failure_code"] = failure_code
+    if failure_stage:
+        detail["wde_failure_stage"] = failure_stage
+    if failure_dependency:
+        detail["wde_failure_dependency"] = failure_dependency
+    if failure_module:
+        detail["wde_failure_module"] = failure_module
+    if failure_message_sanitized:
+        detail["wde_failure_message_sanitized"] = failure_message_sanitized
+    if inputs_available is not None:
+        detail["wde_inputs_available"] = list(inputs_available)
+    if inputs_missing is not None:
+        detail["wde_inputs_missing"] = list(inputs_missing)
+    detail["wde_fallback_attempted"] = bool(fallback_attempted)
+    if fallback_result:
+        detail["wde_fallback_result"] = fallback_result
+    return detail

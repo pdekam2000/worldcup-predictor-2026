@@ -26,6 +26,7 @@ from worldcup_predictor.gpt_actions.bridge_semantics import (
     prediction_report_by_date_payload,
 )
 from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
+from worldcup_predictor.gpt_actions.runtime_bootstrap import bootstrap_gpt_actions_runtime
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture, discover_fixtures_from_db, vienna_day_utc_bounds
 from worldcup_predictor.owner_daily.predictions import run_daily_ecse, run_daily_wde
 from worldcup_predictor.owner_daily.report import _load_ecse, _load_wde, _owner_label
@@ -319,6 +320,20 @@ def _ecse_top_scores(ecse: dict[str, Any] | None) -> list[dict[str, Any]]:
     return out
 
 
+def _market_execution_status(payload: dict[str, Any] | None, market: dict[str, Any], *, label: str) -> dict[str, Any]:
+    if not payload:
+        return {
+            f"{label}_execution_status": "skipped_wde_payload_missing",
+            f"{label}_failure_code": "WDE_PAYLOAD_MISSING",
+        }
+    if market.get("selection") or market.get("pick"):
+        return {f"{label}_execution_status": "executed", f"{label}_failure_code": None}
+    return {
+        f"{label}_execution_status": "blocked_missing_market",
+        f"{label}_failure_code": f"{label.upper()}_MARKET_MISSING",
+    }
+
+
 def _format_prediction_result(
     *,
     row: dict[str, Any],
@@ -331,6 +346,7 @@ def _format_prediction_result(
     wde_result_source: str | None = None,
     wde_failure_code: str | None = None,
     wde_failure_stage: str | None = None,
+    wde_detail: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     wde_block = _market_block(payload) if payload else {}
     btts = wde_block.get("btts") or {}
@@ -353,6 +369,37 @@ def _format_prediction_result(
             if not wde_failure_code:
                 wde_failure_code = wde_warning
             break
+    btts_status = _market_execution_status(payload, btts, label="btts")
+    ou_status = _market_execution_status(payload, ou25, label="ou")
+    wde_block_out: dict[str, Any] = {
+        "home_probability": wde_block.get("home_prob"),
+        "draw_probability": wde_block.get("draw_prob"),
+        "away_probability": wde_block.get("away_prob"),
+        "prediction": wde_block.get("pick"),
+        "decision_pick": wde_block.get("pick"),
+        "effective_pick": wde_block.get("effective_pick"),
+        "probability_argmax": wde_block.get("probability_argmax"),
+        "decision_source": wde_block.get("decision_source"),
+        "confidence": wde_block.get("confidence"),
+        "model_version": wde_block.get("model_version"),
+        "wde_execution_status": wde_detail.get("wde_execution_status") if wde_detail else wde_execution_status,
+        "wde_result_source": wde_result_source,
+        "wde_warning": wde_warning,
+        "wde_failure_code": wde_failure_code,
+        "wde_failure_stage": wde_failure_stage,
+    }
+    if wde_detail:
+        for key in (
+            "wde_failure_dependency",
+            "wde_failure_module",
+            "wde_failure_message_sanitized",
+            "wde_inputs_available",
+            "wde_inputs_missing",
+            "wde_fallback_attempted",
+            "wde_fallback_result",
+        ):
+            if key in wde_detail:
+                wde_block_out[key] = wde_detail[key]
     return {
         "fixture": {
             "fixture_id": int(row["fixture_id"]),
@@ -367,32 +414,18 @@ def _format_prediction_result(
             "freshness": freshness.get("odds_status"),
             "age_minutes": freshness.get("age_minutes"),
         },
-        "wde": {
-            "home_probability": wde_block.get("home_prob"),
-            "draw_probability": wde_block.get("draw_prob"),
-            "away_probability": wde_block.get("away_prob"),
-            "prediction": wde_block.get("pick"),
-            "decision_pick": wde_block.get("pick"),
-            "effective_pick": wde_block.get("effective_pick"),
-            "probability_argmax": wde_block.get("probability_argmax"),
-            "decision_source": wde_block.get("decision_source"),
-            "confidence": wde_block.get("confidence"),
-            "model_version": wde_block.get("model_version"),
-            "wde_execution_status": wde_execution_status,
-            "wde_result_source": wde_result_source,
-            "wde_warning": wde_warning,
-            "wde_failure_code": wde_failure_code,
-            "wde_failure_stage": wde_failure_stage,
-        },
+        "wde": wde_block_out,
         "btts": {
             "prediction": btts.get("selection") or btts.get("pick"),
             "yes_probability": _pct(btts.get("yes") or btts.get("option_a")),
             "no_probability": _pct(btts.get("no") or btts.get("option_b")),
+            **btts_status,
         },
         "over_under_2_5": {
             "prediction": ou25.get("selection") or ou25.get("pick"),
             "over_probability": _pct(ou25.get("over") or ou25.get("option_a")),
             "under_probability": _pct(ou25.get("under") or ou25.get("option_b")),
+            **ou_status,
         },
         "ecse": {
             "top_scores": _ecse_top_scores(ecse_snap),
@@ -423,6 +456,8 @@ def run_fixture_prediction(
 ) -> dict[str, Any]:
     settings = settings or get_settings()
     warnings: list[str] = []
+    bootstrap_gpt_actions_runtime()
+    settings = get_settings()
     with _PREDICTION_LOCK:
         conn = connect(settings.sqlite_path)
         ensure_ecse_live_tables(conn)
@@ -504,13 +539,13 @@ def run_fixture_prediction(
                 warnings.append("ecse_snapshot_missing")
 
             if wde_status == "generated":
-                wde_execution_status = "executed"
+                wde_execution_status = wde_detail.get("wde_execution_status") or "executed"
                 wde_result_source = "fresh_engine"
             elif wde_status == "skipped":
-                wde_execution_status = "skipped"
+                wde_execution_status = wde_detail.get("wde_execution_status") or "skipped"
                 wde_result_source = "stored_prediction" if (payload or payload_before) else "none"
             else:
-                wde_execution_status = str(wde_status)
+                wde_execution_status = wde_detail.get("wde_execution_status") or str(wde_status)
                 wde_result_source = "stored_prediction" if payload else "none"
 
             freshness = _freshness_record(conn, row)
@@ -526,6 +561,7 @@ def run_fixture_prediction(
                 wde_result_source=wde_result_source,
                 wde_failure_code=wde_detail.get("wde_failure_code") if wde_status == "skipped" else None,
                 wde_failure_stage=wde_detail.get("wde_failure_stage") if wde_status == "skipped" else None,
+                wde_detail=wde_detail,
             )
         finally:
             conn.close()

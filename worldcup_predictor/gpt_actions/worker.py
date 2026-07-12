@@ -26,6 +26,7 @@ from worldcup_predictor.gpt_actions.owner_scope import (
 )
 from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
 from worldcup_predictor.gpt_actions.policies import validate_fixture_id_list
+from worldcup_predictor.gpt_actions.runtime_bootstrap import bootstrap_gpt_actions_runtime
 from worldcup_predictor.gpt_actions.shadow_storage import freeze_tier_b_shadow_prediction
 from worldcup_predictor.mcp_server import runtime as mcp_runtime
 
@@ -101,6 +102,7 @@ def execute_prediction_job(
         return
     store.update(job_id, status="running")
     request = record.get("request") or {}
+    bootstrap_gpt_actions_runtime()
     try:
         prediction_scope = _effective_prediction_scope(request)
         fixture_ids = _resolve_fixture_ids(request, max_count=config.max_fixture_ids_per_job)

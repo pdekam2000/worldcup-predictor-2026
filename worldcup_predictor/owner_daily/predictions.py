@@ -19,6 +19,7 @@ from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
 from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata, stamp_payload_odds_freshness
 from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
 from worldcup_predictor.gpt_actions.wde_runtime import (
+    attach_wde_execution_diagnostics,
     classify_wde_exception,
     prepare_daily_fixture_for_wde,
 )
@@ -119,10 +120,18 @@ def run_daily_wde(
     }
 
     if not settings.api_football_configured:
-        detail["reason"] = "missing_fixture_context"
-        detail["wde_failure_code"] = "WDE_DEPENDENCY_FAILED"
-        detail["wde_failure_stage"] = "api_credentials"
-        detail["error"] = "API_FOOTBALL_KEY not configured"
+        attach_wde_execution_diagnostics(
+            detail,
+            wde_execution_status="blocked_missing_dependency",
+            failure_code="WDE_API_CREDENTIALS_MISSING",
+            failure_stage="settings_bootstrap",
+            failure_dependency="api_credentials",
+            failure_module="worldcup_predictor.owner_daily.predictions",
+            failure_message_sanitized="API_FOOTBALL_KEY not loaded; ensure APP_ENV=production or bootstrap_gpt_actions_runtime()",
+            inputs_available=["fixture_row"],
+            inputs_missing=["api_credentials"],
+        )
+        detail["reason"] = "missing_api_credentials"
         return "skipped", detail
 
     fixture_row = repo.get_fixture_row(fid)
@@ -136,6 +145,17 @@ def run_daily_wde(
     )
     detail["odds_freshness"] = freshness
     if strict_fresh_odds and freshness.get("requires_fresh_odds"):
+        attach_wde_execution_diagnostics(
+            detail,
+            wde_execution_status="blocked_missing_dependency",
+            failure_code="WDE_ODDS_STALE",
+            failure_stage="odds_freshness_gate",
+            failure_dependency="fresh_odds",
+            failure_module="worldcup_predictor.owner_daily.predictions",
+            failure_message_sanitized="strict_fresh_odds gate blocked execution",
+            inputs_available=["fixture_row", "odds_snapshot"],
+            inputs_missing=["fresh_odds"],
+        )
         detail["reason"] = "strict_fresh_odds_blocked"
         return "skipped", detail
 
@@ -152,13 +172,36 @@ def run_daily_wde(
         result = pipeline.run(fixture_id=fid, record_history=False)
     except Exception as exc:
         failure_code, failure_stage = classify_wde_exception(exc)
+        attach_wde_execution_diagnostics(
+            detail,
+            wde_execution_status="failed_runtime_error",
+            failure_code=failure_code,
+            failure_stage=failure_stage,
+            failure_dependency=failure_stage,
+            failure_module="worldcup_predictor.orchestration.predict_pipeline",
+            failure_message_sanitized=f"{type(exc).__name__}: {str(exc)[:200]}",
+            inputs_available=["fixture_row", "competition_registry"],
+            inputs_missing=[],
+        )
         detail["reason"] = "engine_error"
-        detail["wde_failure_code"] = failure_code
-        detail["wde_failure_stage"] = failure_stage
         detail["error"] = f"{type(exc).__name__}: {exc}"
         return "skipped", detail
 
     if not result.success:
+        failed_agent = next((ar for ar in result.agent_results if not ar.success), None)
+        attach_wde_execution_diagnostics(
+            detail,
+            wde_execution_status="blocked_missing_dependency",
+            failure_code="WDE_TEAM_DATA_MISSING",
+            failure_stage="data_collector",
+            failure_dependency="team_intelligence",
+            failure_module="worldcup_predictor.orchestration.predict_pipeline",
+            failure_message_sanitized=(
+                failed_agent.message[:200] if failed_agent and failed_agent.message else "pipeline returned success=false"
+            ),
+            inputs_available=["fixture_row"],
+            inputs_missing=["team_form", "h2h", "intelligence_report"],
+        )
         detail["reason"] = "missing_team_data"
         return "skipped", detail
 
@@ -195,6 +238,7 @@ def run_daily_wde(
             "confidence": payload.get("confidence_score") or payload.get("confidence"),
             "no_bet_flag": payload.get("no_bet_flag"),
             "predicted_1x2": (payload.get("one_x_two") or {}).get("selection"),
+            "wde_execution_status": "executed",
         }
     )
     return "generated", detail
