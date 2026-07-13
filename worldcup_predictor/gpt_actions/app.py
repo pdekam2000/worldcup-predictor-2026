@@ -20,6 +20,7 @@ from worldcup_predictor.gpt_actions.delegation import (
     get_system_status,
     list_today_matches_broad,
 )
+from worldcup_predictor.gpt_actions.job_status import build_job_create_fields, build_job_status_fields
 from worldcup_predictor.gpt_actions.jobs import JobStore
 from worldcup_predictor.gpt_actions.policies import validate_iso_date
 from worldcup_predictor.gpt_actions.rate_limit import RateLimiter
@@ -165,23 +166,12 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
             existing = app.state.job_store.get_by_idempotency_key(idempotency_key)
             if existing:
                 if existing["status"] in ("queued", "running"):
-                    return JobCreateResponse(
-                        job_id=existing["job_id"],
-                        status=existing["status"],
-                        created_at=existing["created_at"],
-                        poll_after_seconds=cfg.poll_after_seconds,
-                    )
-                result = existing.get("result")
+                    return JobCreateResponse(**build_job_create_fields(existing, poll_after_seconds=cfg.poll_after_seconds))
+                fields = build_job_status_fields(existing, poll_after_seconds=cfg.poll_after_seconds)
+                result = fields.get("result")
                 if isinstance(result, dict):
-                    result = _trim_payload(result, cfg.max_response_chars)
-                return JobStatusResponse(
-                    job_id=existing["job_id"],
-                    status=existing["status"],
-                    created_at=existing["created_at"],
-                    updated_at=existing["updated_at"],
-                    result=result,
-                    error=existing.get("error"),
-                )
+                    fields["result"] = _trim_payload(result, cfg.max_response_chars)
+                return JobStatusResponse(**fields)
         try:
             record = app.state.job_store.create(
                 payload=body.model_dump(),
@@ -192,12 +182,7 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
                 raise HTTPException(status_code=429, detail="another prediction job is active") from exc
             raise
         enqueue_prediction_job(record["job_id"], store=app.state.job_store, config=cfg)
-        return JobCreateResponse(
-            job_id=record["job_id"],
-            status=record["status"],
-            created_at=record["created_at"],
-            poll_after_seconds=cfg.poll_after_seconds,
-        )
+        return JobCreateResponse(**build_job_create_fields(record, poll_after_seconds=cfg.poll_after_seconds))
 
     @app.get(
         f"{API_PREFIX}/prediction-jobs/{{job_id}}",
@@ -208,17 +193,11 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
         record = app.state.job_store.get(job_id)
         if not record:
             raise HTTPException(status_code=404, detail="job not found")
-        result = record.get("result")
+        fields = build_job_status_fields(record, poll_after_seconds=cfg.poll_after_seconds)
+        result = fields.get("result")
         if isinstance(result, dict):
-            result = _trim_payload(result, cfg.max_response_chars)
-        return JobStatusResponse(
-            job_id=record["job_id"],
-            status=record["status"],
-            created_at=record["created_at"],
-            updated_at=record["updated_at"],
-            result=result,
-            error=record.get("error"),
-        )
+            fields["result"] = _trim_payload(result, cfg.max_response_chars)
+        return JobStatusResponse(**fields)
 
     @app.get(
         f"{API_PREFIX}/reports/latest",

@@ -1,11 +1,12 @@
 openapi: 3.1.0
 info:
   title: WorldCup Predictor GPT Actions
-  version: 1.1.1
+  version: 1.2.0
   description: |
     Owner-only narrow REST bridge for ChatGPT Plus Custom GPT Actions.
     Returns structured model evidence (WDE, BTTS, O/U 2.5, ECSE Top1–Top5).
-    Long predictions use async jobs — poll until completed.
+    Long predictions use async jobs — you MUST poll getPredictionJob until terminal=true.
+    A response with status=queued or status=running and result=null is normal intermediate state — not a final answer.
     Tier A fixtures: display_status=TRUSTED. Tier B: TEST PHASE — UNDER FORWARD EVALUATION.
     listTodayMatches performs broad provider+DB fixture discovery with classification (not prediction-gated).
 servers:
@@ -131,6 +132,14 @@ paths:
     post:
       operationId: startPredictionJob
       summary: Start async canonical prediction job
+      description: |
+        Starts an asynchronous prediction job. The initial 202 response is NOT the final prediction.
+        Save job_id from the response. Poll getPredictionJob with the SAME job_id until terminal=true.
+        Continue polling while should_poll_again=true (status queued or running).
+        Do NOT present WDE, FT Marginal, H/D/A, BTTS, O/U, or ECSE Top1–Top5 from this response.
+        Do NOT create a replacement job merely because the first job is still running.
+        On completed status with terminal=true, display the full result payload.
+        On failed status, show the sanitized error field.
       parameters:
         - name: Idempotency-Key
           in: header
@@ -161,6 +170,16 @@ paths:
     get:
       operationId: getPredictionJob
       summary: Poll prediction job status and evidence
+      description: |
+        Poll the SAME job_id returned by startPredictionJob until terminal=true.
+        If should_poll_again=true, wait poll_after_seconds then call this operation again.
+        Do NOT answer the user with final prediction output while should_poll_again=true.
+        result=null with status=running is normal — keep polling.
+        When status=completed and terminal=true, display result including:
+        WDE Decision, FT Marginal Direction, Home/Draw/Away probabilities, BTTS, Over/Under 2.5,
+        ECSE Top1–Top5, Data Quality, Odds Freshness, Model Agreement, and warnings.
+        If continuation_code=PREDICTION_JOB_STILL_RUNNING, preserve job_id and poll again later.
+        Never create a duplicate job for polling.
       parameters:
         - name: job_id
           in: path
@@ -303,35 +322,68 @@ components:
           default: true
     JobCreateResponse:
       type: object
-      required: [job_id, status, created_at, poll_after_seconds]
+      required: [job_id, status, terminal, should_poll_again, created_at, poll_after_seconds]
       properties:
         job_id:
           type: string
         status:
           type: string
           enum: [queued, running]
+        terminal:
+          type: boolean
+          description: Always false for new jobs — poll until true.
+        should_poll_again:
+          type: boolean
+          description: Always true for new jobs — call getPredictionJob with same job_id.
         created_at:
           type: string
         poll_after_seconds:
           type: integer
           minimum: 1
           maximum: 30
+        polling_message:
+          type: string
+          description: Human-readable reminder not to present final output yet.
+        continuation_code:
+          type: string
+          description: PREDICTION_JOB_STILL_RUNNING when polling must continue.
     JobStatusResponse:
       type: object
-      required: [job_id, status, created_at, updated_at]
+      required: [job_id, status, terminal, should_poll_again, created_at, updated_at, poll_after_seconds]
       properties:
         job_id:
           type: string
         status:
           type: string
-          enum: [queued, running, completed, partial, failed]
+          enum: [queued, running, completed, partial, failed, cancelled]
+        terminal:
+          type: boolean
+          description: True only when job reached completed, partial, failed, or cancelled.
+        should_poll_again:
+          type: boolean
+          description: True while status is queued or running.
         created_at:
           type: string
         updated_at:
           type: string
+        started_at:
+          type: string
+          nullable: true
+        completed_at:
+          type: string
+          nullable: true
+        poll_after_seconds:
+          type: integer
+          minimum: 0
+          maximum: 30
+          description: Seconds to wait before next poll when should_poll_again=true.
         result:
           $ref: "#/components/schemas/PredictionJobResult"
         error:
+          type: string
+        polling_message:
+          type: string
+        continuation_code:
           type: string
     PredictionJobResult:
       type: object

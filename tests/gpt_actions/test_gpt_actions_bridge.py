@@ -43,7 +43,7 @@ def _auth_headers(**extra):
 
 def test_dry_test_manifest():
     manifest = dry_test()
-    assert manifest["route_count"] == 7
+    assert manifest["route_count"] == 8
     assert manifest["bind_localhost_only"] is True
 
 

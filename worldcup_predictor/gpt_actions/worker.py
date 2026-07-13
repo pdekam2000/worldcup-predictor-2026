@@ -14,7 +14,7 @@ from worldcup_predictor.gpt_actions.delegation import (
     format_fixture_evidence,
     rank_best_matches,
 )
-from worldcup_predictor.gpt_actions.jobs import JobStore
+from worldcup_predictor.gpt_actions.jobs import JobStore, _utc_now
 from worldcup_predictor.gpt_actions.owner_odds import OwnerOddsBudget, controlled_owner_odds_lookup
 from worldcup_predictor.gpt_actions.owner_scope import (
     PredictionScope,
@@ -100,7 +100,7 @@ def execute_prediction_job(
     record = store.get(job_id)
     if not record:
         return
-    store.update(job_id, status="running")
+    store.update(job_id, status="running", started_at=_utc_now())
     request = record.get("request") or {}
     bootstrap_gpt_actions_runtime()
     try:
@@ -112,6 +112,7 @@ def execute_prediction_job(
                 status="failed",
                 error="no_fixtures_matched_filter",
                 result={"fixture_count": 0, "predictions": [], "all_match_ranking": [], "best_3": []},
+                completed_at=_utc_now(),
             )
             return
 
@@ -207,11 +208,11 @@ def execute_prediction_job(
         }
         status = _aggregate_status(predictions) if predictions else "failed"
         if not predictions and rejected:
-            store.update(job_id, status="failed", error="all_fixtures_rejected", result=result)
+            store.update(job_id, status="failed", error="all_fixtures_rejected", result=result, completed_at=_utc_now())
         else:
-            store.update(job_id, status=status, result=result)
+            store.update(job_id, status=status, result=result, completed_at=_utc_now())
     except Exception as exc:
-        store.update(job_id, status="failed", error=str(exc)[:500])
+        store.update(job_id, status="failed", error=str(exc)[:500], completed_at=_utc_now())
     finally:
         store.release_active(job_id)
 

@@ -108,14 +108,25 @@ class StartPredictionJobRequest(BaseModel):
 class JobCreateResponse(BaseModel):
     job_id: str
     status: Literal["queued", "running"]
+    terminal: bool = False
+    should_poll_again: bool = True
     created_at: str
     poll_after_seconds: int
+    polling_message: str | None = None
+    continuation_code: str | None = None
 
 
 class JobStatusResponse(BaseModel):
     job_id: str
-    status: Literal["queued", "running", "completed", "partial", "failed"]
+    status: Literal["queued", "running", "completed", "partial", "failed", "cancelled"]
+    terminal: bool
+    should_poll_again: bool
     created_at: str
     updated_at: str
+    poll_after_seconds: int = 0
+    started_at: str | None = None
+    completed_at: str | None = None
     result: dict[str, Any] | None = None
     error: str | None = None
+    polling_message: str | None = None
+    continuation_code: str | None = None
