@@ -178,6 +178,26 @@ def execute_prediction_job(
                 evidence = format_fixture_evidence(raw, timezone=timezone, tier_meta=meta)
                 predictions.append(evidence)
                 if tier == "B":
+                    from worldcup_predictor.forward_evaluation.tier_b_persistence import (
+                        TierBPersistenceContext,
+                        finalize_tier_b_structured_persistence,
+                    )
+
+                    fe = raw.get("forward_evaluation") or {}
+                    persist_meta = finalize_tier_b_structured_persistence(
+                        int(fixture_id),
+                        prod_conn=conn,
+                        persistence_ctx=TierBPersistenceContext(
+                            fixture_id=int(fixture_id),
+                            prediction_scope=str(meta.get("prediction_scope") or "owner_shadow"),
+                            validation_tier="B",
+                            source_runtime="gpt_actions",
+                            source_job_id=job_id,
+                            public_visible=False,
+                        ),
+                        forward_evaluation=fe,
+                    )
+                    evidence["tier_b_persistence"] = persist_meta
                     wde = evidence.get("wde") or {}
                     ecse = evidence.get("ecse") or {}
                     freeze_tier_b_shadow_prediction(
@@ -188,6 +208,9 @@ def execute_prediction_job(
                         wde_version=wde.get("model_version"),
                         ecse_version=(raw.get("ecse") or {}).get("model_version"),
                         evidence=evidence,
+                        freeze_id=fe.get("freeze_id") or persist_meta.get("freeze_id"),
+                        content_hash=fe.get("content_hash") or persist_meta.get("content_hash"),
+                        structured_db_canonical=True,
                     )
         finally:
             conn.close()

@@ -53,12 +53,20 @@ def prod_db(tmp_path):
             predicted_at TEXT,
             updated_at TEXT,
             is_active INTEGER DEFAULT 1,
-            is_quarantined INTEGER DEFAULT 0
+            is_quarantined INTEGER DEFAULT 0,
+            prediction_scope TEXT,
+            validation_tier TEXT,
+            source_runtime TEXT
         )
         """
     )
     for ddl in PHASE_ECSE_LIVE_DDL:
         conn.execute(ddl)
+    for col in ("prediction_scope", "validation_tier", "source_runtime"):
+        try:
+            conn.execute(f"ALTER TABLE ecse_prediction_snapshots ADD COLUMN {col} TEXT")
+        except sqlite3.OperationalError:
+            pass
     conn.commit()
     yield conn
     conn.close()

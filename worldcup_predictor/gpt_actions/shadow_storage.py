@@ -50,8 +50,15 @@ def freeze_tier_b_shadow_prediction(
     ecse_version: str | None,
     evidence: dict[str, Any],
     path: Path | None = None,
+    freeze_id: str | None = None,
+    content_hash: str | None = None,
+    structured_db_canonical: bool = True,
 ) -> dict[str, Any]:
-    """Append frozen Tier B row if payload hash not already stored (idempotent)."""
+    """Append frozen Tier B row if payload hash not already stored (idempotent).
+
+    Structured DB (WSP + ECSE + frozen_predictions) is canonical when
+    structured_db_canonical=True. JSONL remains a compatibility audit mirror.
+    """
     target = path or SHADOW_PREDICTIONS_PATH
     target.parent.mkdir(parents=True, exist_ok=True)
     phash = _payload_hash(evidence)
@@ -72,6 +79,10 @@ def freeze_tier_b_shadow_prediction(
         "public_visible": False,
         "owner_visible": True,
         "evaluation_status": "pending",
+        "structured_db_canonical": structured_db_canonical,
+        "freeze_id": freeze_id,
+        "content_hash": content_hash,
+        "prediction_scope": "owner_shadow",
         "evidence": evidence,
     }
     with target.open("a", encoding="utf-8") as fh:

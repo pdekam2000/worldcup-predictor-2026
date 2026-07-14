@@ -99,6 +99,27 @@ PHASE36C_WC_STORED_COLUMNS: tuple[tuple[str, str, str], ...] = (
     ("worldcup_stored_predictions", "superseded_by", "INTEGER"),
 )
 
+# Phase 2C — Tier B structured forward-evaluation scope columns (additive)
+PHASE2C_TIER_B_COLUMNS: tuple[tuple[str, str, str], ...] = (
+    ("worldcup_stored_predictions", "prediction_scope", "TEXT"),
+    ("worldcup_stored_predictions", "validation_tier", "TEXT"),
+    ("worldcup_stored_predictions", "source_runtime", "TEXT"),
+    ("ecse_prediction_snapshots", "prediction_scope", "TEXT"),
+    ("ecse_prediction_snapshots", "validation_tier", "TEXT"),
+    ("ecse_prediction_snapshots", "source_runtime", "TEXT"),
+)
+
+PHASE2C_TIER_B_DDL: tuple[str, ...] = (
+    """
+    CREATE INDEX IF NOT EXISTS idx_wsp_prediction_scope
+    ON worldcup_stored_predictions(prediction_scope)
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_ecse_snap_prediction_scope
+    ON ecse_prediction_snapshots(prediction_scope)
+    """,
+)
+
 # Phase 46B — historical legacy import metadata (stored-prediction quarantine)
 PHASE46B_STORED_COLUMNS: tuple[tuple[str, str, str], ...] = (
     ("worldcup_stored_predictions", "imported_at", "TEXT"),
@@ -755,6 +776,14 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
     for table, column, typedef in PHASE62B_COLUMNS:
         if _table_exists(conn, table):
             _add_column_if_missing(conn, table, column, typedef)
+
+    for table, column, typedef in PHASE2C_TIER_B_COLUMNS:
+        if _table_exists(conn, table):
+            _add_column_if_missing(conn, table, column, typedef)
+
+    for ddl in PHASE2C_TIER_B_DDL:
+        if _table_exists(conn, "worldcup_stored_predictions"):
+            conn.execute(ddl)
 
     for table, column, typedef in WC_RESULT_SYNC_2_COLUMNS:
         if _table_exists(conn, table):

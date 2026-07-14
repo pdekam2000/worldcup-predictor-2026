@@ -569,10 +569,21 @@ def run_fixture_prediction(
                     ForwardEvalBridgeContext,
                     maybe_capture_after_prediction_persistence,
                 )
+                from worldcup_predictor.forward_evaluation.tier_b_persistence import (
+                    TierBPersistenceContext,
+                    finalize_tier_b_structured_persistence,
+                    resolve_tier_b_bridge_context,
+                )
+                from worldcup_predictor.gpt_actions.owner_scope import fixture_tier
 
-                ctx = ForwardEvalBridgeContext.from_mapping(bridge_context) or ForwardEvalBridgeContext(
+                comp_key = str(row.get("competition_key") or "")
+                tier = fixture_tier(comp_key)
+                ctx = resolve_tier_b_bridge_context(
+                    comp_key,
+                    bridge_context=bridge_context,
                     bridge_origin="mcp",
-                    prediction_scope="production",
+                    worldcup_stored_prediction_id=int(fixture_id),
+                    ecse_snapshot_id=int(ecse_snap["id"]) if ecse_snap.get("id") is not None else None,
                 )
                 if ctx.ecse_snapshot_id is None and ecse_snap.get("id") is not None:
                     ctx.ecse_snapshot_id = int(ecse_snap["id"])
@@ -586,6 +597,21 @@ def run_fixture_prediction(
                     ecse_snapshot_id=int(ecse_snap["id"]) if ecse_snap.get("id") is not None else None,
                 )
                 formatted["forward_evaluation"] = bridge.to_metadata_block()
+                if tier == "B" and ctx.prediction_scope == "owner_shadow":
+                    persist_meta = finalize_tier_b_structured_persistence(
+                        int(fixture_id),
+                        prod_conn=conn,
+                        persistence_ctx=TierBPersistenceContext(
+                            fixture_id=int(fixture_id),
+                            prediction_scope=ctx.prediction_scope,
+                            validation_tier="B",
+                            source_runtime=ctx.bridge_origin,
+                            source_job_id=ctx.source_job_id,
+                            public_visible=False,
+                        ),
+                        forward_evaluation=formatted["forward_evaluation"],
+                    )
+                    formatted["tier_b_persistence"] = persist_meta
             return formatted
         finally:
             conn.close()

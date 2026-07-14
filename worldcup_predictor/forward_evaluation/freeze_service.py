@@ -194,6 +194,10 @@ def _infer_prediction_scope(
 ) -> str:
     if source_context and source_context.get("prediction_scope"):
         return str(source_context["prediction_scope"])
+    if wsp_row.get("prediction_scope"):
+        return str(wsp_row["prediction_scope"])
+    if ecse.get("prediction_scope"):
+        return str(ecse["prediction_scope"])
     src = str(wsp_row.get("source") or ecse.get("prediction_source") or "")
     if "tier_b" in src.lower() or "owner_shadow" in src.lower():
         return "owner_shadow"
