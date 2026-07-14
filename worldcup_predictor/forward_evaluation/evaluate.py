@@ -10,7 +10,7 @@ from worldcup_predictor.forward_evaluation.constants import (
     EVAL_COMPLETE,
     HIT,
     MISS,
-    NOT_APPLICABLE,
+    NOT_EVALUATED_UNAVAILABLE,
     UNAVAILABLE,
 )
 from worldcup_predictor.forward_evaluation.context import build_prediction_context
@@ -50,6 +50,19 @@ def _compare(pred: str | None, actual: str | None) -> str:
     return HIT if p == a else MISS
 
 
+def _market_hit(
+    pred: str | None,
+    actual: str | None,
+    *,
+    execution_status: str | None = None,
+) -> str:
+    if execution_status and str(execution_status).upper() in {"UNAVAILABLE", "NOT_AVAILABLE", "SKIPPED"}:
+        return NOT_EVALUATED_UNAVAILABLE
+    if not pred:
+        return NOT_EVALUATED_UNAVAILABLE
+    return _compare(pred, actual)
+
+
 def _rank_hits(actual_score: str, ranks: list[dict[str, Any]]) -> dict[str, Any]:
     ordered = sorted(ranks, key=lambda r: int(r["rank"]))
     scores = [str(r["score"]) for r in ordered]
@@ -76,6 +89,7 @@ def evaluate_frozen_prediction(
     eval_conn: sqlite3.Connection,
     *,
     prediction_id: str,
+    prod_conn: sqlite3.Connection | None = None,
 ) -> dict[str, Any]:
     existing = eval_conn.execute(
         "SELECT prediction_id FROM market_evaluations WHERE prediction_id=?",
@@ -106,28 +120,59 @@ def evaluate_frozen_prediction(
     ]
     rank_eval = _rank_hits(str(actual["actual_score"]), ranks)
 
+    wde_hit = _compare(frozen.get("wde_decision"), actual.get("actual_1x2"))
+    ft_hit = _compare(frozen.get("ft_marginal_direction"), actual.get("actual_1x2"))
+    eff_hit = _compare(frozen.get("effective_1x2"), actual.get("actual_1x2"))
+    btts_hit = _market_hit(
+        frozen.get("btts_prediction"),
+        actual.get("actual_btts"),
+        execution_status=frozen.get("btts_execution_status"),
+    )
+    ou_hit = _market_hit(
+        frozen.get("ou25_prediction"),
+        actual.get("actual_ou25"),
+        execution_status=frozen.get("ou_execution_status"),
+    )
+
+    from worldcup_predictor.forward_evaluation.result_record import EVALUATION_VERSION
+
     eval_conn.execute(
         """
         INSERT INTO market_evaluations (
             prediction_id, fixture_id, wde_hit, ft_marginal_hit, effective_1x2_hit,
             btts_hit, ou25_hit, ecse_top1_hit, ecse_top3_hit, ecse_top5_hit,
-            actual_score_rank, actual_score_probability, evaluation_timestamp
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            actual_score_rank, actual_score_probability, evaluation_timestamp,
+            prediction_scope, validation_tier, content_hash, result_content_hash,
+            evaluation_version, evaluator_source, eligibility_class,
+            wde_evaluation_status, btts_evaluation_status, ou_evaluation_status,
+            ft_marginal_evaluation_status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             prediction_id,
             fid,
-            _compare(frozen.get("wde_decision"), actual.get("actual_1x2")),
-            _compare(frozen.get("ft_marginal_direction"), actual.get("actual_1x2")),
-            _compare(frozen.get("effective_1x2"), actual.get("actual_1x2")),
-            _compare(frozen.get("btts_prediction"), actual.get("actual_btts")),
-            _compare(frozen.get("ou25_prediction"), actual.get("actual_ou25")),
+            wde_hit,
+            ft_hit,
+            eff_hit,
+            btts_hit,
+            ou_hit,
             rank_eval["ecse_top1_hit"],
             rank_eval["ecse_top3_hit"],
             rank_eval["ecse_top5_hit"],
             rank_eval["actual_score_rank"],
             rank_eval["actual_score_probability"],
             _utc_now(),
+            frozen.get("prediction_scope"),
+            frozen.get("validation_tier"),
+            frozen.get("content_hash"),
+            actual.get("result_content_hash"),
+            EVALUATION_VERSION,
+            "forward_evaluation.evaluate",
+            None,
+            "EVALUATED" if wde_hit in (HIT, MISS) else NOT_EVALUATED_UNAVAILABLE,
+            "EVALUATED" if btts_hit in (HIT, MISS) else btts_hit,
+            "EVALUATED" if ou_hit in (HIT, MISS) else ou_hit,
+            "EVALUATED" if ft_hit in (HIT, MISS) else NOT_EVALUATED_UNAVAILABLE,
         ),
     )
     ctx = build_prediction_context({**frozen, **rank_eval, "rank_1_score": ranks[0]["score"] if ranks else None})
@@ -165,8 +210,12 @@ def evaluate_frozen_prediction(
         "evaluated": True,
         "prediction_id": prediction_id,
         "fixture_id": fid,
+        "evaluation_version": EVALUATION_VERSION,
         **rank_eval,
-        "wde_hit": _compare(frozen.get("wde_decision"), actual.get("actual_1x2")),
+        "wde_hit": wde_hit,
+        "ft_marginal_hit": ft_hit,
+        "btts_hit": btts_hit,
+        "ou25_hit": ou_hit,
     }
 
 

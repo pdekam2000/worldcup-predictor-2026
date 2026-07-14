@@ -16,11 +16,7 @@ def _utc_now() -> str:
 
 def _result_row(prod_conn: sqlite3.Connection, fixture_id: int) -> dict[str, Any] | None:
     row = prod_conn.execute(
-        """
-        SELECT fixture_id, home_goals, away_goals, regulation_home_goals, regulation_away_goals,
-               final_stage, match_outcome_type, ht_home_goals, ht_away_goals, finished_at
-        FROM fixture_results WHERE fixture_id = ? LIMIT 1
-        """,
+        "SELECT * FROM fixture_results WHERE fixture_id = ? LIMIT 1",
         (int(fixture_id),),
     ).fetchone()
     if row:

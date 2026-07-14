@@ -224,6 +224,33 @@ CREATE TABLE IF NOT EXISTS freeze_quarantine (
 )
 """
 
+_PHASE2D_MIGRATIONS = (
+    "ALTER TABLE actual_results ADD COLUMN result_quality_status TEXT",
+    "ALTER TABLE actual_results ADD COLUMN result_content_hash TEXT",
+    "ALTER TABLE actual_results ADD COLUMN provider TEXT",
+    "ALTER TABLE actual_results ADD COLUMN synced_at_utc TEXT",
+    "ALTER TABLE actual_results ADD COLUMN first_synced_at TEXT",
+    "ALTER TABLE actual_results ADD COLUMN last_verified_at TEXT",
+    "ALTER TABLE actual_results ADD COLUMN regulation_result TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN prediction_scope TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN validation_tier TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN content_hash TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN result_content_hash TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN evaluation_version TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN evaluator_source TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN eligibility_class TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN quarantine_status TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN wde_evaluation_status TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN btts_evaluation_status TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN ou_evaluation_status TEXT",
+    "ALTER TABLE market_evaluations ADD COLUMN ft_marginal_evaluation_status TEXT",
+)
+
+_PHASE2D_INDEXES = (
+    "CREATE INDEX IF NOT EXISTS idx_market_eval_scope ON market_evaluations(prediction_scope, evaluation_timestamp)",
+    "CREATE INDEX IF NOT EXISTS idx_actual_results_hash ON actual_results(result_content_hash)",
+)
+
 _SCHEMA_MIGRATIONS = (
     "ALTER TABLE frozen_predictions ADD COLUMN validation_tier TEXT",
     "ALTER TABLE frozen_predictions ADD COLUMN display_status TEXT",
@@ -246,8 +273,18 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
             conn.execute(migration)
         except sqlite3.OperationalError:
             pass
+    for migration in _PHASE2D_MIGRATIONS:
+        try:
+            conn.execute(migration)
+        except sqlite3.OperationalError:
+            pass
     conn.execute(_FREEZE_QUARANTINE_DDL)
     for idx in _FREEZE_V2_INDEXES:
+        try:
+            conn.execute(idx)
+        except sqlite3.OperationalError:
+            pass
+    for idx in _PHASE2D_INDEXES:
         try:
             conn.execute(idx)
         except sqlite3.OperationalError:

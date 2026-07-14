@@ -195,3 +195,62 @@ def seed_tier_b_fixture(prod_conn: sqlite3.Connection, *, fixture_id: int = 9000
     )
     prod_conn.commit()
     return meta
+
+
+def seed_fixture_result(
+    prod_conn: sqlite3.Connection,
+    *,
+    fixture_id: int,
+    home_goals: int = 2,
+    away_goals: int = 1,
+    status: str = "FT",
+) -> None:
+    prod_conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS fixture_results (
+            fixture_id INTEGER PRIMARY KEY,
+            competition_key TEXT,
+            final_score TEXT,
+            halftime_score TEXT,
+            home_goals INTEGER,
+            away_goals INTEGER,
+            winner TEXT,
+            over_under_2_5 TEXT,
+            total_goals INTEGER,
+            finished_at TEXT,
+            source TEXT,
+            regulation_home_goals INTEGER,
+            regulation_away_goals INTEGER,
+            final_stage TEXT,
+            match_outcome_type TEXT
+        )
+        """
+    )
+    score = f"{home_goals}-{away_goals}"
+    prod_conn.execute(
+        """
+        INSERT OR REPLACE INTO fixture_results (
+            fixture_id, competition_key, final_score, home_goals, away_goals,
+            regulation_home_goals, regulation_away_goals, final_stage, match_outcome_type,
+            finished_at, source, total_goals, over_under_2_5, winner
+        ) VALUES (?, 'world_cup_2026', ?, ?, ?, ?, ?, ?, ?, datetime('now'), 'test', ?, ?, ?)
+        """,
+        (
+            fixture_id,
+            score,
+            home_goals,
+            away_goals,
+            home_goals,
+            away_goals,
+            status,
+            status,
+            home_goals + away_goals,
+            "over_2_5" if home_goals + away_goals > 2 else "under_2_5",
+            "home" if home_goals > away_goals else "draw",
+        ),
+    )
+    prod_conn.execute(
+        "UPDATE fixtures SET status=? WHERE fixture_id=?",
+        (status, fixture_id),
+    )
+    prod_conn.commit()
