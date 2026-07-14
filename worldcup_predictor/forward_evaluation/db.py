@@ -167,6 +167,63 @@ def connect_eval_db(root: Path | None = None) -> sqlite3.Connection:
     return conn
 
 
+_FREEZE_V2_MIGRATIONS = (
+    "ALTER TABLE frozen_predictions ADD COLUMN provider_fixture_id INTEGER",
+    "ALTER TABLE frozen_predictions ADD COLUMN league_id INTEGER",
+    "ALTER TABLE frozen_predictions ADD COLUMN season TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN home_team_name TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN away_team_name TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN prediction_scope TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN public_visible INTEGER DEFAULT 1",
+    "ALTER TABLE frozen_predictions ADD COLUMN worldcup_stored_prediction_id INTEGER",
+    "ALTER TABLE frozen_predictions ADD COLUMN ecse_snapshot_id INTEGER",
+    "ALTER TABLE frozen_predictions ADD COLUMN source_job_id TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN odds_snapshot_id INTEGER",
+    "ALTER TABLE frozen_predictions ADD COLUMN source_commit_sha TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN source_payload_hash TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN content_hash TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN odds_fetched_at_utc TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN last_valid_prematch_time_utc TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN prediction_engine_version TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN btts_model_version TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN ou_model_version TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN odds_freshness_status TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN wde_payload_json TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN btts_payload_json TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN ou_payload_json TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN ecse_payload_json TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN complete_payload_json TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN immutable INTEGER DEFAULT 1",
+    "ALTER TABLE frozen_predictions ADD COLUMN freeze_version TEXT DEFAULT 'FORWARD-FREEZE-v2'",
+    "ALTER TABLE frozen_predictions ADD COLUMN supersedes_freeze_id TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN freeze_status TEXT DEFAULT 'ACTIVE'",
+    "ALTER TABLE frozen_predictions ADD COLUMN wde_execution_status TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN btts_execution_status TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN ou_execution_status TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN unavailable_fields_json TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN quarantine_reason TEXT",
+)
+
+_FREEZE_V2_INDEXES = (
+    "CREATE INDEX IF NOT EXISTS idx_frozen_scope ON frozen_predictions(prediction_scope, evaluation_status)",
+    "CREATE INDEX IF NOT EXISTS idx_frozen_kickoff ON frozen_predictions(kickoff)",
+    "CREATE INDEX IF NOT EXISTS idx_frozen_ecse_snapshot ON frozen_predictions(ecse_snapshot_id)",
+    "CREATE INDEX IF NOT EXISTS idx_frozen_wsp ON frozen_predictions(worldcup_stored_prediction_id)",
+    "CREATE INDEX IF NOT EXISTS idx_frozen_content_hash ON frozen_predictions(content_hash)",
+    "CREATE INDEX IF NOT EXISTS idx_frozen_source_hash ON frozen_predictions(source_payload_hash)",
+)
+
+_FREEZE_QUARANTINE_DDL = """
+CREATE TABLE IF NOT EXISTS freeze_quarantine (
+    fixture_id INTEGER NOT NULL,
+    prediction_scope TEXT,
+    reason TEXT NOT NULL,
+    detail_json TEXT,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (fixture_id, reason)
+)
+"""
+
 _SCHEMA_MIGRATIONS = (
     "ALTER TABLE frozen_predictions ADD COLUMN validation_tier TEXT",
     "ALTER TABLE frozen_predictions ADD COLUMN display_status TEXT",
@@ -177,6 +234,7 @@ _SCHEMA_MIGRATIONS = (
     "ALTER TABLE prediction_context ADD COLUMN display_status TEXT",
     "ALTER TABLE prediction_context ADD COLUMN competition_family TEXT",
     "ALTER TABLE prediction_context ADD COLUMN domain_type TEXT",
+    *_FREEZE_V2_MIGRATIONS,
 )
 
 
@@ -188,4 +246,15 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
             conn.execute(migration)
         except sqlite3.OperationalError:
             pass
+    conn.execute(_FREEZE_QUARANTINE_DDL)
+    for idx in _FREEZE_V2_INDEXES:
+        try:
+            conn.execute(idx)
+        except sqlite3.OperationalError:
+            pass
     conn.commit()
+
+
+def schema_column_names(conn: sqlite3.Connection, table: str = "frozen_predictions") -> list[str]:
+    rows = conn.execute(f"PRAGMA table_info({table})").fetchall()
+    return [str(r[1]) for r in rows]

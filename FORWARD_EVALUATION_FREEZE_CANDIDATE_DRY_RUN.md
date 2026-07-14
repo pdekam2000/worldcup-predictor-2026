@@ -1,0 +1,26 @@
+# Forward Evaluation Freeze Candidate Dry-Run
+
+**Generated:** 2026-07-14T05:32:46.250691+00:00
+**DB:** `data\football_intelligence.db`
+**Write mode:** read-only
+
+## Summary
+
+| Category | Count |
+|---|---:|
+| ELIGIBLE_FREEZE | 5 |
+| MISSING_WSP | 0 |
+| MISSING_ECSE | 162 |
+| POST_KICKOFF_SOURCE | 38 |
+| MISSING_TIMESTAMP | 0 |
+| INVALID_QUALITY | 0 |
+| INVALID_ODDS_FRESHNESS | 0 |
+| SOURCE_CONFLICT | 0 |
+| DUPLICATE_IDENTICAL | 0 |
+| QUARANTINE_REQUIRED | 0 |
+
+## Sample fixture IDs
+
+- **ELIGIBLE_FREEZE:** 1514200, 1514244, 1556543, 1556544, 1556545
+- **MISSING_ECSE:** 99, 123, 719349, 1489369, 1489370
+- **POST_KICKOFF_SOURCE:** 1494193, 1494197, 1494201, 1494204, 1494205
