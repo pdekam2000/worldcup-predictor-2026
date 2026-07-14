@@ -188,9 +188,6 @@ def read_tier_b_structured_record(
     canonical_odds = freshness.get("canonical_odds_snapshot") or {}
 
     top5 = _ecse_top_scores(ecse)
-    top3_mass = mass_from_scores(top5, 3) if top5 else None
-    top5_mass = mass_from_scores(top5, 5) if top5 else None
-
     own_eval = eval_conn is None
     ev = eval_conn or connect_eval_db(project_root())
     try:
@@ -218,6 +215,15 @@ def read_tier_b_structured_record(
     finally:
         if own_eval:
             ev.close()
+
+    if len(top5) < 5 and rankings:
+        top5 = [
+            {"rank": int(r.get("rank") or i), "score": r.get("score"), "probability": r.get("probability")}
+            for i, r in enumerate(rankings[:5], start=1)
+        ]
+
+    top3_mass = mass_from_scores(top5, 3) if top5 else None
+    top5_mass = mass_from_scores(top5, 5) if top5 else None
 
     freeze_row = dict(freeze) if freeze else None
     scope_col = wsp_row.get("prediction_scope") or prediction_scope
