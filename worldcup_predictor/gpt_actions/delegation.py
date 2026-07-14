@@ -365,6 +365,8 @@ def format_fixture_evidence(
     }
     if tier_meta:
         out["prediction_scope"] = tier_meta.get("prediction_scope")
+    if mcp_result.get("forward_evaluation"):
+        out["forward_evaluation"] = mcp_result["forward_evaluation"]
     return out
 
 

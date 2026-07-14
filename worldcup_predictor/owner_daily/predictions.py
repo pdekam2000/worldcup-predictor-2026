@@ -18,6 +18,8 @@ from worldcup_predictor.owner_daily.constants import GENERATED_BY, PHASE
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
 from worldcup_predictor.odds.freshness_metadata import build_fixture_freshness_metadata, stamp_payload_odds_freshness
 from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
+from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
+from worldcup_predictor.gpt_actions.owner_scope import fixture_tier
 from worldcup_predictor.gpt_actions.wde_runtime import (
     attach_wde_execution_diagnostics,
     classify_wde_exception,
@@ -44,6 +46,7 @@ class DailyPredictionResult:
     ecse_skip_reasons: dict[str, int] = field(default_factory=dict)
     generated: list[dict[str, Any]] = field(default_factory=list)
     skipped: list[dict[str, Any]] = field(default_factory=list)
+    forward_eval_captures: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -58,6 +61,7 @@ class DailyPredictionResult:
             "ecse_skip_reasons": self.ecse_skip_reasons,
             "generated_sample": self.generated[:20],
             "skipped_sample": self.skipped[:50],
+            "forward_eval_captures": self.forward_eval_captures[:50],
             "completed_at_utc": _utc_now_iso(),
         }
 
@@ -363,6 +367,8 @@ def run_daily_predictions(
 
     result = DailyPredictionResult(dry_run=dry_run, selected=len(fixtures))
     for fixture in fixtures:
+        wde_detail: dict[str, Any] | None = None
+        ecse_detail: dict[str, Any] | None = None
         if mode in ("wde_only", "wde_and_ecse"):
             status, detail = run_daily_wde(
                 fixture,
@@ -373,6 +379,7 @@ def run_daily_predictions(
                 force=force,
                 strict_fresh_odds=strict_fresh_odds,
             )
+            wde_detail = detail
             if status in ("generated", "dry_run"):
                 result.wde_generated += 1
                 result.generated.append(detail)
@@ -390,6 +397,7 @@ def run_daily_predictions(
                 force=force,
                 strict_fresh_odds=strict_fresh_odds,
             )
+            ecse_detail = detail
             if status in ("generated", "dry_run"):
                 result.ecse_generated += 1
                 result.generated.append(detail)
@@ -397,5 +405,34 @@ def run_daily_predictions(
                 result.ecse_skipped += 1
                 _inc(result.ecse_skip_reasons, str(detail.get("reason") or "skipped"))
                 result.skipped.append(detail)
+
+        if not dry_run and mode == "wde_and_ecse":
+            from worldcup_predictor.forward_evaluation.bridge import (
+                ForwardEvalBridgeContext,
+                maybe_capture_after_prediction_persistence,
+            )
+
+            fid = int(fixture.fixture_id)
+            comp_key = normalize_competition_key(fixture.competition_key) or fixture.competition_key
+            tier = fixture_tier(comp_key)
+            ecse_snapshot_id = (ecse_detail or {}).get("snapshot_id")
+            bridge = maybe_capture_after_prediction_persistence(
+                fid,
+                prod_conn=conn,
+                bridge_context=ForwardEvalBridgeContext(
+                    prediction_scope="owner_daily",
+                    validation_tier=tier,
+                    public_visible=tier == "A",
+                    bridge_origin="owner_daily",
+                    worldcup_stored_prediction_id=fid,
+                    ecse_snapshot_id=ecse_snapshot_id,
+                ),
+            )
+            capture_meta = bridge.to_metadata_block()
+            result.forward_eval_captures.append(capture_meta)
+            if wde_detail is not None:
+                wde_detail["forward_evaluation"] = capture_meta
+            if ecse_detail is not None:
+                ecse_detail["forward_evaluation"] = capture_meta
 
     return result

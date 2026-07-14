@@ -166,6 +166,14 @@ def execute_prediction_job(
                 raw = mcp_runtime.run_fixture_prediction(
                     int(fixture_id),
                     refresh_if_stale=refresh,
+                    bridge_context={
+                        "prediction_scope": meta.get("prediction_scope"),
+                        "validation_tier": tier,
+                        "public_visible": False if tier == "B" else True,
+                        "source_job_id": job_id,
+                        "bridge_origin": "gpt_actions",
+                        "worldcup_stored_prediction_id": int(fixture_id),
+                    },
                 )
                 evidence = format_fixture_evidence(raw, timezone=timezone, tier_meta=meta)
                 predictions.append(evidence)

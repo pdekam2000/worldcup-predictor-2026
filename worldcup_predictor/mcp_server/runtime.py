@@ -453,6 +453,7 @@ def run_fixture_prediction(
     *,
     refresh_if_stale: bool = True,
     settings: Settings | None = None,
+    bridge_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     settings = settings or get_settings()
     warnings: list[str] = []
@@ -550,7 +551,7 @@ def run_fixture_prediction(
 
             freshness = _freshness_record(conn, row)
             freshness.pop("_meta", None)
-            return _format_prediction_result(
+            formatted = _format_prediction_result(
                 row=row,
                 freshness=freshness,
                 payload=payload,
@@ -563,6 +564,29 @@ def run_fixture_prediction(
                 wde_failure_stage=wde_detail.get("wde_failure_stage") if wde_status == "skipped" else None,
                 wde_detail=wde_detail,
             )
+            if payload and ecse_snap and status != "BLOCKED":
+                from worldcup_predictor.forward_evaluation.bridge import (
+                    ForwardEvalBridgeContext,
+                    maybe_capture_after_prediction_persistence,
+                )
+
+                ctx = ForwardEvalBridgeContext.from_mapping(bridge_context) or ForwardEvalBridgeContext(
+                    bridge_origin="mcp",
+                    prediction_scope="production",
+                )
+                if ctx.ecse_snapshot_id is None and ecse_snap.get("id") is not None:
+                    ctx.ecse_snapshot_id = int(ecse_snap["id"])
+                if ctx.worldcup_stored_prediction_id is None:
+                    ctx.worldcup_stored_prediction_id = int(fixture_id)
+                bridge = maybe_capture_after_prediction_persistence(
+                    int(fixture_id),
+                    prod_conn=conn,
+                    bridge_context=ctx,
+                    quality_status=status,
+                    ecse_snapshot_id=int(ecse_snap["id"]) if ecse_snap.get("id") is not None else None,
+                )
+                formatted["forward_evaluation"] = bridge.to_metadata_block()
+            return formatted
         finally:
             conn.close()
 
