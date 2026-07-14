@@ -251,6 +251,41 @@ _PHASE2D_INDEXES = (
     "CREATE INDEX IF NOT EXISTS idx_actual_results_hash ON actual_results(result_content_hash)",
 )
 
+_PHASE2E_INDEXES = (
+    "CREATE INDEX IF NOT EXISTS idx_fe_runs_started ON forward_evaluation_runs(started_at_utc)",
+)
+
+_PHASE2E_DDL = """
+CREATE TABLE IF NOT EXISTS forward_evaluation_runs (
+    run_id TEXT PRIMARY KEY,
+    started_at_utc TEXT NOT NULL,
+    completed_at_utc TEXT,
+    dry_run INTEGER NOT NULL DEFAULT 1,
+    source_commit TEXT,
+    fixture_limit INTEGER,
+    lookback_hours INTEGER,
+    scope_filter TEXT,
+    candidates_found INTEGER DEFAULT 0,
+    results_inserted INTEGER DEFAULT 0,
+    results_reused INTEGER DEFAULT 0,
+    results_missing INTEGER DEFAULT 0,
+    result_conflicts INTEGER DEFAULT 0,
+    freezes_valid INTEGER DEFAULT 0,
+    freezes_invalid INTEGER DEFAULT 0,
+    evaluations_inserted INTEGER DEFAULT 0,
+    evaluations_reused INTEGER DEFAULT 0,
+    unavailable_components INTEGER DEFAULT 0,
+    public_eligible_count INTEGER DEFAULT 0,
+    owner_only_count INTEGER DEFAULT 0,
+    quarantined_count INTEGER DEFAULT 0,
+    provider_calls INTEGER DEFAULT 0,
+    provider_errors INTEGER DEFAULT 0,
+    final_status TEXT,
+    ledger_json TEXT
+)
+"""
+
+
 _SCHEMA_MIGRATIONS = (
     "ALTER TABLE frozen_predictions ADD COLUMN validation_tier TEXT",
     "ALTER TABLE frozen_predictions ADD COLUMN display_status TEXT",
@@ -279,12 +314,18 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
         except sqlite3.OperationalError:
             pass
     conn.execute(_FREEZE_QUARANTINE_DDL)
+    conn.execute(_PHASE2E_DDL)
     for idx in _FREEZE_V2_INDEXES:
         try:
             conn.execute(idx)
         except sqlite3.OperationalError:
             pass
     for idx in _PHASE2D_INDEXES:
+        try:
+            conn.execute(idx)
+        except sqlite3.OperationalError:
+            pass
+    for idx in _PHASE2E_INDEXES:
         try:
             conn.execute(idx)
         except sqlite3.OperationalError:

@@ -1,0 +1,31 @@
+# Phase 2E — Forward Evaluation Service (disabled timer install)
+
+[Unit]
+Description=WorldCup forward evaluation cycle (result sync + market evaluation)
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/opt/worldcup-predictor/.venv/bin/python
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=PYTHONUNBUFFERED=1
+Environment=APP_ENV=production
+Environment=PYTHONPATH=/opt/worldcup-predictor
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/run_forward_evaluation_cycle.py --apply --fixture-limit 25 --lookback-hours 72 --scope all
+Nice=10
+TimeoutStartSec=900
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-forward-evaluation
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/worldcup-predictor/data /opt/worldcup-predictor/artifacts /opt/worldcup-predictor/reports
+
+[Install]
+WantedBy=multi-user.target

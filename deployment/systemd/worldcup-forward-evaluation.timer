@@ -1,0 +1,20 @@
+# Phase 2E — Forward evaluation timer (SHIPPED DISABLED — do not enable without approval)
+#
+# Install:
+#   sudo cp deployment/systemd/worldcup-forward-evaluation.* /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   # DO NOT: systemctl enable --now worldcup-forward-evaluation.timer
+#
+# Proposed cadence (future approval): every 30 minutes
+
+[Unit]
+Description=WorldCup forward evaluation timer (every 30 minutes, disabled by default)
+
+[Timer]
+OnCalendar=*-*-* *:00,30:00
+Persistent=true
+RandomizedDelaySec=120
+Unit=worldcup-forward-evaluation.service
+
+[Install]
+WantedBy=timers.target
