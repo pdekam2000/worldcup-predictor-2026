@@ -415,12 +415,13 @@ def run_daily_predictions(
             fid = int(fixture.fixture_id)
             comp_key = normalize_competition_key(fixture.competition_key) or fixture.competition_key
             tier = fixture_tier(comp_key)
+            pred_scope = "production" if tier == "A" else "owner_shadow" if tier == "B" else "owner_daily"
             ecse_snapshot_id = (ecse_detail or {}).get("snapshot_id")
             bridge = maybe_capture_after_prediction_persistence(
                 fid,
                 prod_conn=conn,
                 bridge_context=ForwardEvalBridgeContext(
-                    prediction_scope="owner_daily",
+                    prediction_scope=pred_scope,
                     validation_tier=tier,
                     public_visible=tier == "A",
                     bridge_origin="owner_daily",

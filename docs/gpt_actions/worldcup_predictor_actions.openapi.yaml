@@ -232,6 +232,109 @@ paths:
                 $ref: "#/components/schemas/ReportResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
+  /api/gpt-actions/v1/reports/daily/predictions/{report_date}:
+    get:
+      operationId: getDailyPredictionReport
+      summary: Canonical daily prematch prediction report (YYYY-MM-DD)
+      parameters:
+        - name: report_date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Daily prediction report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+  /api/gpt-actions/v1/reports/daily/evaluation/{report_date}:
+    get:
+      operationId: getDailyEvaluationReport
+      summary: Daily postmatch evaluation report (YYYY-MM-DD)
+      parameters:
+        - name: report_date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Daily evaluation report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+  /api/gpt-actions/v1/reports/daily/predictions/latest:
+    get:
+      operationId: getLatestDailyPredictionReport
+      summary: Latest canonical daily prematch report
+      responses:
+        "200":
+          description: Latest daily prediction report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+  /api/gpt-actions/v1/reports/daily/evaluation/latest:
+    get:
+      operationId: getLatestDailyEvaluationReport
+      summary: Latest daily evaluation report
+      responses:
+        "200":
+          description: Latest daily evaluation report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+  /api/gpt-actions/v1/reports/weekly/frozen-evaluation:
+    get:
+      operationId: getWeeklyFrozenEvaluationReport
+      summary: Weekly frozen evaluation index
+      parameters:
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Weekly summary
+  /api/gpt-actions/v1/reports/monthly/accuracy:
+    get:
+      operationId: getMonthlyAccuracySummary
+      summary: Monthly accuracy summary from report index
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Monthly summary
+  /api/gpt-actions/v1/fixtures/{fixture_id}/frozen-evaluation:
+    get:
+      operationId: getFixtureFrozenEvaluation
+      summary: Frozen prediction evaluation for one fixture
+      parameters:
+        - name: fixture_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Fixture evaluation
 components:
   securitySchemes:
     ApiKeyAuth:

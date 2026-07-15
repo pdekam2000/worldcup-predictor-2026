@@ -174,6 +174,8 @@ def classify_report_type(path: Path) -> ReportType | None:
 
     if name.startswith("TODAY_") and ("PREDICTION" in name or "ENDRESULT" in name):
         return "PREDICTION_DAILY"
+    if name.endswith("_DAILY_PREDICTIONS") or name.endswith("_DAILY_EVALUATION"):
+        return "PREDICTION_DAILY"
     if name.startswith("DAILY_") and "PREDICTION" in name:
         return "PREDICTION_DAILY"
     if name.startswith("WC_TODAY_") or name.startswith("OWNER_DAILY_"):
@@ -195,7 +197,9 @@ def classify_report_type(path: Path) -> ReportType | None:
 
 
 def _report_search_roots() -> list[Path]:
-    roots = [REPORTS_DIR.resolve(), project_root().resolve()]
+    from worldcup_predictor.owner_daily.pipeline.constants import DAILY_REPORTS_DIR
+
+    roots = [REPORTS_DIR.resolve(), DAILY_REPORTS_DIR.resolve(), project_root().resolve()]
     seen: set[Path] = set()
     out: list[Path] = []
     for root in roots:

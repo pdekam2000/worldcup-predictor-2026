@@ -19,7 +19,6 @@ from worldcup_predictor.owner_daily.constants import (
     DAILY_SUPPORTED_COMPETITIONS,
     DEFAULT_TIMEZONE,
 )
-from worldcup_predictor.owner_daily.cycle import DailyCycleConfig, run_daily_owner_cycle
 from worldcup_predictor.owner_daily.result_sync import run_daily_result_sync_and_evaluation
 from worldcup_predictor.owner_predict_eval.control_panel import build_owner_daily_control_panel
 from worldcup_predictor.owner_predict_eval.runner import run_owner_daily_prediction_and_eval
@@ -171,7 +170,9 @@ def _cycle_step(
     fetch_odds: bool,
     force_predictions: bool,
 ) -> dict[str, Any]:
-    cycle_cfg = DailyCycleConfig(
+    from worldcup_predictor.owner_daily.pipeline.orchestrator import DailyPipelineConfig, run_daily_pipeline
+
+    pipeline_cfg = DailyPipelineConfig(
         date_arg=date_arg,
         timezone=config.timezone,
         limit=config.limit,
@@ -190,8 +191,10 @@ def _cycle_step(
         max_odds_provider_calls=config.max_odds_provider_calls,
         strict_fresh_odds=config.strict_fresh_odds,
         fixture_id=config.fixture_id,
+        discovery_scope="owner",
+        emit_evaluation_report=not skip_result_sync,
     )
-    result = run_daily_owner_cycle(cycle_cfg)
+    result = run_daily_pipeline(pipeline_cfg)
     return result.to_dict()
 
 

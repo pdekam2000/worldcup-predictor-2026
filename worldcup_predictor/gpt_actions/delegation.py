@@ -416,9 +416,58 @@ def rank_best_matches(predictions: list[dict[str, Any]], *, select_best: int = 3
 
 
 def get_latest_prediction_report(*, max_bytes: int = 200_000) -> dict[str, Any]:
+    from worldcup_predictor.owner_daily.pipeline.retrieval import get_latest_daily_prediction_report
+
+    daily = get_latest_daily_prediction_report(max_bytes=max_bytes)
+    if daily.get("found"):
+        return daily
     return mcp_runtime.latest_prediction_report(max_bytes=max_bytes)
 
 
 def get_prediction_report_by_date(*, report_date: str, max_bytes: int = 200_000) -> dict[str, Any]:
+    from worldcup_predictor.owner_daily.pipeline.retrieval import get_daily_prediction_report
+
+    daily = get_daily_prediction_report(report_date=report_date, max_bytes=max_bytes)
+    if daily.get("found"):
+        return daily
     target = date.fromisoformat(report_date)
     return mcp_runtime.prediction_report_by_date(target, max_bytes=max_bytes)
+
+
+def get_daily_prediction_report(*, report_date: str, max_bytes: int = 200_000) -> dict[str, Any]:
+    from worldcup_predictor.owner_daily.pipeline.retrieval import get_daily_prediction_report as _get
+
+    return _get(report_date=report_date, max_bytes=max_bytes)
+
+
+def get_daily_evaluation_report(*, report_date: str, max_bytes: int = 200_000) -> dict[str, Any]:
+    from worldcup_predictor.owner_daily.pipeline.retrieval import get_daily_evaluation_report as _get
+
+    return _get(report_date=report_date, max_bytes=max_bytes)
+
+
+def get_latest_daily_evaluation_report(*, max_bytes: int = 200_000) -> dict[str, Any]:
+    from worldcup_predictor.owner_daily.pipeline.retrieval import get_latest_daily_evaluation_report as _get
+
+    return _get(max_bytes=max_bytes)
+
+
+def get_weekly_frozen_evaluation_report(*, end_date: str | None = None, max_bytes: int = 200_000) -> dict[str, Any]:
+    from datetime import date as date_cls
+
+    from worldcup_predictor.owner_daily.pipeline.retrieval import get_weekly_frozen_evaluation_report as _get
+
+    end = date_cls.fromisoformat(end_date) if end_date else None
+    return _get(end_date=end)
+
+
+def get_monthly_accuracy_summary(*, year: int, month: int) -> dict[str, Any]:
+    from worldcup_predictor.owner_daily.pipeline.retrieval import get_monthly_accuracy_summary as _get
+
+    return _get(year=year, month=month)
+
+
+def get_fixture_frozen_evaluation(*, fixture_id: int) -> dict[str, Any]:
+    from worldcup_predictor.owner_daily.pipeline.retrieval import get_fixture_frozen_evaluation as _get
+
+    return _get(fixture_id=fixture_id)

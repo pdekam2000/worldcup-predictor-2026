@@ -15,9 +15,15 @@ from worldcup_predictor.gpt_actions.config import GptActionsConfig, load_gpt_act
 from worldcup_predictor.gpt_actions.delegation import (
     discover_today_matches,
     filter_matches_by_odds,
+    get_daily_evaluation_report,
+    get_daily_prediction_report,
+    get_fixture_frozen_evaluation,
+    get_latest_daily_evaluation_report,
     get_latest_prediction_report,
+    get_monthly_accuracy_summary,
     get_prediction_report_by_date,
     get_system_status,
+    get_weekly_frozen_evaluation_report,
     list_today_matches_broad,
 )
 from worldcup_predictor.gpt_actions.job_status import build_job_create_fields, build_job_status_fields
@@ -220,6 +226,87 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         report = get_prediction_report_by_date(report_date=report_date, max_bytes=cfg.max_response_chars)
         return _trim_payload(report, cfg.max_response_chars)
+
+    @app.get(
+        f"{API_PREFIX}/reports/daily/predictions/{{report_date}}",
+        operation_id="getDailyPredictionReport",
+        dependencies=auth_dep,
+    )
+    def daily_prediction_report_route(report_date: str) -> dict[str, Any]:
+        try:
+            validate_iso_date(report_date, field="report_date")
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return _trim_payload(
+            get_daily_prediction_report(report_date=report_date, max_bytes=cfg.max_response_chars),
+            cfg.max_response_chars,
+        )
+
+    @app.get(
+        f"{API_PREFIX}/reports/daily/evaluation/{{report_date}}",
+        operation_id="getDailyEvaluationReport",
+        dependencies=auth_dep,
+    )
+    def daily_evaluation_report_route(report_date: str) -> dict[str, Any]:
+        try:
+            validate_iso_date(report_date, field="report_date")
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return _trim_payload(
+            get_daily_evaluation_report(report_date=report_date, max_bytes=cfg.max_response_chars),
+            cfg.max_response_chars,
+        )
+
+    @app.get(
+        f"{API_PREFIX}/reports/daily/predictions/latest",
+        operation_id="getLatestDailyPredictionReport",
+        dependencies=auth_dep,
+    )
+    def latest_daily_prediction_route() -> dict[str, Any]:
+        return _trim_payload(get_latest_prediction_report(max_bytes=cfg.max_response_chars), cfg.max_response_chars)
+
+    @app.get(
+        f"{API_PREFIX}/reports/daily/evaluation/latest",
+        operation_id="getLatestDailyEvaluationReport",
+        dependencies=auth_dep,
+    )
+    def latest_daily_evaluation_route() -> dict[str, Any]:
+        return _trim_payload(
+            get_latest_daily_evaluation_report(max_bytes=cfg.max_response_chars),
+            cfg.max_response_chars,
+        )
+
+    @app.get(
+        f"{API_PREFIX}/reports/weekly/frozen-evaluation",
+        operation_id="getWeeklyFrozenEvaluationReport",
+        dependencies=auth_dep,
+    )
+    def weekly_frozen_route(end_date: str | None = None) -> dict[str, Any]:
+        if end_date:
+            try:
+                validate_iso_date(end_date, field="end_date")
+            except ValueError as exc:
+                raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return _trim_payload(
+            get_weekly_frozen_evaluation_report(end_date=end_date, max_bytes=cfg.max_response_chars),
+            cfg.max_response_chars,
+        )
+
+    @app.get(
+        f"{API_PREFIX}/reports/monthly/accuracy",
+        operation_id="getMonthlyAccuracySummary",
+        dependencies=auth_dep,
+    )
+    def monthly_accuracy_route(year: int, month: int) -> dict[str, Any]:
+        return _trim_payload(get_monthly_accuracy_summary(year=year, month=month), cfg.max_response_chars)
+
+    @app.get(
+        f"{API_PREFIX}/fixtures/{{fixture_id}}/frozen-evaluation",
+        operation_id="getFixtureFrozenEvaluation",
+        dependencies=auth_dep,
+    )
+    def fixture_frozen_eval_route(fixture_id: int) -> dict[str, Any]:
+        return _trim_payload(get_fixture_frozen_evaluation(fixture_id=fixture_id), cfg.max_response_chars)
 
     return app
 

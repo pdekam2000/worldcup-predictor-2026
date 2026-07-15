@@ -16,6 +16,13 @@ APPROVED_OPERATION_IDS: frozenset[str] = frozenset(
         "getPredictionJob",
         "getLatestPredictionReport",
         "getPredictionReportByDate",
+        "getDailyPredictionReport",
+        "getDailyEvaluationReport",
+        "getLatestDailyPredictionReport",
+        "getLatestDailyEvaluationReport",
+        "getWeeklyFrozenEvaluationReport",
+        "getMonthlyAccuracySummary",
+        "getFixtureFrozenEvaluation",
     }
 )
 
@@ -29,6 +36,13 @@ APPROVED_ROUTES: frozenset[str] = frozenset(
         "GET /api/gpt-actions/v1/prediction-jobs/{job_id}",
         "GET /api/gpt-actions/v1/reports/latest",
         "GET /api/gpt-actions/v1/reports/{report_date}",
+        "GET /api/gpt-actions/v1/reports/daily/predictions/{report_date}",
+        "GET /api/gpt-actions/v1/reports/daily/evaluation/{report_date}",
+        "GET /api/gpt-actions/v1/reports/daily/predictions/latest",
+        "GET /api/gpt-actions/v1/reports/daily/evaluation/latest",
+        "GET /api/gpt-actions/v1/reports/weekly/frozen-evaluation",
+        "GET /api/gpt-actions/v1/reports/monthly/accuracy",
+        "GET /api/gpt-actions/v1/fixtures/{fixture_id}/frozen-evaluation",
     }
 )
 
