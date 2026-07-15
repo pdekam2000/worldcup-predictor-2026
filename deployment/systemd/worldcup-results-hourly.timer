@@ -1,6 +1,5 @@
-# IMPLEMENT-1 — Hourly result/evaluation run
-#
-# NOT enabled by default.
+# Hourly result sync + evaluation — part of daily prediction lifecycle.
+# Enabled in production via scripts/_prod_daily_pipeline_activate.sh
 
 [Unit]
 Description=WorldCup hourly results pipeline timer

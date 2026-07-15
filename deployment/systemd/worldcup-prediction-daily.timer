@@ -1,9 +1,8 @@
-# IMPLEMENT-1 — Daily prediction run at 06:00 Europe/Vienna (04:00 UTC standard time)
-#
-# NOT enabled by default.
+# Highest-priority daily prediction lifecycle — ~06:00 Europe/Vienna (04:00 UTC).
+# Enabled in production via scripts/_prod_daily_pipeline_activate.sh
 
 [Unit]
-Description=WorldCup daily prediction pipeline timer
+Description=WorldCup daily prediction pipeline timer (highest priority)
 
 [Timer]
 OnCalendar=*-*-* 04:00:00
