@@ -926,6 +926,22 @@ def ensure_schema_compat(conn: sqlite3.Connection) -> None:
     except ModuleNotFoundError:
         pass
 
+    try:
+        from worldcup_predictor.research.correct_score_odds.ddl import PHASE_CS_ODDS_DDL
+
+        for ddl in PHASE_CS_ODDS_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from worldcup_predictor.research.two_fixture_forward_shadow.ddl import PHASE_TFPS_DDL
+
+        for ddl in PHASE_TFPS_DDL:
+            conn.execute(ddl)
+    except ModuleNotFoundError:
+        pass
+
     conn.execute(
         "INSERT OR REPLACE INTO schema_meta(key, value) VALUES (?, ?)",
         ("schema_version", str(SCHEMA_VERSION)),

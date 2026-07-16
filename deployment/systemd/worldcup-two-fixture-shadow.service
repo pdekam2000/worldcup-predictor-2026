@@ -1,0 +1,32 @@
+# Owner-only two-fixture forward shadow cycle (hypothetical stakes).
+# DOES NOT place bets. DOES NOT modify ECSE/WDE/freezes.
+#
+# DO NOT enable until a manual production acceptance run passes.
+#   sudo systemctl enable --now worldcup-two-fixture-shadow.timer   # FORBIDDEN until acceptance
+#
+# Manual one-shot:
+#   sudo systemctl start worldcup-two-fixture-shadow.service
+
+[Unit]
+Description=WorldCup two-fixture forward shadow (collect/freeze/evaluate/report) — NO BETTING
+After=network-online.target worldcup-prediction-daily.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/worldcup-predictor
+EnvironmentFile=/opt/worldcup-predictor/.env.production
+Environment=APP_ENV=production
+Environment=PYTHONUNBUFFERED=1
+# Exclusive lock inside script prevents overlap
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/run_two_fixture_forward_shadow_cycle.py --jobs all
+Nice=15
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldcup-two-fixture-shadow
+
+# Intentionally NOT installed by default — see timer unit comments
+# [Install]
+# WantedBy=multi-user.target

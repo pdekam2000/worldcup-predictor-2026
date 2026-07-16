@@ -206,6 +206,40 @@ def run_daily_pipeline(
     elig_path = write_eligibility_decisions(report_date, eligibility)
     result.artifact_paths["eligibility_decisions"] = str(elig_path)
 
+    # Optional owner-only Correct Score odds enrichment (cache-first; never blocks prediction)
+    cs_odds_stats: dict[str, Any] = {
+        "status": "CS_ODDS_UNAVAILABLE",
+        "prediction_jobs_created": 0,
+        "blocked_prediction": False,
+    }
+    try:
+        from worldcup_predictor.research.correct_score_odds.pipeline_hook import (
+            enrich_correct_score_odds,
+        )
+
+        cs_conn = connect(settings.sqlite_path)
+        try:
+            cs_enrich = enrich_correct_score_odds(
+                cs_conn,
+                [int(fx.provider_fixture_id) for fx in fixtures],
+                enabled=True,
+            )
+        finally:
+            cs_conn.close()
+        cs_odds_stats = {
+            "status": cs_enrich.get("status"),
+            "lines_inserted": (cs_enrich.get("extract") or {}).get("lines_inserted"),
+            "prediction_jobs_created": cs_enrich.get("prediction_jobs_created", 0),
+            "blocked_prediction": False,
+        }
+    except Exception as exc:
+        cs_odds_stats = {
+            "status": "CS_ODDS_UNAVAILABLE",
+            "error": str(exc)[:200],
+            "blocked_prediction": False,
+            "prediction_jobs_created": 0,
+        }
+
     freeze_rows = _freeze_rows_for_date(report_date)
     freeze_path = write_freeze_manifest(report_date, freeze_rows)
     result.artifact_paths["freeze_manifest"] = str(freeze_path)
@@ -246,6 +280,7 @@ def run_daily_pipeline(
         "partial_predictions": partial_n,
         "wde_generated": (cycle.predictions or {}).get("wde_generated"),
         "ecse_generated": (cycle.predictions or {}).get("ecse_generated"),
+        "correct_score_odds": cs_odds_stats,
     }
     result.stats = stats
 

@@ -1,0 +1,27 @@
+# DISABLED BY DEFAULT — do not enable until manual production acceptance.
+#
+# Acceptance checklist:
+# 1. Local code committed and pushed
+# 2. Production git pull --ff-only to matching SHA
+# 3. Manual: python scripts/run_two_fixture_forward_shadow_cycle.py --jobs all
+# 4. scripts/validate_two_fixture_forward_shadow_collection.py PASS
+# 5. Owner confirms no betting path
+#
+# Then only:
+#   sudo systemctl enable --now worldcup-two-fixture-shadow.timer
+
+[Unit]
+Description=Schedule two-fixture forward shadow cycle (DISABLED until acceptance)
+# Refuse accidental enable without review — comment removed only after acceptance
+
+[Timer]
+OnCalendar=*-*-* 06:30:00
+OnCalendar=*-*-* 12:30:00
+OnCalendar=*-*-* 18:30:00
+OnCalendar=*-*-* 22:30:00
+Persistent=true
+RandomizedDelaySec=180
+Unit=worldcup-two-fixture-shadow.service
+
+# [Install]
+# WantedBy=timers.target

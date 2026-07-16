@@ -1,0 +1,107 @@
+"""Frozen versions and statuses for two-fixture forward shadow."""
+
+from __future__ import annotations
+
+# Locked before forward outcomes — do not change mid-cohort
+STRATEGY_VERSION = "tfps-v1"
+RULE_VERSION = "tfps-rules-v1"
+HEDGE_POLICY_VERSION = "hedge-top6to10-shift-secondary-max5-v1"
+STAKE_VERSION = "stakes-equal-gross-primary-benchmark-v1"
+ODDS_INGESTION_VERSION = "cs-odds-lines-v1"
+PRIMARY_SELECTION_GATE = "highest_expected_joint"
+PRIMARY_STAKE_BENCHMARK = "EQUAL_GROSS_RETURN"
+MAX_STANDARD_HEDGES = 5
+HYPOTHETICAL_BUDGETS = (25.0, 50.0, 100.0)
+DEFAULT_BUDGET = 50.0
+BOOK_MIN_STAKE = 0.10
+
+COHORT_A_END = 100
+COHORT_B_END = 500
+
+BOOKMAKER_MODE_SINGLE = "SINGLE_BOOKMAKER_EXECUTABLE"
+BOOKMAKER_MODE_CROSS = "CROSS_BOOKMAKER_THEORETICAL"
+
+SNAPSHOT_WINDOWS = (
+    "FIRST_AVAILABLE",
+    "APPROX_24H",
+    "APPROX_6H",
+    "APPROX_1H",
+    "FINAL_PREMATCH",
+)
+
+# Tolerances in seconds relative to kickoff (negative = before)
+WINDOW_TOLERANCE = {
+    "FIRST_AVAILABLE": (None, None),  # any prematch first quote
+    "APPROX_24H": (18 * 3600, 30 * 3600),  # 18–30h before KO
+    "APPROX_6H": (4 * 3600, 8 * 3600),
+    "APPROX_1H": (30 * 60, 90 * 60),
+    "FINAL_PREMATCH": (0, 3 * 3600),  # latest before KO within 3h
+}
+
+FIXTURE_ELIGIBILITY = {
+    "PORTFOLIO_ELIGIBLE",
+    "PORTFOLIO_PARTIAL_ODDS",
+    "PORTFOLIO_LOW_QUALITY",
+    "PORTFOLIO_ODDS_STALE",
+    "PORTFOLIO_ODDS_INCOMPLETE",
+    "PORTFOLIO_UNSUPPORTED",
+    "PORTFOLIO_POST_KICKOFF",
+    "PORTFOLIO_MAPPING_CONFLICT",
+}
+
+PORTFOLIO_RESULT_STATUSES = {
+    "PRIMARY_WIN",
+    "HEDGE_WIN_FULL_RECOVERY",
+    "HEDGE_WIN_PARTIAL_RECOVERY",
+    "COVERED_BUT_NET_LOSS",
+    "FULL_LOSS",
+    "RESULT_PENDING",
+    "RESULT_UNAVAILABLE",
+    "SETTLEMENT_CONFLICT",
+    "PORTFOLIO_INVALID",
+}
+
+HEDGE_CLASSIFICATIONS = {
+    "PROFIT_HEDGE",
+    "FULL_STAKE_RECOVERY_POSSIBLE",
+    "PARTIAL_RECOVERY_ONLY",
+    "COVERAGE_ONLY",
+    "TOO_EXPENSIVE",
+    "NEGATIVE_VALUE_REJECTED",
+}
+
+HEALTH_STATUSES = {
+    "FORWARD_COLLECTION_HEALTHY",
+    "FORWARD_COLLECTION_PARTIAL",
+    "FORWARD_COLLECTION_NO_ELIGIBLE_PAIR",
+    "FORWARD_COLLECTION_PROVIDER_BLOCKED",
+    "FORWARD_COLLECTION_VALIDATION_FAILED",
+}
+
+ACTIVATION_STATUSES = {
+    "TWO_FIXTURE_FORWARD_SHADOW_ACTIVE",
+    "TWO_FIXTURE_FORWARD_SHADOW_DEPLOY_PENDING",
+    "TWO_FIXTURE_FORWARD_SHADOW_TIMER_DISABLED",
+    "TWO_FIXTURE_FORWARD_SHADOW_PROVIDER_LIMITED",
+    "TWO_FIXTURE_FORWARD_SHADOW_VALIDATION_FAILED",
+}
+
+STAKE_STRATEGIES = (
+    "EQUAL",
+    "EQUAL_GROSS_RETURN",
+    "MINIMAX",
+    "PROBABILITY_WEIGHTED",
+    "POSITIVE_EDGE_ONLY",
+    "TIERED_PRIMARY_HEDGE",
+)
+
+PAIR_SELECTION_STRATEGIES = (
+    "highest_expected_joint",
+    "highest_top5_mass",
+    "lowest_combined_entropy",
+    "strongest_suitability",
+    "highest_model_market_agreement",
+    "cross_league_diversified",
+    "same_league",
+    "random_eligible_control",
+)
