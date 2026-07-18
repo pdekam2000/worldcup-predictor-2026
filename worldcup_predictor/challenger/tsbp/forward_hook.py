@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import traceback
+from datetime import datetime, timezone
 from typing import Any
 
 from worldcup_predictor.challenger.constants import STATUS_DATA_BLOCKED, STATUS_OK, STATUS_POST_KICKOFF
@@ -23,7 +24,7 @@ from worldcup_predictor.challenger.tsbp.constants import (
     TSBP_MODEL_ID,
     TSBP_MODEL_VERSION,
 )
-from worldcup_predictor.challenger.tsbp.domain_policy import classify_competition, is_forward_enabled, load_domain_policy
+from worldcup_predictor.challenger.tsbp.domain_policy import classify_competition, load_domain_policy
 from worldcup_predictor.challenger.tsbp.model import TSBPChallenger
 
 
@@ -91,53 +92,32 @@ def run_tsbp_for_fixture(
                 "diagnostics": diag,
             }
 
+        # Post-kickoff hard block (never predict after KO for forward shadow)
+        from worldcup_predictor.challenger.snapshot_reader import _parse_dt
+
+        kickoff_dt = _parse_dt(fx["kickoff_utc"])
+        if kickoff_dt and kickoff_dt <= datetime.now(timezone.utc):
+            return {"status": STATUS_POST_KICKOFF, "reason": "post_kickoff", "canonical_unaffected": True, "diagnostics": diag}
+
+        # Optional GBGM-style snapshot for shared hash / parity metadata.
+        # TSBP does NOT require L5 form features — strength is fit from FT history.
         snap = build_prematch_feature_snapshot(conn, fixture_id, include_market=False)
         if snap.get("status") == STATUS_POST_KICKOFF:
             return {"status": STATUS_POST_KICKOFF, "reason": "post_kickoff", "canonical_unaffected": True, "diagnostics": diag}
 
-        # Snapshot parity vs canonical cutoff
-        tsbp_cutoff = snap.get("prediction_time")
+        tsbp_cutoff = snap.get("prediction_time") or (kickoff_dt.isoformat() if kickoff_dt else None)
         can_cutoff = _canonical_cutoff(canonical_summary)
         parity_ok = True
         parity_reason = None
-        if can_cutoff and tsbp_cutoff:
-            # Same calendar second bucket is enough for research parity
-            parity_ok = str(can_cutoff)[:19] == str(tsbp_cutoff)[:19] or abs(
-                # if ISO differs only by timezone formatting, compare kickoff-based
-                0
-            ) == 0
-            # Prefer: both use kickoff as cutoff — snapshot builder uses kickoff when prediction_time not forced
-            # Mark failed only if canonical explicitly declares a different cutoff
-            if canonical_summary and canonical_summary.get("feature_cutoff") and str(canonical_summary["feature_cutoff"])[:19] != str(tsbp_cutoff)[:19]:
-                if canonical_summary.get("require_strict_snapshot_parity"):
-                    parity_ok = False
-                    parity_reason = SNAPSHOT_PARITY_FAILED
-
-        if snap.get("status") != "OK":
-            # Still allow TSBP if we have team ids + league history; domain already enabled
-            # Prefer snapshot OK; otherwise data blocked
-            env = build_challenger_prediction_envelope(
-                fixture_id=fixture_id,
-                model_id=TSBP_MODEL_ID,
-                model_version=TSBP_MODEL_VERSION,
-                outputs={},
-                feature_snapshot_id=snap.get("feature_snapshot_id"),
-                feature_snapshot_hash=snap.get("feature_snapshot_hash"),
-                prediction_time=snap.get("prediction_time") or utc_now(),
-                kickoff=snap.get("kickoff_utc") or fx["kickoff_utc"],
-                home_team=snap.get("home_team") or fx["home_team"],
-                away_team=snap.get("away_team") or fx["away_team"],
-                competition=comp,
-                prediction_scope=prediction_scope,
-                validation_tier=validation_tier,
-                confidence=None,
-                data_quality=DOMAIN_DATA_BLOCKED,
-                missing_features=list(snap.get("missing_required") or []),
-                warnings=[str(snap.get("reason")), f"domain_policy={DOMAIN_POLICY_VERSION}"],
-                status=STATUS_DATA_BLOCKED,
-            )
-            save_prediction(conn, env)
-            return {"prediction": env, "freeze": None, "comparison": None, "diagnostics": diag, "canonical_unaffected": True}
+        if (
+            canonical_summary
+            and canonical_summary.get("require_strict_snapshot_parity")
+            and can_cutoff
+            and tsbp_cutoff
+            and str(can_cutoff)[:19] != str(tsbp_cutoff)[:19]
+        ):
+            parity_ok = False
+            parity_reason = SNAPSHOT_PARITY_FAILED
 
         # Fit strengths strictly before kickoff
         model = TSBPChallenger()
@@ -158,6 +138,13 @@ def run_tsbp_for_fixture(
         feats["competition_key"] = comp
         feats["home_team_id"] = fx["home_team_id"]
         feats["away_team_id"] = fx["away_team_id"]
+        if not feats.get("home_team_id") or not feats.get("away_team_id"):
+            return {
+                "status": DOMAIN_DATA_BLOCKED,
+                "reason": "missing_team_ids",
+                "canonical_unaffected": True,
+                "diagnostics": diag,
+            }
         outputs = model.predict(feats)
         home_games = int((outputs.get("team_history") or {}).get("home_games") or 0)
         away_games = int((outputs.get("team_history") or {}).get("away_games") or 0)
