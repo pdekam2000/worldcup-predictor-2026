@@ -1316,6 +1316,13 @@ class FootballIntelligenceRepository:
         competition_key: str = "world_cup_2026",
         superseded_from: int | None = None,
     ) -> None:
+        from worldcup_predictor.research.canonical_ephemeral.write_guard import block_canonical_write
+
+        block_canonical_write(
+            table="worldcup_stored_predictions",
+            operation="UPSERT",
+            detail=f"fixture_id={fixture_id}",
+        )
         now = _utc_now()
         self._conn.execute(
             """

@@ -269,6 +269,14 @@ def create_or_reuse_freeze(
     source_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build or reuse an immutable prematch freeze from canonical WSP + ECSE rows."""
+    from worldcup_predictor.research.canonical_ephemeral.write_guard import block_canonical_write
+
+    # Ephemeral research must never enter freeze capture (create or reuse path that writes).
+    block_canonical_write(
+        table="frozen_predictions",
+        operation="INSERT",
+        detail="create_or_reuse_freeze",
+    )
     source_context = source_context or {}
     allow_post_kickoff_capture = bool(source_context.get("allow_post_kickoff_capture"))
     repo = ForwardEvalRepository(eval_conn)

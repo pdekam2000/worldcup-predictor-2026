@@ -89,6 +89,13 @@ def insert_snapshot(conn: sqlite3.Connection, payload: dict[str, Any]) -> tuple[
     only on an explicit forced regeneration after fresh odds were imported.
     Evaluated snapshots are protected by the audited refresh helper.
     """
+    from worldcup_predictor.research.canonical_ephemeral.write_guard import block_canonical_write
+
+    block_canonical_write(
+        table="ecse_prediction_snapshots",
+        operation="INSERT",
+        detail="insert_snapshot",
+    )
     fixture_id = int(payload["fixture_id"])
     if has_snapshot(conn, fixture_id):
         if str(payload.get("prediction_source") or "") == "owner_daily_predictions":

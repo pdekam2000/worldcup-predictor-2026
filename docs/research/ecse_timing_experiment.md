@@ -4,25 +4,22 @@
 
 Test whether **earlier** odds snapshots produce more accurate canonical ECSE Exact Score Top1–Top5 predictions than **same-day** or **late pre-kickoff** refreshes.
 
-Motivating observation (2026-07-20, Transinvest vs Neptūną): an 11:36 Vienna Top5 included `1-1`; a 14:33 refresh removed it for `0-4`; the match finished `1-1`. That is a hypothesis only — not evidence of a production edge.
+## Execution mode (required)
 
-## Non-negotiable constraints
+All timing captures use `CANONICAL_RESEARCH_EPHEMERAL` via
+`worldcup_predictor.research.canonical_ephemeral.run_ephemeral_canonical_prediction`.
 
-- Do **not** modify canonical WDE/ECSE formulas.
-- Do **not** overwrite the earliest immutable prematch freeze.
-- Always set `freeze_capture=false` / `official_freeze=false` on research jobs.
-- Restore WSP + ECSE state after every temporary run.
-- Never evaluate pending / postponed fixtures as misses.
-- Research outputs are owner-only; Stable Union is never a betting recommendation.
-- Do not declare EARLY/MID/LATE winners until sample policy thresholds are met.
+- Same canonical WDE (`PredictPipeline`) and ECSE (`build_ecse_live_prediction`) formulas
+- Fresh odds only
+- No GPT Actions prediction job
+- No WSP / ECSE canonical / freeze writes
+- Write guard raises `EPHEMERAL_WRITE_BLOCKED` on prohibited writers
+- Outputs stored only in `data/research/ecse_timing_experiment.db`
 
-## Snapshot classes
+## MID/LATE safety gate
 
-| Class | Target hours to kickoff | Notes |
-|-------|-------------------------|-------|
-| EARLY | 18–30h | Still recorded if slightly outside window (`EARLY_TOO_EARLY` / `EARLY_TOO_LATE`) |
-| MID   | 6–12h  | Separate immutable capture |
-| LATE  | 1–3h   | Separate immutable capture |
+MID/LATE refuse with `BLOCKED_RESEARCH_ISOLATION_NOT_PROVEN` unless ephemeral isolation is proven
+(freeze/WSP/ECSE counts + freeze hashes unchanged after dry-run).
 
 ## Commands
 
@@ -31,42 +28,10 @@ python scripts/run_ecse_timing_experiment.py --date 2026-07-21 --snapshot early 
 python scripts/run_ecse_timing_experiment.py --date 2026-07-21 --snapshot mid --scope owner
 python scripts/run_ecse_timing_experiment.py --date 2026-07-21 --snapshot late --scope owner
 python scripts/evaluate_ecse_timing_experiment.py --date 2026-07-21
-python scripts/report_ecse_timing_experiment.py --from 2026-07-21 --to 2026-08-31
 ```
 
-Flags: `--dry-run`, `--json`.
+## Known history — EARLY freeze side-effect
 
-## Storage
-
-Additive SQLite DB: `data/research/ecse_timing_experiment.db`
-
-Tables: `timing_experiments`, `timing_experiment_fixtures`, `timing_prediction_snapshots`, `timing_snapshot_comparisons`, `timing_result_evaluations`, `timing_stable_union_predictions`.
-
-Unique immutable constraint: `(experiment_id, fixture_id, snapshot_class)`.
-
-## Stable Union (`STABLE_UNION_TOP5`)
-
-Research-only comparator built from EARLY/MID/LATE outputs. Ranked by snapshot presence, average rank, average probability, then recency. Always:
-
-- `research_only=true`
-- `canonical=false`
-- `final_decision_authority=false`
-
-## Interpretation bands (paired finished fixtures)
-
-| n | Band |
-|---|------|
-| <30 | descriptive only |
-| 30–79 | preliminary |
-| 80–99 | meaningful but provisional |
-| ≥100 | stronger research conclusions eligible |
-| Production change | separate promotion review + explicit owner approval |
-
-## Known limitation — freeze bridge side-effect
-
-Job requests set `freeze_capture=false`, but GPT Actions → MCP still runs `maybe_capture_after_prediction_persistence`. If no earliest freeze exists yet, FREEZE-SERVICE-v2 may **create** the first freeze. Research treats that as `ECSE_TIMING_EXPERIMENT_PARTIAL` (not hash mutation). MID/LATE must reuse those hashes via `create_or_reuse_freeze`.
-
-## Artifacts
-
-- `artifacts/research/ecse_timing_experiment/<date>/<early|mid|late>/`
-- `reports/research/ecse_timing_experiment_<date>_EARLY.md`
+Pre-ephemeral EARLY created first FREEZE-SERVICE-v2 rows for four Tier A fixtures because job
+flags were ignored by MCP. Annotated `EARLY_FREEZE_SIDE_EFFECT_CREATED` and must remain immutable.
+See `reports/research/ecse_timing_freeze_side_effect_root_cause.md`.
