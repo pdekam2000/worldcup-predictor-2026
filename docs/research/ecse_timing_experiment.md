@@ -62,6 +62,10 @@ Research-only comparator built from EARLY/MID/LATE outputs. Ranked by snapshot p
 | ≥100 | stronger research conclusions eligible |
 | Production change | separate promotion review + explicit owner approval |
 
+## Known limitation — freeze bridge side-effect
+
+Job requests set `freeze_capture=false`, but GPT Actions → MCP still runs `maybe_capture_after_prediction_persistence`. If no earliest freeze exists yet, FREEZE-SERVICE-v2 may **create** the first freeze. Research treats that as `ECSE_TIMING_EXPERIMENT_PARTIAL` (not hash mutation). MID/LATE must reuse those hashes via `create_or_reuse_freeze`.
+
 ## Artifacts
 
 - `artifacts/research/ecse_timing_experiment/<date>/<early|mid|late>/`
