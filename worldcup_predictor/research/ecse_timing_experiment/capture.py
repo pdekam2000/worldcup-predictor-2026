@@ -217,6 +217,9 @@ def run_timing_capture(
     restore_ok = True
     restore_meta: dict[str, Any] = {}
     capture_error: str | None = None
+    freeze_newly_created: list[int] = []
+    freeze_mutated: list[int] = []
+    integrity: dict[str, Any] = {}
 
     try:
         for meta in capture_list:
@@ -508,12 +511,32 @@ def run_timing_capture(
 
         freeze_after = {str(fid): _freeze_hash(_load_freeze(eval_conn, fid)) for fid in fids}
         freeze_unchanged = freeze_before == freeze_after
+        freeze_newly_created = [
+            fid
+            for fid in fids
+            if freeze_before.get(str(fid)) is None and freeze_after.get(str(fid)) is not None
+        ]
+        freeze_mutated = [
+            fid
+            for fid in fids
+            if freeze_before.get(str(fid))
+            and freeze_after.get(str(fid))
+            and freeze_before.get(str(fid)) != freeze_after.get(str(fid))
+        ]
 
         integrity = {
+            "freeze_capture_requested": False,
             "freeze_capture": False,
             "freeze_before": freeze_before,
             "freeze_after": freeze_after,
             "freeze_unchanged": freeze_unchanged,
+            "freeze_newly_created_by_bridge": freeze_newly_created,
+            "freeze_hash_mutated": freeze_mutated,
+            "note": (
+                "GPT Actions/MCP bridge may create earliest FREEZE-SERVICE-v2 freezes on first "
+                "successful Tier A prediction even when job request sets freeze_capture=false. "
+                "Subsequent MID/LATE captures should reuse those hashes (create_or_reuse_freeze)."
+            ),
             "wsp_restore_ok": restore_ok,
             "restore_meta": restore_meta,
             "temporary_run_audit_id": audit_id,
@@ -529,8 +552,11 @@ def run_timing_capture(
         except Exception:
             pass
 
-    if not restore_ok or capture_error:
+    if not restore_ok or capture_error or freeze_mutated:
         final_status = "ECSE_TIMING_EXPERIMENT_VALIDATION_FAILED"
+    elif freeze_newly_created and sc == "EARLY":
+        # First-ever freeze side-effect from production bridge — research snapshots still valid
+        final_status = "ECSE_TIMING_EXPERIMENT_PARTIAL"
     elif captured == 0 and idempotent == 0:
         final_status = "ECSE_TIMING_EXPERIMENT_BLOCKED"
     elif blocked and captured:
