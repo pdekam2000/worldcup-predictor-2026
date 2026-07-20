@@ -1,11 +1,9 @@
-"""Capture EARLY/MID/LATE research snapshots without mutating canonical freezes."""
+"""Capture EARLY/MID/LATE research snapshots via CANONICAL_RESEARCH_EPHEMERAL."""
 
 from __future__ import annotations
 
 import json
 import subprocess
-import time
-import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -14,17 +12,20 @@ from worldcup_predictor.config.env_loading import project_root
 from worldcup_predictor.config.settings import get_settings
 from worldcup_predictor.database.connection import connect
 from worldcup_predictor.forward_evaluation.db import connect_eval_db
-from worldcup_predictor.gpt_actions.config import GptActionsConfig, load_gpt_actions_config
 from worldcup_predictor.gpt_actions.delegation import _fixture_from_db
-from worldcup_predictor.gpt_actions.job_status import build_job_status_fields
-from worldcup_predictor.gpt_actions.jobs import JobStore
 from worldcup_predictor.gpt_actions.runtime_bootstrap import bootstrap_gpt_actions_runtime
-from worldcup_predictor.gpt_actions.worker import enqueue_prediction_job
 from worldcup_predictor.mcp_server import runtime as mcp_runtime
 from worldcup_predictor.odds.canonical_snapshot import get_latest_valid_1x2_odds_snapshot
 from worldcup_predictor.odds.freshness_policy import FreshnessStatus
 from worldcup_predictor.odds.refresh_gate import ensure_fresh_odds_before_prediction, refresh_live_odds
 from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
+from worldcup_predictor.research.canonical_ephemeral.constants import EXECUTION_MODE
+from worldcup_predictor.research.canonical_ephemeral.facade import (
+    ephemeral_prediction_to_timing_payload,
+    run_ephemeral_canonical_prediction,
+)
+from worldcup_predictor.research.canonical_ephemeral.types import ResearchContext
+from worldcup_predictor.research.canonical_ephemeral.write_guard import EphemeralWriteBlocked
 from worldcup_predictor.research.ecse_timing_experiment.compare import compare_snapshots
 from worldcup_predictor.research.ecse_timing_experiment.constants import (
     ARTIFACT_ROOT,
@@ -35,18 +36,12 @@ from worldcup_predictor.research.ecse_timing_experiment.constants import (
 )
 from worldcup_predictor.research.ecse_timing_experiment.db import connect_timing_db
 from worldcup_predictor.research.ecse_timing_experiment.discovery import discover_owner_day
-from worldcup_predictor.research.ecse_timing_experiment.extract import (
-    extract_model_payload,
-    freeze_payload_from_eval,
-    odds_blob,
+from worldcup_predictor.research.ecse_timing_experiment.extract import odds_blob
+from worldcup_predictor.research.ecse_timing_experiment.isolation import (
+    run_isolation_preflight,
+    snapshot_canonical_state,
 )
-from worldcup_predictor.research.ecse_timing_experiment.hashing import content_hash
 from worldcup_predictor.research.ecse_timing_experiment.stable_union import build_stable_union
-from worldcup_predictor.research.ecse_timing_experiment.state_restore import (
-    backup_prediction_state,
-    restore_prediction_state,
-    verify_wsp_restore,
-)
 from worldcup_predictor.research.ecse_timing_experiment.store import (
     ensure_experiment,
     get_snapshot,
@@ -59,6 +54,30 @@ from worldcup_predictor.research.ecse_timing_experiment.store import (
 from worldcup_predictor.research.ecse_timing_experiment.windows import to_vienna, window_meta
 
 FRESH_OK = frozenset({FreshnessStatus.FRESH_ODDS.value, "fresh", "ODDS_FRESH", "FRESH_ODDS"})
+
+# Fixtures whose earliest freezes were created by the pre-ephemeral EARLY path (2026-07-21).
+EARLY_FREEZE_SIDE_EFFECT_FIXTURES: dict[int, dict[str, Any]] = {
+    1556501: {
+        "match": "Aarhus vs Lech Poznan",
+        "label": "EARLY_FREEZE_SIDE_EFFECT_CREATED",
+        "experiment_audit_id": "timing_2026-07-21_EARLY_20260720T162205Z",
+    },
+    1556502: {
+        "match": "Fenerbahçe vs Gornik Zabrze",
+        "label": "EARLY_FREEZE_SIDE_EFFECT_CREATED",
+        "experiment_audit_id": "timing_2026-07-21_EARLY_20260720T162205Z",
+    },
+    1556503: {
+        "match": "Sturm Graz vs Heart Of Midlothian",
+        "label": "EARLY_FREEZE_SIDE_EFFECT_CREATED",
+        "experiment_audit_id": "timing_2026-07-21_EARLY_20260720T162205Z",
+    },
+    1556504: {
+        "match": "FC Thun vs Dinamo Zagreb",
+        "label": "EARLY_FREEZE_SIDE_EFFECT_CREATED",
+        "experiment_audit_id": "timing_2026-07-21_EARLY_20260720T162205Z",
+    },
+}
 
 
 def _git_sha() -> str:
@@ -91,24 +110,6 @@ def _write_json(path: Path, obj: Any) -> None:
     path.write_text(json.dumps(obj, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
 
 
-def _poll(job_id: str, store: JobStore, cfg: GptActionsConfig, deadline_s: int = 480) -> dict[str, Any]:
-    deadline = time.time() + deadline_s
-    final = None
-    while time.time() < deadline:
-        rec = store.get(job_id)
-        if not rec:
-            time.sleep(2)
-            continue
-        if "job_id" not in rec:
-            rec = {**rec, "job_id": job_id}
-        fields = build_job_status_fields(rec, poll_after_seconds=cfg.poll_after_seconds)
-        if fields.get("terminal"):
-            final = {**rec, **fields}
-            break
-        time.sleep(max(1, int(fields.get("poll_after_seconds") or 3)))
-    return {"final": final, "timed_out": final is None}
-
-
 def _load_freeze(eval_conn, fid: int) -> dict[str, Any] | None:
     row = eval_conn.execute(
         "SELECT * FROM frozen_predictions WHERE fixture_id=? ORDER BY frozen_at ASC LIMIT 1",
@@ -134,6 +135,35 @@ def _freeze_hash(fr: dict[str, Any] | None) -> str | None:
     return str(fr.get("content_hash") or fr.get("payload_hash") or fr.get("prediction_id") or "")
 
 
+def annotate_early_freeze_side_effects(eval_conn, audit_id: str) -> list[dict[str, Any]]:
+    """Record immutable audit annotations for freezes created by the old MCP path."""
+    annotations = []
+    for fid, meta in EARLY_FREEZE_SIDE_EFFECT_FIXTURES.items():
+        fr = _load_freeze(eval_conn, fid)
+        annotations.append(
+            {
+                "label": "EARLY_FREEZE_SIDE_EFFECT_CREATED",
+                "fixture_id": fid,
+                "match": meta["match"],
+                "freeze_id": None if not fr else fr.get("prediction_id"),
+                "freeze_hash": _freeze_hash(fr),
+                "created_timestamp": None if not fr else fr.get("frozen_at"),
+                "experiment_audit_id": meta["experiment_audit_id"],
+                "current_audit_id": audit_id,
+                "explanation": (
+                    "Freeze was created unintentionally by the pre-ephemeral MCP bridge path "
+                    "during EARLY capture when freeze_capture=false was requested but not honored. "
+                    "No prior freeze existed; this row is now the earliest immutable freeze."
+                ),
+                "must_remain_immutable": True,
+                "future_mid_late_must_not_create_additional_freezes": True,
+                "payload_mutated": False,
+                "timestamp_mutated": False,
+            }
+        )
+    return annotations
+
+
 def run_timing_capture(
     *,
     experiment_date: str,
@@ -142,7 +172,7 @@ def run_timing_capture(
     dry_run: bool = False,
     root: Path | None = None,
 ) -> dict[str, Any]:
-    """Discover fixtures and capture one immutable snapshot class."""
+    """Discover fixtures and capture one immutable snapshot class via ephemeral canonical execution."""
     sc = snapshot_class.upper().strip()
     if sc not in SNAPSHOT_CLASSES:
         raise ValueError(f"snapshot_class must be one of {SNAPSHOT_CLASSES}")
@@ -169,7 +199,11 @@ def run_timing_capture(
         scope=scope,
         timezone=TZ_NAME,
         git_sha=_git_sha(),
-        meta={"phase": "ECSE_TIMING_EXPERIMENT_V1", "research_only": True},
+        meta={
+            "phase": "ECSE_TIMING_EXPERIMENT_V2_EPHEMERAL",
+            "research_only": True,
+            "execution_mode": EXECUTION_MODE,
+        },
     )
 
     prod = connect(settings.sqlite_path)
@@ -184,41 +218,54 @@ def run_timing_capture(
             "final_status": "ECSE_TIMING_EXPERIMENT_PARTIAL",
             "dry_run": True,
             "experiment_id": experiment_id,
+            "execution_mode": EXECUTION_MODE,
             "discovery": {
                 "included_count": discovery["included_count"],
                 "excluded_count": discovery["excluded_count"],
             },
-            "note": "Dry-run only — no predictions executed, freeze_capture=false",
+            "note": "Dry-run only — no predictions executed",
             "audit_id": audit_id,
         }
 
     included = list(discovery["included"])
-    # Also allow previously EXCLUDED-for-stale to be re-attempted at capture with forced refresh
     stale_candidates = [
         x for x in discovery["excluded"] if str(x.get("exclusion_reason") or "").startswith("BLOCKED_STALE_ODDS")
     ]
-    # Prefer included; add stale for refresh attempt
     capture_list = included + stale_candidates
     fids = [int(x["fixture_id"]) for x in capture_list]
 
     eval_conn = connect_eval_db(root)
-    freeze_before = {str(fid): _freeze_hash(_load_freeze(eval_conn, fid)) for fid in fids}
+    freeze_annotations = annotate_early_freeze_side_effects(eval_conn, audit_id)
+    _write_json(art / "early_freeze_side_effect_audit.json", {"annotations": freeze_annotations})
 
-    backup = backup_prediction_state(prod, fids)
-    _write_json(
-        art / "prediction_state_backup_meta.json",
-        {"fixture_ids": fids, "wsp": len(backup.get("wsp") or {}), "ecse": len(backup.get("ecse") or {})},
-    )
+    # MID/LATE hard isolation gate
+    if sc in {"MID", "LATE"}:
+        preflight = run_isolation_preflight(
+            experiment_id=experiment_id,
+            experiment_date=experiment_date,
+            snapshot_class=sc,
+            fixture_ids=fids or [int(a["fixture_id"]) for a in freeze_annotations],
+            audit_id=audit_id,
+        )
+        _write_json(art / "isolation_preflight.json", preflight)
+        if not preflight.get("ok"):
+            return {
+                "final_status": "ECSE_TIMING_EXPERIMENT_BLOCKED",
+                "reason": "BLOCKED_RESEARCH_ISOLATION_NOT_PROVEN",
+                "preflight": preflight,
+                "experiment_id": experiment_id,
+                "audit_id": audit_id,
+                "execution_mode": EXECUTION_MODE,
+            }
+
+    state_before = snapshot_canonical_state(fids)
+    freeze_before = state_before["freeze_hashes"]
 
     results: list[dict[str, Any]] = []
     captured = 0
     blocked = 0
     idempotent = 0
-    restore_ok = True
-    restore_meta: dict[str, Any] = {}
     capture_error: str | None = None
-    freeze_newly_created: list[int] = []
-    freeze_mutated: list[int] = []
     integrity: dict[str, Any] = {}
 
     try:
@@ -233,13 +280,13 @@ def run_timing_capture(
                         "status": "IDEMPOTENT_ALREADY_CAPTURED",
                         "snapshot_id": existing["snapshot_id"],
                         "research_output_hash": existing.get("research_output_hash"),
+                        "execution_mode": EXECUTION_MODE,
                     }
                 )
                 continue
 
             wmeta = window_meta(sc, meta.get("kickoff_utc"))
             status_now = str(meta.get("status") or "NS").upper()
-            # refresh live status from DB
             row = prod.execute(
                 "SELECT status, kickoff_utc FROM fixtures WHERE fixture_id=? LIMIT 1", (fid,)
             ).fetchone()
@@ -257,7 +304,7 @@ def run_timing_capture(
                     fixture_id=fid,
                     snapshot_class=sc,
                     status="BLOCKED_FIXTURE_STARTED",
-                    payload={"fixture_id": fid, "status": status_now, "research_only": True},
+                    payload={"fixture_id": fid, "status": status_now, "research_only": True, "execution_mode": EXECUTION_MODE},
                     window_classification=wmeta["window_classification"],
                     hours_to_kickoff=wmeta["hours_to_kickoff"],
                     captured_at_utc=_utc_now(),
@@ -280,6 +327,7 @@ def run_timing_capture(
                 status=status_now,
                 season=None,
             )
+            # Odds refresh is allowed (odds tables); prediction path must remain ephemeral.
             forced = refresh_live_odds(daily, settings=settings)
             prod.close()
             prod = connect(settings.sqlite_path)
@@ -290,7 +338,8 @@ def run_timing_capture(
                 settings=settings,
                 refresh_if_needed=True,
             )
-            after = odds_blob(get_latest_valid_1x2_odds_snapshot(prod, fid, kickoff_utc=meta.get("kickoff_utc")))
+            odds_snap = get_latest_valid_1x2_odds_snapshot(prod, fid, kickoff_utc=meta.get("kickoff_utc"))
+            after = odds_blob(odds_snap)
             complete = all(
                 after.get(k) is not None and float(after.get(k) or 0) > 1 for k in ("home", "draw", "away")
             )
@@ -304,7 +353,7 @@ def run_timing_capture(
                     fixture_id=fid,
                     snapshot_class=sc,
                     status="BLOCKED_INCOMPLETE_ODDS",
-                    payload={"odds": after, "gate": gate, "refresh": forced, "research_only": True},
+                    payload={"odds": after, "gate": gate, "refresh": forced, "research_only": True, "execution_mode": EXECUTION_MODE},
                     window_classification=wmeta["window_classification"],
                     hours_to_kickoff=wmeta["hours_to_kickoff"],
                     captured_at_utc=_utc_now(),
@@ -324,7 +373,7 @@ def run_timing_capture(
                     fixture_id=fid,
                     snapshot_class=sc,
                     status="BLOCKED_STALE_ODDS",
-                    payload={"odds": after, "gate": gate, "refresh": forced, "research_only": True},
+                    payload={"odds": after, "gate": gate, "refresh": forced, "research_only": True, "execution_mode": EXECUTION_MODE},
                     window_classification=wmeta["window_classification"],
                     hours_to_kickoff=wmeta["hours_to_kickoff"],
                     captured_at_utc=_utc_now(),
@@ -338,56 +387,56 @@ def run_timing_capture(
                 results.append({**meta, **ins, **wmeta, "odds": after})
                 continue
 
-            job_dir = art / f"jobs_{audit_id}"
-            base_cfg = load_gpt_actions_config()
-            cfg = GptActionsConfig(
-                host=base_cfg.host,
-                port=base_cfg.port,
-                api_key=base_cfg.api_key,
-                audit_log_path=str(art / "audit.jsonl"),
-                job_store_dir=str(job_dir),
-                max_jobs_retained=200,
-                rate_limit_per_minute=base_cfg.rate_limit_per_minute,
-                max_fixture_ids_per_job=base_cfg.max_fixture_ids_per_job,
-                max_response_chars=base_cfg.max_response_chars,
-                poll_after_seconds=base_cfg.poll_after_seconds,
+            research_ctx = ResearchContext(
+                experiment_id=experiment_id,
+                experiment_date=experiment_date,
+                snapshot_class=sc,
+                audit_id=audit_id,
+                scope=scope,
+                caller="ecse_timing_experiment",
             )
-            store = JobStore(str(job_dir), max_retained=200)
-            job_id = str(uuid.uuid4())
-            record = {
-                "job_id": job_id,
-                "status": "queued",
-                "created_at": _utc_now(),
-                "request": {
-                    "fixture_ids": [fid],
-                    "prediction_scope": meta.get("prediction_scope") or "owner_shadow",
-                    "refresh_if_stale": True,
-                    "include_all_predictions": True,
-                    "freeze_capture": False,
-                    "research_only": True,
-                    "official_freeze": False,
-                    "timing_experiment": True,
-                    "snapshot_class": sc,
-                },
-            }
-            store._path(job_id).write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
             try:
-                enqueue_prediction_job(job_id, store=store, config=cfg)
-                poll = _poll(job_id, store, cfg)
-                final = poll.get("final") or store.get(job_id) or {}
+                eph = run_ephemeral_canonical_prediction(
+                    fid,
+                    scope=scope,
+                    odds_snapshot=odds_snap,
+                    research_context=research_ctx,
+                    settings=settings,
+                    prod_conn=prod,
+                )
+            except EphemeralWriteBlocked as exc:
+                ins = insert_snapshot_immutable(
+                    timing,
+                    experiment_id=experiment_id,
+                    fixture_id=fid,
+                    snapshot_class=sc,
+                    status="BLOCKED_MODEL_FAILURE",
+                    payload={"error": str(exc), "research_only": True, "execution_mode": EXECUTION_MODE},
+                    window_classification=wmeta["window_classification"],
+                    hours_to_kickoff=wmeta["hours_to_kickoff"],
+                    captured_at_utc=_utc_now(),
+                    captured_at_vienna=to_vienna(_utc_now()),
+                    block_reason="EPHEMERAL_WRITE_BLOCKED",
+                    freeze_capture=False,
+                    temporary_run_audit_id=audit_id,
+                )
+                blocked += 1
+                capture_error = str(exc)
+                results.append({**meta, **ins, **wmeta, "error": str(exc)})
+                break
             except Exception as exc:
                 ins = insert_snapshot_immutable(
                     timing,
                     experiment_id=experiment_id,
                     fixture_id=fid,
                     snapshot_class=sc,
-                    status="BLOCKED_PROVIDER_FAILURE",
-                    payload={"error": str(exc), "research_only": True},
+                    status="BLOCKED_MODEL_FAILURE",
+                    payload={"error": str(exc), "research_only": True, "execution_mode": EXECUTION_MODE},
                     window_classification=wmeta["window_classification"],
                     hours_to_kickoff=wmeta["hours_to_kickoff"],
                     captured_at_utc=_utc_now(),
                     captured_at_vienna=to_vienna(_utc_now()),
-                    block_reason="BLOCKED_PROVIDER_FAILURE",
+                    block_reason="BLOCKED_MODEL_FAILURE",
                     freeze_capture=False,
                     temporary_run_audit_id=audit_id,
                 )
@@ -395,17 +444,19 @@ def run_timing_capture(
                 results.append({**meta, **ins, **wmeta, "error": str(exc)})
                 continue
 
-            prod.close()
-            prod = connect(settings.sqlite_path)
-            pred = extract_model_payload(prod, fid, after)
-            if not pred.get("complete"):
+            if not eph.complete:
                 ins = insert_snapshot_immutable(
                     timing,
                     experiment_id=experiment_id,
                     fixture_id=fid,
                     snapshot_class=sc,
                     status="BLOCKED_MODEL_FAILURE",
-                    payload={"prediction": pred, "job": final, "odds": after, "research_only": True},
+                    payload={
+                        "prediction": eph.to_dict(),
+                        "odds": after,
+                        "research_only": True,
+                        "execution_mode": EXECUTION_MODE,
+                    },
                     window_classification=wmeta["window_classification"],
                     hours_to_kickoff=wmeta["hours_to_kickoff"],
                     captured_at_utc=_utc_now(),
@@ -420,9 +471,10 @@ def run_timing_capture(
                 continue
 
             fr = _load_freeze(eval_conn, fid)
-            payload = {
-                **pred,
-                "identity": {
+            side = next((a for a in freeze_annotations if a["fixture_id"] == fid), None)
+            payload = ephemeral_prediction_to_timing_payload(
+                eph,
+                identity={
                     "experiment_id": experiment_id,
                     "experiment_date": experiment_date,
                     "fixture_id": fid,
@@ -435,19 +487,23 @@ def run_timing_capture(
                     "snapshot_class": sc,
                     "hours_to_kickoff": wmeta["hours_to_kickoff"],
                     "window_classification": wmeta["window_classification"],
+                    "execution_mode": EXECUTION_MODE,
                 },
-                "integrity": {
+                integrity={
                     "earliest_canonical_freeze_id": (fr or {}).get("prediction_id"),
                     "earliest_canonical_freeze_hash": _freeze_hash(fr),
                     "freeze_capture": False,
                     "temporary_run_audit_id": audit_id,
-                    "job_id": job_id,
-                    "job_status": final.get("status"),
+                    "execution_mode": EXECUTION_MODE,
+                    "canonical_writes_attempted": eph.canonical_writes_attempted,
+                    "canonical_writes_completed": 0,
+                    "freeze_created": False,
+                    "freeze_updated": False,
+                    "wsp_written": False,
+                    "ecse_canonical_written": False,
+                    "early_freeze_side_effect": side,
                 },
-                "model_config_hash": content_hash(
-                    {"model_version": pred.get("model_version"), "snapshot_class": sc, "phase": "V1"}
-                ),
-            }
+            )
             ins = insert_snapshot_immutable(
                 timing,
                 experiment_id=experiment_id,
@@ -460,17 +516,16 @@ def run_timing_capture(
                 captured_at_utc=_utc_now(),
                 captured_at_vienna=to_vienna(_utc_now()),
                 odds_content_hash=after.get("content_hash"),
-                model_config_hash=payload["model_config_hash"],
+                model_config_hash=eph.model_config_hash,
                 freeze_id=(fr or {}).get("prediction_id"),
                 freeze_hash=_freeze_hash(fr),
-                freeze_unchanged=True,  # verified after restore batch
+                freeze_unchanged=True,
                 freeze_capture=False,
                 temporary_run_audit_id=audit_id,
             )
             captured += 1
             results.append({**meta, **ins, **wmeta, "prediction": payload, "odds": after})
 
-            # Comparisons vs prior classes
             for prior in SNAPSHOT_CLASSES:
                 if prior == sc:
                     break
@@ -486,13 +541,12 @@ def run_timing_capture(
                         timing, experiment_id=experiment_id, fixture_id=fid, comparison=cmp
                     )
 
-            # Stable union if >=1 snapshots
             snaps = {}
             for cls in SNAPSHOT_CLASSES:
                 s = get_snapshot(timing, experiment_id=experiment_id, fixture_id=fid, snapshot_class=cls)
                 if s and s.get("status") == "CAPTURED":
                     snaps[cls] = s.get("payload") or {}
-            if len(snaps) >= 1:
+            if snaps:
                 union = build_stable_union(snaps)
                 upsert_stable_union(
                     timing, experiment_id=experiment_id, fixture_id=fid, union_payload=union
@@ -500,48 +554,44 @@ def run_timing_capture(
     except Exception as exc:
         capture_error = str(exc)
     finally:
-        # Always restore WSP/ECSE
-        try:
-            prod.close()
-        except Exception:
-            pass
-        prod = connect(settings.sqlite_path)
-        restore_meta = restore_prediction_state(prod, backup)
-        restore_ok = verify_wsp_restore(prod, backup, fids)
-
-        freeze_after = {str(fid): _freeze_hash(_load_freeze(eval_conn, fid)) for fid in fids}
+        state_after = snapshot_canonical_state(fids)
+        freeze_after = state_after["freeze_hashes"]
         freeze_unchanged = freeze_before == freeze_after
-        freeze_newly_created = [
-            fid
-            for fid in fids
-            if freeze_before.get(str(fid)) is None and freeze_after.get(str(fid)) is not None
-        ]
         freeze_mutated = [
-            fid
+            int(fid)
             for fid in fids
             if freeze_before.get(str(fid))
             and freeze_after.get(str(fid))
             and freeze_before.get(str(fid)) != freeze_after.get(str(fid))
         ]
-
+        freeze_newly_created = [
+            int(fid)
+            for fid in fids
+            if freeze_before.get(str(fid)) is None and freeze_after.get(str(fid)) is not None
+        ]
         integrity = {
-            "freeze_capture_requested": False,
+            "execution_mode": EXECUTION_MODE,
             "freeze_capture": False,
             "freeze_before": freeze_before,
             "freeze_after": freeze_after,
             "freeze_unchanged": freeze_unchanged,
             "freeze_newly_created_by_bridge": freeze_newly_created,
             "freeze_hash_mutated": freeze_mutated,
-            "note": (
-                "GPT Actions/MCP bridge may create earliest FREEZE-SERVICE-v2 freezes on first "
-                "successful Tier A prediction even when job request sets freeze_capture=false. "
-                "Subsequent MID/LATE captures should reuse those hashes (create_or_reuse_freeze)."
-            ),
-            "wsp_restore_ok": restore_ok,
-            "restore_meta": restore_meta,
+            "canonical_state_before": state_before,
+            "canonical_state_after": state_after,
+            "wsp_count_unchanged": state_before["wsp_count"] == state_after["wsp_count"],
+            "ecse_count_unchanged": state_before["ecse_count"] == state_after["ecse_count"],
+            "freeze_count_unchanged": state_before["freeze_count"] == state_after["freeze_count"],
+            "canonical_writes_attempted": 0,
+            "canonical_writes_completed": 0,
+            "early_freeze_side_effect_annotations": freeze_annotations,
             "temporary_run_audit_id": audit_id,
             "research_only": True,
             "capture_error": capture_error,
+            "note": (
+                "V2 ephemeral path: no GPT Actions job, no WSP/ECSE/freeze writes. "
+                "Odds refresh may update odds_snapshots only."
+            ),
         }
         _write_json(art / "integrity.json", integrity)
         _write_json(art / "capture_results.json", {"results": results})
@@ -552,11 +602,18 @@ def run_timing_capture(
         except Exception:
             pass
 
-    if not restore_ok or capture_error or freeze_mutated:
+    isolation_ok = (
+        integrity.get("freeze_unchanged")
+        and integrity.get("wsp_count_unchanged")
+        and integrity.get("ecse_count_unchanged")
+        and integrity.get("freeze_count_unchanged")
+        and not freeze_mutated
+        and not freeze_newly_created
+        and not capture_error
+    )
+
+    if not isolation_ok or capture_error or freeze_mutated or freeze_newly_created:
         final_status = "ECSE_TIMING_EXPERIMENT_VALIDATION_FAILED"
-    elif freeze_newly_created and sc == "EARLY":
-        # First-ever freeze side-effect from production bridge — research snapshots still valid
-        final_status = "ECSE_TIMING_EXPERIMENT_PARTIAL"
     elif captured == 0 and idempotent == 0:
         final_status = "ECSE_TIMING_EXPERIMENT_BLOCKED"
     elif blocked and captured:
@@ -574,12 +631,14 @@ def run_timing_capture(
         "scope": scope,
         "audit_id": audit_id,
         "git_sha": _git_sha(),
+        "execution_mode": EXECUTION_MODE,
         "captured": captured,
         "blocked": blocked,
         "idempotent": idempotent,
         "included_discovery": discovery["included_count"],
         "excluded_discovery": discovery["excluded_count"],
         "integrity": integrity,
+        "isolation_ok": isolation_ok,
         "mid_command": (
             f"python scripts/run_ecse_timing_experiment.py --date {experiment_date} "
             f"--snapshot mid --scope {scope}"
@@ -589,6 +648,7 @@ def run_timing_capture(
             f"--snapshot late --scope {scope}"
         ),
         "evaluate_command": f"python scripts/evaluate_ecse_timing_experiment.py --date {experiment_date}",
+        "mid_authorized": bool(isolation_ok and sc == "EARLY" and (captured or idempotent)),
     }
     _write_json(art / "run_summary.json", summary)
     return summary
