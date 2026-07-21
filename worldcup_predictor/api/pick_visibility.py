@@ -38,6 +38,38 @@ def _pick_display(pick: dict[str, Any] | None, *, prefix: str) -> dict[str, Any]
     return out
 
 
+def _attach_no_bet_diagnostics(out: dict[str, Any], prediction: MatchPrediction) -> None:
+    """Additive owner/research diagnostics from post-enrichment recompute (if present)."""
+    md = prediction.metadata or {}
+    if md.get("no_bet_recomputed") != "true":
+        return
+    reasons_raw = md.get("no_bet_reasons") or ""
+    reasons = [r for r in str(reasons_raw).split(",") if r]
+    out["no_bet_recomputed"] = True
+    out["no_bet_decision_stage"] = md.get("no_bet_decision_stage") or "FINAL_POST_ENRICHMENT"
+    out["no_bet_reasons"] = reasons
+    out["no_bet_cleared_reasons"] = [
+        r for r in str(md.get("no_bet_cleared_reasons") or "").split(",") if r
+    ]
+    out["no_bet_retained_reasons"] = [
+        r for r in str(md.get("no_bet_retained_reasons") or "").split(",") if r
+    ]
+    if md.get("baseline_no_bet") is not None:
+        out["baseline_no_bet"] = str(md.get("baseline_no_bet")).lower() == "true"
+    if md.get("final_no_bet") is not None:
+        out["final_no_bet"] = str(md.get("final_no_bet")).lower() == "true"
+    details_json = md.get("no_bet_reason_details_json")
+    if details_json:
+        try:
+            import json
+
+            out["no_bet_reason_details"] = json.loads(details_json)
+        except Exception:
+            pass
+    if md.get("no_bet_recompute_mode") == "shadow" and md.get("shadow_final_no_bet") is not None:
+        out["shadow_final_no_bet"] = str(md.get("shadow_final_no_bet")).lower() == "true"
+
+
 def enrich_pick_visibility(
     block: dict[str, Any],
     prediction: MatchPrediction,
@@ -48,13 +80,26 @@ def enrich_pick_visibility(
     out = dict(block)
     confidence = float(prediction.confidence_score or 0.0)
     dq = data_quality if data_quality is not None else float(out.get("data_quality") or 0.0)
-    internal_no_bet = bool(
-        prediction.no_bet_flag
-        or confidence < OFFICIAL_CONFIDENCE_THRESHOLD
-        or dq < 45.0
+    md = prediction.metadata or {}
+    recompute_active = (
+        md.get("no_bet_recomputed") == "true"
+        and md.get("no_bet_recompute_mode") == "active"
     )
+    if recompute_active:
+        # Consume final recomputed decision — do NOT re-OR sticky inherited flag alone.
+        # Defense-in-depth: visibility thresholds remain enforced.
+        internal_no_bet = bool(prediction.no_bet_flag)
+        if confidence < OFFICIAL_CONFIDENCE_THRESHOLD or dq < 45.0:
+            internal_no_bet = True
+    else:
+        internal_no_bet = bool(
+            prediction.no_bet_flag
+            or confidence < OFFICIAL_CONFIDENCE_THRESHOLD
+            or dq < 45.0
+        )
 
     out["no_bet"] = internal_no_bet
+    _attach_no_bet_diagnostics(out, prediction)
     official = not internal_no_bet
     out["pick_tier"] = "official" if official else "caution"
     out["confidence_gap_to_threshold"] = _gap_to_threshold(confidence) if not official else 0.0
