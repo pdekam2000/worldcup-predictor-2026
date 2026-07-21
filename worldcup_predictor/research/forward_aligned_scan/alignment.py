@@ -11,7 +11,7 @@ from worldcup_predictor.research.forward_aligned_scan.constants import (
     TIER_S,
     TOP5_MASS_TIER_S_MIN,
 )
-from worldcup_predictor.research.wde_vs_ecse_forensics.directions import norm_dir
+from worldcup_predictor.research.forward_aligned_scan.directions import norm_dir
 
 
 SCORE_FORMULA = """

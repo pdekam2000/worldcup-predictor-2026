@@ -11,13 +11,24 @@ from worldcup_predictor.config.settings import get_settings
 from worldcup_predictor.database.connection import connect
 from worldcup_predictor.forward_evaluation.context import scoreline_side
 from worldcup_predictor.research.forward_aligned_scan.constants import ARTIFACT_ROOT, PROMOTION_MIN_CONFIRMED
+from worldcup_predictor.research.forward_aligned_scan.directions import norm_dir
 from worldcup_predictor.research.forward_aligned_scan.store import scan_dir, write_json
-from worldcup_predictor.research.wde_vs_ecse_forensics.directions import norm_dir
-from worldcup_predictor.research.wde_vs_ecse_forensics.load import load_prod_fixture_results
-from worldcup_predictor.research.wde_vs_ecse_forensics.stats_ext import paired_mcnemar, rate_block
 
 
 def evaluate_scan(scan_id: str, *, root: Path | None = None) -> dict[str, Any]:
+    # Post-match loaders live in an optional forensics package; keep them lazy so
+    # FAS unit tests collect from a clean checkout without that dependency.
+    try:
+        from worldcup_predictor.research.wde_vs_ecse_forensics.load import load_prod_fixture_results
+        from worldcup_predictor.research.wde_vs_ecse_forensics.stats_ext import paired_mcnemar, rate_block
+    except ImportError as exc:
+        return {
+            "status": "MISSING_OPTIONAL_FORENSICS_DEPS",
+            "scan_id": scan_id,
+            "error": str(exc),
+            "hint": "Install/track wde_vs_ecse_forensics to run post-match evaluate_scan.",
+        }
+
     root = root or project_root()
     d = scan_dir(scan_id, root)
     summary_path = d / "summary.json"
