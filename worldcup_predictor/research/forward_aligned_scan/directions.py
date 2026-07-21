@@ -1,17 +1,126 @@
-"""ECSE direction derivation and goal-pattern helpers."""
+"""ECSE direction derivation and goal-pattern helpers (self-contained).
+
+Direction utilities previously imported from untracked research packages
+``wde_vs_ecse_forensics`` / ``wde_ecse_conflict``. Logic is inlined here so the
+FAS package collects and runs from a clean checkout without those packages.
+Behavior matches the prior helper semantics; Tier S thresholds are unchanged.
+"""
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import Any
 
 from worldcup_predictor.forward_evaluation.context import scoreline_side
-from worldcup_predictor.research.wde_ecse_conflict.detect import market_implied_direction
-from worldcup_predictor.research.wde_vs_ecse_forensics.directions import (
-    majority_direction,
-    mass_winner,
-    norm_dir,
-    prob01,
-)
+
+
+def norm_dir(value: Any) -> str | None:
+    if value is None:
+        return None
+    text = str(value).lower().strip().replace(" ", "_")
+    mapping = {
+        "home": "home_win",
+        "away": "away_win",
+        "1": "home_win",
+        "x": "draw",
+        "2": "away_win",
+        "home_win": "home_win",
+        "away_win": "away_win",
+        "draw": "draw",
+        "h": "home_win",
+        "d": "draw",
+        "a": "away_win",
+    }
+    return mapping.get(text, text if text in {"home_win", "away_win", "draw"} else None)
+
+
+def prob01(value: Any) -> float | None:
+    if value is None:
+        return None
+    try:
+        p = float(value)
+    except (TypeError, ValueError):
+        return None
+    return p / 100.0 if p > 1.0 else p
+
+
+def market_implied_direction(home: Any, draw: Any, away: Any) -> str | None:
+    try:
+        h, d, a = float(home), float(draw), float(away)
+    except (TypeError, ValueError):
+        return None
+    best = min(h, d, a)
+    if best == h:
+        return "home_win"
+    if best == a:
+        return "away_win"
+    return "draw"
+
+
+def majority_direction(ranks: list[dict[str, Any]], n: int) -> dict[str, Any]:
+    """Vote-count majority among Top-n; mass break ties; else direction_tie."""
+    ordered = sorted(ranks, key=lambda r: int(r.get("rank") or 99))[:n]
+    votes: Counter[str] = Counter()
+    mass: dict[str, float] = {"home_win": 0.0, "draw": 0.0, "away_win": 0.0}
+    score_directions: list[dict[str, Any]] = []
+    for i, row in enumerate(ordered, start=1):
+        score = str(row.get("score") or row.get("scoreline") or "")
+        side = scoreline_side(score)
+        p = prob01(row.get("probability")) or 0.0
+        score_directions.append(
+            {
+                "rank": int(row.get("rank") or i),
+                "score": score,
+                "probability": row.get("probability"),
+                "direction": side,
+            }
+        )
+        if side:
+            votes[side] += 1
+            mass[side] += p
+    if not votes:
+        return {
+            "majority": None,
+            "label": None,
+            "mass_by_direction": mass,
+            "votes_by_direction": dict(votes),
+            "score_directions": score_directions,
+            "tied": False,
+        }
+    top_vote = max(votes.values())
+    leaders = [d for d, v in votes.items() if v == top_vote]
+    tied = False
+    if len(leaders) == 1:
+        majority = leaders[0]
+    else:
+        # mass tie-break among vote leaders
+        best_mass = max(mass[d] for d in leaders)
+        mass_leaders = [d for d in leaders if mass[d] == best_mass]
+        if len(mass_leaders) == 1 and best_mass > 0:
+            majority = mass_leaders[0]
+        elif len(mass_leaders) == 1 and best_mass == 0:
+            # no probabilities — still a vote tie
+            majority = "direction_tie"
+            tied = True
+        else:
+            majority = "direction_tie"
+            tied = True
+    return {
+        "majority": majority if majority != "direction_tie" else None,
+        "label": majority,
+        "mass_by_direction": {k: round(v, 6) for k, v in mass.items()},
+        "votes_by_direction": dict(votes),
+        "score_directions": score_directions,
+        "tied": tied,
+    }
+
+
+def mass_winner(mass_by_direction: dict[str, float]) -> str | None:
+    if not mass_by_direction or not any(mass_by_direction.values()):
+        return None
+    best = max(mass_by_direction.values())
+    leaders = [k for k, v in mass_by_direction.items() if v == best]
+    return leaders[0] if len(leaders) == 1 else None
 
 
 def ranks_from_ecse(ecse: dict[str, Any] | None) -> list[dict[str, Any]]:

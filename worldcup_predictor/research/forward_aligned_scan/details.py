@@ -25,7 +25,7 @@ from worldcup_predictor.research.forward_aligned_scan.constants import (
     TZ_NAME,
 )
 from worldcup_predictor.research.forward_aligned_scan.directions import goal_alignment, ranks_from_ecse
-from worldcup_predictor.research.wde_vs_ecse_forensics.directions import norm_dir
+from worldcup_predictor.research.forward_aligned_scan.directions import norm_dir
 
 VIENNA = ZoneInfo(TZ_NAME)
 

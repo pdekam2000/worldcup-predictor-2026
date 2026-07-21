@@ -8,7 +8,7 @@ from typing import Any
 
 from worldcup_predictor.config.env_loading import project_root
 from worldcup_predictor.research.forward_aligned_scan.constants import ARTIFACT_ROOT, TIER_A, TIER_B, TIER_S
-from worldcup_predictor.research.wde_vs_ecse_forensics.directions import norm_dir
+from worldcup_predictor.research.forward_aligned_scan.directions import norm_dir
 
 
 def _f(v: Any) -> float | None:
