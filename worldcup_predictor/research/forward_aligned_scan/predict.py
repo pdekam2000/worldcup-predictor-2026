@@ -129,6 +129,21 @@ def predict_fixture(
         prod_conn=prod_conn,
     )
     pred_d = pred.to_dict()
+    nobet_diag = (
+        pred_d.get("no_bet_diagnostics")
+        if isinstance(pred_d.get("no_bet_diagnostics"), dict)
+        else {}
+    )
+    raw_wde = pred.raw_wde_payload if isinstance(getattr(pred, "raw_wde_payload", None), dict) else {}
+
+    def _lift_nobet(key: str):
+        val = pred_d.get(key)
+        if val is None:
+            val = raw_wde.get(key)
+        if val is None:
+            val = nobet_diag.get(key)
+        return val
+
     dirs = derive_directions(
         wde=pred_d.get("wde"),
         ecse=pred_d.get("ecse"),
@@ -172,14 +187,14 @@ def predict_fixture(
             "consensus": pred_d.get("consensus"),
             "no_bet": pred_d.get("no_bet"),
             "no_bet_diagnostics": pred_d.get("no_bet_diagnostics"),
-            "no_bet_recomputed": pred_d.get("no_bet_recomputed"),
-            "no_bet_decision_stage": pred_d.get("no_bet_decision_stage"),
-            "no_bet_reasons": pred_d.get("no_bet_reasons"),
-            "no_bet_reason_details": pred_d.get("no_bet_reason_details"),
-            "no_bet_cleared_reasons": pred_d.get("no_bet_cleared_reasons"),
-            "no_bet_retained_reasons": pred_d.get("no_bet_retained_reasons"),
-            "baseline_no_bet": pred_d.get("baseline_no_bet"),
-            "final_no_bet": pred_d.get("final_no_bet"),
+            "no_bet_recomputed": _lift_nobet("no_bet_recomputed"),
+            "no_bet_decision_stage": _lift_nobet("no_bet_decision_stage"),
+            "no_bet_reasons": _lift_nobet("no_bet_reasons") or nobet_diag.get("no_bet_reasons"),
+            "no_bet_reason_details": _lift_nobet("no_bet_reason_details"),
+            "no_bet_cleared_reasons": _lift_nobet("no_bet_cleared_reasons"),
+            "no_bet_retained_reasons": _lift_nobet("no_bet_retained_reasons"),
+            "baseline_no_bet": _lift_nobet("baseline_no_bet"),
+            "final_no_bet": _lift_nobet("final_no_bet"),
             "pick_tier": pred_d.get("pick_tier"),
             "model_version": pred_d.get("model_version"),
             "model_config_hash": pred_d.get("model_config_hash"),

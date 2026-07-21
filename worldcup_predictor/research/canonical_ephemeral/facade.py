@@ -285,6 +285,8 @@ def _no_bet_diagnostics(payload: dict[str, Any]) -> dict[str, Any]:
     ):
         if key in payload and payload.get(key) is not None:
             out[key] = payload.get(key)
+        elif conf_trace.get(key) is not None:
+            out[key] = conf_trace.get(key)
     return out
 
 
