@@ -138,44 +138,101 @@ def _consensus(wde: str | None, top1_side: str | None, market: str | None, ft: s
 
 
 def _top5_from_ecse_prediction(prediction: dict[str, Any] | None) -> list[dict[str, Any]]:
+    """Extract Top1–Top5 with probabilities.
+
+    Prefer ``top_10_scorelines`` (dicts with probabilities). When ``top_5_scores``
+    is a list of bare strings, enrich probabilities from ``top_10_scorelines``
+    by scoreline label so mass/entropy are available at prediction time.
+    Does not change ECSE model math — only persistence/extraction.
+    """
     if not prediction:
         return []
+
+    prob_by_score: dict[str, float] = {}
+    ordered_from_10: list[dict[str, Any]] = []
+    for item in prediction.get("top_10_scorelines") or []:
+        if not isinstance(item, dict):
+            continue
+        score = item.get("scoreline") or item.get("score")
+        if not score:
+            continue
+        p = as_float(item.get("probability"))
+        if p is not None:
+            prob_by_score[str(score)] = p
+        ordered_from_10.append(
+            {
+                "rank": len(ordered_from_10) + 1,
+                "score": str(score),
+                "probability": p,
+            }
+        )
+
+    # If top_10 already supplies five scored rows with probabilities, use them.
+    if len(ordered_from_10) >= 5 and all(r.get("probability") is not None for r in ordered_from_10[:5]):
+        return [
+            {"rank": i, "score": r["score"], "probability": r["probability"]}
+            for i, r in enumerate(ordered_from_10[:5], start=1)
+        ]
+
     rows: list[dict[str, Any]] = []
-    # Prefer top_5_scores then top_10
     for i, item in enumerate((prediction.get("top_5_scores") or [])[:5], start=1):
         if isinstance(item, dict):
+            score = item.get("scoreline") or item.get("score")
+            p = as_float(item.get("probability"))
+            if p is None and score is not None:
+                p = prob_by_score.get(str(score))
+            if score:
+                rows.append({"rank": i, "score": str(score), "probability": p})
+        elif isinstance(item, str) and item:
             rows.append(
                 {
                     "rank": i,
-                    "score": item.get("scoreline") or item.get("score"),
-                    "probability": as_float(item.get("probability")),
+                    "score": item,
+                    "probability": prob_by_score.get(item),
                 }
             )
-        elif isinstance(item, str):
-            rows.append({"rank": i, "score": item, "probability": None})
-    if len(rows) >= 5:
-        return rows[:5]
-    for i, item in enumerate((prediction.get("top_10_scorelines") or [])[:5], start=1):
-        if isinstance(item, dict):
-            score = item.get("scoreline") or item.get("score")
-            if score and all(str(r.get("score")) != str(score) for r in rows):
+
+    if len(rows) < 5:
+        for r in ordered_from_10:
+            if len(rows) >= 5:
+                break
+            if all(str(x.get("score")) != str(r.get("score")) for x in rows):
                 rows.append(
                     {
                         "rank": len(rows) + 1,
-                        "score": score,
-                        "probability": as_float(item.get("probability")),
+                        "score": r["score"],
+                        "probability": r.get("probability"),
                     }
                 )
-    return rows[:5]
+
+    # Final fill: if still missing probs but top_10 ordered list is complete, prefer it.
+    if (
+        (not rows or any(r.get("probability") is None for r in rows[:5]))
+        and len(ordered_from_10) >= 5
+        and all(r.get("probability") is not None for r in ordered_from_10[:5])
+    ):
+        return [
+            {"rank": i, "score": r["score"], "probability": r["probability"]}
+            for i, r in enumerate(ordered_from_10[:5], start=1)
+        ]
+
+    return [
+        {"rank": i, "score": r.get("score"), "probability": r.get("probability")}
+        for i, r in enumerate(rows[:5], start=1)
+    ]
 
 
 def _no_bet_diagnostics(payload: dict[str, Any]) -> dict[str, Any]:
     audit = payload.get("confidence_audit") or payload.get("audit") or {}
     if isinstance(audit, dict) and "confidence_audit" in audit:
         audit = audit.get("confidence_audit") or audit
+    # Prefer post-enrichment reason-based fields; also read audit_trace.confidence.
+    audit_trace = payload.get("audit_trace") if isinstance(payload.get("audit_trace"), dict) else {}
+    conf_trace = audit_trace.get("confidence") if isinstance(audit_trace.get("confidence"), dict) else {}
     reasons = (
         payload.get("no_bet_reasons")
         or (audit.get("no_bet_reasons") if isinstance(audit, dict) else None)
+        or conf_trace.get("no_bet_reasons")
         or (payload.get("trace") or {}).get("no_bet_reasons")
         or []
     )
@@ -215,6 +272,19 @@ def _no_bet_diagnostics(payload: dict[str, Any]) -> dict[str, Any]:
         out["no_bet_reason_status"] = "NOT_EXPOSED_BY_CANONICAL_PAYLOAD"
     else:
         out["no_bet_reason_status"] = "EXPOSED"
+    # Additive reason-based recompute fields (new scans / active mode only).
+    for key in (
+        "no_bet_recomputed",
+        "no_bet_decision_stage",
+        "no_bet_reason_details",
+        "no_bet_cleared_reasons",
+        "no_bet_retained_reasons",
+        "baseline_no_bet",
+        "final_no_bet",
+        "shadow_final_no_bet",
+    ):
+        if key in payload and payload.get(key) is not None:
+            out[key] = payload.get(key)
     return out
 
 
@@ -244,7 +314,12 @@ def run_ephemeral_canonical_prediction(
 
     Callable only from internal research code. Not exposed via public API or GPT Actions.
     """
-    if research_context.caller not in {"ecse_timing_experiment", "canonical_ephemeral_test", "research_internal"}:
+    if research_context.caller not in {
+        "ecse_timing_experiment",
+        "canonical_ephemeral_test",
+        "research_internal",
+        "forward_aligned_scan",
+    }:
         raise PermissionError(
             f"CANONICAL_RESEARCH_EPHEMERAL refused: caller={research_context.caller!r} not authorized"
         )
@@ -557,7 +632,8 @@ def ephemeral_prediction_to_timing_payload(
     """Map ephemeral result into timing-experiment snapshot payload shape."""
     d = pred.to_dict()
     nobet = d.get("no_bet_diagnostics") or {}
-    return {
+    raw = pred.raw_wde_payload if isinstance(getattr(pred, "raw_wde_payload", None), dict) else {}
+    out = {
         "complete": pred.complete,
         "execution_mode": EXECUTION_MODE,
         "odds": pred.odds,
@@ -588,3 +664,21 @@ def ephemeral_prediction_to_timing_payload(
         "warnings": pred.warnings,
         "quality_status": pred.quality_status,
     }
+    for key in (
+        "no_bet_recomputed",
+        "no_bet_decision_stage",
+        "no_bet_reasons",
+        "no_bet_reason_details",
+        "no_bet_cleared_reasons",
+        "no_bet_retained_reasons",
+        "baseline_no_bet",
+        "final_no_bet",
+    ):
+        val = raw.get(key)
+        if val is None:
+            val = nobet.get(key)
+        if val is not None:
+            out[key] = val
+    if "no_bet_reasons" not in out and nobet.get("no_bet_reasons"):
+        out["no_bet_reasons"] = nobet.get("no_bet_reasons")
+    return out

@@ -396,6 +396,27 @@ class ScoringEngine:
             report,
             base_prediction_quality=pq,
         )
+        # Phase NO_BET: reason-based recompute after adaptive enrichment (gated by settings).
+        try:
+            from worldcup_predictor.decision.no_bet_evaluator import (
+                recompute_no_bet_after_enrichment,
+            )
+
+            recompute_mode = str(getattr(settings, "no_bet_reason_recompute_mode", "off") or "off")
+            wde_dq = None
+            try:
+                wde_dq = float(prediction.confidence_breakdown.data_quality_score)
+            except Exception:
+                wde_dq = None
+            prediction, _no_bet_decision = recompute_no_bet_after_enrichment(
+                prediction,
+                mode=recompute_mode,
+                wde_data_quality=wde_dq,
+                visibility_data_quality=wde_dq,
+                scoring_data_quality=wde_dq,
+            )
+        except Exception:
+            pass
         pq = prediction.prediction_quality_score
         final_prediction = replace(
             prediction,

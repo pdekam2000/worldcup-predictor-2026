@@ -115,6 +115,15 @@ class Settings(BaseSettings):
         alias="SPORTMONKS_PREDICTION_PROMOTION_SHADOW_PATH",
     )
 
+    # Phase NO_BET — reason-based recompute after adaptive enrichment
+    # off: legacy sticky boolean path (default until controlled deploy)
+    # shadow: compute diagnostics only; public no_bet unchanged
+    # active: final no_bet derived from active reasons only
+    no_bet_reason_recompute_mode: Literal["off", "shadow", "active"] = Field(
+        default="off",
+        alias="NO_BET_REASON_RECOMPUTE_MODE",
+    )
+
     # Phase 26 — real-world validation framework (capture only; promotions stay shadow)
     real_world_validation_mode: Literal["off", "shadow"] = Field(
         default="shadow",

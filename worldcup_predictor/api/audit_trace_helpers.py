@@ -184,5 +184,17 @@ def build_audit_trace(
             adaptive = build_adaptive_confidence_trace(prediction)
             if adaptive:
                 out["confidence"]["adaptive"] = adaptive
+            md = getattr(prediction, "metadata", None) or {}
+            if md.get("no_bet_recomputed") == "true":
+                reasons = [r for r in str(md.get("no_bet_reasons") or "").split(",") if r]
+                out["confidence"]["no_bet_reasons"] = reasons
+                out["confidence"]["no_bet_recomputed"] = True
+                out["confidence"]["no_bet_decision_stage"] = md.get("no_bet_decision_stage")
+                out["confidence"]["no_bet_cleared_reasons"] = [
+                    r for r in str(md.get("no_bet_cleared_reasons") or "").split(",") if r
+                ]
+                out["confidence"]["no_bet_retained_reasons"] = [
+                    r for r in str(md.get("no_bet_retained_reasons") or "").split(",") if r
+                ]
 
     return out
