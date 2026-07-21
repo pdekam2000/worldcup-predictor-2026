@@ -31,13 +31,20 @@ def main() -> int:
     parser.add_argument("--timezone", default="Europe/Vienna")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--skip-lock", action="store_true")
-    parser.add_argument("--limit", type=int, default=50)
+    parser.add_argument("--limit", type=int, default=0, help="Max fixtures (0 = all eligible)")
     parser.add_argument("--no-tomorrow", action="store_true")
     parser.add_argument("--no-shadow", action="store_true")
     parser.add_argument("--refresh-stale-odds", action="store_true")
     parser.add_argument("--max-odds-provider-calls", type=int, default=20)
     parser.add_argument("--strict-fresh-odds", action="store_true")
     parser.add_argument("--fixture-id", type=int, default=None)
+    parser.add_argument("--lock-wait-sec", type=float, default=300.0)
+    parser.add_argument(
+        "--include-result-sync",
+        action="store_true",
+        help="If set, daily mode also runs result sync (default: deferred to eval timer)",
+    )
+    parser.add_argument("--drain-concurrency", type=int, default=1)
     args = parser.parse_args()
 
     if args.mode == "hourly":
@@ -58,6 +65,9 @@ def main() -> int:
         max_odds_provider_calls=args.max_odds_provider_calls,
         strict_fresh_odds=args.strict_fresh_odds,
         fixture_id=args.fixture_id,
+        lock_wait_sec=args.lock_wait_sec,
+        skip_result_sync_in_daily=not args.include_result_sync,
+        drain_concurrency=max(1, int(args.drain_concurrency)),
     )
     result = run_production_prediction_pipeline(config)
     print(json.dumps(result.to_dict(), indent=2, ensure_ascii=False))

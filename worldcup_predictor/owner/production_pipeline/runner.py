@@ -46,7 +46,7 @@ class PipelineConfig:
     date_arg: str = "today"
     timezone: str = DEFAULT_TIMEZONE
     dry_run: bool = False
-    limit: int = 50
+    limit: int = 0
     include_tomorrow: bool = True
     include_shadow_monitor: bool = True
     max_api_football_calls: int = 80
@@ -57,6 +57,9 @@ class PipelineConfig:
     max_odds_provider_calls: int = 20
     strict_fresh_odds: bool = False
     fixture_id: int | None = None
+    lock_wait_sec: float = 300.0
+    skip_result_sync_in_daily: bool = True
+    drain_concurrency: int = 1
 
 
 @dataclass
@@ -193,6 +196,8 @@ def _cycle_step(
         fixture_id=config.fixture_id,
         discovery_scope="owner",
         emit_evaluation_report=not skip_result_sync,
+        use_fixture_drain=True,
+        drain_concurrency=config.drain_concurrency,
     )
     result = run_daily_pipeline(pipeline_cfg)
     return result.to_dict()
@@ -229,21 +234,51 @@ def _results_step(*, config: PipelineConfig, settings: Settings) -> dict[str, An
     }
 
 
+def _writable_artifact_dir() -> Path:
+    """Prefer canonical dir; fall back if root-owned / unwritable by service user."""
+    primary = ARTIFACT_DIR
+    try:
+        primary.mkdir(parents=True, exist_ok=True)
+        probe = primary / ".write_probe"
+        probe.write_text("ok", encoding="utf-8")
+        probe.unlink(missing_ok=True)
+        return primary
+    except OSError:
+        fallback = Path("artifacts") / "production_pipeline_www"
+        fallback.mkdir(parents=True, exist_ok=True)
+        return fallback
+
+
 def _write_reports(result: PipelineRunResult) -> None:
-    ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
+    art_dir = _writable_artifact_dir()
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    json_path = ARTIFACT_DIR / f"production_pipeline_{result.mode}_{ts}.json"
-    json_path.write_text(json.dumps(result.to_dict(), indent=2, ensure_ascii=False), encoding="utf-8")
-    latest = ARTIFACT_DIR / "production_pipeline_latest.json"
-    latest.write_text(json.dumps(result.to_dict(), indent=2, ensure_ascii=False), encoding="utf-8")
+    payload = json.dumps(result.to_dict(), indent=2, ensure_ascii=False)
+    json_path = art_dir / f"production_pipeline_{result.mode}_{ts}.json"
+    latest = art_dir / "production_pipeline_latest.json"
+    try:
+        json_path.write_text(payload, encoding="utf-8")
+        latest.write_text(payload, encoding="utf-8")
+    except OSError as exc:
+        result.errors.append(f"report_write_failed:{exc}")
+        result.report_paths = {"error": str(exc)}
+        return
 
     md = _render_markdown(result)
-    REPORT_MD.write_text(md, encoding="utf-8")
+    md_path = REPORT_MD
+    try:
+        md_path.write_text(md, encoding="utf-8")
+    except OSError:
+        md_path = art_dir / "PRODUCTION_PIPELINE_LAST_RUN.md"
+        try:
+            md_path.write_text(md, encoding="utf-8")
+        except OSError:
+            md_path = None
 
     result.report_paths = {
         "json": str(json_path),
         "json_latest": str(latest),
-        "markdown": str(REPORT_MD),
+        "markdown": str(md_path) if md_path else "",
+        "artifact_dir": str(art_dir),
     }
 
 
@@ -306,11 +341,14 @@ def run_production_prediction_pipeline(
     lock = ProductionPipelineLock(LOCK_PATH)
     if config.skip_lock or config.dry_run:
         result.lock_acquired = True
-    elif lock.acquire():
+    elif lock.acquire(wait_sec=float(config.lock_wait_sec), poll_sec=5.0):
         result.lock_acquired = True
+        result.steps["lock"] = {"path": str(lock.path), "wait_sec": config.lock_wait_sec}
     else:
+        # Busy after wait — not a permanent failure; leave queue for resume
         result.skipped_overlap = True
-        result.recommendation = "IMPLEMENT_1_DO_NOT_ENABLE"
+        result.errors.append("PIPELINE_LOCK_BUSY_AFTER_WAIT")
+        result.recommendation = "IMPLEMENT_1_NEEDS_PIPELINE_FIX"
         result.finished_at = _utc_now()
         _write_reports(result)
         return result
@@ -321,10 +359,15 @@ def run_production_prediction_pipeline(
     try:
         if effective_mode in ("daily", "predictions-only"):
             fetch = effective_mode == "daily" and not config.dry_run
+            # Daily prediction must not block on result sync (handoff to eval timer).
+            skip_sync = (
+                effective_mode == "predictions-only"
+                or (effective_mode == "daily" and config.skip_result_sync_in_daily)
+            )
             today_cycle = _cycle_step(
                 date_arg=config.date_arg,
                 config=config,
-                skip_result_sync=effective_mode == "predictions-only",
+                skip_result_sync=skip_sync,
                 fetch_odds=fetch,
                 force_predictions=False,
             )
@@ -357,7 +400,10 @@ def run_production_prediction_pipeline(
                     t_pred.get("ecse_skipped") or 0
                 )
 
-        if effective_mode in ("daily", "hourly", "results-only", "eval-only"):
+        # Result sync / evaluation: separate from prediction drain for daily mode
+        if effective_mode in ("hourly", "results-only", "eval-only") or (
+            effective_mode == "daily" and not config.skip_result_sync_in_daily
+        ):
             results = _results_step(config=config, settings=settings)
             result.steps["results_eval"] = results
             rs = results.get("result_sync") or {}
@@ -368,8 +414,13 @@ def run_production_prediction_pipeline(
             wae = results.get("worldcup_auto_eval") or {}
             if isinstance(wae.get("evaluated"), int):
                 result.counts["predictions_evaluated"] += wae["evaluated"]
+        elif effective_mode == "daily":
+            result.steps["results_eval"] = {
+                "status": "DEFERRED_TO_FORWARD_EVAL_TIMER",
+                "note": "daily prediction drain does not block on result sync",
+            }
 
-        if effective_mode in ("daily", "eval-only") and not config.dry_run:
+        if effective_mode == "eval-only" and not config.dry_run:
             owner_eval = run_owner_daily_prediction_and_eval(
                 date_arg=config.date_arg,
                 timezone=config.timezone,

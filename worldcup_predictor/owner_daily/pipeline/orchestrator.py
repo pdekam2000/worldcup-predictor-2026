@@ -47,6 +47,9 @@ class DailyPipelineConfig(DailyCycleConfig):
     discovery_scope: str = "owner"  # Tier A + B
     emit_evaluation_report: bool = True
     max_retry_before_kickoff: int = 2
+    use_fixture_drain: bool = True
+    drain_concurrency: int = 1
+    drain_simulate_only: bool = False
 
 
 @dataclass
@@ -178,8 +181,92 @@ def run_daily_pipeline(
         write_pipeline_status(report_date, result.to_dict())
         return result
 
+    # When drain is enabled, cycle handles discovery/odds/fetch only; predict+freeze via drain.
+    if config.use_fixture_drain:
+        config.skip_predictions = True
+
     cycle = run_daily_owner_cycle(config, settings=settings)
     result.cycle = cycle
+
+    # Refresh fixtures from cycle discovery (may include provider fetch)
+    cycle_fixtures = discovery_pre.fixtures
+    try:
+        from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture as _DF
+
+        raw = (cycle.discovery or {}).get("fixtures") or []
+        if raw:
+            rebuilt: list = []
+            for item in raw:
+                if isinstance(item, dict):
+                    rebuilt.append(
+                        _DF(
+                            fixture_id=int(item.get("fixture_id") or item.get("provider_fixture_id") or 0),
+                            provider_fixture_id=int(item.get("provider_fixture_id") or item.get("fixture_id") or 0),
+                            competition_key=str(item.get("competition_key") or ""),
+                            home_team=str(item.get("home_team") or ""),
+                            away_team=str(item.get("away_team") or ""),
+                            kickoff_utc=str(item.get("kickoff_utc") or ""),
+                            status=str(item.get("status") or "NS"),
+                            season=item.get("season"),
+                            coverage_sources=list(item.get("coverage_sources") or ["local_db"]),
+                        )
+                    )
+            if rebuilt:
+                cycle_fixtures = rebuilt
+                fixtures = rebuilt
+    except Exception:
+        pass
+
+    drain_stats: dict[str, Any] = {"enabled": False}
+    if config.use_fixture_drain:
+        from worldcup_predictor.owner_daily.pipeline.drain_ledger import DrainLedger
+        from worldcup_predictor.owner_daily.pipeline.drain_runner import DrainConfig, drain_daily_queue
+
+        with DrainLedger() as ledger:
+            drain = drain_daily_queue(
+                fixtures,
+                config=DrainConfig(
+                    report_date=report_date,
+                    concurrency=max(1, int(config.drain_concurrency or 1)),
+                    dry_run=config.dry_run,
+                    simulate_only=bool(config.drain_simulate_only or config.dry_run),
+                    strict_fresh_odds=config.strict_fresh_odds,
+                    force_predictions=config.force_predictions,
+                ),
+                ledger=ledger,
+                settings=settings,
+            )
+        drain_stats = drain.to_dict()
+        result.artifact_paths["fixture_drain"] = str(
+            Path("data") / "daily_fixture_drain" / "ledger.db"
+        )
+        # Merge drain outcomes into cycle.predictions for eligibility indexing
+        cycle.predictions = {
+            **(cycle.predictions or {}),
+            "fixture_drain": drain_stats,
+            "wde_generated": sum(
+                1
+                for i in drain.items
+                if i.get("queue_state") in ("FROZEN", "COMPLETED")
+                and i.get("prediction_status") in ("OK", "PARTIAL", "SIMULATED_NO_WRITE")
+            ),
+            "ecse_generated": sum(
+                1
+                for i in drain.items
+                if i.get("queue_state") in ("FROZEN", "COMPLETED")
+            ),
+            "forward_eval_captures": [
+                {
+                    "fixture_id": i.get("fixture_id"),
+                    "capture_status": "reused"
+                    if i.get("queue_state") == "FROZEN" and i.get("freeze_id")
+                    else i.get("queue_state"),
+                    "freeze_id": i.get("freeze_id"),
+                }
+                for i in drain.items
+                if i.get("freeze_id")
+            ],
+        }
 
     conn = connect(settings.sqlite_path)
     repo = FootballIntelligenceRepository(settings.sqlite_path or None)
@@ -244,6 +331,30 @@ def run_daily_pipeline(
     freeze_path = write_freeze_manifest(report_date, freeze_rows)
     result.artifact_paths["freeze_manifest"] = str(freeze_path)
 
+    # Owner-only TeamFormH2HForensicAgent — after freeze, non-blocking, read-only
+    forensic_stats: dict[str, Any] = {"status": "SKIPPED", "blocked_prediction": False}
+    try:
+        from worldcup_predictor.research.team_form_h2h_forensic.agent import run_forensic_batch
+
+        forensic_out = run_forensic_batch(report_date=report_date, settings=settings)
+        forensic_stats = {
+            "status": forensic_out.get("final_status"),
+            "fixture_count": forensic_out.get("fixture_count"),
+            "artifact_path": forensic_out.get("artifact_path"),
+            "report_fa_path": forensic_out.get("report_fa_path"),
+            "blocked_prediction": False,
+        }
+        if forensic_out.get("artifact_path"):
+            result.artifact_paths["team_form_h2h_forensics"] = str(forensic_out["artifact_path"])
+        if forensic_out.get("report_fa_path"):
+            result.report_paths["team_form_h2h_forensic_fa_md"] = str(forensic_out["report_fa_path"])
+    except Exception as exc:
+        forensic_stats = {
+            "status": "TEAM_FORM_H2H_FORENSIC_ERROR",
+            "error": str(exc)[:200],
+            "blocked_prediction": False,
+        }
+
     prematch = build_prematch_reports(
         report_date=report_date,
         timezone_name=config.timezone,
@@ -281,8 +392,19 @@ def run_daily_pipeline(
         "wde_generated": (cycle.predictions or {}).get("wde_generated"),
         "ecse_generated": (cycle.predictions or {}).get("ecse_generated"),
         "correct_score_odds": cs_odds_stats,
+        "team_form_h2h_forensics": forensic_stats,
+        "fixture_drain": drain_stats,
     }
     result.stats = stats
+
+    # Drain reconciliation: queue must reach terminal for all items
+    if config.use_fixture_drain and isinstance(drain_stats, dict):
+        rec = drain_stats.get("reconcile") or {}
+        if rec.get("pending", 0) == 0 and rec.get("total", 0) > 0:
+            if frozen_n + blocked_n + int(rec.get("FAILED_FINAL") or 0) + int(
+                rec.get("POST_KICKOFF_SKIPPED") or 0
+            ) + int(rec.get("COMPLETED") or 0) + int(rec.get("FROZEN") or 0) >= int(rec.get("total") or 0):
+                result.pipeline_status = PIPELINE_COMPLETE
 
     summary_path = build_owner_summary_fa(
         report_date=report_date,

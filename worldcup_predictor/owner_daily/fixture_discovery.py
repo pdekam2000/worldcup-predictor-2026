@@ -298,15 +298,22 @@ def discover_daily_fixtures(
     date_arg: str = "today",
     timezone: str = "Europe/Vienna",
     competition_keys: list[str] | None = None,
-    limit: int = 50,
+    limit: int = 0,
     settings: Settings | None = None,
     fetch_if_missing: bool = True,
     call_log: DailyProviderCallLog | None = None,
     dry_run: bool = False,
 ) -> FixtureDiscoveryResult:
     settings = settings or get_settings()
-    keys = [normalize_competition_key(k) for k in (competition_keys or list(DAILY_SUPPORTED_COMPETITIONS))]
-    keys = [k for k in keys if k in DAILY_SUPPORTED_COMPETITIONS]
+    raw_keys = competition_keys or list(DAILY_SUPPORTED_COMPETITIONS)
+    keys = []
+    for k in raw_keys:
+        canon = normalize_competition_key(k) or k
+        if canon and canon not in keys:
+            keys.append(canon)
+    # Keep owner/Tier-B keys when explicitly provided; only default list is Tier-A daily supported.
+    if competition_keys is None:
+        keys = [k for k in keys if k in DAILY_SUPPORTED_COMPETITIONS]
     target = resolve_target_date(date_arg, timezone)
     start_utc, end_utc = vienna_day_utc_bounds(target, timezone)
 
@@ -319,7 +326,12 @@ def discover_daily_fixtures(
         timezone=timezone,
     )
 
-    local = discover_fixtures_from_db(conn, competition_keys=keys, start_utc=start_utc, end_utc=end_utc, limit=limit)
+    # limit<=0 means ALL eligible (no SQL/ cap slice)
+    eff_limit: int | None = None if limit is None or int(limit) <= 0 else int(limit)
+
+    local = discover_fixtures_from_db(
+        conn, competition_keys=keys, start_utc=start_utc, end_utc=end_utc, limit=eff_limit
+    )
     if fetch_if_missing and len(local) == 0:
         fetched, dupes, errors = fetch_missing_fixtures_from_providers(
             target=target,
@@ -334,7 +346,7 @@ def discover_daily_fixtures(
         result.duplicates_avoided = dupes
         result.provider_errors = errors
         local = discover_fixtures_from_db(
-            conn, competition_keys=keys, start_utc=start_utc, end_utc=end_utc, limit=limit
+            conn, competition_keys=keys, start_utc=start_utc, end_utc=end_utc, limit=eff_limit
         )
 
     seen: dict[str, DailyFixture] = {}
@@ -352,7 +364,7 @@ def discover_daily_fixtures(
         seen[dk] = fx
         result.fixtures.append(fx)
 
-    if len(result.fixtures) > limit:
-        result.fixtures = result.fixtures[:limit]
+    if eff_limit is not None and len(result.fixtures) > eff_limit:
+        result.fixtures = result.fixtures[:eff_limit]
 
     return result

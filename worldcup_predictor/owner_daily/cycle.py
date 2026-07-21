@@ -38,7 +38,7 @@ class DailyCycleConfig:
     date_arg: str = "today"
     timezone: str = "Europe/Vienna"
     competition_keys: list[str] | None = None
-    limit: int = 50
+    limit: int = 0
     max_api_football_calls: int = DEFAULT_MAX_API_FOOTBALL_CALLS
     max_sportmonks_calls: int = DEFAULT_MAX_SPORTMONKS_CALLS
     max_oddalerts_calls: int = DEFAULT_MAX_ODDALERTS_CALLS
@@ -48,6 +48,7 @@ class DailyCycleConfig:
     no_provider_calls: bool = False
     force_predictions: bool = False
     skip_result_sync: bool = False
+    skip_predictions: bool = False
     fetch_missing_odds: bool = False
     include_shadow: bool = False
     refresh_stale_odds: bool = False
@@ -264,14 +265,22 @@ def run_daily_owner_cycle(
             oddalerts_configured=oa.is_configured,
         )
 
-    pred_out = run_daily_predictions(
-        discovery.fixtures,
-        dry_run=config.dry_run,
-        force=config.force_predictions or refreshed_for_prediction,
-        strict_fresh_odds=config.strict_fresh_odds,
-        settings=settings,
-    )
-    result.predictions = pred_out.to_dict()
+    pred_out = None
+    if not config.skip_predictions:
+        pred_out = run_daily_predictions(
+            discovery.fixtures,
+            dry_run=config.dry_run,
+            force=config.force_predictions or refreshed_for_prediction,
+            strict_fresh_odds=config.strict_fresh_odds,
+            settings=settings,
+        )
+        result.predictions = pred_out.to_dict()
+    else:
+        result.predictions = {
+            "skipped": True,
+            "reason": "deferred_to_fixture_drain",
+            "selected": len(discovery.fixtures),
+        }
 
     if not config.skip_result_sync:
         post_sync = run_daily_result_sync_and_evaluation(
