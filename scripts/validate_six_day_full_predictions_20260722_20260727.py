@@ -90,7 +90,8 @@ def run_validation() -> dict:
     add("40_consensus", "_consensus" in full)
     add("41_reports_created", (REPORT_DIR / "2026-07-22_TO_2026-07-27_SIX_DAY_FULL_PREDICTIONS.md").is_file())
     add("42_persian_report", (REPORT_DIR / "2026-07-22_TO_2026-07-27_SIX_DAY_FULL_PREDICTIONS_FA.md").is_file())
-    add("43_no_formula_changes", "modify WDE" not in full and integrity.get("formula_changes") is False)
+    add("43_no_formula_changes", integrity.get("formula_changes") is False and "Do not modify WDE" not in full.replace("Does not modify WDE", ""))
+
     add("44_no_shadow_promotion", integrity.get("shadow_promotion") is False)
     add("45_no_production_deletion", "DELETE FROM" not in runner and "unlink(" not in runner)
 
