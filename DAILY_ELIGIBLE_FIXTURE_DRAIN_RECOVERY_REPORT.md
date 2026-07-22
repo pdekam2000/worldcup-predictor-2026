@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-21  
 **Canonical goal:** `ALL_ELIGIBLE_SUPPORTED_PREMATCH_FIXTURES_PER_DAY`  
-**Final status:** `DAILY_DRAIN_PARTIAL_RUNTIME_LIMIT` (code complete; production deploy/live cycle pending host write approval)
+**Final status:** `DAILY_DRAIN_DEPLOY_FAILED` (code committed + pushed to `fix/no-bet-reason-recompute`; direct `origin/main` push and production host deploy blocked by session approval — manual finish required)
 
 ---
 
@@ -137,15 +137,32 @@ Command: `python scripts/validate_daily_eligible_fixture_drain_and_freeze.py`
 
 - Timer remains **enabled** (single daily prediction timer).
 - No second overlapping prediction timer activated.
-- Production file sync / `chown` of lock+artifact dirs / live cycle: **blocked pending host-write approval** in this session.
+- Production file sync / `chown` of lock+artifact dirs / live cycle: **blocked** — finish manually (see below).
+- Branch pushed: `origin/fix/no-bet-reason-recompute` @ `a684a24`
+- Direct push to `origin/main` not completed in this session (approval gate).
 
-Ops fix required on host (once):
+### Manual finish checklist
 
 ```bash
+# 1) land on main (from a clean checkout)
+git fetch origin
+git checkout main && git pull
+git cherry-pick a684a24
+git push origin main
+
+# 2) deploy code to production (existing SCP/rsync path)
+# then:
 sudo chown -R www-data:www-data /opt/worldcup-predictor/data/locks \
   /opt/worldcup-predictor/artifacts/production_pipeline
 sudo chmod 775 /opt/worldcup-predictor/data/locks \
   /opt/worldcup-predictor/artifacts/production_pipeline
+
+cd /opt/worldcup-predictor
+sudo -u www-data .venv/bin/python3 scripts/run_jul16_eligible_drain_simulation.py
+sudo -u www-data .venv/bin/python3 scripts/validate_daily_eligible_fixture_drain_and_freeze.py
+sudo -u www-data .venv/bin/python3 scripts/run_live_daily_eligible_drain_acceptance.py tomorrow
+sudo systemctl restart worldcup-prediction-daily.timer
+# do NOT enable a second prediction timer
 ```
 
 ---
