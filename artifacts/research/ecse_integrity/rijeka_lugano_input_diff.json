@@ -1,0 +1,76 @@
+{
+  "first_identical_stage": "odds_feature_extraction_first_bookmaker_pick",
+  "root_cause": "build_odds_feature_row used _pick_odd (first Match Winner line). Both Rijeka and Lugano snapshots listed 10Bet first with identical 1.16/5.75/19.5 while later books differed.",
+  "not_cache": true,
+  "not_registry_collision": true,
+  "registry_resolve": {
+    "1593490": null,
+    "1556516": null,
+    "method": "unresolved"
+  },
+  "prediction_source": "live_odds",
+  "odds_features_first_book_identical": {
+    "ft_home_closing": 1.16,
+    "ft_draw_closing": 5.75,
+    "ft_away_closing": 19.5,
+    "ou_over_25_closing": 1.62,
+    "ou_under_25_closing": 2.2,
+    "btts_yes_closing": 2.5,
+    "btts_no_closing": 1.42
+  },
+  "fas_odds_prep_differed": {
+    "1593490": {
+      "home": 1.17,
+      "draw": 6.5,
+      "away": 15.44
+    },
+    "1556516": {
+      "home": 1.15,
+      "draw": 6.8,
+      "away": 17.0
+    }
+  },
+  "book_order_sample": {
+    "1593490": [
+      [
+        "10Bet",
+        1.16,
+        5.75,
+        19.5
+      ],
+      [
+        "William Hill",
+        1.17,
+        6.0,
+        17.0
+      ],
+      [
+        "Bet365",
+        1.17,
+        6.0,
+        13.0
+      ]
+    ],
+    "1556516": [
+      [
+        "10Bet",
+        1.16,
+        5.75,
+        19.5
+      ],
+      [
+        "William Hill",
+        1.15,
+        6.5,
+        17.0
+      ],
+      [
+        "Bet365",
+        1.17,
+        6.25,
+        21.0
+      ]
+    ]
+  },
+  "fix": "median_across_bookmakers in build_odds_feature_row"
+}

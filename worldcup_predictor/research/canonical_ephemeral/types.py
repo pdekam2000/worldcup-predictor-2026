@@ -50,6 +50,8 @@ class EphemeralCanonicalPrediction:
     final_decision_authority: bool = False
     raw_wde_payload: dict[str, Any] | None = None
     raw_ecse_prediction: dict[str, Any] | None = None
+    confidence_lineage: dict[str, Any] = field(default_factory=dict)
+    research_integrity_warnings: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

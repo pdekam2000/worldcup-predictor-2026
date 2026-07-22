@@ -1,0 +1,74 @@
+{
+  "fixture_id": 1494611,
+  "prior_freeze": {
+    "confidence": 67.4,
+    "no_bet": false,
+    "odds": [
+      1.1,
+      9.5,
+      19.0
+    ],
+    "wde_hda": [
+      86.4,
+      9.6,
+      4.0
+    ]
+  },
+  "fresh_scan": {
+    "confidence": 53.7,
+    "no_bet": true,
+    "odds": [
+      1.1,
+      9.5,
+      19.0
+    ],
+    "wde_hda": [
+      86.4,
+      9.6,
+      4.0
+    ]
+  },
+  "stages": [
+    {
+      "stage": "raw/base confidence",
+      "prior": "NOT_EXPOSED",
+      "fresh": "NOT_EXPOSED",
+      "delta": "unavailable"
+    },
+    {
+      "stage": "WDE H/D/A probabilities",
+      "prior": [
+        86.4,
+        9.6,
+        4.0
+      ],
+      "fresh": [
+        86.4,
+        9.6,
+        4.0
+      ],
+      "delta": 0
+    },
+    {
+      "stage": "1X2 odds prices",
+      "prior": [
+        1.1,
+        9.5,
+        19.0
+      ],
+      "fresh": [
+        1.1,
+        9.5,
+        19.0
+      ],
+      "delta": 0
+    },
+    {
+      "stage": "final confidence",
+      "prior": 67.4,
+      "fresh": 53.7,
+      "delta": -13.7
+    }
+  ],
+  "classification": "pipeline-context / enrichment difference; not odds-price-driven; full stage split unresolved without historical lineage fields"
+}

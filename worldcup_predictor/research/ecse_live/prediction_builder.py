@@ -41,10 +41,34 @@ def _table_exists(conn: sqlite3.Connection, name: str) -> bool:
 
 
 def _pick_odd(lines: list, market_filter, selection_filter) -> float | None:
+    """Legacy first-match pick (kept for tests / callers that need raw first book)."""
     for line in lines:
         if market_filter(line.market_name, line.selection) and selection_filter(line.selection):
             return float(line.odd)
     return None
+
+
+def _median_odd(lines: list, market_filter, selection_filter) -> float | None:
+    """Median odd across bookmakers for one market/selection.
+
+    First-bookmaker pick caused distinct Conference League fixtures that shared the
+    same lead book (e.g. 10Bet) to produce bit-identical ECSE lambdas despite
+    different consensus 1X2 prices. Median matches canonical snapshot practice.
+    """
+    vals: list[float] = []
+    for line in lines:
+        if not (market_filter(line.market_name, line.selection) and selection_filter(line.selection)):
+            continue
+        try:
+            odd = float(line.odd)
+        except (TypeError, ValueError):
+            continue
+        if odd > 1.0:
+            vals.append(odd)
+    if not vals:
+        return None
+    vals.sort()
+    return float(vals[len(vals) // 2])
 
 
 def _is_ou_line(name: str, selection: str, line: str) -> bool:
@@ -85,51 +109,57 @@ def build_odds_feature_row(conn: sqlite3.Connection, fixture_id: int) -> dict[st
     def mw_sel(sel: str, key: str) -> bool:
         return sel.lower().strip() == key
 
+    # Prefer median across bookmakers (not first-book pick) so distinct fixtures with
+    # a shared lead bookmaker cannot collapse to identical ECSE inputs.
+    pick = _median_odd
     out: dict[str, Any] = {
         "registry_fixture_id": int(fixture_id),
-        "ft_home_closing": _pick_odd(lines, mw, lambda s: mw_sel(s, "home")),
-        "ft_draw_closing": _pick_odd(lines, mw, lambda s: mw_sel(s, "draw")),
-        "ft_away_closing": _pick_odd(lines, mw, lambda s: mw_sel(s, "away")),
-        "ou_over_25_closing": _pick_odd(
+        "ft_home_closing": pick(lines, mw, lambda s: mw_sel(s, "home")),
+        "ft_draw_closing": pick(lines, mw, lambda s: mw_sel(s, "draw")),
+        "ft_away_closing": pick(lines, mw, lambda s: mw_sel(s, "away")),
+        "ou_over_25_closing": pick(
             lines,
             lambda n, s: _is_ou_line(n, s, "2.5") and "over" in s.lower(),
             lambda _s: True,
         ),
-        "ou_under_25_closing": _pick_odd(
+        "ou_under_25_closing": pick(
             lines,
             lambda n, s: _is_ou_line(n, s, "2.5") and "under" in s.lower(),
             lambda _s: True,
         ),
-        "ou_over_15_closing": _pick_odd(
+        "ou_over_15_closing": pick(
             lines,
             lambda n, s: _is_ou_line(n, s, "1.5") and "over" in s.lower(),
             lambda _s: True,
         ),
-        "ou_under_15_closing": _pick_odd(
+        "ou_under_15_closing": pick(
             lines,
             lambda n, s: _is_ou_line(n, s, "1.5") and "under" in s.lower(),
             lambda _s: True,
         ),
-        "ou_over_35_closing": _pick_odd(
+        "ou_over_35_closing": pick(
             lines,
             lambda n, s: _is_ou_line(n, s, "3.5") and "over" in s.lower(),
             lambda _s: True,
         ),
-        "ou_under_35_closing": _pick_odd(
+        "ou_under_35_closing": pick(
             lines,
             lambda n, s: _is_ou_line(n, s, "3.5") and "under" in s.lower(),
             lambda _s: True,
         ),
-        "btts_yes_closing": _pick_odd(
+        "btts_yes_closing": pick(
             lines,
             lambda n, _s: "both teams" in n.lower() or n.lower() == "btts",
             lambda s: s.lower().strip() in {"yes", "btts: yes"},
         ),
-        "btts_no_closing": _pick_odd(
+        "btts_no_closing": pick(
             lines,
             lambda n, _s: "both teams" in n.lower() or n.lower() == "btts",
             lambda s: s.lower().strip() in {"no", "btts: no"},
         ),
+        "_odds_aggregation": "median_across_bookmakers",
+        "_odds_line_count": len(lines),
+        "_first_book_ft_home": _pick_odd(lines, mw, lambda s: mw_sel(s, "home")),
     }
     if not any(out.get(k) for k in ("ft_home_closing", "ft_away_closing", "ou_over_25_closing")):
         return None
@@ -164,6 +194,9 @@ def _assemble_from_lambdas(
     top_5 = [e["scoreline"] for e in top_10[:5]]
     top_1 = top_10[0]["scoreline"]
     confidence = float(top_10[0]["probability"])
+    # Defensive copy so callers cannot mutate shared distribution objects across fixtures.
+    top_10_safe = [dict(e) for e in top_10]
+    raw_safe = dict(raw_features) if isinstance(raw_features, dict) else {"value": raw_features}
     return {
         "fixture_id": fixture_id,
         "registry_fixture_id": registry_fixture_id,
@@ -175,14 +208,15 @@ def _assemble_from_lambdas(
         "model_version": MODEL_VERSION,
         "lambda_home": round(float(lambda_home), 6),
         "lambda_away": round(float(lambda_away), 6),
-        "top_10_scorelines": top_10,
+        "top_10_scorelines": top_10_safe,
         "top_1_score": top_1,
-        "top_3_scores": top_3,
-        "top_5_scores": top_5,
+        "top_3_scores": list(top_3),
+        "top_5_scores": list(top_5),
         "confidence_score": round(confidence, 6),
         "data_quality_score": round(float(data_quality_score), 4),
-        "raw_features": raw_features,
+        "raw_features": raw_safe,
         "prediction_source": prediction_source,
+        "ecse_input_hash": None,  # filled by caller/integrity helper when available
     }
 
 
@@ -229,7 +263,13 @@ def build_ecse_live_prediction(
             while len(top_10) < 10:
                 break
             if len(top_10) >= 1:
-                return {
+                from worldcup_predictor.research.ecse_integrity import (
+                    compute_ecse_input_hash,
+                    compute_ecse_output_hash,
+                    stamp_ecse_integrity_fields,
+                )
+
+                precomputed_payload = {
                     "fixture_id": fixture_id,
                     "registry_fixture_id": registry_id,
                     "competition_key": fixture_row.get("competition_key"),
@@ -240,7 +280,7 @@ def build_ecse_live_prediction(
                     "model_version": MODEL_VERSION,
                     "lambda_home": lambdas["lambda_home"],
                     "lambda_away": lambdas["lambda_away"],
-                    "top_10_scorelines": top_10,
+                    "top_10_scorelines": [dict(x) for x in top_10],
                     "top_1_score": top_10[0]["scoreline"],
                     "top_3_scores": [s["scoreline"] for s in top_10[:3]],
                     "top_5_scores": [s["scoreline"] for s in top_10[:5]],
@@ -250,9 +290,23 @@ def build_ecse_live_prediction(
                         "resolve": resolved,
                         "source": "registry_precomputed",
                         "distribution_method": DIST_METHOD_VERSION,
+                        "ecse_fallback_template_used": False,
+                        "ECSE_REGISTRY_PRECOMPUTED": True,
                     },
                     "prediction_source": "registry_precomputed",
                 }
+                return stamp_ecse_integrity_fields(
+                    precomputed_payload,
+                    input_hash=compute_ecse_input_hash(
+                        fixture_id=fixture_id,
+                        odds_row={"registry_precomputed": True, "registry_fixture_id": registry_id},
+                        lambda_features=lambdas,
+                        source="registry_precomputed",
+                        model_version=MODEL_VERSION,
+                        registry_fixture_id=registry_id,
+                    ),
+                    output_hash_fn=compute_ecse_output_hash,
+                )
 
     odds_row = build_odds_feature_row(conn, fixture_id)
     if not odds_row:
@@ -261,7 +315,13 @@ def build_ecse_live_prediction(
     feat = extract_lambdas(odds_row)
     if not feat:
         return None
-    return _assemble_from_lambdas(
+    from worldcup_predictor.research.ecse_integrity import (
+        compute_ecse_input_hash,
+        compute_ecse_output_hash,
+        stamp_ecse_integrity_fields,
+    )
+
+    assembled = _assemble_from_lambdas(
         fixture_id=fixture_id,
         registry_fixture_id=registry_id,
         fixture_row=fixture_row,
@@ -271,10 +331,24 @@ def build_ecse_live_prediction(
         prediction_source="live_odds",
         raw_features={
             "resolve": resolved,
-            "odds_row": odds_row,
+            "odds_row": {k: v for k, v in odds_row.items() if not str(k).startswith("_")},
+            "odds_aggregation": odds_row.get("_odds_aggregation"),
+            "first_book_ft_home": odds_row.get("_first_book_ft_home"),
             "lambda_features": feat,
             "source": "live_odds",
+            "ecse_fallback_template_used": False,
         },
+    )
+    return stamp_ecse_integrity_fields(
+        assembled,
+        input_hash=compute_ecse_input_hash(
+            fixture_id=fixture_id,
+            odds_row=odds_row,
+            lambda_features=feat,
+            source="live_odds",
+            model_version=MODEL_VERSION,
+        ),
+        output_hash_fn=compute_ecse_output_hash,
     )
 
 

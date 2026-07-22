@@ -53,6 +53,15 @@ def persist_scan(payload: dict[str, Any], *, root: Path | None = None) -> dict[s
     write_json(d / "zero_write_integrity.json", payload.get("zero_write_integrity"))
     write_json(d / "selection.json", payload.get("selection"))
     write_json(d / "fixtures.json", payload.get("fixtures"))
+    # Research integrity: duplicate ECSE outputs with distinct inputs
+    try:
+        from worldcup_predictor.research.ecse_integrity import detect_duplicate_output_distinct_inputs
+
+        dup_warnings = detect_duplicate_output_distinct_inputs(list(payload.get("fixtures") or []))
+        payload["ecse_integrity_warnings"] = dup_warnings
+        write_json(d / "ecse_integrity_warnings.json", dup_warnings)
+    except Exception as exc:
+        write_json(d / "ecse_integrity_warnings.json", {"error": str(exc)})
     write_json(d / "timing_classes.json", payload.get("timing_summary"))
     if payload.get("isolation_preflight") is not None:
         write_json(d / "isolation_preflight.json", payload.get("isolation_preflight"))

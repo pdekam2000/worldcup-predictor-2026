@@ -181,6 +181,8 @@ def predict_fixture(
             "baseline_no_bet": pred_d.get("baseline_no_bet"),
             "final_no_bet": pred_d.get("final_no_bet"),
             "pick_tier": pred_d.get("pick_tier"),
+            "confidence_lineage": pred_d.get("confidence_lineage"),
+            "research_integrity_warnings": pred_d.get("research_integrity_warnings"),
             "model_version": pred_d.get("model_version"),
             "model_config_hash": pred_d.get("model_config_hash"),
             "odds_content_hash": pred_d.get("odds_content_hash"),
