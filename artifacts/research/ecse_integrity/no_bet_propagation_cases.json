@@ -1,0 +1,23 @@
+{
+  "cases": [
+    {
+      "fixture_id": 1494680,
+      "match": "Lillestrom vs Viking",
+      "confidence": 58.1,
+      "no_bet": true,
+      "reasons_before": [],
+      "root": "pick_visibility forced no_bet via confidence<60 without serializing CONFIDENCE_BELOW_60"
+    },
+    {
+      "fixture_id": 1494224,
+      "match": "Vasteras SK FK vs Orgryte IS",
+      "confidence": 59.1,
+      "no_bet": true,
+      "reasons_before": [],
+      "root": "same"
+    }
+  ],
+  "fix": "pick_visibility._ensure_no_bet_reasons_invariant",
+  "conditions_unchanged": true,
+  "threshold_unchanged": 60.0
+}

@@ -70,6 +70,53 @@ def _attach_no_bet_diagnostics(out: dict[str, Any], prediction: MatchPrediction)
         out["shadow_final_no_bet"] = str(md.get("shadow_final_no_bet")).lower() == "true"
 
 
+def _ensure_no_bet_reasons_invariant(
+    out: dict[str, Any],
+    prediction: MatchPrediction,
+    *,
+    confidence: float,
+    data_quality: float,
+    internal_no_bet: bool,
+) -> None:
+    """Invariant: no_bet=true ⇒ non-empty reasons aligned to current gates.
+
+    Does not add new no_bet *conditions* — only serializes reasons for gates already
+    applied by evaluator and/or this visibility layer (conf < 60, dq < 45).
+    """
+    if not internal_no_bet:
+        # Active reasons must be empty when betting is allowed.
+        if not out.get("no_bet_reasons"):
+            out["no_bet_reasons"] = []
+        return
+
+    reasons = [str(r) for r in (out.get("no_bet_reasons") or []) if r]
+    if reasons:
+        out["no_bet_reasons"] = reasons
+        return
+
+    from worldcup_predictor.decision.no_bet_evaluator import evaluate_no_bet_reasons
+    from worldcup_predictor.decision.no_bet_reasons import NoBetReason
+
+    decision = evaluate_no_bet_reasons(
+        confidence=confidence,
+        wde_data_quality=data_quality,
+        visibility_data_quality=data_quality,
+        scoring_data_quality=data_quality,
+        placeholder=bool(getattr(prediction, "is_placeholder", False)),
+    )
+    reasons = list(decision.active_reasons)
+    # Mirror visibility gates already enforced above when recompute left reasons empty.
+    if confidence < OFFICIAL_CONFIDENCE_THRESHOLD and NoBetReason.CONFIDENCE_BELOW_60.value not in reasons:
+        reasons.append(NoBetReason.CONFIDENCE_BELOW_60.value)
+    if data_quality < 45.0 and NoBetReason.VISIBILITY_DATA_QUALITY_BELOW_45.value not in reasons:
+        reasons.append(NoBetReason.VISIBILITY_DATA_QUALITY_BELOW_45.value)
+    if not reasons:
+        reasons = [NoBetReason.CONFIDENCE_BELOW_60.value]
+    out["no_bet_reasons"] = reasons
+    out["no_bet_reasons_repaired"] = True
+    out["no_bet_decision_stage"] = out.get("no_bet_decision_stage") or "PICK_VISIBILITY_INVARIANT"
+
+
 def enrich_pick_visibility(
     block: dict[str, Any],
     prediction: MatchPrediction,
@@ -100,6 +147,9 @@ def enrich_pick_visibility(
 
     out["no_bet"] = internal_no_bet
     _attach_no_bet_diagnostics(out, prediction)
+    _ensure_no_bet_reasons_invariant(
+        out, prediction, confidence=confidence, data_quality=dq, internal_no_bet=internal_no_bet
+    )
     official = not internal_no_bet
     out["pick_tier"] = "official" if official else "caution"
     out["confidence_gap_to_threshold"] = _gap_to_threshold(confidence) if not official else 0.0

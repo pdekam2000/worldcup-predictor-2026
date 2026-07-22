@@ -460,6 +460,7 @@ def run_ephemeral_canonical_prediction(
                 )
 
             from worldcup_predictor.api.prediction_metadata import stamp_prediction_engine_metadata
+            from worldcup_predictor.research.confidence_lineage import build_confidence_lineage
 
             payload = build_api_payload(
                 result,
@@ -549,7 +550,15 @@ def run_ephemeral_canonical_prediction(
                 "lambda_home": (ecse_prediction or {}).get("lambda_home"),
                 "lambda_away": (ecse_prediction or {}).get("lambda_away"),
                 "model_version": (ecse_prediction or {}).get("model_version"),
+                "prediction_source": (ecse_prediction or {}).get("prediction_source"),
+                "ecse_input_hash": (ecse_prediction or {}).get("ecse_input_hash"),
+                "ecse_output_hash": (ecse_prediction or {}).get("ecse_output_hash"),
+                "ecse_fallback_template_used": bool(
+                    ((ecse_prediction or {}).get("raw_features") or {}).get("ecse_fallback_template_used")
+                ),
+                "odds_aggregation": ((ecse_prediction or {}).get("raw_features") or {}).get("odds_aggregation"),
             }
+            confidence_lineage = build_confidence_lineage(result.prediction, payload=payload)
             wde_block = {
                 "decision": sem.get("decision_pick"),
                 "ft_marginal": sem.get("probability_argmax"),
@@ -614,6 +623,8 @@ def run_ephemeral_canonical_prediction(
                 final_decision_authority=False,
                 raw_wde_payload=payload,
                 raw_ecse_prediction=ecse_prediction,
+                confidence_lineage=confidence_lineage,
+                research_integrity_warnings=[],
             )
     except EphemeralWriteBlocked:
         raise
