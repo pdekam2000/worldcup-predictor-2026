@@ -5,9 +5,10 @@
 set -euo pipefail
 
 APP="${APP:-/opt/worldcup-predictor}"
-RELEASE_REF="${RELEASE_REF:-c8e68d7}"
+RELEASE_REF="${RELEASE_REF:-origin/release/football-strength-shadow-infra-20260730T151432Z}"
 RELEASE_BRANCH="${RELEASE_BRANCH:-release/football-strength-shadow-infra-20260730T151432Z}"
 # Infra-validated SHA (included in ancestry): 537266d
+# Package commits add deploy/rollback/health tooling only.
 BACKUP_ROOT="${BACKUP_ROOT:-$APP/backups/infra_deploy}"
 TS="$(date -u +%Y%m%dT%H%M%SZ)"
 RUN_DIR="${BACKUP_ROOT}/${TS}"

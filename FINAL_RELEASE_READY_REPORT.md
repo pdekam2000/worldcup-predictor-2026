@@ -8,7 +8,7 @@ Status: **RELEASE_READY_AWAITING_PRODUCTION_ACCESS**
 |------|-------|
 | Release branch | `release/football-strength-shadow-infra-20260730T151432Z` |
 | Validated infra commit | `537266d` (113/113 PASS) |
-| Package tip (deploy this) | `c8e68d7` — adds deploy/rollback/health scripts only |
+| Package tip (deploy this) | branch HEAD (`87a576c`+); includes deploy tooling only |
 | Parent | `origin/main` @ `a1962d1` |
 | Local tests | **113/113 PASS** |
 | Deploy script | `deployment/run_infrastructure_deploy.sh` |
