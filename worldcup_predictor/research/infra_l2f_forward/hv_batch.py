@@ -12,7 +12,6 @@ import sqlite3
 import time
 import traceback
 import uuid
-from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -310,26 +309,20 @@ def run_hv_true_forward_day(
             _persist_checkpoint(fi_conn, out, last_fixture_id=fid)
             continue
 
+        # Fresh connections inside executor; call synchronously so sqlite stays
+        # on one thread. Per-fixture bound comes from poll_deadline_s.
         ctx = {
             "fixture_id": fid,
             "fixture_row": row,
-            "prod_conn": prod_conn,
-            "eval_conn": eval_conn,
-            "fi_conn": fi_conn,
+            "prod_conn": None,
+            "eval_conn": None,
+            "fi_conn": None,
             "settings": settings,
             "prediction_scope": row.get("prediction_scope") or "owner_shadow",
+            "poll_deadline_s": max(30, int(float(fixture_timeout_sec) - 30)),
         }
         try:
-            with ThreadPoolExecutor(max_workers=1) as pool:
-                fut = pool.submit(processor, ctx)
-                result = fut.result(timeout=float(fixture_timeout_sec))
-        except FuturesTimeout:
-            result = {
-                "status": "failed",
-                "canonical_status": "timeout",
-                "shadow_status": "not_run",
-                "reason": "per_fixture_timeout",
-            }
+            result = processor(ctx)
         except Exception as exc:  # noqa: BLE001
             result = {
                 "status": "failed",

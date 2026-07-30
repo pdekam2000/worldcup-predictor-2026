@@ -132,14 +132,36 @@ def process_true_forward_fixture(
     fid = int(fixture_id)
     row = dict(fixture_row or {})
 
-    # Re-open connections if callers passed closed handles (ThreadPool safety).
-    prod = prod_conn if prod_conn is not None else connect(settings.sqlite_path)
-    eval_db = eval_conn
-    if eval_db is None:
-        from worldcup_predictor.forward_evaluation.db import connect_eval_db
+    # Always open thread-local connections. Callers may pass None from a
+    # ThreadPool timeout wrapper; never reuse cross-thread sqlite handles.
+    from worldcup_predictor.forward_evaluation.db import connect_eval_db
 
-        eval_db = connect_eval_db()
+    _ = prod_conn, eval_conn, fi_conn  # API compat; never reuse caller handles
+    prod = connect(settings.sqlite_path)
+    eval_db = connect_eval_db()
+    return _process_true_forward_fixture_inner(
+        fid=fid,
+        row=row,
+        prod=prod,
+        eval_db=eval_db,
+        settings=settings,
+        prediction_scope=prediction_scope,
+        job_store_dir=job_store_dir,
+        poll_deadline_s=poll_deadline_s,
+    )
 
+
+def _process_true_forward_fixture_inner(
+    *,
+    fid: int,
+    row: dict[str, Any],
+    prod: Any,
+    eval_db: Any,
+    settings: Any,
+    prediction_scope: str | None,
+    job_store_dir: str | Path | None,
+    poll_deadline_s: int,
+) -> dict[str, Any]:
     fx = prod.execute(
         """
         SELECT fixture_id, home_team, away_team, kickoff_utc, status, competition_key, season
@@ -192,6 +214,7 @@ def process_true_forward_fixture(
 
     freeze_meta: dict[str, Any] = {}
     mode = "NEW_PREDICTION"
+    hash_before = None
 
     if existing and pred_exists and snap:
         mode = "REUSE_IMMUTABLE_FREEZE"
@@ -230,13 +253,11 @@ def process_true_forward_fixture(
             season=int(fx["season"]) if fx and fx["season"] is not None else None,
         )
         refresh_live_odds(daily, settings=settings)
-        # Refresh connection after odds write
-        if prod_conn is None:
-            try:
-                prod.close()
-            except Exception:
-                pass
-            prod = connect(settings.sqlite_path)
+        try:
+            prod.close()
+        except Exception:
+            pass
+        prod = connect(settings.sqlite_path)
 
         gate = ensure_fresh_odds_before_prediction(
             prod,
@@ -304,12 +325,11 @@ def process_true_forward_fixture(
                 "cohort_type": "true_forward",
             }
 
-        if prod_conn is None:
-            try:
-                prod.close()
-            except Exception:
-                pass
-            prod = connect(settings.sqlite_path)
+        try:
+            prod.close()
+        except Exception:
+            pass
+        prod = connect(settings.sqlite_path)
 
         try:
             snap_id = None
