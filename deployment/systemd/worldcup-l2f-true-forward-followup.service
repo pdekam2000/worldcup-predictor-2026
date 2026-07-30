@@ -1,0 +1,24 @@
+# Optional systemd timer for true-forward result follow-up.
+# Conservative default: twice daily. Do NOT enable aggressively.
+# Install (owner only):
+#   sudo cp deployment/systemd/worldcup-l2f-true-forward-followup.service /etc/systemd/system/
+#   sudo cp deployment/systemd/worldcup-l2f-true-forward-followup.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now worldcup-l2f-true-forward-followup.timer
+# Leave disabled unless operator explicitly enables.
+
+[Unit]
+Description=WorldCup L2-F true-forward result follow-up (bounded, shadow-only)
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/worldcup-predictor
+Environment=APP_ENV=production
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/opt/worldcup-predictor/.env.production
+ExecStart=/opt/worldcup-predictor/.venv/bin/python scripts/run_l2f_true_forward_followup.py --apply --batch-size 20 --grace-hours 2.5 --min-free-gb 8.0 --out-dir backups/infra_deploy/l2f_true_forward_followup
+User=root
+
+[Install]
+WantedBy=multi-user.target

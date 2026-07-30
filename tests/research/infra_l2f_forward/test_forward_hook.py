@@ -98,6 +98,7 @@ def test_scope_not_owner_skips(tmp_path):
 
 def test_freeze_missing_skips(tmp_path):
     conn = _conn(tmp_path)
+    # Missing immutable freeze identity is a hard block in Phase 4.
     out = maybe_run_l2f_forward_shadow(
         conn=conn,
         fixture_id=1001,
@@ -105,8 +106,18 @@ def test_freeze_missing_skips(tmp_path):
         prediction_scope="production",
         settings=_settings(),
     )
-    assert out["status"] == "skipped"
-    assert "freeze_status_rejected" in out["reason"]
+    assert out["status"] == "blocked"
+    assert out["reason"] == "missing_freeze_id"
+    # Invalid capture status with freeze id present.
+    out2 = maybe_run_l2f_forward_shadow(
+        conn=conn,
+        fixture_id=1001,
+        freeze_meta={"capture_status": "rejected", "freeze_id": "fz-rej"},
+        prediction_scope="production",
+        settings=_settings(),
+    )
+    assert out2["status"] == "blocked"
+    assert "freeze_status_rejected" in out2["reason"]
     conn.close()
 
 

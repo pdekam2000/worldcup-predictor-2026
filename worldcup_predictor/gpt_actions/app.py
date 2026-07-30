@@ -18,6 +18,7 @@ from worldcup_predictor.gpt_actions.delegation import (
     get_daily_evaluation_report,
     get_daily_prediction_report,
     get_fixture_frozen_evaluation,
+    get_fixture_team_forensic_analysis,
     get_latest_daily_evaluation_report,
     get_latest_prediction_report,
     get_monthly_accuracy_summary,
@@ -307,6 +308,50 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
     )
     def fixture_frozen_eval_route(fixture_id: int) -> dict[str, Any]:
         return _trim_payload(get_fixture_frozen_evaluation(fixture_id=fixture_id), cfg.max_response_chars)
+
+    @app.get(
+        f"{API_PREFIX}/fixtures/{{fixture_id}}/team-forensic",
+        operation_id="getFixtureTeamForensicAnalysis",
+        dependencies=auth_dep,
+    )
+    def fixture_team_forensic_route(fixture_id: int) -> dict[str, Any]:
+        return _trim_payload(get_fixture_team_forensic_analysis(fixture_id=fixture_id), cfg.max_response_chars)
+
+    @app.get(
+        f"{API_PREFIX}/research/l2f-true-forward-observability",
+        operation_id="getL2fTrueForwardObservability",
+        dependencies=auth_dep,
+    )
+    def l2f_true_forward_observability_route() -> dict[str, Any]:
+        """Owner-auth GPT Actions read-only observability for L2-F true-forward cohort."""
+        import sqlite3
+
+        from worldcup_predictor.config.env_loading import project_root
+        from worldcup_predictor.config.settings import get_settings
+        from worldcup_predictor.research.infra_l2f_forward.observability import build_observability_report
+        from worldcup_predictor.research.infra_l2f_forward.readiness import evaluate_readiness
+
+        settings = get_settings()
+        fi = sqlite3.connect(str(settings.sqlite_path))
+        fi.row_factory = sqlite3.Row
+        ev = sqlite3.connect(str(project_root() / "data/evaluation/forward_prediction_tracking.db"))
+        ev.row_factory = sqlite3.Row
+        try:
+            obs = build_observability_report(fi, ev)
+            ready = evaluate_readiness(fi, ev, obs=obs)
+            return _trim_payload(
+                {
+                    "owner_only": True,
+                    "read_only": True,
+                    "secrets_redacted": True,
+                    "observability": obs,
+                    "readiness": ready,
+                },
+                cfg.max_response_chars,
+            )
+        finally:
+            fi.close()
+            ev.close()
 
     return app
 

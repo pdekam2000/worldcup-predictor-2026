@@ -1,0 +1,11 @@
+[Unit]
+Description=Timer for WorldCup L2-F true-forward result follow-up (conservative)
+
+[Timer]
+OnCalendar=*-*-* 06:00:00
+OnCalendar=*-*-* 18:00:00
+Persistent=true
+Unit=worldcup-l2f-true-forward-followup.service
+
+[Install]
+WantedBy=timers.target

@@ -1,4 +1,4 @@
-"""Persistent job status for L2-F forward shadow (additive; never touches freezes)."""
+"""Additive job-store upgrades for Phase 4 true-forward observability."""
 
 from __future__ import annotations
 
@@ -28,6 +28,16 @@ CREATE TABLE IF NOT EXISTS {JOB_TABLE} (
 )
 """
 
+_EXTRA_COLUMNS = (
+    ("cohort_type", "TEXT"),
+    ("classification", "TEXT"),
+    ("kickoff_utc", "TEXT"),
+    ("frozen_at_utc", "TEXT"),
+    ("prediction_scope", "TEXT"),
+    ("started_at_utc", "TEXT"),
+    ("completed_at_utc", "TEXT"),
+)
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
@@ -35,8 +45,13 @@ def _now() -> str:
 
 def ensure_job_schema(conn: sqlite3.Connection) -> None:
     conn.execute(JOB_DDL)
+    cols = {r[1] for r in conn.execute(f"PRAGMA table_info({JOB_TABLE})").fetchall()}
+    for name, typ in _EXTRA_COLUMNS:
+        if name not in cols:
+            conn.execute(f"ALTER TABLE {JOB_TABLE} ADD COLUMN {name} {typ}")
     conn.execute(f"CREATE INDEX IF NOT EXISTS idx_l2f_jobs_fx ON {JOB_TABLE}(fixture_id)")
     conn.execute(f"CREATE INDEX IF NOT EXISTS idx_l2f_jobs_status ON {JOB_TABLE}(status)")
+    conn.execute(f"CREATE INDEX IF NOT EXISTS idx_l2f_jobs_cohort ON {JOB_TABLE}(cohort_type)")
     conn.commit()
 
 
@@ -54,6 +69,13 @@ def upsert_job(
     lambda_rows: int = 0,
     exact_rows: int = 0,
     duration_ms: float | None = None,
+    cohort_type: str | None = None,
+    classification: str | None = None,
+    kickoff_utc: str | None = None,
+    frozen_at_utc: str | None = None,
+    prediction_scope: str | None = None,
+    started_at_utc: str | None = None,
+    completed_at_utc: str | None = None,
 ) -> None:
     ensure_job_schema(conn)
     now = _now()
@@ -61,8 +83,10 @@ def upsert_job(
         f"""
         INSERT INTO {JOB_TABLE} (
             job_id, fixture_id, freeze_id, run_id, status, reason, retry_count,
-            stages_json, lambda_rows, exact_rows, duration_ms, created_at_utc, updated_at_utc
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+            stages_json, lambda_rows, exact_rows, duration_ms, created_at_utc, updated_at_utc,
+            cohort_type, classification, kickoff_utc, frozen_at_utc, prediction_scope,
+            started_at_utc, completed_at_utc
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         ON CONFLICT(fixture_id, freeze_id, run_id) DO UPDATE SET
             status=excluded.status,
             reason=excluded.reason,
@@ -71,7 +95,14 @@ def upsert_job(
             lambda_rows=excluded.lambda_rows,
             exact_rows=excluded.exact_rows,
             duration_ms=excluded.duration_ms,
-            updated_at_utc=excluded.updated_at_utc
+            updated_at_utc=excluded.updated_at_utc,
+            cohort_type=COALESCE(excluded.cohort_type, {JOB_TABLE}.cohort_type),
+            classification=COALESCE(excluded.classification, {JOB_TABLE}.classification),
+            kickoff_utc=COALESCE(excluded.kickoff_utc, {JOB_TABLE}.kickoff_utc),
+            frozen_at_utc=COALESCE(excluded.frozen_at_utc, {JOB_TABLE}.frozen_at_utc),
+            prediction_scope=COALESCE(excluded.prediction_scope, {JOB_TABLE}.prediction_scope),
+            started_at_utc=COALESCE(excluded.started_at_utc, {JOB_TABLE}.started_at_utc),
+            completed_at_utc=COALESCE(excluded.completed_at_utc, {JOB_TABLE}.completed_at_utc)
         """,
         (
             job_id,
@@ -87,6 +118,13 @@ def upsert_job(
             duration_ms,
             now,
             now,
+            cohort_type,
+            classification,
+            kickoff_utc,
+            frozen_at_utc,
+            prediction_scope,
+            started_at_utc,
+            completed_at_utc,
         ),
     )
     conn.commit()
