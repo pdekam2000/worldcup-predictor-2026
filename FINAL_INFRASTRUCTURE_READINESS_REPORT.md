@@ -25,3 +25,5 @@ GitHub: this branch. Production: **not deployed**. GPT Actions: canonical unchan
 - Controlled infra deploy not yet executed
 - Forward sample accumulation (have 168)
 - Live multi-line capture needed before totals-aware blend can fire
+
+See INFRASTRUCTURE_PRODUCTION_READINESS.md and deployable_component_matrix.csv.
