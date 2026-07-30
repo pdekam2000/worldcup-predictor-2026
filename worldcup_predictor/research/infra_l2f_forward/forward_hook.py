@@ -269,6 +269,18 @@ def maybe_run_l2f_forward_shadow(
             return out
 
         lh, la = _canonical_lambdas(conn, int(fixture_id))
+        # Prefer immutable freeze lambdas when provided (historical replay safety).
+        if freeze_meta:
+            if freeze_meta.get("canonical_lambda_home") is not None:
+                try:
+                    lh = float(freeze_meta["canonical_lambda_home"])
+                except (TypeError, ValueError):
+                    pass
+            if freeze_meta.get("canonical_lambda_away") is not None:
+                try:
+                    la = float(freeze_meta["canonical_lambda_away"])
+                except (TypeError, ValueError):
+                    pass
         if lh is None or la is None:
             out = {**base, "status": "blocked", "reason": "missing_canonical_lambdas", "retry_count": retry_count}
             upsert_job(
