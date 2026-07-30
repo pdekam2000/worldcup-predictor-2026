@@ -323,7 +323,11 @@ def _poll(job_id: str, store: JobStore, cfg: GptActionsConfig, deadline_s: int =
     final = None
     deadline = time.time() + deadline_s
     while time.time() < deadline:
-        rec = store.get(job_id) or {}
+        rec = store.get(job_id)
+        if not rec or not rec.get("job_id"):
+            # Transient empty/partial read while worker rewrites the job file.
+            time.sleep(1)
+            continue
         fields = build_job_status_fields(rec, poll_after_seconds=cfg.poll_after_seconds)
         if fields.get("terminal"):
             final = {**rec, **fields}
