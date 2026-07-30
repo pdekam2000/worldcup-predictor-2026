@@ -1,0 +1,78 @@
+{
+  "primary_status": "DEEP_FORENSIC_AUDIT_COMPLETE_WITH_SAFE_FIXES",
+  "artifact_dir": "C:\\Users\\kaman\\Desktop\\Footbal\\artifacts\\deep_model_forensic_audit\\20260730T115455Z",
+  "branch": "audit/deep-model-forensic-20260730T115031Z",
+  "base_commit": "a1962d182309957c4ec79c7f51f6697295250706",
+  "production_deployed_commit": "UNKNOWN",
+  "metric": {
+    "n_evaluated": 142,
+    "n_unresolved": 109,
+    "n_duplicate_fixtures": 62,
+    "exact_top1": {"n": 142, "hits": 24, "rate": 0.169, "ci95": [0.1056, 0.2324]},
+    "exact_top3": {"n": 142, "hits": 44, "rate": 0.3099, "ci95": [0.2394, 0.3873]},
+    "exact_top5": {"n": 142, "hits": 63, "rate": 0.4437, "ci95": [0.3592, 0.5282]},
+    "exact_top10": {"n": 142, "hits": 108, "rate": 0.7606, "ci95": [0.6831, 0.831]},
+    "wde": {"n": 142, "hits": 70, "rate": 0.493, "ci95": [0.4155, 0.5775]},
+    "btts": {"n": 142, "hits": 68, "rate": 0.4789, "ci95": [0.3944, 0.5563]},
+    "ou25": {"n": 142, "hits": 76, "rate": 0.5352, "ci95": [0.4507, 0.6127]},
+    "mean_actual_rank": 4.759,
+    "median_actual_rank": 5,
+    "outside_top10_or_unmodeled": 0.2394,
+    "home_goal_mae": 1.0538,
+    "away_goal_mae": 0.8628,
+    "total_goal_mae": 1.4345,
+    "goal_diff_mae": 1.3075,
+    "high_score_tail_n": 42,
+    "high_score_tail_top5_rate": 0.0714,
+    "failure_taxonomy": {
+      "wrong_WDE_direction": 42,
+      "in_top5_but_not_top1": 39,
+      "correct_direction_underestimated_goals": 27,
+      "correct_direction_wrong_scoreline": 3,
+      "correct_direction_overestimated_goals": 3,
+      "high_score_tail_miss": 2,
+      "model_limitation_or_upset": 1,
+      "draw_or_0_0_miss": 1
+    }
+  },
+  "phase1": {"incomplete": 219, "hidden": 214, "other": 987},
+  "safe_fixes": [
+    {
+      "id": "FIX-001",
+      "file": "worldcup_predictor/forward_evaluation/freeze_service.py",
+      "tests": ["tests/forward_evaluation/test_ecse_rank_rows_prob_backfill.py"],
+      "historical_freezes_mutated": false,
+      "deployed_to_production": false
+    }
+  ],
+  "validation": {
+    "commands": [
+      "pytest tests/forward_evaluation/test_ecse_rank_rows_prob_backfill.py tests/forward_evaluation/test_freeze_service.py -q",
+      "pytest tests/forward_evaluation/ -q"
+    ],
+    "targeted": {"passed": 33, "failed": 0},
+    "forward_evaluation_suite": {"passed": 106, "failed": 1, "preexisting_failure": "test_timer_unit_not_enabled_by_default_in_repo"}
+  },
+  "sub_statuses": {
+    "FREEZE_RECONCILIATION_STATUS": "COMPLETE",
+    "RESULT_SYNC_STATUS": "PARTIAL",
+    "EXACT_SCORE_AUDIT_STATUS": "COMPLETE",
+    "WDE_AUDIT_STATUS": "COMPLETE",
+    "BTTS_AUDIT_STATUS": "COMPLETE",
+    "OU_AUDIT_STATUS": "COMPLETE",
+    "MODEL_EXPERIMENT_STATUS": "REGISTERED_NOT_EXECUTED",
+    "SAFE_FIX_STATUS": "FIX_001_IMPLEMENTED_LOCAL",
+    "LOCAL_VALIDATION_STATUS": "TARGETED_PASS_SUITE_1_PREEXISTING_FAIL",
+    "GITHUB_PARITY_STATUS": "BRANCH_LOCAL_ONLY",
+    "PRODUCTION_PARITY_STATUS": "UNKNOWN",
+    "GPT_ACTIONS_PARITY_STATUS": "UNKNOWN_MCP_ERROR",
+    "FORWARD_SHADOW_READINESS": "STRATEGY_SPEC_READY"
+  },
+  "remaining_blockers": [
+    "Production SSH/commit parity not available in this environment",
+    "GPT Actions MCP server discovery failed",
+    "109 freezes lack FT results in eval DB",
+    "Odds columns empty on most freezes — odds-profile analysis blocked",
+    "Dirty workspace with many unrelated uncommitted files at audit start"
+  ]
+}

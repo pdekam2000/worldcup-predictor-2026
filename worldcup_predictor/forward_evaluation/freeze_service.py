@@ -128,44 +128,79 @@ def _select_ecse(
     return snap, None
 
 
-def _ecse_rank_rows(ecse: dict[str, Any]) -> list[dict[str, Any]]:
+def _parse_ecse_score_list(raw: Any) -> list[Any]:
+    if isinstance(raw, str):
+        try:
+            raw = json.loads(raw)
+        except json.JSONDecodeError:
+            return []
+    return list(raw) if isinstance(raw, list) else []
+
+
+def _score_items_to_rank_rows(raw: list[Any], *, limit: int) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    for idx, item in enumerate(raw[:limit], start=1):
+        if isinstance(item, dict):
+            rows.append(
+                {
+                    "rank": int(item.get("rank") or idx),
+                    "score": item.get("scoreline") or item.get("score"),
+                    "probability": item.get("probability"),
+                }
+            )
+        else:
+            rows.append({"rank": idx, "score": str(item), "probability": None})
+    return rows
+
+
+def _ecse_rank_rows(ecse: dict[str, Any]) -> list[dict[str, Any]]:
+    """Build Top5 rank rows, backfilling probabilities from top10 when top5 omits them.
+
+    Historical ECSE snapshots often store score order in ``top_5_scores`` with null
+    probabilities while ``top_10_scorelines`` carries the canonical probabilities.
+    Preferring incomplete top5 alone nulls ``exact_score_rankings.probability``,
+    ``top5_mass``, and ``entropy`` at freeze time.
+    """
+    top5_raw: list[Any] = []
     for key in ("top_5_scores", "top_5_scores_json"):
-        raw = ecse.get(key.replace("_json", "")) if not key.endswith("_json") else ecse.get(key)
-        if isinstance(raw, str):
-            try:
-                raw = json.loads(raw)
-            except json.JSONDecodeError:
-                raw = []
-        if isinstance(raw, list) and raw:
-            for idx, item in enumerate(raw[:5], start=1):
-                if isinstance(item, dict):
-                    rows.append(
-                        {
-                            "rank": int(item.get("rank") or idx),
-                            "score": item.get("scoreline") or item.get("score"),
-                            "probability": item.get("probability"),
-                        }
-                    )
-                else:
-                    rows.append({"rank": idx, "score": str(item), "probability": None})
+        candidate = _parse_ecse_score_list(ecse.get(key))
+        if candidate:
+            top5_raw = candidate
             break
-    if len(rows) < 5 and ecse.get("top_10_scorelines"):
-        top10 = ecse["top_10_scorelines"]
-        if isinstance(top10, str):
-            try:
-                top10 = json.loads(top10)
-            except json.JSONDecodeError:
-                top10 = []
-        for idx, item in enumerate(top10[:5], start=1):
-            if isinstance(item, dict):
-                rows.append(
-                    {
-                        "rank": int(item.get("rank") or idx),
-                        "score": item.get("scoreline") or item.get("score"),
-                        "probability": item.get("probability"),
-                    }
-                )
+    top10_raw = _parse_ecse_score_list(ecse.get("top_10_scorelines"))
+
+    top5_rows = _score_items_to_rank_rows(top5_raw, limit=5)
+    top10_rows = _score_items_to_rank_rows(top10_raw, limit=10)
+
+    prob_by_score: dict[str, Any] = {}
+    for row in top10_rows:
+        score = str(row.get("score") or "")
+        if score and row.get("probability") is not None and score not in prob_by_score:
+            prob_by_score[score] = row.get("probability")
+
+    rows = list(top5_rows) if top5_rows else list(top10_rows[:5])
+    for row in rows:
+        if row.get("probability") is None:
+            score = str(row.get("score") or "")
+            if score in prob_by_score:
+                row["probability"] = prob_by_score[score]
+
+    n_with_prob = sum(1 for r in rows if r.get("probability") is not None)
+    if n_with_prob < min(3, max(1, len(rows))) and top10_rows:
+        # Incomplete probability coverage on top5 — use top10 order/probs.
+        rows = list(top10_rows[:5])
+
+    if len(rows) < 5 and top10_rows:
+        seen_scores = {str(r.get("score") or "") for r in rows}
+        for row in top10_rows:
+            score = str(row.get("score") or "")
+            if not score or score in seen_scores:
+                continue
+            rows.append(row)
+            seen_scores.add(score)
+            if len(rows) >= 5:
+                break
+
     dedup: list[dict[str, Any]] = []
     seen: set[str] = set()
     for row in sorted(rows, key=lambda r: int(r.get("rank") or 99)):
