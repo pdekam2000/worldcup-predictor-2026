@@ -1,0 +1,200 @@
+{
+  "generated_at_utc": "2026-07-30T17:45:44Z",
+  "backfill_mode": true,
+  "n_fixtures": 3,
+  "results": [
+    {
+      "fixture_id": 1508819,
+      "home": "KA Akureyri",
+      "away": "Thor Akureyri",
+      "kickoff_utc": "2026-07-27T19:15:00",
+      "before_shadow_rows": 8,
+      "first": {
+        "shadow_system": "l2f_forward",
+        "canonical_unaffected": true,
+        "fixture_id": 1508819,
+        "freeze_id": "smoke-l2f-v5-1508819",
+        "run_id": "l2f-forward-v1-backfill",
+        "job_id": "l2f-1508819-smoke-l2f-v5-1508819-l2f-forward-v1-backfill",
+        "status": "success",
+        "reason": null,
+        "retry_count": 0,
+        "stages": [
+          {
+            "stage": "form_snapshot",
+            "ok": true,
+            "detail": "ok"
+          },
+          {
+            "stage": "totals_snapshot",
+            "ok": true,
+            "detail": "ok"
+          },
+          {
+            "stage": "lambda_exact_shadow",
+            "ok": true,
+            "detail": "ok"
+          }
+        ],
+        "lambda_rows": 8,
+        "exact_rows": 8,
+        "duration_ms": 17741.715
+      },
+      "second": {
+        "shadow_system": "l2f_forward",
+        "canonical_unaffected": true,
+        "fixture_id": 1508819,
+        "freeze_id": "smoke-l2f-v5-1508819",
+        "run_id": "l2f-forward-v1-backfill",
+        "job_id": "l2f-1508819-smoke-l2f-v5-1508819-l2f-forward-v1-backfill",
+        "status": "skipped",
+        "reason": "already_success_idempotent",
+        "lambda_rows": 8,
+        "exact_rows": 8,
+        "retry_count": 0
+      },
+      "lambda_v2_rows": 8,
+      "exact_v2_rows": 8,
+      "models": {
+        "EXACT_V2_DC": 2,
+        "EXACT_V2_OVERDISPERSED": 2,
+        "EXACT_V2_POISSON": 2,
+        "EXACT_V2_SELECTED": 2,
+        "LAMBDA_V2_BLENDED": 2,
+        "LAMBDA_V2_BLENDED_ADAPTIVE": 2,
+        "LAMBDA_V2_FOOTBALL": 2,
+        "LAMBDA_V2_MARKET_TOTAL": 2
+      }
+    },
+    {
+      "fixture_id": 1508818,
+      "home": "Breidablik",
+      "away": "IBV Vestmannaeyjar",
+      "kickoff_utc": "2026-07-27T18:00:00",
+      "before_shadow_rows": 8,
+      "first": {
+        "shadow_system": "l2f_forward",
+        "canonical_unaffected": true,
+        "fixture_id": 1508818,
+        "freeze_id": "smoke-l2f-v5-1508818",
+        "run_id": "l2f-forward-v1-backfill",
+        "job_id": "l2f-1508818-smoke-l2f-v5-1508818-l2f-forward-v1-backfill",
+        "status": "success",
+        "reason": null,
+        "retry_count": 0,
+        "stages": [
+          {
+            "stage": "form_snapshot",
+            "ok": true,
+            "detail": "ok"
+          },
+          {
+            "stage": "totals_snapshot",
+            "ok": true,
+            "detail": "ok"
+          },
+          {
+            "stage": "lambda_exact_shadow",
+            "ok": true,
+            "detail": "ok"
+          }
+        ],
+        "lambda_rows": 8,
+        "exact_rows": 8,
+        "duration_ms": 17.665
+      },
+      "second": {
+        "shadow_system": "l2f_forward",
+        "canonical_unaffected": true,
+        "fixture_id": 1508818,
+        "freeze_id": "smoke-l2f-v5-1508818",
+        "run_id": "l2f-forward-v1-backfill",
+        "job_id": "l2f-1508818-smoke-l2f-v5-1508818-l2f-forward-v1-backfill",
+        "status": "skipped",
+        "reason": "already_success_idempotent",
+        "lambda_rows": 8,
+        "exact_rows": 8,
+        "retry_count": 0
+      },
+      "lambda_v2_rows": 8,
+      "exact_v2_rows": 8,
+      "models": {
+        "EXACT_V2_DC": 2,
+        "EXACT_V2_OVERDISPERSED": 2,
+        "EXACT_V2_POISSON": 2,
+        "EXACT_V2_SELECTED": 2,
+        "LAMBDA_V2_BLENDED": 2,
+        "LAMBDA_V2_BLENDED_ADAPTIVE": 2,
+        "LAMBDA_V2_FOOTBALL": 2,
+        "LAMBDA_V2_MARKET_TOTAL": 2
+      }
+    },
+    {
+      "fixture_id": 1497638,
+      "home": "Osters IF",
+      "away": "Varbergs BoIS FC",
+      "kickoff_utc": "2026-07-27T17:05:00",
+      "before_shadow_rows": 8,
+      "first": {
+        "shadow_system": "l2f_forward",
+        "canonical_unaffected": true,
+        "fixture_id": 1497638,
+        "freeze_id": "smoke-l2f-v5-1497638",
+        "run_id": "l2f-forward-v1-backfill",
+        "job_id": "l2f-1497638-smoke-l2f-v5-1497638-l2f-forward-v1-backfill",
+        "status": "success",
+        "reason": null,
+        "retry_count": 0,
+        "stages": [
+          {
+            "stage": "form_snapshot",
+            "ok": true,
+            "detail": "ok"
+          },
+          {
+            "stage": "totals_snapshot",
+            "ok": true,
+            "detail": "ok"
+          },
+          {
+            "stage": "lambda_exact_shadow",
+            "ok": true,
+            "detail": "ok"
+          }
+        ],
+        "lambda_rows": 8,
+        "exact_rows": 8,
+        "duration_ms": 21.897
+      },
+      "second": {
+        "shadow_system": "l2f_forward",
+        "canonical_unaffected": true,
+        "fixture_id": 1497638,
+        "freeze_id": "smoke-l2f-v5-1497638",
+        "run_id": "l2f-forward-v1-backfill",
+        "job_id": "l2f-1497638-smoke-l2f-v5-1497638-l2f-forward-v1-backfill",
+        "status": "skipped",
+        "reason": "already_success_idempotent",
+        "lambda_rows": 8,
+        "exact_rows": 8,
+        "retry_count": 0
+      },
+      "lambda_v2_rows": 8,
+      "exact_v2_rows": 8,
+      "models": {
+        "EXACT_V2_DC": 2,
+        "EXACT_V2_OVERDISPERSED": 2,
+        "EXACT_V2_POISSON": 2,
+        "EXACT_V2_SELECTED": 2,
+        "LAMBDA_V2_BLENDED": 2,
+        "LAMBDA_V2_BLENDED_ADAPTIVE": 2,
+        "LAMBDA_V2_FOOTBALL": 2,
+        "LAMBDA_V2_MARKET_TOTAL": 2
+      }
+    }
+  ],
+  "totals": {
+    "lambda_v2_rows": 24,
+    "exact_v2_rows": 24
+  }
+}
