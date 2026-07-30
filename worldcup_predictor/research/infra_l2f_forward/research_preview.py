@@ -334,7 +334,7 @@ def build_integrity_proof(
     fi: sqlite3.Connection,
     fixture_id: int,
 ) -> dict[str, Any]:
-    ko = fixture.get("kickoff_utc") or (freeze or {}).get("kickoff_utc")
+    ko = fixture.get("kickoff_utc") or _freeze_kickoff(freeze)
     frozen_at = (freeze or {}).get("frozen_at")
     pred_ts = (job or {}).get("started_at_utc") or (job or {}).get("created_at_utc") or frozen_at
     checks = {
@@ -428,7 +428,7 @@ def build_fixture_preview(
         no_bet=bool(no_bet) if no_bet is not None else False,
     )
 
-    odds_ts = (freeze or {}).get("odds_fetched_at_utc")
+    odds_ts = (freeze or {}).get("odds_fetched_at_utc") or (freeze or {}).get("odds_timestamp")
     hash_after = (freeze or {}).get("content_hash")
     integrity = build_integrity_proof(
         freeze=freeze,
@@ -441,7 +441,7 @@ def build_fixture_preview(
         fixture_id=int(fixture_id),
     )
 
-    ko = fx.get("kickoff_utc") or (freeze or {}).get("kickoff_utc")
+    ko = fx.get("kickoff_utc") or _freeze_kickoff(freeze)
     exact_skip = None
     if not exact_v2:
         exact_skip = (job or {}).get("reason") or "exact_v2_shadow_missing"
@@ -454,7 +454,7 @@ def build_fixture_preview(
         "kickoff_utc": ko,
         "kickoff_europe_vienna": _vienna(ko),
         "country": None,
-        "league": fx.get("competition_key"),
+        "league": fx.get("competition_key") or (freeze or {}).get("competition"),
         "home_team": fx.get("home_team") or (freeze or {}).get("home_team_name"),
         "away_team": fx.get("away_team") or (freeze or {}).get("away_team_name"),
         "odds": {
@@ -464,17 +464,38 @@ def build_fixture_preview(
             "provider": "api-football",
             "bookmaker_count": (freeze or {}).get("bookmaker_count"),
             "odds_timestamp": odds_ts,
-            "odds_freshness_status": (freeze or {}).get("odds_freshness_status"),
+            "odds_freshness_status": (freeze or {}).get("odds_freshness_status")
+            or (freeze or {}).get("odds_freshness"),
         },
         "canonical": {
             **canonical,
             "wde": wde,
             "decision": wde.get("decision") or (freeze or {}).get("wde_decision"),
             "confidence": wde.get("confidence") or (freeze or {}).get("wde_confidence"),
-            "consensus": wde.get("consensus"),
-            "btts": wde.get("btts"),
-            "ou25": wde.get("ou25"),
+            "consensus": wde.get("consensus") or (freeze or {}).get("consensus"),
+            "btts": wde.get("btts")
+            or {
+                "prediction": (freeze or {}).get("btts_prediction"),
+                "probability": (freeze or {}).get("btts_probability"),
+            },
+            "ou25": wde.get("ou25")
+            or {
+                "prediction": (freeze or {}).get("ou25_prediction"),
+                "over_probability": (freeze or {}).get("over_probability"),
+                "under_probability": (freeze or {}).get("under_probability"),
+            },
             "no_bet": no_bet,
+            "lambda_home": canonical.get("lambda_home") if canonical.get("lambda_home") is not None else _f((freeze or {}).get("lambda_home")),
+            "lambda_away": canonical.get("lambda_away") if canonical.get("lambda_away") is not None else _f((freeze or {}).get("lambda_away")),
+            "lambda_total": canonical.get("lambda_total")
+            if canonical.get("lambda_total") is not None
+            else _f((freeze or {}).get("total_lambda")),
+            "top5_mass": canonical.get("top5_mass")
+            if canonical.get("top5_mass") is not None
+            else _f((freeze or {}).get("top5_mass")),
+            "entropy": canonical.get("entropy")
+            if canonical.get("entropy") is not None
+            else _f((freeze or {}).get("entropy")),
         },
         "lambda_v2": lambda_v2,
         "exact_v2": exact_v2,
@@ -499,6 +520,12 @@ def build_fixture_preview(
             "challenger_promotion": False,
         },
     }
+
+
+def _freeze_kickoff(freeze: dict[str, Any] | None) -> str | None:
+    if not freeze:
+        return None
+    return freeze.get("kickoff_utc") or freeze.get("kickoff")
 
 
 def list_candidate_fixture_ids(
@@ -536,7 +563,7 @@ def list_candidate_fixture_ids(
         for fid in ids:
             ko = None
             row = eval_conn.execute(
-                "SELECT kickoff_utc FROM frozen_predictions WHERE fixture_id=? ORDER BY frozen_at DESC LIMIT 1",
+                "SELECT kickoff FROM frozen_predictions WHERE fixture_id=? ORDER BY frozen_at DESC LIMIT 1",
                 (fid,),
             ).fetchone()
             if row:
