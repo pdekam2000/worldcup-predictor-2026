@@ -63,6 +63,12 @@ def oddalerts_history_to_ecse_row(rows: list[dict[str, Any]]) -> dict[str, Any]:
                 _set_if_missing(out, "ou_over_35_closing", closing)
             elif "under" in selection:
                 _set_if_missing(out, "ou_under_35_closing", closing)
+        elif "over" in market and "4.5" in market:
+            # Additive for alternate-totals shadow capture; not used by extract_lambdas.
+            if "over" in selection:
+                _set_if_missing(out, "ou_over_45_closing", closing)
+            elif "under" in selection:
+                _set_if_missing(out, "ou_under_45_closing", closing)
         elif market in {"btts", "both_teams_to_score"}:
             if selection in {"yes", "btts_yes"}:
                 _set_if_missing(out, "btts_yes_closing", closing)
@@ -137,6 +143,16 @@ def api_football_odds_to_ecse_row(payload: Any, *, fixture_id: int | None = None
             "ou_under_35_closing": _pick_odd(
                 lines,
                 lambda n, s: _is_ou_line(n, s, "3.5") and "under" in s.lower(),
+                lambda _s: True,
+            ),
+            "ou_over_45_closing": _pick_odd(
+                lines,
+                lambda n, s: _is_ou_line(n, s, "4.5") and "over" in s.lower(),
+                lambda _s: True,
+            ),
+            "ou_under_45_closing": _pick_odd(
+                lines,
+                lambda n, s: _is_ou_line(n, s, "4.5") and "under" in s.lower(),
                 lambda _s: True,
             ),
             "btts_yes_closing": _pick_odd(

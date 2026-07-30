@@ -147,6 +147,18 @@ def build_odds_feature_row(conn: sqlite3.Connection, fixture_id: int) -> dict[st
             lambda n, s: _is_ou_line(n, s, "3.5") and "under" in s.lower(),
             lambda _s: True,
         ),
+        # Additive capture for shadow / future multi-line totals.
+        # extract_lambdas currently ignores O/U 4.5 — canonical λ unchanged.
+        "ou_over_45_closing": pick(
+            lines,
+            lambda n, s: _is_ou_line(n, s, "4.5") and "over" in s.lower(),
+            lambda _s: True,
+        ),
+        "ou_under_45_closing": pick(
+            lines,
+            lambda n, s: _is_ou_line(n, s, "4.5") and "under" in s.lower(),
+            lambda _s: True,
+        ),
         "btts_yes_closing": pick(
             lines,
             lambda n, _s: "both teams" in n.lower() or n.lower() == "btts",
