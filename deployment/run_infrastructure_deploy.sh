@@ -5,8 +5,9 @@
 set -euo pipefail
 
 APP="${APP:-/opt/worldcup-predictor}"
-RELEASE_REF="${RELEASE_REF:-537266d}"
+RELEASE_REF="${RELEASE_REF:-c8e68d7}"
 RELEASE_BRANCH="${RELEASE_BRANCH:-release/football-strength-shadow-infra-20260730T151432Z}"
+# Infra-validated SHA (included in ancestry): 537266d
 BACKUP_ROOT="${BACKUP_ROOT:-$APP/backups/infra_deploy}"
 TS="$(date -u +%Y%m%dT%H%M%SZ)"
 RUN_DIR="${BACKUP_ROOT}/${TS}"
@@ -172,6 +173,7 @@ pre_commit=$PRE_COMMIT
 post_commit=$POST_COMMIT
 release_branch=$RELEASE_BRANCH
 validated_target=537266d
+package_commit=c8e68d7
 migrations=research_football_strength_lambda_v2.sql,research_alternate_totals_capture_status.sql
 services_restarted=$SERVICES
 backup_dir=$RUN_DIR
