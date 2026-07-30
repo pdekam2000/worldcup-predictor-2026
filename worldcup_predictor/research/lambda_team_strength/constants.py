@@ -1,0 +1,20 @@
+"""Constants for lambda team-strength research."""
+
+from __future__ import annotations
+
+LAMBDA_FLOOR = 0.15
+LAMBDA_CEIL = 6.0
+METHOD_VERSION_CANONICAL = "ECSE-1C-v1"
+DIST_METHOD = "ECSE-1D-B-v1"
+DRAW_PRIOR_DEFAULT = 0.26
+
+# Promotion gates (forward shadow)
+FORWARD_MIN_GLOBAL = 250
+FORWARD_MIN_HIGH_SCORE_RISK = 100
+FORWARD_MIN_ACTUAL_4PLUS = 75
+FORWARD_MIN_ACTUAL_5PLUS = 40
+FORWARD_MIN_LOW_SCORE = 150
+
+SEVERE_TOTAL_ERROR = 2.0  # actual - predicted total goals
+HIGH_SCORE_ACTUAL = 5
+LOW_SCORE_ACTUAL = 2
