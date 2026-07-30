@@ -308,6 +308,20 @@ class Settings(BaseSettings):
         alias="ELITE_SHADOW_QUEUE_BATCH_SIZE",
     )
 
+    # L2-F / Exact V2 forward shadow (owner daily only; never canonical)
+    l2f_forward_shadow_mode: Literal["off", "shadow"] = Field(
+        default="shadow",
+        alias="L2F_FORWARD_SHADOW_MODE",
+    )
+    l2f_forward_shadow_kill_switch: bool = Field(
+        default=False,
+        alias="L2F_FORWARD_SHADOW_KILL_SWITCH",
+    )
+    l2f_forward_shadow_timeout_sec: float = Field(
+        default=8.0,
+        alias="L2F_FORWARD_SHADOW_TIMEOUT_SEC",
+    )
+
     # Database — PostgreSQL primary for SaaS; SQLite for intelligence (legacy/local)
     app_env: AppEnv = Field(default="local", alias="APP_ENV")
     database_url: str | None = Field(default=None, alias="DATABASE_URL")

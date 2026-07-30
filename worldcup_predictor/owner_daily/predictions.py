@@ -436,4 +436,24 @@ def run_daily_predictions(
             if ecse_detail is not None:
                 ecse_detail["forward_evaluation"] = capture_meta
 
+            # Non-blocking L2-F / Exact V2 forward shadow (never affects canonical).
+            try:
+                from worldcup_predictor.research.infra_l2f_forward.forward_hook import (
+                    maybe_run_l2f_forward_shadow,
+                )
+
+                shadow_meta = maybe_run_l2f_forward_shadow(
+                    conn=conn,
+                    fixture_id=fid,
+                    freeze_meta=capture_meta,
+                    prediction_scope=pred_scope,
+                    settings=settings,
+                )
+                if wde_detail is not None:
+                    wde_detail["l2f_forward_shadow"] = shadow_meta
+                if ecse_detail is not None:
+                    ecse_detail["l2f_forward_shadow"] = shadow_meta
+            except Exception:  # noqa: BLE001 — hard isolation; never fail daily predictions
+                pass
+
     return result
