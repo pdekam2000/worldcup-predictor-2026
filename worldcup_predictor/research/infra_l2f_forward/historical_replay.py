@@ -173,6 +173,14 @@ def run_historical_replay_batch(
     eligible = [c for c in candidates if c.classification == wanted and c.is_first_for_fixture]
     if resume_after_fixture_id is not None:
         eligible = [c for c in eligible if c.fixture_id > int(resume_after_fixture_id)]
+    # Skip fixtures already successfully shadowed (idempotent resume without re-processing).
+    done = {
+        int(r[0])
+        for r in fi_conn.execute(
+            "SELECT DISTINCT fixture_id FROM l2f_forward_shadow_jobs WHERE status = 'success'"
+        ).fetchall()
+    }
+    eligible = [c for c in eligible if c.fixture_id not in done]
     batch = eligible[: max(0, int(batch_size))]
 
     for c in batch:
@@ -416,12 +424,17 @@ def aggregate_eval_metrics(fi_conn: sqlite3.Connection, *, cohort_type: str | No
                AVG(lambda_total_err) AS mae_total,
                AVG(lambda_home_err) AS mae_home,
                AVG(lambda_away_err) AS mae_away,
+               SQRT(AVG(lambda_total_err * lambda_total_err)) AS rmse_total,
+               SQRT(AVG(lambda_home_err * lambda_home_err)) AS rmse_home,
+               SQRT(AVG(lambda_away_err * lambda_away_err)) AS rmse_away,
                AVG(top1) AS top1,
                AVG(top3) AS top3,
                AVG(top5) AS top5,
                AVG(top10) AS top10,
                AVG(log_loss) AS log_loss,
-               AVG(canonical_top5) AS canonical_top5
+               AVG(canonical_top5) AS canonical_top5,
+               AVG(actual_rank) AS mean_actual_rank,
+               AVG(p_actual) AS mean_p_actual
         FROM {EVAL_TABLE}
         {where}
         GROUP BY model_id
@@ -438,12 +451,17 @@ def aggregate_eval_metrics(fi_conn: sqlite3.Connection, *, cohort_type: str | No
                 "mae_total": r[2],
                 "mae_home": r[3],
                 "mae_away": r[4],
-                "top1": r[5],
-                "top3": r[6],
-                "top5": r[7],
-                "top10": r[8],
-                "log_loss": r[9],
-                "canonical_top5": r[10],
+                "rmse_total": r[5],
+                "rmse_home": r[6],
+                "rmse_away": r[7],
+                "top1": r[8],
+                "top3": r[9],
+                "top5": r[10],
+                "top10": r[11],
+                "log_loss": r[12],
+                "canonical_top5": r[13],
+                "mean_actual_rank": r[14],
+                "mean_p_actual": r[15],
             }
         )
     return {"cohort_type": cohort_type or "combined", "models": out}
