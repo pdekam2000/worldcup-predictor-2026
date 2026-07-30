@@ -12,7 +12,7 @@ Hard invariants:
 
 from __future__ import annotations
 
-RECOMMENDATION_VERSION = "bco-1.0.0"
+RECOMMENDATION_VERSION = "bco-1.1.0"
 RESEARCH_ONLY = True
 OWNER_ONLY = True
 PUBLIC_VISIBLE = False

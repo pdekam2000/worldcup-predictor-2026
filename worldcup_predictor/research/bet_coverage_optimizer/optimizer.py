@@ -10,6 +10,11 @@ from worldcup_predictor.research.bet_coverage_optimizer import (
     STATUS_COVERAGE_UNAVAILABLE,
     STATUS_OK,
 )
+from worldcup_predictor.research.bet_coverage_optimizer.config import (
+    DEFAULT_TOP_CANDIDATES,
+    scoring_weights_from_config,
+    validate_top_n,
+)
 from worldcup_predictor.research.bet_coverage_optimizer.exact_consensus import (
     merge_top_n_targets,
     model_snapshot_hash,
@@ -89,6 +94,29 @@ def attach_exact_odds(selections: list[ExactSelection], prices: list[MarketPrice
             sel.odds_freshness_status = p.freshness
 
 
+def build_ranked_candidates(
+    evals: list[CoverageMarketEvaluation],
+    *,
+    selected: CoverageMarketEvaluation | None,
+    top_k: int = DEFAULT_TOP_CANDIDATES,
+) -> list[dict[str, Any]]:
+    """Top-K markets ranked by coverage_score (eligible first), then mass."""
+    ordered = sorted(
+        evals,
+        key=lambda e: (
+            0 if e.eligible and e.coverage_score is not None else 1,
+            -(e.coverage_score if e.coverage_score is not None else -1.0),
+            -(e.covered_probability_mass or 0.0),
+            str(e.market_key or ""),
+        ),
+    )
+    selected_key = selected.market_key if selected else None
+    rows: list[dict[str, Any]] = []
+    for i, ev in enumerate(ordered[: int(top_k)], start=1):
+        rows.append(ev.to_ranked_row(rank=i, selected=(selected_key is not None and ev.market_key == selected_key)))
+    return rows
+
+
 def optimize_fixture(
     fixture_id: int,
     models: list[ModelTopScores],
@@ -98,19 +126,26 @@ def optimize_fixture(
     total_selections: int = 4,
     bookmaker_allowlist: list[str] | None = None,
     weights: ScoringWeights | None = None,
+    config: dict[str, Any] | None = None,
     require_fresh: bool = True,
     extra_prices: list[MarketPrice] | None = None,
     raw_payload: dict[str, Any] | None = None,
     skip_db_odds: bool = False,
+    top_candidates: int | None = None,
 ) -> CoverageRecommendation:
     if int(total_selections) != 4:
         raise ValueError("total_selections is fixed at 4 for this research optimizer")
     if int(exact_count) != 3:
         raise ValueError("exact_count is fixed at 3 for this research optimizer")
 
+    top_n = validate_top_n(int(top_n_scores))
+    if weights is None:
+        weights = scoring_weights_from_config(config)
+    top_k = int(top_candidates if top_candidates is not None else (config or {}).get("top_candidates") or DEFAULT_TOP_CANDIDATES)
+
     exacts = select_exact_scores(models, exact_count=exact_count)
-    top8 = merge_top_n_targets(models, top_n=top_n_scores)
-    target_pairs = [(s.score, float(s.probability)) for s in top8]
+    top_targets = merge_top_n_targets(models, top_n=top_n)
+    target_pairs = [(s.score, float(s.probability)) for s in top_targets]
     snap_hash = model_snapshot_hash(models)
 
     candidates, bundle = load_and_build_candidates(
@@ -131,13 +166,14 @@ def optimize_fixture(
     eligible = [e for e in evals if e.eligible and e.coverage_score is not None]
     selected = eligible[0] if eligible else None
     rejected = [e for e in evals if e is not selected]
+    ranked = build_ranked_candidates(evals, selected=selected, top_k=top_k)
 
     covered: list[str] = []
     if selected:
         covered = list(dict.fromkeys(list(selected.covered_scores) + [e.score for e in exacts]))
     else:
         covered = [e.score for e in exacts]
-    uncovered = [s.score for s in top8 if s.score not in set(covered)]
+    uncovered = [s.score for s in top_targets if s.score not in set(covered)]
 
     status = STATUS_OK if selected else STATUS_COVERAGE_UNAVAILABLE
     blockers: list[str] = []
@@ -151,11 +187,14 @@ def optimize_fixture(
         model_snapshot_hash=snap_hash,
         selected_exact_scores=exacts,
         selected_coverage_market=selected,
-        top8_scores=top8,
-        total_top8_probability_mass=round(sum(float(s.probability) for s in top8), 8),
-        covered_top8_scores=covered,
-        uncovered_top8_scores=uncovered,
+        top_n_scores_list=top_targets,
+        total_top_n_probability_mass=round(sum(float(s.probability) for s in top_targets), 8),
+        covered_top_n_scores=covered,
+        uncovered_top_n_scores=uncovered,
         generated_at=_utc_now(),
+        top_n=top_n,
+        ranked_candidates=ranked,
+        scoring_weights=weights.to_dict(),
         research_only=True,
         owner_only=True,
         recommendation_version=RECOMMENDATION_VERSION,

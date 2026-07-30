@@ -44,7 +44,8 @@ def compute_coverage_metrics(
     edge = (model_p - implied) if implied is not None else None
     return {
         "covered_scores": covered,
-        "covered_top8_count": len(covered),
+        "covered_topN_count": len(covered),
+        "covered_top8_count": len(covered),  # alias
         "covered_probability_mass": round(covered_mass, 8),
         "exact_overlap_scores": exact_overlap,
         "exact_overlap_count": len(exact_overlap),

@@ -1,0 +1,29 @@
+{
+  "research_only": true,
+  "owner_only": true,
+  "top_n_scores": 8,
+  "exact_count": 3,
+  "total_selections": 4,
+  "top_candidates": 5,
+  "min_odds": 1.55,
+  "coverage_weights": {
+    "covered_probability_mass": 0.35,
+    "non_exact_probability_mass": 0.20,
+    "exact_overlap_probability_mass": 0.15,
+    "estimated_edge": 0.20,
+    "log_odds": 0.10
+  },
+  "penalties": {
+    "stale_penalty": 1.0,
+    "redundant_penalty": 0.35,
+    "narrow_mass_penalty": 0.25,
+    "narrow_mass_threshold": 0.05
+  },
+  "coupon_optimizer": {
+    "candidate_pool_per_fixture": 5,
+    "stake_per_ticket": 1.0,
+    "diversification_weight": 0.15,
+    "overlap_penalty_weight": 0.20,
+    "ev_weight": 0.65
+  }
+}

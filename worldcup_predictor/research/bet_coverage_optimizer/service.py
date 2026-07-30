@@ -10,6 +10,11 @@ from pathlib import Path
 from typing import Any
 
 from worldcup_predictor.research.bet_coverage_optimizer import STATUS_COVERAGE_UNAVAILABLE
+from worldcup_predictor.research.bet_coverage_optimizer.config import (
+    load_optimizer_config,
+    scoring_weights_from_config,
+    validate_top_n,
+)
 from worldcup_predictor.research.bet_coverage_optimizer.generate_tickets import (
     generate_64_tickets,
     write_tickets_artifacts,
@@ -78,7 +83,6 @@ def load_models_from_db(conn: sqlite3.Connection, fixture_id: int) -> list[Model
     models: list[ModelTopScores] = []
     tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
-    # Canonical ECSE freeze / snapshot
     if "ecse_live_snapshots" in tables:
         row = conn.execute(
             """
@@ -91,11 +95,10 @@ def load_models_from_db(conn: sqlite3.Connection, fixture_id: int) -> list[Model
         ).fetchone()
         if row:
             tops = _parse_json(row[0]) or []
-            entries = score_entries_from_list(list(tops)[:10], source="canonical")
+            entries = score_entries_from_list(list(tops)[:12], source="canonical")
             if entries:
                 models.append(ModelTopScores(model_id="canonical", scores=entries, weight=1.0))
 
-    # Shadow tables (names vary by infra)
     for table, model_id in (
         ("exact_v2_shadow_outputs", "exact_v2"),
         ("lambda_v2_shadow_outputs", "lambda_v2"),
@@ -119,7 +122,7 @@ def load_models_from_db(conn: sqlite3.Connection, fixture_id: int) -> list[Model
             tops = raw.get("top_10_scorelines") or raw.get("top10") or raw.get("scores") or []
         else:
             tops = raw or []
-        entries = score_entries_from_list(list(tops)[:10], source=model_id)
+        entries = score_entries_from_list(list(tops)[:12], source=model_id)
         if entries:
             w = 1.0 if model_id == "exact_v2" else 0.75
             models.append(ModelTopScores(model_id=model_id, scores=entries, weight=w))
@@ -133,6 +136,7 @@ def write_run_artifacts(
     tickets_payload: dict[str, Any] | None,
     validation: dict[str, Any],
     run_manifest: dict[str, Any],
+    coupon_result: dict[str, Any] | None = None,
 ) -> dict[str, str]:
     output_dir.mkdir(parents=True, exist_ok=True)
     paths: dict[str, str] = {}
@@ -143,7 +147,16 @@ def write_run_artifacts(
         "owner_only": True,
         "fixture_ids": [r.fixture_id for r in recommendations],
         "statuses": {str(r.fixture_id): r.status for r in recommendations},
+        "top_n": {str(r.fixture_id): r.top_n for r in recommendations},
         "ticket_summary": (tickets_payload or {}).get("summary"),
+        "coupon_optimizer": (
+            {
+                "coupon_score": (coupon_result or {}).get("coupon_score"),
+                "expected_coupon_value": (coupon_result or {}).get("expected_coupon_value"),
+            }
+            if coupon_result
+            else None
+        ),
     }
     (output_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     paths["summary.json"] = str(output_dir / "summary.json")
@@ -153,12 +166,26 @@ def write_run_artifacts(
     paths["recommendations.json"] = str(output_dir / "recommendations.json")
 
     candidates = []
+    ranked_by_fixture: dict[str, list[dict[str, Any]]] = {}
     for r in recommendations:
+        ranked_by_fixture[str(r.fixture_id)] = list(r.ranked_candidates)
         for c in ([r.selected_coverage_market] if r.selected_coverage_market else []) + list(r.rejected_candidates):
             if c:
                 candidates.append(c.to_dict())
     (output_dir / "candidate_markets.json").write_text(json.dumps(candidates, indent=2), encoding="utf-8")
     paths["candidate_markets.json"] = str(output_dir / "candidate_markets.json")
+
+    ranked_payload = {
+        "research_only": True,
+        "owner_only": True,
+        "top_k": 5,
+        "generated_at": _utc_now(),
+        "by_fixture": ranked_by_fixture,
+    }
+    (output_dir / "candidate_markets_ranked.json").write_text(
+        json.dumps(ranked_payload, indent=2), encoding="utf-8"
+    )
+    paths["candidate_markets_ranked.json"] = str(output_dir / "candidate_markets_ranked.json")
 
     matrix_path = output_dir / "coverage_matrix.csv"
     with matrix_path.open("w", encoding="utf-8", newline="") as fh:
@@ -166,6 +193,7 @@ def write_run_artifacts(
         w.writerow(
             [
                 "fixture_id",
+                "top_n",
                 "score",
                 "probability",
                 "selected_exact",
@@ -176,11 +204,12 @@ def write_run_artifacts(
         for r in recommendations:
             exact_set = {e.score for e in r.selected_exact_scores}
             cov_set = set((r.selected_coverage_market.covered_scores if r.selected_coverage_market else []) or [])
-            unc = set(r.uncovered_top8_scores)
-            for s in r.top8_scores:
+            unc = set(r.uncovered_top_n_scores)
+            for s in r.top_n_scores_list:
                 w.writerow(
                     [
                         r.fixture_id,
+                        r.top_n,
                         s.score,
                         s.probability,
                         1 if s.score in exact_set else 0,
@@ -192,6 +221,14 @@ def write_run_artifacts(
 
     if tickets_payload is not None:
         paths.update(write_tickets_artifacts(tickets_payload, output_dir))
+
+    if coupon_result is not None:
+        (output_dir / "coupon_optimizer.json").write_text(json.dumps(coupon_result, indent=2), encoding="utf-8")
+        paths["coupon_optimizer.json"] = str(output_dir / "coupon_optimizer.json")
+        coupon_tickets = coupon_result.get("tickets")
+        if isinstance(coupon_tickets, dict):
+            coupon_dir = output_dir / "coupon_tickets"
+            paths.update({f"coupon_tickets/{k}": v for k, v in write_tickets_artifacts(coupon_tickets, coupon_dir).items()})
 
     (output_dir / "validation_report.json").write_text(json.dumps(validation, indent=2), encoding="utf-8")
     paths["validation_report.json"] = str(output_dir / "validation_report.json")
@@ -205,7 +242,7 @@ def run_coverage_optimizer_job(
     *,
     model_payloads: dict[int, dict[str, Any]] | None = None,
     bookmaker_allowlist: list[str] | None = None,
-    top_n_scores: int = 8,
+    top_n_scores: int | None = None,
     exact_count: int = 3,
     total_selections: int = 4,
     stake_per_ticket: float = 1.0,
@@ -214,13 +251,31 @@ def run_coverage_optimizer_job(
     extra_prices_by_fixture: dict[int, list[MarketPrice]] | None = None,
     raw_payload_by_fixture: dict[int, dict[str, Any]] | None = None,
     weights: ScoringWeights | None = None,
+    config_path: str | Path | None = None,
+    config: dict[str, Any] | None = None,
     db_path: str | Path | None = None,
     generate_tickets: bool = True,
     skip_db_odds: bool = False,
+    run_coupon_optimizer: bool = True,
 ) -> dict[str, Any]:
     """
     Research-only job runner. Never writes freezes or canonical predictions.
     """
+    cfg = load_optimizer_config(config_path)
+    if config:
+        # merge overlays
+        for key, value in config.items():
+            if key in {"coverage_weights", "penalties", "coupon_optimizer"} and isinstance(value, dict):
+                base = dict(cfg.get(key) or {})
+                base.update(value)
+                cfg[key] = base
+            else:
+                cfg[key] = value
+
+    top_n = validate_top_n(int(top_n_scores if top_n_scores is not None else cfg.get("top_n_scores") or 8))
+    if weights is None:
+        weights = scoring_weights_from_config(cfg)
+
     recommendations = []
     conn = None
     if db_path:
@@ -235,17 +290,17 @@ def run_coverage_optimizer_job(
             elif conn is not None:
                 models = load_models_from_db(conn, int(fid))
             if not models:
-                # Empty models → empty exacts; still return structured unavailable result
                 models = [ModelTopScores(model_id="canonical", scores=[], weight=1.0)]
 
             rec = optimize_fixture(
                 int(fid),
                 models,
-                top_n_scores=top_n_scores,
+                top_n_scores=top_n,
                 exact_count=exact_count,
                 total_selections=total_selections,
                 bookmaker_allowlist=bookmaker_allowlist,
                 weights=weights,
+                config=cfg,
                 require_fresh=require_fresh,
                 extra_prices=(extra_prices_by_fixture or {}).get(int(fid)),
                 raw_payload=(raw_payload_by_fixture or {}).get(int(fid)),
@@ -260,8 +315,18 @@ def run_coverage_optimizer_job(
     if generate_tickets and len(recommendations) == 3:
         tickets_payload = generate_64_tickets(recommendations, stake_per_ticket=stake_per_ticket)
 
+    coupon_result = None
+    if run_coupon_optimizer and len(recommendations) == 3:
+        from worldcup_predictor.research.coupon_optimizer import optimize_coupon
+
+        coupon = optimize_coupon(recommendations, config=cfg.get("coupon_optimizer"))
+        coupon_result = coupon.to_dict()
+
     validation = {
         "exact_count_per_fixture": {str(r.fixture_id): len(r.selected_exact_scores) for r in recommendations},
+        "top_n": top_n,
+        "ranked_candidates_per_fixture": {str(r.fixture_id): len(r.ranked_candidates) for r in recommendations},
+        "scoring_weights": weights.to_dict(),
         "no_invented_markets": all(
             r.selected_coverage_market is not None
             or STATUS_COVERAGE_UNAVAILABLE in r.blockers
@@ -277,6 +342,7 @@ def run_coverage_optimizer_job(
             for r in recommendations
         ),
         "ticket_count": (tickets_payload or {}).get("summary", {}).get("ticket_count"),
+        "coupon_optimizer_ran": coupon_result is not None,
         "canonical_formulas_unchanged": True,
         "freezes_unchanged": True,
         "shadow_not_promoted": True,
@@ -290,15 +356,20 @@ def run_coverage_optimizer_job(
         "run_id": ts,
         "fixture_ids": [int(x) for x in fixture_ids],
         "require_fresh": require_fresh,
-        "top_n_scores": top_n_scores,
+        "top_n_scores": top_n,
         "exact_count": exact_count,
         "total_selections": total_selections,
         "stake_per_ticket": stake_per_ticket,
+        "scoring_weights": weights.to_dict(),
+        "config_path": str(config_path) if config_path else str(
+            Path(__file__).resolve().parent / "default_config.json"
+        ),
         "generated_at": _utc_now(),
         "research_only": True,
         "owner_only": True,
         "no_freeze_mutation": True,
         "no_canonical_mutation": True,
+        "phase": "bco-phase2",
     }
     paths = write_run_artifacts(
         output_dir=out,
@@ -306,6 +377,7 @@ def run_coverage_optimizer_job(
         tickets_payload=tickets_payload,
         validation=validation,
         run_manifest=manifest,
+        coupon_result=coupon_result,
     )
     return {
         "status": "completed",
@@ -315,16 +387,19 @@ def run_coverage_optimizer_job(
         "summary": {
             "fixture_ids": [r.fixture_id for r in recommendations],
             "statuses": {str(r.fixture_id): r.status for r in recommendations},
+            "top_n": top_n,
             "ticket_summary": (tickets_payload or {}).get("summary"),
+            "coupon_score": (coupon_result or {}).get("coupon_score"),
+            "expected_coupon_value": (coupon_result or {}).get("expected_coupon_value"),
         },
         "tickets": tickets_payload,
+        "coupon_optimizer": coupon_result,
         "validation": validation,
         "artifact_paths": paths,
         "output_dir": str(out),
     }
 
 
-# In-memory research job store (owner endpoints)
 _RESEARCH_JOBS: dict[str, dict[str, Any]] = {}
 
 
@@ -360,14 +435,18 @@ def create_research_job(request: dict[str, Any]) -> dict[str, Any]:
         result = run_coverage_optimizer_job(
             ids,
             bookmaker_allowlist=request.get("bookmaker_allowlist"),
-            top_n_scores=int(request.get("top_n_scores") or 8),
+            top_n_scores=int(request["top_n_scores"]) if request.get("top_n_scores") is not None else None,
             exact_count=int(request.get("exact_count") or 3),
             total_selections=int(request.get("total_selections") or 4),
             stake_per_ticket=float(request.get("stake_per_ticket") or 1.0),
             require_fresh=bool(request.get("require_fresh", True)),
             model_payloads=model_payloads,
+            config_path=request.get("config_path"),
+            config=request.get("config"),
             generate_tickets=len(ids) == 3,
+            run_coupon_optimizer=bool(request.get("run_coupon_optimizer", True)) and len(ids) == 3,
             output_dir=Path(request["output_dir"]) if request.get("output_dir") else None,
+            skip_db_odds=bool(request.get("skip_db_odds", False)),
         )
         record["status"] = "completed"
         record["result"] = result

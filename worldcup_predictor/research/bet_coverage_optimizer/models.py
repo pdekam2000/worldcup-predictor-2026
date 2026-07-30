@@ -45,7 +45,18 @@ class ScoringWeights:
     narrow_mass_threshold: float = 0.05
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return {
+            "covered_probability_mass": self.covered_mass,
+            "non_exact_probability_mass": self.non_exact_mass,
+            "exact_overlap_probability_mass": self.exact_overlap_mass,
+            "estimated_edge": self.estimated_edge,
+            "log_odds": self.log_odds,
+            "min_odds": self.min_odds,
+            "stale_penalty": self.stale_penalty,
+            "redundant_penalty": self.redundant_penalty,
+            "narrow_mass_penalty": self.narrow_mass_penalty,
+            "narrow_mass_threshold": self.narrow_mass_threshold,
+        }
 
 
 @dataclass
@@ -79,6 +90,33 @@ class CoverageMarketEvaluation:
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
+    def to_ranked_row(self, *, rank: int, selected: bool) -> dict[str, Any]:
+        rejection = None
+        if not selected:
+            if self.rejection_reasons:
+                rejection = self.rejection_reasons[0]
+            elif not self.eligible:
+                rejection = "NOT_ELIGIBLE"
+            else:
+                rejection = "NOT_SELECTED"
+        return {
+            "rank": int(rank),
+            "fixture_id": self.fixture_id,
+            "market_label": self.market_label,
+            "market_key": self.market_key,
+            "bookmaker": self.bookmaker,
+            "odds": self.odds,
+            "covered_topN_scores": list(self.covered_scores),
+            "covered_probability_mass": self.covered_probability_mass,
+            "exact_overlap_probability_mass": self.exact_overlap_probability_mass,
+            "estimated_edge": self.estimated_edge,
+            "coverage_score": self.coverage_score,
+            "eligible": self.eligible,
+            "selected": bool(selected),
+            "rejection_reason": rejection,
+            "rejection_reasons": list(self.rejection_reasons),
+        }
+
 
 @dataclass
 class ExactSelection:
@@ -102,23 +140,44 @@ class CoverageRecommendation:
     model_snapshot_hash: str
     selected_exact_scores: list[ExactSelection]
     selected_coverage_market: CoverageMarketEvaluation | None
-    top8_scores: list[ScoreEntry]
-    total_top8_probability_mass: float
-    covered_top8_scores: list[str]
-    uncovered_top8_scores: list[str]
+    top_n_scores_list: list[ScoreEntry]
+    total_top_n_probability_mass: float
+    covered_top_n_scores: list[str]
+    uncovered_top_n_scores: list[str]
     generated_at: str
+    top_n: int = 8
+    ranked_candidates: list[dict[str, Any]] = field(default_factory=list)
+    scoring_weights: dict[str, Any] = field(default_factory=dict)
     research_only: bool = True
     owner_only: bool = True
-    recommendation_version: str = "bco-1.0.0"
+    recommendation_version: str = "bco-1.1.0"
     status: str = "OK"
     blockers: list[str] = field(default_factory=list)
     rejected_candidates: list[CoverageMarketEvaluation] = field(default_factory=list)
     candidate_count: int = 0
 
+    # Backward-compatible aliases used by Phase-1 callers/tests
+    @property
+    def top8_scores(self) -> list[ScoreEntry]:
+        return self.top_n_scores_list
+
+    @property
+    def total_top8_probability_mass(self) -> float:
+        return self.total_top_n_probability_mass
+
+    @property
+    def covered_top8_scores(self) -> list[str]:
+        return self.covered_top_n_scores
+
+    @property
+    def uncovered_top8_scores(self) -> list[str]:
+        return self.uncovered_top_n_scores
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "fixture_id": self.fixture_id,
             "model_snapshot_hash": self.model_snapshot_hash,
+            "top_n": self.top_n,
             "selected_exact_scores": [s.to_dict() for s in self.selected_exact_scores],
             "selected_coverage_market": (
                 self.selected_coverage_market.to_dict() if self.selected_coverage_market else None
@@ -126,10 +185,16 @@ class CoverageRecommendation:
             "fourth_selection": (
                 self.selected_coverage_market.to_dict() if self.selected_coverage_market else None
             ),
-            "top8_scores": [s.to_dict() for s in self.top8_scores],
-            "total_top8_probability_mass": self.total_top8_probability_mass,
-            "covered_top8_scores": list(self.covered_top8_scores),
-            "uncovered_top8_scores": list(self.uncovered_top8_scores),
+            "ranked_candidates": list(self.ranked_candidates),
+            "top_n_scores": [s.to_dict() for s in self.top_n_scores_list],
+            "top8_scores": [s.to_dict() for s in self.top_n_scores_list],  # alias
+            "total_top_n_probability_mass": self.total_top_n_probability_mass,
+            "total_top8_probability_mass": self.total_top_n_probability_mass,
+            "covered_top_n_scores": list(self.covered_top_n_scores),
+            "covered_top8_scores": list(self.covered_top_n_scores),
+            "uncovered_top_n_scores": list(self.uncovered_top_n_scores),
+            "uncovered_top8_scores": list(self.uncovered_top_n_scores),
+            "scoring_weights": dict(self.scoring_weights),
             "generated_at": self.generated_at,
             "research_only": self.research_only,
             "owner_only": self.owner_only,
