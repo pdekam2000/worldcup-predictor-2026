@@ -230,13 +230,13 @@ GET /api/gpt-actions/v1/research/l2f-research-preview?vienna_date=2026-07-31
 
 | Location | SHA |
 |---|---|
-| Local | `dd23390` |
-| GitHub (`release/football-strength-shadow-infra-20260730T151432Z`) | `dd23390` |
-| Production `/opt/worldcup-predictor` | `dd23390` |
+| Local | `5374ce7` |
+| GitHub (`release/football-strength-shadow-infra-20260730T151432Z`) | `5374ce7` |
+| Production `/opt/worldcup-predictor` | `5374ce7` |
 
-Tip message: *Document Phase 5 live true-forward accumulation and research preview.*
+Tip message: *Record final Phase 5 Local/GitHub/Production tip SHA in the report.*
 
-Code tip for TF hook + preview (before docs commit): `3b1293f`.
+Functional code tip (TF hook + preview): `3b1293f`.
 
 ## 15. Challenger outputs remain research-only
 
