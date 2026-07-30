@@ -10,8 +10,8 @@
 - [ ] Confirm current production commit recorded
 - [ ] Confirm free disk for DB backup
 - [ ] Confirm `.env.production` present (do not print secrets)
-- [ ] Confirm release commit reachable: `git fetch && git cat-file -e c8e68d7^{commit}`
-- [ ] Note validated infra SHA `537266d` is ancestor of package tip `c8e68d7`
+- [ ] Confirm release branch tip reachable: `git fetch origin release/football-strength-shadow-infra-20260730T151432Z`
+- [ ] Note validated infra SHA `537266d` is ancestor of package tip
 - [ ] Read `FINAL_DEPLOYMENT_AUDIT.md`
 - [ ] Confirm no concurrent prediction backfills that lock FI DB
 - [ ] Owner approval: infrastructure-only deploy (no model promotion)
