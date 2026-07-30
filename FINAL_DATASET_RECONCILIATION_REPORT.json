@@ -1,0 +1,57 @@
+{
+  "primary_status": "DATASET_RECONCILIATION_AND_EXPERIMENTS_COMPLETE",
+  "artifact_dir": "artifacts/dataset_reconciliation_experiments/20260730T125305Z",
+  "branch": "audit/deep-model-forensic-20260730T115031Z",
+  "previous_audit": {
+    "n_evaluated": 142,
+    "exact_top5": 0.4437,
+    "wde": 0.493
+  },
+  "result_sync": {
+    "missing_before": 109,
+    "newly_resolved": 26,
+    "still_unresolved": 83,
+    "still_unresolved_breakdown": {
+      "STATUS_NOT_TERMINAL": 73,
+      "fixture_not_found": 5,
+      "internal_regulation_ft_mismatch": 5
+    }
+  },
+  "duplicates": {"groups": 62, "classified_rows": 173},
+  "canonical_metrics": {
+    "n_unique_fixtures": 168,
+    "exact_top1": 0.1488,
+    "exact_top3": 0.2976,
+    "exact_top5": 0.4524,
+    "exact_top10": 0.756,
+    "wde": 0.4881,
+    "btts": 0.5179,
+    "ou25": 0.5595
+  },
+  "conclusions_materially_changed": false,
+  "best_challenger": {
+    "name": "G3_dixon_coles",
+    "validation_top5": 0.5441,
+    "delta_top5": 0.0441,
+    "high_score_top5": 0.0,
+    "promotion": false,
+    "forward_shadow_min_n": 150
+  },
+  "persistence_fixes": [
+    "FIX-001_rank_prob_backfill",
+    "freeze_meta_v3_probability_unit_and_decision_fields",
+    "freeze_derived_research_metadata_table"
+  ],
+  "unit_contract": "fractions_[0,1]_with_explicit_pct_fields",
+  "production_deployed": false,
+  "github_parity": "BRANCH_LOCAL_ONLY",
+  "production_parity": "UNKNOWN",
+  "gpt_actions_parity": "UNKNOWN",
+  "tests": {"forward_evaluation": {"passed": 113, "failed": 0}},
+  "remaining_blockers": [
+    "83 unresolved fixtures mostly not terminal",
+    "production and GPT Actions live parity unverified",
+    "high-score tail unsolved by all challengers",
+    "Tier S n=12 too small to promote"
+  ]
+}
