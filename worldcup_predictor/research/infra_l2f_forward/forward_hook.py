@@ -28,6 +28,16 @@ OWNER_SCOPES = frozenset({"production", "owner_shadow", "owner_daily"})
 LAMBDA_PREFIX = "LAMBDA_V2_"
 EXACT_PREFIX = "EXACT_V2_"
 RUN_ID = "l2f-forward-v1"
+_HIST_CACHE: dict[str, HistoricalMatchService] = {}
+
+
+def _get_history_service(fi_path: str) -> HistoricalMatchService:
+    """Process-level cache — avoid reloading the FI strength store per fixture."""
+    svc = _HIST_CACHE.get(fi_path)
+    if svc is None:
+        svc = HistoricalMatchService(fi_path=fi_path)
+        _HIST_CACHE[fi_path] = svc
+    return svc
 
 
 def _settings_flags(settings: Any | None) -> dict[str, Any]:
@@ -40,13 +50,13 @@ def _settings_flags(settings: Any | None) -> dict[str, Any]:
             return {
                 "mode": "shadow",
                 "kill_switch": False,
-                "timeout_sec": 8.0,
+                "timeout_sec": 90.0,
                 "fi_path": "data/football_intelligence.db",
             }
     return {
         "mode": str(getattr(settings, "l2f_forward_shadow_mode", "shadow") or "shadow"),
         "kill_switch": bool(getattr(settings, "l2f_forward_shadow_kill_switch", False)),
-        "timeout_sec": float(getattr(settings, "l2f_forward_shadow_timeout_sec", 8.0) or 8.0),
+        "timeout_sec": float(getattr(settings, "l2f_forward_shadow_timeout_sec", 90.0) or 90.0),
         "fi_path": str(getattr(settings, "sqlite_path", "data/football_intelligence.db")),
     }
 
@@ -277,7 +287,7 @@ def maybe_run_l2f_forward_shadow(
         timeout = float(flags["timeout_sec"])
 
         def _work() -> dict[str, Any]:
-            hist = HistoricalMatchService(fi_path=str(flags["fi_path"]))
+            hist = _get_history_service(str(flags["fi_path"]))
             engine = TeamStrengthEngine(hist)
             res = run_shadow_pipeline(
                 conn=conn,

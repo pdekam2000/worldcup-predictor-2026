@@ -318,7 +318,7 @@ class Settings(BaseSettings):
         alias="L2F_FORWARD_SHADOW_KILL_SWITCH",
     )
     l2f_forward_shadow_timeout_sec: float = Field(
-        default=8.0,
+        default=90.0,
         alias="L2F_FORWARD_SHADOW_TIMEOUT_SEC",
     )
 
