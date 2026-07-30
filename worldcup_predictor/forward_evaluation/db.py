@@ -286,6 +286,43 @@ CREATE TABLE IF NOT EXISTS forward_evaluation_runs (
 """
 
 
+_FREEZE_V3_MIGRATIONS = (
+    "ALTER TABLE frozen_predictions ADD COLUMN no_bet INTEGER",
+    "ALTER TABLE frozen_predictions ADD COLUMN conflict_count INTEGER",
+    "ALTER TABLE frozen_predictions ADD COLUMN odds_provider TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN odds_age_minutes REAL",
+    "ALTER TABLE frozen_predictions ADD COLUMN feature_schema_version TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN probability_unit TEXT",
+    "ALTER TABLE frozen_predictions ADD COLUMN home_probability_pct REAL",
+    "ALTER TABLE frozen_predictions ADD COLUMN draw_probability_pct REAL",
+    "ALTER TABLE frozen_predictions ADD COLUMN away_probability_pct REAL",
+)
+
+_DERIVED_RESEARCH_DDL = """
+CREATE TABLE IF NOT EXISTS freeze_derived_research_metadata (
+    prediction_id TEXT PRIMARY KEY,
+    fixture_id INTEGER NOT NULL,
+    derived_at_utc TEXT NOT NULL,
+    source TEXT NOT NULL,
+    odds_home REAL,
+    odds_draw REAL,
+    odds_away REAL,
+    bookmaker_count INTEGER,
+    odds_provider TEXT,
+    odds_fetched_at_utc TEXT,
+    odds_freshness_status TEXT,
+    top3_mass REAL,
+    top5_mass REAL,
+    entropy REAL,
+    rank_probabilities_json TEXT,
+    consensus TEXT,
+    conflict_count INTEGER,
+    no_bet INTEGER,
+    notes TEXT
+)
+"""
+
+
 _SCHEMA_MIGRATIONS = (
     "ALTER TABLE frozen_predictions ADD COLUMN validation_tier TEXT",
     "ALTER TABLE frozen_predictions ADD COLUMN display_status TEXT",
@@ -297,6 +334,7 @@ _SCHEMA_MIGRATIONS = (
     "ALTER TABLE prediction_context ADD COLUMN competition_family TEXT",
     "ALTER TABLE prediction_context ADD COLUMN domain_type TEXT",
     *_FREEZE_V2_MIGRATIONS,
+    *_FREEZE_V3_MIGRATIONS,
 )
 
 
@@ -315,6 +353,7 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
             pass
     conn.execute(_FREEZE_QUARANTINE_DDL)
     conn.execute(_PHASE2E_DDL)
+    conn.execute(_DERIVED_RESEARCH_DDL)
     for idx in _FREEZE_V2_INDEXES:
         try:
             conn.execute(idx)

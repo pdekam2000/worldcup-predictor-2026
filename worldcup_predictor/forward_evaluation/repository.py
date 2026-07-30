@@ -104,6 +104,15 @@ _INSERT_COLUMNS = (
     "ou_execution_status",
     "unavailable_fields_json",
     "quarantine_reason",
+    "no_bet",
+    "conflict_count",
+    "odds_provider",
+    "odds_age_minutes",
+    "feature_schema_version",
+    "probability_unit",
+    "home_probability_pct",
+    "draw_probability_pct",
+    "away_probability_pct",
 )
 
 

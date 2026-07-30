@@ -17,6 +17,14 @@ from worldcup_predictor.forward_evaluation.fixture_model import (
     validation_note_for_tier,
 )
 from worldcup_predictor.forward_evaluation.hashing import content_hash, source_payload_hash
+from worldcup_predictor.forward_evaluation.probability_units import (
+    FEATURE_SCHEMA_VERSION,
+    PROBABILITY_UNIT_FRACTION,
+    normalize_score_probability_rows,
+    to_fraction,
+    to_percent,
+    top_mass,
+)
 from worldcup_predictor.forward_evaluation.repository import ForwardEvalRepository
 from worldcup_predictor.gpt_actions.bridge_semantics import extract_wde_semantics
 from worldcup_predictor.gpt_actions.competition_normalize import normalize_competition_key
@@ -243,6 +251,46 @@ def _infer_prediction_scope(
     return "production"
 
 
+def _extract_decision_meta(payload: dict[str, Any]) -> dict[str, Any]:
+    quality = payload.get("quality") if isinstance(payload.get("quality"), dict) else {}
+    consensus = (
+        payload.get("consensus")
+        or quality.get("owner_label")
+        or quality.get("consensus")
+        or payload.get("owner_label")
+    )
+    conflicts = payload.get("conflicts") or payload.get("conflict_flags") or quality.get("conflicts") or []
+    if isinstance(conflicts, dict):
+        conflict_count = len(conflicts)
+    elif isinstance(conflicts, list):
+        conflict_count = len(conflicts)
+    else:
+        try:
+            conflict_count = int(conflicts)
+        except (TypeError, ValueError):
+            conflict_count = 0
+    no_bet = payload.get("no_bet")
+    if no_bet is None:
+        no_bet = quality.get("no_bet")
+    if isinstance(no_bet, str):
+        no_bet = no_bet.strip().lower() in {"1", "true", "yes"}
+    elif no_bet is not None:
+        no_bet = bool(no_bet)
+    return {
+        "consensus": consensus,
+        "conflict_count": conflict_count,
+        "no_bet": no_bet,
+    }
+
+
+def _odds_age_minutes(fetched_at: Any, generated_at: Any) -> float | None:
+    a = _parse_dt(fetched_at)
+    b = _parse_dt(generated_at)
+    if not a or not b:
+        return None
+    return round(abs((b - a).total_seconds()) / 60.0, 3)
+
+
 def _extract_odds_evidence(payload: dict[str, Any]) -> dict[str, Any]:
     freshness = payload.get("odds_freshness") or payload.get("freshness_metadata") or {}
     canonical = freshness.get("canonical_odds_snapshot") or payload.get("canonical_odds_snapshot") or {}
@@ -374,7 +422,7 @@ def create_or_reuse_freeze(
     if not sem.get("decision_pick") and not sem.get("home_prob"):
         return _result(status="rejected", fixture_id=fid, reason_code="WDE_PAYLOAD_MISSING")
 
-    ranks = _ecse_rank_rows(ecse)
+    ranks = normalize_score_probability_rows(_ecse_rank_rows(ecse))
     if len(ranks) < 5:
         return _result(status="rejected", fixture_id=fid, reason_code="ECSE_TOP5_MISSING")
 
@@ -399,6 +447,7 @@ def create_or_reuse_freeze(
         quarantine_reasons.append("INVALID_DATA_QUALITY")
 
     odds_evidence = _extract_odds_evidence(payload)
+    decision_meta = _extract_decision_meta(payload)
     freshness_status = str(odds_evidence.get("odds_freshness_status") or "").upper()
     if freshness_status in {"ODDS_STALE", "DATA_QUALITY_BLOCKED", "ODDS_MISSING"}:
         quarantine_reasons.append("INVALID_ODDS_FRESHNESS_AT_GENERATION")
@@ -423,17 +472,29 @@ def create_or_reuse_freeze(
 
     git_sha = resolve_current_git_sha().get("current_git_sha")
 
-    top10_rows = ecse.get("top_10_scorelines") or []
-    if isinstance(top10_rows, str):
+    raw_top10 = ecse.get("top_10_scorelines") or []
+    if isinstance(raw_top10, str):
         try:
-            top10_rows = json.loads(top10_rows)
+            raw_top10 = json.loads(raw_top10)
         except json.JSONDecodeError:
-            top10_rows = []
+            raw_top10 = []
+    top10_rows = normalize_score_probability_rows(
+        [
+            {
+                "rank": int(item.get("rank") or idx),
+                "score": item.get("scoreline") or item.get("score"),
+                "probability": item.get("probability"),
+            }
+            if isinstance(item, dict)
+            else {"rank": idx, "score": str(item), "probability": None}
+            for idx, item in enumerate(list(raw_top10)[:10], start=1)
+        ]
+    )
 
     entropy = entropy_from_scores(ranks)
-    top3_mass = mass_from_scores(ranks, 3)
-    top5_mass = mass_from_scores(ranks, 5)
-    top10_mass = mass_from_scores(top10_rows, 10) if top10_rows else None
+    top3_mass = top_mass(ranks, 3) or mass_from_scores(ranks, 3)
+    top5_mass = top_mass(ranks, 5) or mass_from_scores(ranks, 5)
+    top10_mass = top_mass(top10_rows, 10) if top10_rows else mass_from_scores(top10_rows, 10)
 
     lambda_home = ecse.get("lambda_home")
     lambda_away = ecse.get("lambda_away")
@@ -451,13 +512,24 @@ def create_or_reuse_freeze(
         if dt and (not last_prematch or (_parse_dt(last_prematch) and dt < _parse_dt(last_prematch))):
             last_prematch = candidate
 
+    home_frac = to_fraction(sem.get("home_prob"), field="home_probability")
+    draw_frac = to_fraction(sem.get("draw_prob"), field="draw_probability")
+    away_frac = to_fraction(sem.get("away_prob"), field="away_probability")
+    home_pct = to_percent(sem.get("home_prob"), field="home_probability")
+    draw_pct = to_percent(sem.get("draw_prob"), field="draw_probability")
+    away_pct = to_percent(sem.get("away_prob"), field="away_probability")
+
     wde_payload = {
         "decision_pick": sem.get("decision_pick"),
         "effective_pick": sem.get("effective_pick"),
         "probability_argmax": sem.get("probability_argmax"),
-        "home_probability": sem.get("home_prob"),
-        "draw_probability": sem.get("draw_prob"),
-        "away_probability": sem.get("away_prob"),
+        "home_probability": home_frac,
+        "draw_probability": draw_frac,
+        "away_probability": away_frac,
+        "home_probability_pct": home_pct,
+        "draw_probability_pct": draw_pct,
+        "away_probability_pct": away_pct,
+        "probability_unit": PROBABILITY_UNIT_FRACTION,
         "confidence": sem.get("confidence"),
         "decision_source": sem.get("decision_source"),
         "model_version": sem.get("model_version"),
@@ -521,19 +593,29 @@ def create_or_reuse_freeze(
         "odds_away": odds_evidence.get("odds_away"),
         "bookmaker_count": odds_evidence.get("bookmaker_count"),
         "odds_freshness": odds_evidence.get("odds_freshness_status"),
+        "odds_provider": odds_evidence.get("provider"),
+        "odds_age_minutes": _odds_age_minutes(odds_fetched, generated_at_str),
         "wde_decision": sem.get("decision_pick"),
         "ft_marginal_direction": sem.get("probability_argmax"),
-        "home_probability": sem.get("home_prob"),
-        "draw_probability": sem.get("draw_prob"),
-        "away_probability": sem.get("away_prob"),
+        "home_probability": home_frac,
+        "draw_probability": draw_frac,
+        "away_probability": away_frac,
+        "home_probability_pct": home_pct,
+        "draw_probability_pct": draw_pct,
+        "away_probability_pct": away_pct,
+        "probability_unit": PROBABILITY_UNIT_FRACTION,
+        "feature_schema_version": FEATURE_SCHEMA_VERSION,
         "wde_confidence": sem.get("confidence"),
         "effective_1x2": sem.get("effective_pick"),
         "market_direction": sem.get("probability_argmax"),
         "btts_prediction": btts_block.get("prediction") or btts_block.get("selection"),
-        "btts_probability": btts_block.get("yes_probability") or btts_block.get("no_probability"),
+        "btts_probability": to_fraction(
+            btts_block.get("yes_probability") or btts_block.get("no_probability"),
+            field="btts_probability",
+        ),
         "ou25_prediction": ou_block.get("prediction") or ou_block.get("selection"),
-        "over_probability": ou_block.get("over_probability"),
-        "under_probability": ou_block.get("under_probability"),
+        "over_probability": to_fraction(ou_block.get("over_probability"), field="over_probability"),
+        "under_probability": to_fraction(ou_block.get("under_probability"), field="under_probability"),
         "top3_mass": top3_mass,
         "top5_mass": top5_mass,
         "top10_mass": top10_mass,
@@ -541,6 +623,9 @@ def create_or_reuse_freeze(
         "lambda_home": lambda_home,
         "lambda_away": lambda_away,
         "total_lambda": total_lambda,
+        "consensus": decision_meta.get("consensus"),
+        "no_bet": 1 if decision_meta.get("no_bet") is True else (0 if decision_meta.get("no_bet") is False else None),
+        "conflict_count": decision_meta.get("conflict_count"),
         "wde_execution_status": _execution_status(wde_payload, required=True),
         "btts_execution_status": _execution_status(btts_block),
         "ou_execution_status": _execution_status(ou_block),
@@ -569,6 +654,12 @@ def create_or_reuse_freeze(
         "ou25": ou_payload,
         "ecse": ecse_payload,
         "evidence": odds_evidence,
+        "decision_meta": decision_meta,
+        "probability_unit": PROBABILITY_UNIT_FRACTION,
+        "feature_schema_version": FEATURE_SCHEMA_VERSION,
+        "no_bet": decision_meta.get("no_bet"),
+        "consensus": decision_meta.get("consensus"),
+        "conflict_count": decision_meta.get("conflict_count"),
         "source": {
             "worldcup_stored_prediction_id": int(wsp["fixture_id"]),
             "ecse_snapshot_id": int(ecse.get("id") or 0),
