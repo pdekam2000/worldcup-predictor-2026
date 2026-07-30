@@ -48,7 +48,7 @@ for r in rows:
     fid = int(r["fixture_id"])
     freeze_meta = {
         "capture_status": "created",
-        "freeze_id": f"smoke-l2f-{fid}",
+        "freeze_id": f"smoke-l2f-v2-{fid}",
         "prediction_scope": "owner_shadow",
         "quarantined": False,
         "conflict_detected": False,

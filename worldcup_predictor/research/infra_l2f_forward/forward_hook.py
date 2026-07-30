@@ -7,6 +7,7 @@ Never writes canonical prediction/freeze tables.
 from __future__ import annotations
 
 import logging
+import sqlite3
 import traceback
 import uuid
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
@@ -283,32 +284,45 @@ def maybe_run_l2f_forward_shadow(
             return out
 
         odds_row = _odds_row(conn, int(fixture_id))
-        cutoff = now if kickoff is None else min(now, kickoff)
+        # Strength store uses naive UTC timestamps — keep cutoff naive.
+        now_naive = datetime.now(timezone.utc).replace(tzinfo=None)
+        if kickoff is not None:
+            ko = kickoff.replace(tzinfo=None) if kickoff.tzinfo else kickoff
+            cutoff = min(now_naive, ko)
+        else:
+            cutoff = now_naive
         timeout = float(flags["timeout_sec"])
+        fi_path = str(flags["fi_path"])
 
         def _work() -> dict[str, Any]:
-            hist = _get_history_service(str(flags["fi_path"]))
-            engine = TeamStrengthEngine(hist)
-            res = run_shadow_pipeline(
-                conn=conn,
-                fixture_id=int(fixture_id),
-                home_team=str(fx.get("home_team") or ""),
-                away_team=str(fx.get("away_team") or ""),
-                league=str(fx.get("competition_key") or "unknown"),
-                cutoff=cutoff,
-                engine=engine,
-                odds_row=odds_row,
-                canonical_lh=float(lh),
-                canonical_la=float(la),
-                canonical_prediction_id=str(freeze_id) if freeze_id else None,
-                odds_fresh=True if odds_row else False,
-            )
-            return {
-                "canonical_blocked": res.canonical_blocked,
-                "stages": [
-                    {"stage": s.stage, "ok": s.ok, "detail": s.detail[:240]} for s in res.stages
-                ],
-            }
+            # Dedicated connection: SQLite objects are not thread-safe across threads.
+            wconn = sqlite3.connect(fi_path, timeout=60.0)
+            wconn.row_factory = sqlite3.Row
+            try:
+                hist = _get_history_service(fi_path)
+                engine = TeamStrengthEngine(hist)
+                res = run_shadow_pipeline(
+                    conn=wconn,
+                    fixture_id=int(fixture_id),
+                    home_team=str(fx.get("home_team") or ""),
+                    away_team=str(fx.get("away_team") or ""),
+                    league=str(fx.get("competition_key") or "unknown"),
+                    cutoff=cutoff,
+                    engine=engine,
+                    odds_row=odds_row,
+                    canonical_lh=float(lh),
+                    canonical_la=float(la),
+                    canonical_prediction_id=str(freeze_id) if freeze_id else None,
+                    odds_fresh=True if odds_row else False,
+                )
+                return {
+                    "canonical_blocked": res.canonical_blocked,
+                    "stages": [
+                        {"stage": s.stage, "ok": s.ok, "detail": s.detail[:240]} for s in res.stages
+                    ],
+                }
+            finally:
+                wconn.close()
 
         t0 = datetime.now(timezone.utc)
         try:
