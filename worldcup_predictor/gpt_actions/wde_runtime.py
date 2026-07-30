@@ -27,6 +27,9 @@ _TIER_B_DISPLAY_NAMES: dict[str, str] = {
     "la_liga": "La Liga",
     "serie_a": "Serie A",
     "ligue_1": "Ligue 1",
+    "primera_nacional": "Primera Nacional",
+    "scottish_premiership": "Scottish Premiership",
+    "austria_2_liga": "Austria 2. Liga",
 }
 
 
