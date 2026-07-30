@@ -230,11 +230,13 @@ GET /api/gpt-actions/v1/research/l2f-research-preview?vienna_date=2026-07-31
 
 | Location | SHA |
 |---|---|
-| Local | `3b1293f` |
-| GitHub (`release/football-strength-shadow-infra-20260730T151432Z`) | `3b1293f` |
-| Production `/opt/worldcup-predictor` | `3b1293f` |
+| Local | `dd23390` |
+| GitHub (`release/football-strength-shadow-infra-20260730T151432Z`) | `dd23390` |
+| Production `/opt/worldcup-predictor` | `dd23390` |
 
-Tip message: *Fix research preview odds loader for CanonicalOddsSnapshot fields.*
+Tip message: *Document Phase 5 live true-forward accumulation and research preview.*
+
+Code tip for TF hook + preview (before docs commit): `3b1293f`.
 
 ## 15. Challenger outputs remain research-only
 
