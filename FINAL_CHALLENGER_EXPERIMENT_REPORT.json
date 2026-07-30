@@ -1,0 +1,16 @@
+{
+  "best_challenger": "G3_dixon_coles",
+  "validation_n": 68,
+  "experiments": [
+    {"name": "canonical_ECSE_freeze", "top1": 0.1912, "top5": 0.5, "high_score_top5": 0.0},
+    {"name": "G1_dynamic_tail", "top1": 0.1912, "top5": 0.5, "delta_top5": 0.0, "high_score_top5": 0.0},
+    {"name": "G2_lambda_recal", "top1": 0.1176, "top5": 0.4853, "delta_top5": -0.0147, "high_score_top5": 0.0},
+    {"name": "G3_dixon_coles", "top1": 0.1618, "top5": 0.5441, "delta_top5": 0.0441, "high_score_top5": 0.0, "low_score_top5": 0.8824},
+    {"name": "G4_bivariate", "top1": 0.2059, "top5": 0.5, "delta_top5": 0.0, "high_score_top5": 0.0},
+    {"name": "G5_rank_calibration", "top1": 0.1912, "top5": 0.5, "delta_top5": 0.0, "high_score_top5": 0.0},
+    {"name": "G6_tail_ensemble", "top1": 0.2206, "top5": 0.5, "delta_top5": 0.0, "high_score_top5": 0.0}
+  ],
+  "promotion_allowed": false,
+  "forward_shadow_min_n": 150,
+  "high_score_tail_solved": false
+}
