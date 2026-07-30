@@ -57,6 +57,49 @@ from worldcup_predictor.owner_daily.fixture_discovery import DailyFixture
 from worldcup_predictor.research.ecse_live.store import get_snapshot
 
 TZ_NAME = "Europe/Vienna"
+
+
+def _run_l2f_true_forward_shadow(
+    *,
+    prod_conn,
+    fixture_id: int,
+    freeze_meta: dict[str, Any],
+    prediction_scope: str | None,
+    settings,
+) -> dict[str, Any]:
+    """Non-blocking true-forward shadow after freeze. Never fails canonical."""
+    try:
+        from worldcup_predictor.research.infra_l2f_forward.forward_hook import (
+            maybe_run_l2f_forward_shadow,
+        )
+
+        meta = dict(freeze_meta or {})
+        # Hook accepts only created|reused capture_status.
+        cs = str(meta.get("capture_status") or "")
+        if cs in ("reused_existing", "reused"):
+            meta["capture_status"] = "reused"
+        elif meta.get("created"):
+            meta["capture_status"] = "created"
+        elif meta.get("reused"):
+            meta["capture_status"] = "reused"
+        if not meta.get("prediction_scope") and prediction_scope:
+            meta["prediction_scope"] = prediction_scope
+        return maybe_run_l2f_forward_shadow(
+            conn=prod_conn,
+            fixture_id=int(fixture_id),
+            freeze_meta=meta,
+            prediction_scope=prediction_scope or meta.get("prediction_scope"),
+            settings=settings,
+            backfill=False,
+        )
+    except Exception as exc:  # noqa: BLE001 — hard isolation
+        return {
+            "shadow_system": "l2f_forward",
+            "canonical_unaffected": True,
+            "status": "failed",
+            "reason": f"hook_exception:{type(exc).__name__}",
+            "cohort_type": "true_forward",
+        }
 TZ = ZoneInfo(TZ_NAME)
 REPORT_DIR = ROOT / "reports" / "owner" / "daily"
 
@@ -818,6 +861,13 @@ def main(argv: list[str] | None = None) -> int:
         ko_dt = _parse_dt(meta.get("kickoff_utc"))
         fr_dt = _parse_dt(str(fr.get("frozen_at") or ""))
         freeze_before = bool(ko_dt and fr_dt and fr_dt < ko_dt)
+        shadow_meta = _run_l2f_true_forward_shadow(
+            prod_conn=prod,
+            fixture_id=fid,
+            freeze_meta=freeze_meta,
+            prediction_scope=str(meta.get("prediction_scope") or "owner_shadow"),
+            settings=settings,
+        )
         out = _assemble_prediction(
             meta,
             pred,
@@ -829,6 +879,7 @@ def main(argv: list[str] | None = None) -> int:
             freeze_meta=freeze_meta,
             freeze_before_ko=freeze_before,
         )
+        out["l2f_forward_shadow"] = shadow_meta
         predictions.append(out)
         freezes.append(
             {
@@ -840,6 +891,8 @@ def main(argv: list[str] | None = None) -> int:
                 "freeze_hash": freeze_meta.get("content_hash"),
                 "new_or_reused": "reused",
                 "before_kickoff": freeze_before,
+                "l2f_status": shadow_meta.get("status"),
+                "l2f_cohort_type": shadow_meta.get("cohort_type"),
             }
         )
         if freeze_meta.get("freeze_id") and freeze_meta.get("content_hash"):
@@ -988,12 +1041,27 @@ def main(argv: list[str] | None = None) -> int:
                 ecse_snapshot_id=snap_i,
             )
             freeze_meta = bridge.to_metadata_block() if hasattr(bridge, "to_metadata_block") else {}
+            # Enrich timestamps for true-forward integrity (bridge block may omit frozen_at).
+            fr_row = _load_freeze(eval_conn, fid) or {}
+            if not freeze_meta.get("frozen_at"):
+                freeze_meta["frozen_at"] = fr_row.get("frozen_at")
+            if not freeze_meta.get("prediction_scope"):
+                freeze_meta["prediction_scope"] = meta.get("prediction_scope")
             frozen_at = freeze_meta.get("frozen_at") or freeze_meta.get("captured_at") or _utc_now()
             ko_dt = _parse_dt(meta["kickoff_utc"])
             fr_dt = _parse_dt(str(frozen_at))
             freeze_before_ko = bool(ko_dt and fr_dt and fr_dt < ko_dt)
         except Exception as exc:
             freeze_meta = {"status": "capture_error", "error": str(exc)[:200]}
+            freeze_before_ko = False
+
+        shadow_meta = _run_l2f_true_forward_shadow(
+            prod_conn=prod,
+            fixture_id=fid,
+            freeze_meta=freeze_meta,
+            prediction_scope=str(meta.get("prediction_scope") or "owner_shadow"),
+            settings=settings,
+        )
 
         out = _assemble_prediction(
             meta,
@@ -1007,6 +1075,7 @@ def main(argv: list[str] | None = None) -> int:
             freeze_before_ko=freeze_before_ko,
         )
         out["refresh_status"] = "success" if forced.get("success") else "failed_or_cached"
+        out["l2f_forward_shadow"] = shadow_meta
         predictions.append(out)
         freezes.append(
             {
@@ -1017,6 +1086,8 @@ def main(argv: list[str] | None = None) -> int:
                 "freeze_timestamp": freeze_meta.get("frozen_at") or freeze_meta.get("captured_at"),
                 "freeze_hash": freeze_meta.get("content_hash") or freeze_meta.get("source_payload_hash"),
                 "new_or_reused": "reused" if freeze_meta.get("reused") else ("new" if freeze_meta.get("created") else "unknown"),
+                "l2f_status": shadow_meta.get("status"),
+                "l2f_cohort_type": shadow_meta.get("cohort_type"),
                 "before_kickoff": freeze_before_ko,
             }
         )

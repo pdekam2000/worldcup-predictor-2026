@@ -344,6 +344,48 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
             fi.close()
             ev.close()
 
+    @app.get(
+        f"{API_PREFIX}/research/l2f-research-preview",
+        operation_id="getL2fResearchPreview",
+        dependencies=auth_dep,
+    )
+    def l2f_research_preview_route(
+        vienna_date: str | None = None,
+        league: str | None = None,
+        fixture_id: int | None = None,
+        true_forward_status: str | None = None,
+        agreement_classification: str | None = None,
+        no_bet: bool | None = None,
+    ) -> dict[str, Any]:
+        """Owner-auth read-only Canonical vs Shadow side-by-side preview. No writes."""
+        import sqlite3
+
+        from worldcup_predictor.config.env_loading import project_root
+        from worldcup_predictor.config.settings import get_settings
+        from worldcup_predictor.research.infra_l2f_forward.research_preview import build_research_preview
+
+        settings = get_settings()
+        fi = sqlite3.connect(str(settings.sqlite_path))
+        fi.row_factory = sqlite3.Row
+        ev = sqlite3.connect(str(project_root() / "data/evaluation/forward_prediction_tracking.db"))
+        ev.row_factory = sqlite3.Row
+        try:
+            report = build_research_preview(
+                prod=fi,
+                fi=fi,
+                eval_conn=ev,
+                vienna_date=vienna_date,
+                league=league,
+                fixture_id=fixture_id,
+                true_forward_status=true_forward_status,
+                agreement_classification=agreement_classification,
+                no_bet=no_bet,
+            )
+            return _trim_payload(report, cfg.max_response_chars)
+        finally:
+            fi.close()
+            ev.close()
+
     return app
 
 
