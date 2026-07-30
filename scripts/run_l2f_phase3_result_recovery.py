@@ -14,6 +14,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+import os
+
+# Prefer production env file on the server so provider fallback is configured.
+if (ROOT / ".env.production").exists() and not os.environ.get("APP_ENV"):
+    os.environ["APP_ENV"] = "production"
+
+from worldcup_predictor.config.settings import get_settings
 from worldcup_predictor.research.infra_l2f_forward.deep_slices import run_deep_slice_report
 from worldcup_predictor.research.infra_l2f_forward.high_goal_detector import evaluate_detector
 from worldcup_predictor.research.infra_l2f_forward.historical_replay import (
@@ -62,6 +69,7 @@ def main() -> int:
     disk_before = df_line()
     (out_dir / "disk_before.txt").write_text(disk_before + "\n", encoding="utf-8")
 
+    settings = get_settings()
     eval_conn = sqlite3.connect(args.eval_db)
     eval_conn.row_factory = sqlite3.Row
     fi_conn = sqlite3.connect(args.fi_db)
@@ -99,6 +107,7 @@ def main() -> int:
             disk_line=disk_before,
             resume_after_fixture_id=args.resume_after,
             generate_missing_shadow=True,
+            settings=settings,
         )
         disk_after = df_line()
         batch.disk_after = disk_after
