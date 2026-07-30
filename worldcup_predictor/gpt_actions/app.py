@@ -18,7 +18,6 @@ from worldcup_predictor.gpt_actions.delegation import (
     get_daily_evaluation_report,
     get_daily_prediction_report,
     get_fixture_frozen_evaluation,
-    get_fixture_team_forensic_analysis,
     get_latest_daily_evaluation_report,
     get_latest_prediction_report,
     get_monthly_accuracy_summary,
@@ -308,14 +307,6 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
     )
     def fixture_frozen_eval_route(fixture_id: int) -> dict[str, Any]:
         return _trim_payload(get_fixture_frozen_evaluation(fixture_id=fixture_id), cfg.max_response_chars)
-
-    @app.get(
-        f"{API_PREFIX}/fixtures/{{fixture_id}}/team-forensic",
-        operation_id="getFixtureTeamForensicAnalysis",
-        dependencies=auth_dep,
-    )
-    def fixture_team_forensic_route(fixture_id: int) -> dict[str, Any]:
-        return _trim_payload(get_fixture_team_forensic_analysis(fixture_id=fixture_id), cfg.max_response_chars)
 
     @app.get(
         f"{API_PREFIX}/research/l2f-true-forward-observability",
