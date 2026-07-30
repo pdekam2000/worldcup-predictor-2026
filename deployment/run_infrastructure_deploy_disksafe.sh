@@ -77,7 +77,7 @@ for f in \
   migrations/research_alternate_totals_capture_status.sql
 do
   [[ -f "$f" ]] || die "missing migration: $f"
-  if grep -Eiq 'drop table|alter table.*(drop|rename)|delete from frozen|update frozen' "$f"; then
+  if grep -Ev '^[[:space:]]*--' "$f" | grep -Eiq 'drop[[:space:]]+table|alter[[:space:]]+table.*(drop|rename)|delete[[:space:]]+from[[:space:]]+frozen|update[[:space:]]+frozen'; then
     die "unsafe DDL detected in $f"
   fi
   grep -Eq 'CREATE TABLE IF NOT EXISTS' "$f" || die "expected CREATE TABLE IF NOT EXISTS in $f"
