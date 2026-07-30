@@ -49,6 +49,11 @@ def ensure_shadow_schema(conn: sqlite3.Connection) -> None:
     conn.execute(SHADOW_DDL)
     conn.execute(f"CREATE INDEX IF NOT EXISTS idx_l2_shadow_fx ON {SHADOW_TABLE}(fixture_id)")
     conn.execute(f"CREATE INDEX IF NOT EXISTS idx_l2_shadow_model ON {SHADOW_TABLE}(model_id)")
+    from worldcup_predictor.research.football_strength_foundation.schema_upgrade import (
+        upgrade_shadow_tables,
+    )
+
+    upgrade_shadow_tables(conn)
     conn.commit()
 
 

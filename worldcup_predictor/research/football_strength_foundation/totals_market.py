@@ -66,6 +66,11 @@ class TotalsLine:
 
 def ensure_totals_schema(conn: sqlite3.Connection) -> None:
     conn.execute(TOTALS_DDL)
+    from worldcup_predictor.research.football_strength_foundation.schema_upgrade import (
+        upgrade_shadow_tables,
+    )
+
+    upgrade_shadow_tables(conn)
     conn.commit()
 
 

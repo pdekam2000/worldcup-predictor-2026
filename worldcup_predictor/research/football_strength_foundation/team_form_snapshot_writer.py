@@ -144,6 +144,11 @@ class TeamFormSnapshotWriter:
     def __init__(self, conn: sqlite3.Connection):
         self.conn = conn
         self.conn.execute(DERIVED_DDL)
+        from worldcup_predictor.research.football_strength_foundation.schema_upgrade import (
+            upgrade_shadow_tables,
+        )
+
+        upgrade_shadow_tables(self.conn)
         self.conn.commit()
 
     def persist_derived(
