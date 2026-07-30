@@ -43,14 +43,29 @@ def _freeze(
     if seed_fixture:
         if tier == "B" or scope == "owner_shadow":
             seed_tier_b_fixture(prod_db, fixture_id=fixture_id)
-            prod_db.execute(
-                "UPDATE fixtures SET kickoff_utc=datetime('now','+2 days') WHERE fixture_id=?",
-                (fixture_id,),
-            )
         else:
             seed_tier_a_fixture(
                 prod_db, fixture_id=fixture_id, kickoff_days_ahead=2.0, predicted_days_ahead=1.0
             )
+        # Keep fixture / WSP / ECSE kickoffs identical (ISO UTC). Do not use SQLite
+        # datetime('now',...) on fixtures alone — that causes KICKOFF_MISMATCH rejects
+        # and intermittent missing freeze_id (see flaky_test_root_cause.md).
+        from datetime import datetime, timedelta, timezone
+
+        kickoff = (datetime.now(timezone.utc) + timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        predicted = (datetime.now(timezone.utc) + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        prod_db.execute(
+            "UPDATE fixtures SET kickoff_utc=?, status='NS' WHERE fixture_id=?",
+            (kickoff, fixture_id),
+        )
+        prod_db.execute(
+            "UPDATE worldcup_stored_predictions SET kickoff_utc=?, predicted_at=?, updated_at=? WHERE fixture_id=?",
+            (kickoff, predicted, predicted, fixture_id),
+        )
+        prod_db.execute(
+            "UPDATE ecse_prediction_snapshots SET kickoff_utc=?, generated_at=? WHERE fixture_id=?",
+            (kickoff, predicted, fixture_id),
+        )
         prod_db.commit()
     ctx = {
         "prediction_scope": scope,
@@ -58,7 +73,11 @@ def _freeze(
         "public_visible": public,
     }
     fr = create_or_reuse_freeze(fixture_id, prod_conn=prod_db, eval_conn=eval_db, source_context=ctx)
-    assert fr.get("freeze_id"), fr
+    assert fr.get("freeze_id"), (
+        f"freeze missing freeze_id for fixture={fixture_id}: "
+        f"status={fr.get('status')} reason={fr.get('reason_code')} payload={fr}"
+    )
+    # After successful prematch freeze, mark fixture finished for result-sync helpers.
     prod_db.execute(
         "UPDATE fixtures SET kickoff_utc=datetime('now','-2 days'), status='FT' WHERE fixture_id=?",
         (fixture_id,),
