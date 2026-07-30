@@ -177,8 +177,28 @@ def _canonical_ecse_tops(
 ) -> dict[str, Any]:
     from worldcup_predictor.research.ecse_live.store import get_snapshot
 
-    snap = get_snapshot(prod, int(fixture_id)) or {}
-    tops_raw = snap.get("top_scores") or snap.get("top5") or []
+    snap: dict[str, Any] = {}
+    try:
+        if prod.row_factory is None:
+            prod.row_factory = sqlite3.Row
+        raw_snap = get_snapshot(prod, int(fixture_id))
+        if isinstance(raw_snap, dict):
+            snap = raw_snap
+    except Exception:
+        snap = {}
+
+    tops_raw = (
+        snap.get("top_5_scores")
+        or snap.get("top_scores")
+        or snap.get("top5")
+        or snap.get("top_5_scores_json")
+        or []
+    )
+    if isinstance(tops_raw, str):
+        try:
+            tops_raw = json.loads(tops_raw)
+        except Exception:
+            tops_raw = []
     tops: list[dict[str, Any]] = []
     if isinstance(tops_raw, list):
         for t in tops_raw[:5]:
@@ -264,15 +284,32 @@ def _odds_from_sources(
         from worldcup_predictor.odds.canonical_snapshot import get_latest_valid_1x2_odds_snapshot
 
         snap = get_latest_valid_1x2_odds_snapshot(prod, int(fixture_id), kickoff_utc=kickoff)
-        if snap:
-            out["home"] = out["home"] or _f(snap.get("home") or snap.get("odds_home"))
-            out["draw"] = out["draw"] or _f(snap.get("draw") or snap.get("odds_draw"))
-            out["away"] = out["away"] or _f(snap.get("away") or snap.get("odds_away"))
-            out["bookmaker_count"] = out["bookmaker_count"] or snap.get("bookmaker_count")
-            out["odds_timestamp"] = out["odds_timestamp"] or snap.get("captured_at") or snap.get("odds_timestamp")
-            out["odds_freshness_status"] = out["odds_freshness_status"] or snap.get("freshness_status")
-            out["odds_age_minutes"] = snap.get("odds_age_minutes")
-            out["snapshot_id"] = snap.get("snapshot_id")
+        if snap is not None:
+            # CanonicalOddsSnapshot dataclass (preferred) or dict-like.
+            home = getattr(snap, "home_odds", None)
+            draw = getattr(snap, "draw_odds", None)
+            away = getattr(snap, "away_odds", None)
+            if home is None and isinstance(snap, dict):
+                home = snap.get("home") or snap.get("home_odds") or snap.get("odds_home")
+                draw = snap.get("draw") or snap.get("draw_odds") or snap.get("odds_draw")
+                away = snap.get("away") or snap.get("away_odds") or snap.get("odds_away")
+            out["home"] = out["home"] or _f(home)
+            out["draw"] = out["draw"] or _f(draw)
+            out["away"] = out["away"] or _f(away)
+            out["bookmaker_count"] = out["bookmaker_count"] or getattr(snap, "bookmaker_count", None)
+            out["odds_timestamp"] = (
+                out["odds_timestamp"]
+                or getattr(snap, "fetched_at_utc", None)
+                or getattr(snap, "captured_at", None)
+            )
+            out["odds_freshness_status"] = out["odds_freshness_status"] or getattr(
+                snap, "freshness_class", None
+            ) or getattr(snap, "freshness_status", None)
+            age = getattr(snap, "odds_age_minutes", None)
+            if age is None and hasattr(snap, "age_seconds") and snap.age_seconds is not None:
+                age = float(snap.age_seconds) / 60.0
+            out["odds_age_minutes"] = age
+            out["snapshot_id"] = getattr(snap, "row_id", None)
     except Exception:
         pass
     return out
