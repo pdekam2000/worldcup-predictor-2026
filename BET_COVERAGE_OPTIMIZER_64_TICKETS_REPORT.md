@@ -116,7 +116,9 @@ python -m worldcup_predictor.research.bet_coverage_optimizer.generate_tickets \
 
 ## 9. Commit hash and push status
 
-Filled after commit/push on this feature branch.
+- **Commit:** `050df42`
+- **Branch:** `feature/bet-coverage-optimizer-64-tickets` pushed to `origin`
+- PR link (optional): https://github.com/pdekam2000/worldcup-predictor-2026/pull/new/feature/bet-coverage-optimizer-64-tickets
 
 ## 10. Deployment status
 
