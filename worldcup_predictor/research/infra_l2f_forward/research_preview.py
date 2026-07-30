@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from worldcup_predictor.research.ecse_score_distribution import generate_score_distribution
 from worldcup_predictor.research.football_strength_foundation.constants import SHADOW_TABLE
 from worldcup_predictor.research.football_strength_foundation.score_v2 import dist_dc
 from worldcup_predictor.research.infra_l2f_forward.agreement import classify_model_agreement
@@ -17,6 +18,11 @@ from worldcup_predictor.research.infra_l2f_forward.leakage_checks import (
     assert_prediction_before_kickoff,
     check_shadow_payloads_no_results,
 )
+
+# Canonical ECSE ranks by independent Poisson probability (Dixon–Coles OFF).
+CANONICAL_ECSE_RANKING_FIELD = "independent_poisson_probability"
+# Exact V2 SELECTED ranks by Dixon–Coles probability.
+EXACT_V2_RANKING_FIELD = "dixon_coles_probability"
 
 TZ = ZoneInfo("Europe/Vienna")
 LAMBDA_SELECTED = "LAMBDA_V2_BLENDED_ADAPTIVE"
@@ -105,12 +111,20 @@ def _high_score_tail(dist: list[dict[str, Any]], min_goals: int = 4) -> float:
     )
 
 
-def _tops_with_probs(dist: list[dict[str, Any]], n: int = 5) -> list[dict[str, Any]]:
+def _tops_with_probs(dist: list[dict[str, Any]], n: int = 5, *, ranking_field: str | None = None) -> list[dict[str, Any]]:
+    """Take first n non-OTHER rows from an already probability-sorted distribution."""
     out = []
     for e in dist:
         if e.get("scoreline") == "OTHER":
             continue
-        out.append({"score": e["scoreline"], "probability": round(float(e["probability"]), 6)})
+        out.append(
+            {
+                "score": e["scoreline"],
+                "probability": round(float(e["probability"]), 6),
+                "rank": int(e.get("rank") or len(out) + 1),
+                "ranking_field": ranking_field or EXACT_V2_RANKING_FIELD,
+            }
+        )
         if len(out) >= n:
             break
     return out
@@ -144,7 +158,11 @@ def _load_shadow(fi: sqlite3.Connection, fixture_id: int, model_id: str) -> dict
         tops_raw = []
     lh, la = _f(d.get("lambda_home")), _f(d.get("lambda_away"))
     dist = dist_dc(lh or 0.0, la or 0.0) if lh is not None and la is not None else []
-    tops = _tops_with_probs(dist, 5) if dist else [{"score": s, "probability": None} for s in tops_raw[:5]]
+    tops = (
+        _tops_with_probs(dist, 5, ranking_field=EXACT_V2_RANKING_FIELD)
+        if dist
+        else [{"score": s, "probability": None, "ranking_field": EXACT_V2_RANKING_FIELD} for s in tops_raw[:5]]
+    )
     mass = _f(d.get("top5_mass"))
     if mass is None and tops:
         mass = round(sum(float(t["probability"] or 0) for t in tops), 6)
@@ -170,11 +188,42 @@ def _load_shadow(fi: sqlite3.Connection, fixture_id: int, model_id: str) -> dict
     }
 
 
+def _canonical_poisson_dist(lh: float, la: float) -> list[dict[str, Any]]:
+    """Canonical ECSE distribution: independent Poisson (Dixon–Coles disabled)."""
+    return generate_score_distribution(float(lh), float(la), use_dixon_coles=False)
+
+
+def _tops_from_ranked_entries(entries: list[dict[str, Any]], n: int = 5) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for e in entries:
+        if e.get("scoreline") == "OTHER" or e.get("score") == "OTHER":
+            continue
+        score = e.get("scoreline") or e.get("score")
+        if not score:
+            continue
+        out.append(
+            {
+                "score": str(score),
+                "probability": round(float(e["probability"]), 6) if e.get("probability") is not None else None,
+                "rank": int(e["rank"]) if e.get("rank") is not None else len(out) + 1,
+                "ranking_field": CANONICAL_ECSE_RANKING_FIELD,
+            }
+        )
+        if len(out) >= n:
+            break
+    return out
+
+
 def _canonical_ecse_tops(
     prod: sqlite3.Connection,
     fixture_id: int,
     freeze: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    """Load canonical ECSE Top5 preserving stored ranks + matching Poisson probabilities.
+
+    Critical: do NOT join Dixon–Coles probabilities onto independent-Poisson ranks.
+    That cross-join produced non-descending displayed probabilities in Phase 5 reports.
+    """
     from worldcup_predictor.research.ecse_live.store import get_snapshot
 
     snap: dict[str, Any] = {}
@@ -187,62 +236,96 @@ def _canonical_ecse_tops(
     except Exception:
         snap = {}
 
-    tops_raw = (
-        snap.get("top_5_scores")
-        or snap.get("top_scores")
-        or snap.get("top5")
-        or snap.get("top_5_scores_json")
-        or []
-    )
-    if isinstance(tops_raw, str):
-        try:
-            tops_raw = json.loads(tops_raw)
-        except Exception:
-            tops_raw = []
-    tops: list[dict[str, Any]] = []
-    if isinstance(tops_raw, list):
-        for t in tops_raw[:5]:
-            if isinstance(t, dict):
-                tops.append(
-                    {
-                        "score": t.get("score") or t.get("scoreline"),
-                        "probability": _f(t.get("probability") or t.get("p")),
-                    }
-                )
-            else:
-                tops.append({"score": str(t), "probability": None})
-
-    # Fallback: freeze ECSE payload (may lack probabilities).
-    if (not tops) and freeze and freeze.get("ecse_payload_json"):
-        try:
-            ep = json.loads(freeze["ecse_payload_json"])
-            for t in (ep.get("top5") or [])[:5]:
-                if isinstance(t, dict):
-                    tops.append(
-                        {
-                            "score": t.get("score") or t.get("scoreline"),
-                            "probability": _f(t.get("probability") or t.get("p")),
-                        }
-                    )
-        except Exception:
-            pass
-
     lh = _f(snap.get("lambda_home"))
     la = _f(snap.get("lambda_away"))
     if freeze:
         lh = lh if lh is not None else _f(freeze.get("lambda_home"))
         la = la if la is not None else _f(freeze.get("lambda_away"))
 
-    # If scorelines exist but probs missing, recompute display probs from canonical lambdas (research display only).
-    if tops and lh is not None and la is not None and all(t.get("probability") is None for t in tops):
-        dist = dist_dc(float(lh), float(la))
-        pmap = {e["scoreline"]: float(e["probability"]) for e in dist if e.get("scoreline") != "OTHER"}
-        for t in tops:
-            if t.get("score") in pmap:
-                t["probability"] = round(pmap[t["score"]], 6)
-        # If freeze only stored scores, prefer full recomputed Top5 for side-by-side mass/entropy.
-        if not any(t.get("probability") is not None for t in tops):
-            tops = _tops_with_probs(dist, 5)
+    # Prefer top_10_scorelines (includes rank + probability from canonical ECSE).
+    top10 = snap.get("top_10_scorelines") or snap.get("top_10") or []
+    if isinstance(top10, str):
+        try:
+            top10 = json.loads(top10)
+        except Exception:
+            top10 = []
+    tops: list[dict[str, Any]] = []
+    if isinstance(top10, list) and top10:
+        tops = _tops_from_ranked_entries([t for t in top10 if isinstance(t, dict)], 5)
+
+    # Fallback: top_5_scores list (strings or dicts).
+    if not tops:
+        tops_raw = (
+            snap.get("top_5_scores")
+            or snap.get("top_scores")
+            or snap.get("top5")
+            or snap.get("top_5_scores_json")
+            or []
+        )
+        if isinstance(tops_raw, str):
+            try:
+                tops_raw = json.loads(tops_raw)
+            except Exception:
+                tops_raw = []
+        if isinstance(tops_raw, list):
+            for i, t in enumerate(tops_raw[:5]):
+                if isinstance(t, dict):
+                    tops.append(
+                        {
+                            "score": t.get("score") or t.get("scoreline"),
+                            "probability": _f(t.get("probability") or t.get("p")),
+                            "rank": int(t.get("rank") or i + 1),
+                            "ranking_field": CANONICAL_ECSE_RANKING_FIELD,
+                        }
+                    )
+                else:
+                    tops.append(
+                        {
+                            "score": str(t),
+                            "probability": None,
+                            "rank": i + 1,
+                            "ranking_field": CANONICAL_ECSE_RANKING_FIELD,
+                        }
+                    )
+
+    # Freeze ECSE payload fallback.
+    if (not tops) and freeze and freeze.get("ecse_payload_json"):
+        try:
+            ep = json.loads(freeze["ecse_payload_json"])
+            for i, t in enumerate((ep.get("top5") or [])[:5]):
+                if isinstance(t, dict):
+                    tops.append(
+                        {
+                            "score": t.get("score") or t.get("scoreline"),
+                            "probability": _f(t.get("probability") or t.get("p")),
+                            "rank": int(t.get("rank") or i + 1),
+                            "ranking_field": CANONICAL_ECSE_RANKING_FIELD,
+                        }
+                    )
+        except Exception:
+            pass
+
+    # Attach independent-Poisson probs to stored rank order (never Dixon–Coles).
+    poisson_dist: list[dict[str, Any]] = []
+    if lh is not None and la is not None:
+        poisson_dist = _canonical_poisson_dist(float(lh), float(la))
+        pmap = {
+            e["scoreline"]: float(e["probability"])
+            for e in poisson_dist
+            if e.get("scoreline") != "OTHER"
+        }
+        if tops and any(t.get("probability") is None for t in tops):
+            for t in tops:
+                if t.get("probability") is None and t.get("score") in pmap:
+                    t["probability"] = round(pmap[str(t["score"])], 6)
+        if not tops:
+            tops = _tops_from_ranked_entries(poisson_dist, 5)
+
+    # Validate: displayed probs must match ranking field (descending when all present).
+    ranking_consistent = True
+    probs_present = [float(t["probability"]) for t in tops if t.get("probability") is not None]
+    if len(probs_present) >= 2:
+        ranking_consistent = all(probs_present[i] >= probs_present[i + 1] - 1e-12 for i in range(len(probs_present) - 1))
 
     mass = None
     if tops and all(t.get("probability") is not None for t in tops):
@@ -251,6 +334,8 @@ def _canonical_ecse_tops(
     return {
         "label": "CANONICAL",
         "official": True,
+        "ranking_field": CANONICAL_ECSE_RANKING_FIELD,
+        "ranking_consistent_with_displayed_probability": ranking_consistent,
         "lambda_home": lh,
         "lambda_away": la,
         "lambda_total": round((lh or 0) + (la or 0), 4) if lh is not None and la is not None else None,
@@ -259,6 +344,7 @@ def _canonical_ecse_tops(
         "top5_mass": mass if mass is not None else _f((freeze or {}).get("top5_mass")) if freeze else _f(snap.get("top5_mass")),
         "entropy": ent if ent is not None else (_f((freeze or {}).get("entropy")) if freeze else _f(snap.get("entropy"))),
         "snapshot_id": snap.get("snapshot_id"),
+        "_poisson_dist": poisson_dist,
     }
 
 
@@ -340,12 +426,31 @@ def _canonical_wde(prod: sqlite3.Connection, fixture_id: int) -> dict[str, Any]:
     probs = payload.get("probabilities") or {}
     btts = probs.get("btts") or {}
     ou = probs.get("over_under_2_5") or {}
+    decision = sem.get("decision_pick") or payload.get("decision") or payload.get("prediction")
+    argmax = sem.get("probability_argmax")
+    override = None
+    decision_policy = "probability_argmax"
+    if decision and argmax and str(decision) != str(argmax):
+        decision_policy = "wde_edge_resolve_1x2_not_probability_argmax"
+        override = (
+            "WeightedDecisionEngine._resolve_1x2 uses specialist/home_edge bands and "
+            "optional draw-preference calibration; stored prediction/match_winner.selection "
+            "may differ from probability argmax. no_bet may also be active."
+        )
+        if payload.get("no_bet"):
+            override += " Payload no_bet=true (abstention/quality gate)."
     return {
-        "decision": sem.get("decision_pick") or payload.get("decision"),
+        "decision": decision,
+        "canonical_decision": decision,
+        "raw_argmax": argmax,
+        "probability_argmax": argmax,
+        "decision_policy": decision_policy,
+        "decision_override_reason": override,
+        "decision_source": sem.get("decision_source"),
         "probabilities": {
-            "home": sem.get("p_home"),
-            "draw": sem.get("p_draw"),
-            "away": sem.get("p_away"),
+            "home": sem.get("home_prob"),
+            "draw": sem.get("draw_prob"),
+            "away": sem.get("away_prob"),
         },
         "confidence": sem.get("confidence") or payload.get("confidence"),
         "consensus": payload.get("consensus"),
@@ -500,15 +605,33 @@ def build_fixture_preview(
     exact_v2 = _load_shadow(fi, fixture_id, EXACT_SELECTED)
     odds_blob = _odds_from_sources(prod, fixture_id, freeze, ko_early)
 
-    # Canonical high-score tail via Poisson/DC from canonical lambdas when available
-    c_dist = []
-    if canonical.get("lambda_home") is not None and canonical.get("lambda_away") is not None:
-        c_dist = dist_dc(float(canonical["lambda_home"]), float(canonical["lambda_away"]))
+    # Canonical full-distribution masses from independent Poisson (ranking field),
+    # NOT Dixon–Coles (Exact V2 ranking field).
+    c_dist = list(canonical.pop("_poisson_dist", None) or [])
+    if not c_dist and canonical.get("lambda_home") is not None and canonical.get("lambda_away") is not None:
+        c_dist = _canonical_poisson_dist(float(canonical["lambda_home"]), float(canonical["lambda_away"]))
+    if c_dist:
         canonical["high_score_tail"] = round(_high_score_tail(c_dist), 6)
         canonical.update(_side_mass(c_dist))
+        # Score-mass 1X2 direction from FULL distribution (not Top5 truncation).
+        sides = {
+            "home_win": float(canonical.get("home_win_mass") or 0),
+            "draw": float(canonical.get("draw_mass") or 0),
+            "away_win": float(canonical.get("away_win_mass") or 0),
+        }
+        canonical["score_mass_1x2_direction"] = max(sides, key=sides.get)
     else:
         canonical["high_score_tail"] = None
+        canonical["score_mass_1x2_direction"] = None
 
+    if exact_v2 and exact_v2.get("home_win_mass") is not None:
+        esides = {
+            "home_win": float(exact_v2.get("home_win_mass") or 0),
+            "draw": float(exact_v2.get("draw_mass") or 0),
+            "away_win": float(exact_v2.get("away_win_mass") or 0),
+        }
+        exact_v2["score_mass_1x2_direction"] = max(esides, key=esides.get)
+        exact_v2["ranking_field"] = EXACT_V2_RANKING_FIELD
     # Recompute agreement after tops are known
     e_top5 = (exact_v2 or {}).get("top5") or []
     c_top5 = canonical.get("top5") or []
