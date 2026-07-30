@@ -38,6 +38,11 @@ CREATE TABLE IF NOT EXISTS alternate_totals_capture_status (
 def ensure_capture_schema(conn: sqlite3.Connection) -> None:
     ensure_totals_schema(conn)
     conn.execute(MISSING_DDL)
+    from worldcup_predictor.research.football_strength_foundation.schema_upgrade import (
+        upgrade_shadow_tables,
+    )
+
+    upgrade_shadow_tables(conn)
     conn.commit()
 
 

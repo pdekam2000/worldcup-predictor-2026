@@ -54,6 +54,12 @@ UPGRADES: dict[str, list[tuple[str, str]]] = {
         ("ou_mass", "REAL"),
         ("payload_json", "TEXT"),
     ],
+    "alternate_totals_capture_status": [
+        ("provider", "TEXT"),
+        ("odds_timestamp", "TEXT"),
+        ("freshness", "TEXT"),
+        ("source_hash", "TEXT"),
+    ],
 }
 
 
