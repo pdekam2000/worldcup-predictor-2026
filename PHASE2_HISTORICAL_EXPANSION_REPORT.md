@@ -2,7 +2,10 @@
 
 **Status: COMPLETE (no promotion)**
 
-Parity tip: local = GitHub = production = `03b504a`
+Parity tip: local = GitHub = production = `757500a`
+
+(Report body tip line previously chased intermediate SHAs; treat `757500a` as the authoritative Phase 2 completion tip.)
+
 
 ---
 
@@ -159,9 +162,9 @@ Throughout Phase 2 production batches:
 
 | Location | SHA |
 |---|---|
-| Local | `03b504a` |
-| GitHub (`release/football-strength-shadow-infra-20260730T151432Z`) | `03b504a` |
-| Production `/opt/worldcup-predictor` | `03b504a` |
+| Local | `757500a` |
+| GitHub (`release/football-strength-shadow-infra-20260730T151432Z`) | `757500a` |
+| Production `/opt/worldcup-predictor` | `757500a` |
 
 ## 15. Explicit non-promotion statement
 
