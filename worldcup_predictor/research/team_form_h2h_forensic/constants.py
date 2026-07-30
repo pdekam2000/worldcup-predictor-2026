@@ -1,0 +1,30 @@
+"""TeamFormH2HForensicAgent constants — owner-only, read-only."""
+
+from __future__ import annotations
+
+RULE_VERSION = "team-form-h2h-forensic-v1"
+AGENT_NAME = "TeamFormH2HForensicAgent"
+
+CLASSIFICATIONS = frozenset(
+    {
+        "TOP5_STRONGLY_SUPPORTED",
+        "TOP5_SUPPORTED_WITH_RISK",
+        "TOP5_FRAGILE",
+        "DIRECTION_ONLY_RECOMMENDED",
+        "HEDGE_RECOMMENDED",
+        "NO_BET",
+        "INSUFFICIENT_FORENSIC_DATA",
+    }
+)
+
+UNDERDOG_RISK_LEVELS = frozenset({"UNDERDOG_GOAL_RISK_LOW", "UNDERDOG_GOAL_RISK_MEDIUM", "UNDERDOG_GOAL_RISK_HIGH"})
+
+AGREEMENT_LEVELS = frozenset(
+    {"HIGH_AGREEMENT", "MODERATE_AGREEMENT", "MIXED", "HIGH_CONFLICT", "INSUFFICIENT_DATA"}
+)
+
+COMPLETENESS_LEVELS = frozenset({"HIGH", "MEDIUM", "LOW", "INSUFFICIENT"})
+
+H2H_RELEVANCE = frozenset(
+    {"H2H_HIGH_RELEVANCE", "H2H_MEDIUM_RELEVANCE", "H2H_LOW_RELEVANCE", "H2H_NOT_AVAILABLE"}
+)
