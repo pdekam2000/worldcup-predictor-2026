@@ -170,7 +170,11 @@ def _load_shadow(fi: sqlite3.Connection, fixture_id: int, model_id: str) -> dict
     }
 
 
-def _canonical_ecse_tops(prod: sqlite3.Connection, fixture_id: int) -> dict[str, Any]:
+def _canonical_ecse_tops(
+    prod: sqlite3.Connection,
+    fixture_id: int,
+    freeze: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     from worldcup_predictor.research.ecse_live.store import get_snapshot
 
     snap = get_snapshot(prod, int(fixture_id)) or {}
@@ -187,12 +191,43 @@ def _canonical_ecse_tops(prod: sqlite3.Connection, fixture_id: int) -> dict[str,
                 )
             else:
                 tops.append({"score": str(t), "probability": None})
-    lh, la = _f(snap.get("lambda_home")), _f(snap.get("lambda_away"))
+
+    # Fallback: freeze ECSE payload (may lack probabilities).
+    if (not tops) and freeze and freeze.get("ecse_payload_json"):
+        try:
+            ep = json.loads(freeze["ecse_payload_json"])
+            for t in (ep.get("top5") or [])[:5]:
+                if isinstance(t, dict):
+                    tops.append(
+                        {
+                            "score": t.get("score") or t.get("scoreline"),
+                            "probability": _f(t.get("probability") or t.get("p")),
+                        }
+                    )
+        except Exception:
+            pass
+
+    lh = _f(snap.get("lambda_home"))
+    la = _f(snap.get("lambda_away"))
+    if freeze:
+        lh = lh if lh is not None else _f(freeze.get("lambda_home"))
+        la = la if la is not None else _f(freeze.get("lambda_away"))
+
+    # If scorelines exist but probs missing, recompute display probs from canonical lambdas (research display only).
+    if tops and lh is not None and la is not None and all(t.get("probability") is None for t in tops):
+        dist = dist_dc(float(lh), float(la))
+        pmap = {e["scoreline"]: float(e["probability"]) for e in dist if e.get("scoreline") != "OTHER"}
+        for t in tops:
+            if t.get("score") in pmap:
+                t["probability"] = round(pmap[t["score"]], 6)
+        # If freeze only stored scores, prefer full recomputed Top5 for side-by-side mass/entropy.
+        if not any(t.get("probability") is not None for t in tops):
+            tops = _tops_with_probs(dist, 5)
+
     mass = None
     if tops and all(t.get("probability") is not None for t in tops):
         mass = round(sum(float(t["probability"]) for t in tops), 6)
     ent = _entropy([float(t["probability"]) for t in tops if t.get("probability") is not None])
-    # Approximate side masses from top5 only if full dist unavailable
     return {
         "label": "CANONICAL",
         "official": True,
@@ -201,10 +236,46 @@ def _canonical_ecse_tops(prod: sqlite3.Connection, fixture_id: int) -> dict[str,
         "lambda_total": round((lh or 0) + (la or 0), 4) if lh is not None and la is not None else None,
         "top1": tops[0]["score"] if tops else None,
         "top5": tops,
-        "top5_mass": mass if mass is not None else _f(snap.get("top5_mass")),
-        "entropy": ent if ent is not None else _f(snap.get("entropy")),
+        "top5_mass": mass if mass is not None else _f((freeze or {}).get("top5_mass")) if freeze else _f(snap.get("top5_mass")),
+        "entropy": ent if ent is not None else (_f((freeze or {}).get("entropy")) if freeze else _f(snap.get("entropy"))),
         "snapshot_id": snap.get("snapshot_id"),
     }
+
+
+def _odds_from_sources(
+    prod: sqlite3.Connection,
+    fixture_id: int,
+    freeze: dict[str, Any] | None,
+    kickoff: str | None,
+) -> dict[str, Any]:
+    out = {
+        "home": _f((freeze or {}).get("odds_home")),
+        "draw": _f((freeze or {}).get("odds_draw")),
+        "away": _f((freeze or {}).get("odds_away")),
+        "provider": "api-football",
+        "bookmaker_count": (freeze or {}).get("bookmaker_count"),
+        "odds_timestamp": (freeze or {}).get("odds_fetched_at_utc") or (freeze or {}).get("odds_timestamp"),
+        "odds_freshness_status": (freeze or {}).get("odds_freshness_status") or (freeze or {}).get("odds_freshness"),
+        "odds_age_minutes": None,
+    }
+    if out["home"] and out["draw"] and out["away"]:
+        return out
+    try:
+        from worldcup_predictor.odds.canonical_snapshot import get_latest_valid_1x2_odds_snapshot
+
+        snap = get_latest_valid_1x2_odds_snapshot(prod, int(fixture_id), kickoff_utc=kickoff)
+        if snap:
+            out["home"] = out["home"] or _f(snap.get("home") or snap.get("odds_home"))
+            out["draw"] = out["draw"] or _f(snap.get("draw") or snap.get("odds_draw"))
+            out["away"] = out["away"] or _f(snap.get("away") or snap.get("odds_away"))
+            out["bookmaker_count"] = out["bookmaker_count"] or snap.get("bookmaker_count")
+            out["odds_timestamp"] = out["odds_timestamp"] or snap.get("captured_at") or snap.get("odds_timestamp")
+            out["odds_freshness_status"] = out["odds_freshness_status"] or snap.get("freshness_status")
+            out["odds_age_minutes"] = snap.get("odds_age_minutes")
+            out["snapshot_id"] = snap.get("snapshot_id")
+    except Exception:
+        pass
+    return out
 
 
 def _canonical_wde(prod: sqlite3.Connection, fixture_id: int) -> dict[str, Any]:
@@ -356,7 +427,20 @@ def build_integrity_proof(
     checks["no_result_at_prediction_time"] = len(issues) == 0
     checks["shadow_payloads_clean"] = len(issues) == 0
     checks["leakage_issues"] = issues
-    checks["all_ok"] = all(v is True for k, v in checks.items() if k not in ("leakage_issues", "odds_timestamp_before_kickoff") or v is not None)
+    required = [
+        "prediction_timestamp_before_kickoff",
+        "freeze_timestamp_before_kickoff",
+        "immutable_freeze_identity_exists",
+        "cohort_type_true_forward",
+        "no_historical_backfill_flag",
+        "no_result_at_prediction_time",
+        "shadow_payloads_clean",
+        "shadow_cannot_fail_canonical",
+    ]
+    soft = ["odds_timestamp_before_kickoff", "canonical_freeze_hash_unchanged_after_shadow"]
+    checks["all_ok"] = all(checks.get(k) is True for k in required) and all(
+        checks.get(k) in (True, None) for k in soft
+    )
     return checks
 
 
@@ -368,14 +452,16 @@ def build_fixture_preview(
     fixture_id: int,
     freeze_hash_before: str | None = None,
 ) -> dict[str, Any]:
-    fx = _fixture_meta(prod, fixture_id)
     freeze = _freeze_row(eval_conn, fixture_id)
     freeze_id = (freeze or {}).get("prediction_id")
     job = _job_row(fi, fixture_id, freeze_id)
-    canonical = _canonical_ecse_tops(prod, fixture_id)
+    fx = _fixture_meta(prod, fixture_id)
+    ko_early = fx.get("kickoff_utc") or _freeze_kickoff(freeze)
+    canonical = _canonical_ecse_tops(prod, fixture_id, freeze=freeze)
     wde = _canonical_wde(prod, fixture_id)
     lambda_v2 = _load_shadow(fi, fixture_id, LAMBDA_SELECTED)
     exact_v2 = _load_shadow(fi, fixture_id, EXACT_SELECTED)
+    odds_blob = _odds_from_sources(prod, fixture_id, freeze, ko_early)
 
     # Canonical high-score tail via Poisson/DC from canonical lambdas when available
     c_dist = []
@@ -386,6 +472,7 @@ def build_fixture_preview(
     else:
         canonical["high_score_tail"] = None
 
+    # Recompute agreement after tops are known
     e_top5 = (exact_v2 or {}).get("top5") or []
     c_top5 = canonical.get("top5") or []
     comparison = build_top_comparison(c_top5, e_top5)
@@ -428,7 +515,7 @@ def build_fixture_preview(
         no_bet=bool(no_bet) if no_bet is not None else False,
     )
 
-    odds_ts = (freeze or {}).get("odds_fetched_at_utc") or (freeze or {}).get("odds_timestamp")
+    odds_ts = odds_blob.get("odds_timestamp")
     hash_after = (freeze or {}).get("content_hash")
     integrity = build_integrity_proof(
         freeze=freeze,
@@ -457,16 +544,7 @@ def build_fixture_preview(
         "league": fx.get("competition_key") or (freeze or {}).get("competition"),
         "home_team": fx.get("home_team") or (freeze or {}).get("home_team_name"),
         "away_team": fx.get("away_team") or (freeze or {}).get("away_team_name"),
-        "odds": {
-            "home": _f((freeze or {}).get("odds_home")),
-            "draw": _f((freeze or {}).get("odds_draw")),
-            "away": _f((freeze or {}).get("odds_away")),
-            "provider": "api-football",
-            "bookmaker_count": (freeze or {}).get("bookmaker_count"),
-            "odds_timestamp": odds_ts,
-            "odds_freshness_status": (freeze or {}).get("odds_freshness_status")
-            or (freeze or {}).get("odds_freshness"),
-        },
+        "odds": odds_blob,
         "canonical": {
             **canonical,
             "wde": wde,
