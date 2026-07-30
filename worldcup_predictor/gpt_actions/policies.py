@@ -23,6 +23,10 @@ APPROVED_OPERATION_IDS: frozenset[str] = frozenset(
         "getWeeklyFrozenEvaluationReport",
         "getMonthlyAccuracySummary",
         "getFixtureFrozenEvaluation",
+        "getL2fTrueForwardObservability",
+        "getL2fResearchPreview",
+        "startCoverageOptimizerJob",
+        "getCoverageOptimizerJob",
     }
 )
 
@@ -43,6 +47,10 @@ APPROVED_ROUTES: frozenset[str] = frozenset(
         "GET /api/gpt-actions/v1/reports/weekly/frozen-evaluation",
         "GET /api/gpt-actions/v1/reports/monthly/accuracy",
         "GET /api/gpt-actions/v1/fixtures/{fixture_id}/frozen-evaluation",
+        "GET /api/gpt-actions/v1/research/l2f-true-forward-observability",
+        "GET /api/gpt-actions/v1/research/l2f-research-preview",
+        "POST /api/gpt-actions/v1/research/coverage-optimizer/jobs",
+        "GET /api/gpt-actions/v1/research/coverage-optimizer/jobs/{job_id}",
     }
 )
 

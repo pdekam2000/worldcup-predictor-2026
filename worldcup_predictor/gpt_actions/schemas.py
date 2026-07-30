@@ -130,3 +130,20 @@ class JobStatusResponse(BaseModel):
     error: str | None = None
     polling_message: str | None = None
     continuation_code: str | None = None
+
+
+class CoverageOptimizerJobRequest(BaseModel):
+    """Owner-only research coverage optimizer job (never mutates freezes)."""
+
+    fixture_id: int | None = None
+    fixture_ids: list[int] | None = None
+    bookmaker_allowlist: list[str] | None = None
+    top_n_scores: int = 8
+    exact_count: int = 3
+    total_selections: int = 4
+    stake_per_ticket: float = 1.0
+    require_fresh: bool = True
+    model_payloads: dict[str, Any] | None = None
+    output_dir: str | None = None
+    research_only: bool = True
+    owner_only: bool = True

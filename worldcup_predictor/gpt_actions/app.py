@@ -31,6 +31,7 @@ from worldcup_predictor.gpt_actions.jobs import JobStore
 from worldcup_predictor.gpt_actions.policies import validate_iso_date
 from worldcup_predictor.gpt_actions.rate_limit import RateLimiter
 from worldcup_predictor.gpt_actions.schemas import (
+    CoverageOptimizerJobRequest,
     DiscoverMatchesQuery,
     FilterMatchesRequest,
     JobCreateResponse,
@@ -385,6 +386,54 @@ def create_app(config: GptActionsConfig | None = None) -> FastAPI:
         finally:
             fi.close()
             ev.close()
+
+    @app.post(
+        f"{API_PREFIX}/research/coverage-optimizer/jobs",
+        operation_id="startCoverageOptimizerJob",
+        dependencies=auth_dep,
+        status_code=202,
+    )
+    def start_coverage_optimizer_job_route(body: CoverageOptimizerJobRequest) -> dict[str, Any]:
+        """Owner-only research job: 3 Exact + 1 Smart Coverage. Never mutates freezes."""
+        from worldcup_predictor.research.bet_coverage_optimizer.service import create_research_job
+
+        payload = body.model_dump()
+        # API uses string keys in JSON; normalize model_payloads fixture ids to int keys later in service
+        record = create_research_job(payload)
+        return {
+            "job_id": record["job_id"],
+            "status": record["status"],
+            "research_only": True,
+            "owner_only": True,
+            "poll_path": f"{API_PREFIX}/research/coverage-optimizer/jobs/{record['job_id']}",
+            "result": record.get("result"),
+            "error": record.get("error"),
+        }
+
+    @app.get(
+        f"{API_PREFIX}/research/coverage-optimizer/jobs/{{job_id}}",
+        operation_id="getCoverageOptimizerJob",
+        dependencies=auth_dep,
+    )
+    def get_coverage_optimizer_job_route(job_id: str) -> dict[str, Any]:
+        from worldcup_predictor.research.bet_coverage_optimizer.service import get_research_job
+
+        record = get_research_job(job_id)
+        if not record:
+            raise HTTPException(status_code=404, detail="job not found")
+        result = record.get("result")
+        if isinstance(result, dict):
+            result = _trim_payload(result, cfg.max_response_chars)
+        return {
+            "job_id": record["job_id"],
+            "status": record["status"],
+            "research_only": True,
+            "owner_only": True,
+            "created_at": record.get("created_at"),
+            "updated_at": record.get("updated_at"),
+            "result": result,
+            "error": record.get("error"),
+        }
 
     return app
 

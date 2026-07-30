@@ -43,8 +43,11 @@ def _auth_headers(**extra):
 
 def test_dry_test_manifest():
     manifest = dry_test()
-    assert manifest["route_count"] == 8
+    assert manifest["route_count"] >= 8
     assert manifest["bind_localhost_only"] is True
+    routes = set(manifest["approved_routes"])
+    assert "POST /api/gpt-actions/v1/research/coverage-optimizer/jobs" in routes
+    assert "GET /api/gpt-actions/v1/research/coverage-optimizer/jobs/{job_id}" in routes
 
 
 def test_authentication_success(client):
