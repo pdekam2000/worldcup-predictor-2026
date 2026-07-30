@@ -2,7 +2,7 @@
 
 **Status: COMPLETE (no promotion)**
 
-Parity tip: local = GitHub = production = `7f99790`
+Parity tip: local = GitHub = production = `03b504a`
 
 ---
 
@@ -159,9 +159,9 @@ Throughout Phase 2 production batches:
 
 | Location | SHA |
 |---|---|
-| Local | `7f99790` |
-| GitHub (`release/football-strength-shadow-infra-20260730T151432Z`) | `7f99790` |
-| Production `/opt/worldcup-predictor` | `7f99790` |
+| Local | `03b504a` |
+| GitHub (`release/football-strength-shadow-infra-20260730T151432Z`) | `03b504a` |
+| Production `/opt/worldcup-predictor` | `03b504a` |
 
 ## 15. Explicit non-promotion statement
 
