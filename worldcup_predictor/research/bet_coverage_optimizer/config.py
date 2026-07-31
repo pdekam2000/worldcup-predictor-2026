@@ -41,6 +41,37 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "overlap_penalty_weight": 0.20,
         "ev_weight": 0.65,
     },
+    "insurance": {
+        "enabled": True,
+        "min_odds": 1.55,
+        "max_odds": 25.0,
+        "min_incremental_uncovered_mass": 0.03,
+        "max_primary_overlap_ratio": 0.85,
+        "top_k_candidates": 5,
+        "max_insurance_tickets": 15,
+        "min_insurance_tickets": 3,
+        "allow_triple_insurance": False,
+        "min_two_leg_joint_mass": 0.02,
+        "research_freshness_max_age_hours": 48.0,
+    },
+    "insurance_weights": {
+        "incremental_uncovered_probability_mass": 0.40,
+        "residual_risk_reduction": 0.20,
+        "estimated_edge": 0.15,
+        "log_odds": 0.10,
+        "diversification": 0.10,
+        "primary_overlap_penalty": 0.05,
+    },
+    "budget": {
+        "total_budget_eur": 400.0,
+        "main_budget_ratio": 0.80,
+        "insurance_budget_ratio": 0.20,
+        "min_stake_per_ticket_eur": 1.0,
+        "max_stake_per_ticket_eur": 20.0,
+        "rounding_step_eur": 0.50,
+        "stake_mode": "equal",
+        "kelly_enabled": False,
+    },
 }
 
 _WEIGHT_KEY_MAP = {
@@ -128,7 +159,9 @@ def load_optimizer_config(path: str | Path | None = None) -> dict[str, Any]:
 
     # shallow merge + nested weight/penalty/coupon merges
     for key, value in loaded.items():
-        if key in {"coverage_weights", "penalties", "coupon_optimizer"} and isinstance(value, dict):
+        if key in {"coverage_weights", "penalties", "coupon_optimizer", "insurance", "insurance_weights", "budget"} and isinstance(
+            value, dict
+        ):
             base = dict(cfg.get(key) or {})
             base.update(value)
             cfg[key] = base
