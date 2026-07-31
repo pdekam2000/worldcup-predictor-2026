@@ -1,0 +1,30 @@
+{
+  "research_only": true,
+  "owner_only": true,
+  "not_deployed": true,
+  "exact_count": 3,
+  "coverage_market_count": 2,
+  "top_n": 10,
+  "fixture_budget_eur": 25.0,
+  "minimum_stake_eur": 1.0,
+  "maximum_stake_eur": 10.0,
+  "rounding_step_eur": 0.5,
+  "stake_mode": "profit_floor",
+  "fractional_kelly_enabled": false,
+  "kelly_fraction": 0.25,
+  "coupon_ticket_cap": 25,
+  "top10_source": "consensus",
+  "pair_score_weights": {
+    "top10_covered_mass": 0.15,
+    "profitable_top10_mass": 0.30,
+    "incremental_mass": 0.10,
+    "expected_return": 0.20,
+    "estimated_edge": 0.10,
+    "worst_case_loss_penalty": 0.05,
+    "redundancy_penalty": 0.05,
+    "concentration_penalty": 0.05
+  },
+  "stale_odds_block": true,
+  "require_real_odds_lane": true,
+  "max_market_pair_candidates": 5000
+}
