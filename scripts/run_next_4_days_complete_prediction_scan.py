@@ -439,7 +439,33 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--output-dir", type=str, default="")
     ap.add_argument("--allow-low-disk", action="store_true", help="Permit aggregation when free disk < 8GB (no heavy owner)")
     ap.add_argument("--light-evidence", action="store_true", help="Skip DNA/Twins corpus build (low disk / fast)")
+    ap.add_argument(
+        "--enrich-only",
+        action="store_true",
+        help="Resume existing mission: shadow enrichment only (no Canonical/freeze regeneration)",
+    )
+    ap.add_argument(
+        "--mission-dir",
+        type=str,
+        default="",
+        help="Existing mission artifact dir for --enrich-only",
+    )
     args = ap.parse_args(argv)
+
+    if args.enrich_only:
+        from pathlib import Path as _P
+
+        enrich_path = ROOT / "scripts" / "enrich_next_4_days_existing_mission.py"
+        spec = importlib.util.spec_from_file_location("enrich_next_4", enrich_path)
+        enrich_mod = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(enrich_mod)
+        argv2 = ["--dates", *list(args.dates)]
+        if args.mission_dir:
+            argv2 = ["--mission-dir", args.mission_dir, *argv2]
+        elif args.output_dir:
+            argv2 = ["--mission-dir", args.output_dir, *argv2]
+        return int(enrich_mod.main(argv2))
 
     dates = list(args.dates)
     if len(dates) != 4:
@@ -806,6 +832,7 @@ def main(argv: list[str] | None = None) -> int:
     top10_avoid = [slim(r, risk_key(r)) for r in ranked_avoid[:10]]
 
     def pick_best3(ranked_full: list[dict], score_fn=None, *, allow_no_bet: bool = False) -> list[dict]:
+        """Never promote NO_BET merely to fill Best Picks — may return fewer than 3."""
         out = []
         for r in ranked_full:
             sm = slim(r, score_fn(r) if score_fn else None)
@@ -814,16 +841,7 @@ def main(argv: list[str] | None = None) -> int:
             out.append(sm)
             if len(out) >= 3:
                 break
-        if len(out) < 3 and not allow_no_bet:
-            # transparent fallback: note scarcity of non-no_bet fixtures
-            for r in ranked_full:
-                sm = slim(r, score_fn(r) if score_fn else None)
-                if sm in out:
-                    continue
-                out.append({**sm, "fallback_note": "insufficient_non_no_bet_pool"})
-                if len(out) >= 3:
-                    break
-        return out[:3]
+        return out
 
     best3_end = pick_best3(ranked_end, end_result_score, allow_no_bet=False)
     best3_exact = pick_best3(ranked_exact, exact_score_rank_key, allow_no_bet=False)

@@ -1,8 +1,8 @@
 # NEXT_4_DAYS_COMPLETE_PREDICTION_REPORT
 
-**Status:** `NEXT_4_DAYS_COMPLETE_MULTI_MODEL_PREDICTION_PARTIAL`  
+**Status:** `NEXT_4_DAYS_COMPLETE_MULTI_MODEL_PREDICTION_READY`  
 **Dates:** `['2026-08-01', '2026-08-02', '2026-08-03', '2026-08-04']`  
-**Commit:** `f08134c606f3f6be03a91ee2a38bdcbf7940913a`  
+**Commit:** `7cc58a6151cc172d185375ed15215a4627458d31`  
 **No promotion and no routing activation occurred.**
 
 ## Counters
@@ -11,61 +11,42 @@
 - Eligible predicted/frozen: `67`
 - Blocked: `4`
 - Canonical success: `67`
-- Shadow success: `{'dna_v2': 0, 'twins': 0, 'hcee': 0, 'exact_v2_proxy': 0, 'l2f': 0, 'tsbp': 0}`
-- Disk before/after: `{'total_gb': 930.59, 'used_gb': 923.18, 'free_gb': 7.41}` → `{'total_gb': 930.59, 'used_gb': 923.18, 'free_gb': 7.41}`
+- Shadow success: `{'dna_v2': 67, 'twins': 67, 'hcee': 67, 'exact_v2': 71, 'exact_v2_proxy': 0, 'lambda_v2': 71, 'l2f': 71, 'dixon_coles': 71, 'football_strength': 71, 'tsbp': 0, 'forensic_team_form_h2h': 71}`
+- Disk before/after: `{'total_gb': 930.59, 'used_gb': 791.21, 'free_gb': 139.38}` → `{'total_gb': 930.59, 'used_gb': 792.41, 'free_gb': 138.19}`
 
 ## Final shortlist
 
 ### Best 3 End Result
-- `2026-08-03` `Halmstad vs Sirius` id=`1494232` verdict=`WATCHLIST` decision=`away_win`
-- `2026-08-03` `Djurgardens IF vs Vasteras SK FK` id=`1494227` verdict=`WATCHLIST` decision=`home_win`
-- `2026-08-02` `Riga vs Grobiņa` id=`1515896` verdict=`NO_BET` decision=`home_win`
+- `2026-08-03` `Halmstad vs Sirius` id=`1494232` verdict=`RESEARCH_CANDIDATE` decision=`away_win`
+- `2026-08-03` `Djurgardens IF vs Vasteras SK FK` id=`1494227` verdict=`RESEARCH_CANDIDATE` decision=`home_win`
 
 ### Best 3 Exact Score
-- `2026-08-03` `Halmstad vs Sirius` id=`1494232` verdict=`WATCHLIST`
-- `2026-08-03` `Djurgardens IF vs Vasteras SK FK` id=`1494227` verdict=`WATCHLIST`
-- `2026-08-02` `Deportivo Madryn vs All Boys` id=`1498695` verdict=`NO_BET`
+- `2026-08-03` `Halmstad vs Sirius` id=`1494232` verdict=`RESEARCH_CANDIDATE`
+- `2026-08-03` `Djurgardens IF vs Vasteras SK FK` id=`1494227` verdict=`RESEARCH_CANDIDATE`
 
 ### Best 3 Model Consensus
-- `2026-08-03` `Halmstad vs Sirius` id=`1494232` agree=`MODELS_PARTIALLY_AGREE`
-- `2026-08-03` `Djurgardens IF vs Vasteras SK FK` id=`1494227` agree=`MODELS_PARTIALLY_AGREE`
-- `2026-08-02` `Deportivo Madryn vs All Boys` id=`1498695` agree=`HIGH_UNCERTAINTY`
+- `2026-08-03` `Halmstad vs Sirius` id=`1494232` agree=`MODELS_AGREE`
+- `2026-08-03` `Djurgardens IF vs Vasteras SK FK` id=`1494227` agree=`MODELS_AGREE`
 
 ## Top 10 End Result
-1. `Halmstad vs Sirius` (2026-08-03) score=`74.515`
-2. `Djurgardens IF vs Vasteras SK FK` (2026-08-03) score=`67.89`
-3. `Riga vs Grobiņa` (2026-08-02) score=`13.664999999999992`
-4. `Auda vs Ogre United` (2026-08-03) score=`12.789999999999992`
-5. `Transinvest 2 vs Babrungas` (2026-08-03) score=`12.490000000000009`
-6. `Start vs Viking` (2026-08-01) score=`11.865000000000009`
-7. `Thor Akureyri vs Breidablik` (2026-08-04) score=`11.215000000000003`
-8. `AIK Stockholm vs Orgryte IS` (2026-08-02) score=`10.75`
-9. `Aalesund vs Tromso` (2026-08-02) score=`10.189999999999998`
-10. `Turku PS vs Mariehamn` (2026-08-01) score=`9.765`
+1. `Halmstad vs Sirius` (2026-08-03) score=`89.515`
+2. `Djurgardens IF vs Vasteras SK FK` (2026-08-03) score=`82.89`
 
 ## Top 10 Exact Score
-1. `Deportivo Madryn vs All Boys` (2026-08-02) score=`53.03531`
-2. `Ciudad de Bolívar vs Atletico Mitre` (2026-08-02) score=`52.62227`
-3. `Temperley vs Gimnasia Y Tiro` (2026-08-02) score=`52.571780000000004`
-4. `Chacarita Juniors vs Agropecuario` (2026-08-01) score=`51.97546`
-5. `Ferro Carril Oeste vs Godoy Cruz` (2026-08-01) score=`51.782315`
-6. `Patronato vs Quilmes` (2026-08-02) score=`51.163504999999994`
-7. `Acassuso vs Colon Santa Fe` (2026-08-01) score=`50.895579999999995`
-8. `Riga vs Grobiņa` (2026-08-02) score=`49.00448499999999`
-9. `Celtic vs Dundee` (2026-08-03) score=`48.28072999999999`
-10. `BFC Daugavpils vs FS Jelgava` (2026-08-01) score=`47.632745`
+1. `Halmstad vs Sirius` (2026-08-03) score=`53.952835`
+2. `Djurgardens IF vs Vasteras SK FK` (2026-08-03) score=`52.734280000000005`
 
 ## Top 10 Avoid
-1. `Ostersunds FK vs Osters IF` risk=`75.0` agree=`DIRECTION_CONFLICT`
-2. `Varbergs BoIS FC vs Falkenbergs FF` risk=`75.0` agree=`DIRECTION_CONFLICT`
-3. `Fredrikstad vs Sandefjord` risk=`75.0` agree=`DIRECTION_CONFLICT`
-4. `IK brage vs Landskrona BoIS` risk=`75.0` agree=`DIRECTION_CONFLICT`
-5. `Colegiales vs Gimnasia Jujuy` risk=`75.0` agree=`DIRECTION_CONFLICT`
-6. `Defensores De Belgrano vs CA Estudiantes` risk=`75.0` agree=`DIRECTION_CONFLICT`
-7. `Nueva Chicago vs San Martin Tucuman` risk=`75.0` agree=`DIRECTION_CONFLICT`
-8. `San Martin S.J. vs Atletico DE Rafaela` risk=`75.0` agree=`DIRECTION_CONFLICT`
-9. `VPS vs Inter Turku` risk=`75.0` agree=`DIRECTION_CONFLICT`
-10. `Dainava vs Tauras` risk=`75.0` agree=`DIRECTION_CONFLICT`
+1. `Varbergs BoIS FC vs Falkenbergs FF` risk=`65.0` agree=`DIRECTION_CONFLICT`
+2. `IK brage vs Landskrona BoIS` risk=`65.0` agree=`DIRECTION_CONFLICT`
+3. `Vestri vs Grotta` risk=`65.0` agree=`DIRECTION_CONFLICT`
+4. `VPS vs Inter Turku` risk=`60.0` agree=`DIRECTION_CONFLICT`
+5. `Molde vs Sarpsborg 08 FF` risk=`60.0` agree=`DIRECTION_CONFLICT`
+6. `Union St. Gilloise vs Bodo/Glimt` risk=`60.0` agree=`DIRECTION_CONFLICT`
+7. `Ostersunds FK vs Osters IF` risk=`55.0` agree=`DIRECTION_CONFLICT`
+8. `Fredrikstad vs Sandefjord` risk=`55.0` agree=`DIRECTION_CONFLICT`
+9. `Colegiales vs Gimnasia Jujuy` risk=`55.0` agree=`DIRECTION_CONFLICT`
+10. `San Martin S.J. vs Atletico DE Rafaela` risk=`55.0` agree=`DIRECTION_CONFLICT`
 
 ## Exact Top1–Top10 (per fixture)
 
@@ -73,1051 +54,1051 @@
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-1 | 0.133546 | None | None | None | None |
-| 2 | 0-1 | 0.119253 | None | None | None | None |
-| 3 | 1-0 | 0.119253 | None | None | None | None |
-| 4 | 0-0 | 0.10649 | None | None | None | None |
-| 5 | 1-2 | 0.074776 | None | None | None | None |
-| 6 | 2-1 | 0.074776 | None | None | None | None |
-| 7 | 0-2 | 0.066773 | None | None | None | None |
-| 8 | 2-0 | 0.066773 | None | None | None | None |
-| 9 | 2-2 | 0.041869 | None | None | None | None |
-| 10 | 1-3 | 0.027913 | None | None | None | None |
+| 1 | 1-1 | 0.133546 | 1-1 | 0.13863459461393277 | 0-1 | None |
+| 2 | 0-1 | 0.119253 | 0-0 | 0.08358767704027505 | 2-1 | None |
+| 3 | 1-0 | 0.119253 | 1-2 | 0.0826156974816148 | 1-1 | None |
+| 4 | 0-0 | 0.10649 | 2-1 | 0.0826156974816148 | 2-2 | None |
+| 5 | 1-2 | 0.074776 | 0-1 | 0.07514572732361484 | 1-0 | None |
+| 6 | 2-1 | 0.074776 | 1-0 | 0.07514572732361484 | None | None |
+| 7 | 0-2 | 0.066773 | 0-2 | 0.06134274097961628 | None | None |
+| 8 | 2-0 | 0.066773 | 2-0 | 0.06134274097961628 | None | None |
+| 9 | 2-2 | 0.041869 | 2-2 | 0.05563293522082514 | None | None |
+| 10 | 1-3 | 0.027913 | 1-3 | 0.03708862348055009 | None | None |
 
 ### Fixture 1497646 — Ostersunds FK vs Osters IF (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.166095 | None | None | None | None |
-| 2 | 0-0 | 0.131567 | None | None | None | None |
-| 3 | 1-1 | 0.127196 | None | None | None | None |
-| 4 | 2-0 | 0.104842 | None | None | None | None |
-| 5 | 0-1 | 0.100754 | None | None | None | None |
-| 6 | 2-1 | 0.080288 | None | None | None | None |
-| 7 | 1-2 | 0.048704 | None | None | None | None |
-| 8 | 3-0 | 0.044119 | None | None | None | None |
-| 9 | 0-2 | 0.038579 | None | None | None | None |
-| 10 | 3-1 | 0.033786 | None | None | None | None |
+| 1 | 1-0 | 0.166095 | 1-1 | 0.12137371829145495 | 1-1 | None |
+| 2 | 0-0 | 0.131567 | 2-1 | 0.09825597112078893 | 0-0 | None |
+| 3 | 1-1 | 0.127196 | 2-0 | 0.08853375181710155 | 2-0 | None |
+| 4 | 2-0 | 0.104842 | 1-0 | 0.07376356708333592 | 0-1 | None |
+| 5 | 0-1 | 0.100754 | 0-0 | 0.06686307076077348 | 1-0 | None |
+| 6 | 2-1 | 0.080288 | 3-1 | 0.05992119038823229 | None | None |
+| 7 | 1-2 | 0.048704 | 1-2 | 0.059602750436032484 | None | None |
+| 8 | 3-0 | 0.044119 | 2-2 | 0.054522911673469024 | None | None |
+| 9 | 0-2 | 0.038579 | 3-0 | 0.05399211608112243 | None | None |
+| 10 | 3-1 | 0.033786 | 0-1 | 0.05023857380158698 | None | None |
 
 ### Fixture 1556400 — Kauno Žalgiris II vs Atmosfera (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.162988 | None | None | None | None |
-| 2 | 0-2 | 0.144694 | None | None | None | None |
-| 3 | 1-1 | 0.099855 | None | None | None | None |
-| 4 | 0-0 | 0.091797 | None | None | None | None |
-| 5 | 1-2 | 0.088647 | None | None | None | None |
-| 6 | 0-3 | 0.085636 | None | None | None | None |
-| 7 | 1-0 | 0.05624 | None | None | None | None |
-| 8 | 1-3 | 0.052465 | None | None | None | None |
-| 9 | 0-4 | 0.038012 | None | None | None | None |
-| 10 | 2-1 | 0.030588 | None | None | None | None |
+| 1 | 0-1 | 0.162988 | 0-2 | 0.13386084479047156 | 0-2 | None |
+| 2 | 0-2 | 0.144694 | 1-1 | 0.10438793045339544 | 0-1 | None |
+| 3 | 1-1 | 0.099855 | 0-1 | 0.09646852845777935 | 1-1 | None |
+| 4 | 0-0 | 0.091797 | 1-2 | 0.09420027093720593 | 2-2 | None |
+| 5 | 1-2 | 0.088647 | 0-3 | 0.09100025520438348 | 1-2 | None |
+| 6 | 0-3 | 0.085636 | 0-0 | 0.0763761838109305 | None | None |
+| 7 | 1-0 | 0.05624 | 1-3 | 0.06403850736954259 | None | None |
+| 8 | 1-3 | 0.052465 | 0-4 | 0.04639732287039389 | None | None |
+| 9 | 0-4 | 0.038012 | 1-0 | 0.04115233129342276 | None | None |
+| 10 | 2-1 | 0.030588 | 2-2 | 0.033145207840772 | None | None |
 
 ### Fixture 1495745 — Turku PS vs Mariehamn (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.212242 | None | None | None | None |
-| 2 | 2-0 | 0.166621 | None | None | None | None |
-| 3 | 0-0 | 0.135176 | None | None | None | None |
-| 4 | 1-1 | 0.09149 | None | None | None | None |
-| 5 | 3-0 | 0.087204 | None | None | None | None |
-| 6 | 2-1 | 0.071825 | None | None | None | None |
-| 7 | 0-1 | 0.05827 | None | None | None | None |
-| 8 | 3-1 | 0.037591 | None | None | None | None |
-| 9 | 4-0 | 0.03423 | None | None | None | None |
-| 10 | 1-2 | 0.019719 | None | None | None | None |
+| 1 | 1-0 | 0.212242 | 2-0 | 0.15730228448997058 | 2-1 | None |
+| 2 | 2-0 | 0.166621 | 1-0 | 0.1182877996252067 | 1-0 | None |
+| 3 | 0-0 | 0.135176 | 3-0 | 0.10362698363567527 | 3-1 | None |
+| 4 | 1-1 | 0.09149 | 1-1 | 0.0976017741703471 | 1-1 | None |
+| 5 | 3-0 | 0.087204 | 0-0 | 0.09177505762387213 | 2-0 | None |
+| 6 | 2-1 | 0.071825 | 2-1 | 0.08535094909629662 | None | None |
+| 7 | 0-1 | 0.05827 | 3-1 | 0.05622716436680364 | None | None |
+| 8 | 3-1 | 0.037591 | 4-0 | 0.051200234180864 | None | None |
+| 9 | 4-0 | 0.03423 | 0-1 | 0.04062115954925843 | None | None |
+| 10 | 1-2 | 0.019719 | 4-1 | 0.027780833542617848 | None | None |
 
 ### Fixture 1494231 — BK Hacken vs Kalmar FF (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.173301 | None | None | None | None |
-| 2 | 2-0 | 0.125823 | None | None | None | None |
-| 3 | 0-0 | 0.119348 | None | None | None | None |
-| 4 | 1-1 | 0.116743 | None | None | None | None |
-| 5 | 2-1 | 0.08476 | None | None | None | None |
-| 6 | 0-1 | 0.080398 | None | None | None | None |
-| 7 | 3-0 | 0.060901 | None | None | None | None |
-| 8 | 3-1 | 0.041026 | None | None | None | None |
-| 9 | 1-2 | 0.039322 | None | None | None | None |
-| 10 | 2-2 | 0.028549 | None | None | None | None |
+| 1 | 1-0 | 0.173301 | 1-1 | 0.10996168265904106 | 3-1 | None |
+| 2 | 2-0 | 0.125823 | 2-0 | 0.10487989197155934 | 2-1 | None |
+| 3 | 0-0 | 0.119348 | 2-1 | 0.0993881200179577 | 1-0 | None |
+| 4 | 1-1 | 0.116743 | 1-0 | 0.07541946302042979 | 1-2 | None |
+| 5 | 2-1 | 0.08476 | 3-0 | 0.07141221677529798 | 1-1 | None |
+| 6 | 0-1 | 0.080398 | 3-1 | 0.0676728955206818 | None | None |
+| 7 | 3-0 | 0.060901 | 0-0 | 0.06292164735405167 | None | None |
+| 8 | 3-1 | 0.041026 | 2-2 | 0.04709195545025265 | None | None |
+| 9 | 1-2 | 0.039322 | 1-2 | 0.04610788296809946 | None | None |
+| 10 | 2-2 | 0.028549 | 0-1 | 0.04177009517425664 | None | None |
 
 ### Fixture 1497647 — Sandviken vs GIF Sundsvall (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.194326 | None | None | None | None |
-| 2 | 0-0 | 0.137547 | None | None | None | None |
-| 3 | 2-0 | 0.137272 | None | None | None | None |
-| 4 | 1-1 | 0.110959 | None | None | None | None |
-| 5 | 0-1 | 0.078538 | None | None | None | None |
-| 6 | 2-1 | 0.078381 | None | None | None | None |
-| 7 | 3-0 | 0.064646 | None | None | None | None |
-| 8 | 3-1 | 0.036912 | None | None | None | None |
-| 9 | 1-2 | 0.031678 | None | None | None | None |
-| 10 | 4-0 | 0.022833 | None | None | None | None |
+| 1 | 1-0 | 0.194326 | 2-0 | 0.11733365283939824 | 2-1 | None |
+| 2 | 0-0 | 0.137547 | 1-1 | 0.10717187695649698 | 0-1 | None |
+| 3 | 2-0 | 0.137272 | 2-1 | 0.09795339950865595 | 0-0 | None |
+| 4 | 1-1 | 0.110959 | 1-0 | 0.0831003496899559 | 1-1 | None |
+| 5 | 0-1 | 0.078538 | 3-0 | 0.08078829672868812 | 2-0 | None |
+| 6 | 2-1 | 0.078381 | 3-1 | 0.06744431894505752 | None | None |
+| 7 | 3-0 | 0.064646 | 0-0 | 0.06732895922628308 | None | None |
+| 8 | 3-1 | 0.036912 | 4-0 | 0.041719161960653284 | None | None |
+| 9 | 1-2 | 0.031678 | 0-1 | 0.040932019361037096 | None | None |
+| 10 | 4-0 | 0.022833 | 2-2 | 0.04088711227816047 | None | None |
 
 ### Fixture 1497648 — Varbergs BoIS FC vs Falkenbergs FF (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.174442 | None | None | None | None |
-| 2 | 0-0 | 0.134306 | None | None | None | None |
-| 3 | 1-1 | 0.123644 | None | None | None | None |
-| 4 | 2-0 | 0.113286 | None | None | None | None |
-| 5 | 0-1 | 0.095196 | None | None | None | None |
-| 6 | 2-1 | 0.080297 | None | None | None | None |
-| 7 | 3-0 | 0.049047 | None | None | None | None |
-| 8 | 1-2 | 0.043819 | None | None | None | None |
-| 9 | 3-1 | 0.034764 | None | None | None | None |
-| 10 | 0-2 | 0.033737 | None | None | None | None |
+| 1 | 1-0 | 0.174442 | 1-1 | 0.1059878752119737 | 2-1 | None |
+| 2 | 0-0 | 0.134306 | 2-1 | 0.09839437869505534 | 2-0 | None |
+| 3 | 1-1 | 0.123644 | 2-0 | 0.08593737574469339 | 1-0 | None |
+| 4 | 2-0 | 0.113286 | 3-1 | 0.06881317147864481 | 1-1 | None |
+| 5 | 0-1 | 0.095196 | 3-0 | 0.06010123191967977 | 1-2 | None |
+| 6 | 2-1 | 0.080297 | 1-0 | 0.05957620656300014 | None | None |
+| 7 | 3-0 | 0.049047 | 2-2 | 0.056328539677241565 | None | None |
+| 8 | 1-2 | 0.043819 | 1-2 | 0.05369525964528428 | None | None |
+| 9 | 3-1 | 0.034764 | 0-0 | 0.05123843686690673 | None | None |
+| 10 | 0-2 | 0.033737 | 3-2 | 0.03939397261671476 | None | None |
 
 ### Fixture 1515894 — BFC Daugavpils vs FS Jelgava (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.211596 | None | None | None | None |
-| 2 | 0-0 | 0.184501 | None | None | None | None |
-| 3 | 2-0 | 0.121335 | None | None | None | None |
-| 4 | 1-1 | 0.114949 | None | None | None | None |
-| 5 | 0-1 | 0.100229 | None | None | None | None |
-| 6 | 2-1 | 0.065915 | None | None | None | None |
-| 7 | 3-0 | 0.046384 | None | None | None | None |
-| 8 | 1-2 | 0.031223 | None | None | None | None |
-| 9 | 0-2 | 0.027225 | None | None | None | None |
-| 10 | 3-1 | 0.025198 | None | None | None | None |
+| 1 | 1-0 | 0.211596 | 1-1 | 0.13101231876547315 | 1-1 | None |
+| 2 | 0-0 | 0.184501 | 1-0 | 0.12622241584191324 | 2-0 | None |
+| 3 | 2-0 | 0.121335 | 2-0 | 0.12238124576571113 | 2-1 | None |
+| 4 | 1-1 | 0.114949 | 0-0 | 0.11711860209244855 | 1-0 | None |
+| 5 | 0-1 | 0.100229 | 2-1 | 0.08977952581243127 | 0-0 | None |
+| 6 | 2-1 | 0.065915 | 0-1 | 0.06772229923027731 | None | None |
+| 7 | 3-0 | 0.046384 | 3-0 | 0.06317819707279616 | None | None |
+| 8 | 1-2 | 0.031223 | 3-1 | 0.04634785778973651 | None | None |
+| 9 | 0-2 | 0.027225 | 1-2 | 0.042527135565547394 | None | None |
+| 10 | 3-1 | 0.025198 | 2-2 | 0.03293136625907502 | None | None |
 
 ### Fixture 1494719 — Fredrikstad vs Sandefjord (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.158581 | None | None | None | None |
-| 2 | 0-0 | 0.145173 | None | None | None | None |
-| 3 | 1-1 | 0.132807 | None | None | None | None |
-| 4 | 0-1 | 0.121579 | None | None | None | None |
-| 5 | 2-0 | 0.086613 | None | None | None | None |
-| 6 | 2-1 | 0.072536 | None | None | None | None |
-| 7 | 1-2 | 0.055611 | None | None | None | None |
-| 8 | 0-2 | 0.050909 | None | None | None | None |
-| 9 | 3-0 | 0.031537 | None | None | None | None |
-| 10 | 2-2 | 0.030374 | None | None | None | None |
+| 1 | 1-0 | 0.158581 | 1-1 | 0.13284376997240507 | 2-1 | None |
+| 2 | 0-0 | 0.145173 | 2-1 | 0.09270985938747274 | 1-1 | None |
+| 3 | 1-1 | 0.132807 | 1-0 | 0.07728743513969122 | 0-0 | None |
+| 4 | 0-1 | 0.121579 | 0-0 | 0.07692394547758401 | 1-2 | None |
+| 5 | 2-0 | 0.086613 | 2-0 | 0.07667014029041559 | 2-0 | None |
+| 6 | 2-1 | 0.072536 | 1-2 | 0.07107754471847116 | None | None |
+| 7 | 1-2 | 0.055611 | 0-1 | 0.0628197035176629 | None | None |
+| 8 | 0-2 | 0.050909 | 2-2 | 0.056052577933781524 | None | None |
+| 9 | 3-0 | 0.031537 | 3-1 | 0.04874138181643159 | None | None |
+| 10 | 2-2 | 0.030374 | 0-2 | 0.04506498674489636 | None | None |
 
 ### Fixture 1508820 — IBV Vestmannaeyjar vs Fram Reykjavik (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.153033 | None | None | None | None |
-| 2 | 1-1 | 0.120365 | None | None | None | None |
-| 3 | 0-2 | 0.113858 | None | None | None | None |
-| 4 | 0-0 | 0.102843 | None | None | None | None |
-| 5 | 1-2 | 0.089553 | None | None | None | None |
-| 6 | 1-0 | 0.080889 | None | None | None | None |
-| 7 | 0-3 | 0.056475 | None | None | None | None |
-| 8 | 2-1 | 0.047335 | None | None | None | None |
-| 9 | 1-3 | 0.044419 | None | None | None | None |
-| 10 | 2-2 | 0.035218 | None | None | None | None |
+| 1 | 0-1 | 0.153033 | 1-1 | 0.1014877517255146 | 1-2 | None |
+| 2 | 1-1 | 0.120365 | 1-2 | 0.09780861193878478 | 0-2 | None |
+| 3 | 0-2 | 0.113858 | 0-2 | 0.0849574547084489 | 1-1 | None |
+| 4 | 0-0 | 0.102843 | 1-3 | 0.0710113458988305 | 0-1 | None |
+| 5 | 1-2 | 0.089553 | 0-3 | 0.06168110438743076 | 2-2 | None |
+| 6 | 1-0 | 0.080889 | 2-2 | 0.05630185486501172 | None | None |
+| 7 | 0-3 | 0.056475 | 0-1 | 0.05592273360755221 | None | None |
+| 8 | 2-1 | 0.047335 | 2-1 | 0.05169883961708721 | None | None |
+| 9 | 1-3 | 0.044419 | 0-0 | 0.04749245629632007 | None | None |
+| 10 | 2-2 | 0.035218 | 2-3 | 0.04087646692161792 | None | None |
 
 ### Fixture 1495748 — Lahti vs FF Jaro (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.199709 | None | None | None | None |
-| 2 | 2-0 | 0.147091 | None | None | None | None |
-| 3 | 0-0 | 0.135575 | None | None | None | None |
-| 4 | 1-1 | 0.104883 | None | None | None | None |
-| 5 | 2-1 | 0.077249 | None | None | None | None |
-| 6 | 3-0 | 0.072225 | None | None | None | None |
-| 7 | 0-1 | 0.071201 | None | None | None | None |
-| 8 | 3-1 | 0.037931 | None | None | None | None |
-| 9 | 1-2 | 0.027541 | None | None | None | None |
-| 10 | 4-0 | 0.026598 | None | None | None | None |
+| 1 | 1-0 | 0.199709 | 2-0 | 0.12315024064900187 | 2-0 | None |
+| 2 | 2-0 | 0.147091 | 1-1 | 0.09922694316896603 | 0-0 | None |
+| 3 | 0-0 | 0.135575 | 2-1 | 0.09597727024130635 | 1-1 | None |
+| 4 | 1-1 | 0.104883 | 3-0 | 0.08973486844747129 | 2-1 | None |
+| 5 | 2-1 | 0.077249 | 1-0 | 0.08065346584225573 | 1-2 | None |
+| 6 | 3-0 | 0.072225 | 3-1 | 0.06993496459010638 | None | None |
+| 7 | 0-1 | 0.071201 | 0-0 | 0.06295862282081352 | None | None |
+| 8 | 3-1 | 0.037931 | 4-0 | 0.04903977393496616 | None | None |
+| 9 | 1-2 | 0.027541 | 4-1 | 0.03821919965989905 | None | None |
+| 10 | 4-0 | 0.026598 | 2-2 | 0.037399993513725256 | None | None |
 
 ### Fixture 1497641 — IK brage vs Landskrona BoIS (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.136922 | None | None | None | None |
-| 2 | 1-1 | 0.135175 | None | None | None | None |
-| 3 | 0-0 | 0.13069 | None | None | None | None |
-| 4 | 0-1 | 0.129023 | None | None | None | None |
-| 5 | 2-0 | 0.071726 | None | None | None | None |
-| 6 | 2-1 | 0.070811 | None | None | None | None |
-| 7 | 1-2 | 0.066725 | None | None | None | None |
-| 8 | 0-2 | 0.063688 | None | None | None | None |
-| 9 | 2-2 | 0.034954 | None | None | None | None |
-| 10 | 3-0 | 0.025049 | None | None | None | None |
+| 1 | 1-0 | 0.136922 | 1-1 | 0.11517959865954468 | 1-2 | None |
+| 2 | 1-1 | 0.135175 | 2-1 | 0.08552302456076542 | 0-1 | None |
+| 3 | 0-0 | 0.13069 | 1-2 | 0.08058903844896634 | 1-1 | None |
+| 4 | 0-1 | 0.129023 | 2-2 | 0.06761793569465567 | 2-2 | None |
+| 5 | 2-0 | 0.071726 | 2-0 | 0.05408467187648393 | 1-3 | None |
+| 6 | 2-1 | 0.070811 | 0-0 | 0.05166322925394778 | None | None |
+| 7 | 1-2 | 0.066725 | 1-0 | 0.05039768312122943 | None | None |
+| 8 | 0-2 | 0.063688 | 0-1 | 0.04825460584309191 | None | None |
+| 9 | 2-2 | 0.034954 | 0-2 | 0.04802418952463148 | None | None |
+| 10 | 3-0 | 0.025049 | 3-1 | 0.04783851903816385 | None | None |
 
 ### Fixture 1497643 — IFK Norrkoping vs Helsingborg (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.186886 | None | None | None | None |
-| 2 | 2-0 | 0.155487 | None | None | None | None |
-| 3 | 0-0 | 0.112313 | None | None | None | None |
-| 4 | 1-1 | 0.097646 | None | None | None | None |
-| 5 | 3-0 | 0.086242 | None | None | None | None |
-| 6 | 2-1 | 0.08124 | None | None | None | None |
-| 7 | 0-1 | 0.058682 | None | None | None | None |
-| 8 | 3-1 | 0.045061 | None | None | None | None |
-| 9 | 4-0 | 0.035876 | None | None | None | None |
-| 10 | 1-2 | 0.025509 | None | None | None | None |
+| 1 | 1-0 | 0.186886 | 2-0 | 0.12595692294941957 | 2-0 | None |
+| 2 | 2-0 | 0.155487 | 3-0 | 0.09862990833068885 | 1-0 | None |
+| 3 | 0-0 | 0.112313 | 2-1 | 0.09290930145234993 | 2-1 | None |
+| 4 | 1-1 | 0.097646 | 1-1 | 0.08938400134600107 | 1-1 | None |
+| 5 | 3-0 | 0.086242 | 1-0 | 0.07448808660845457 | 2-2 | None |
+| 6 | 2-1 | 0.08124 | 3-1 | 0.07275214153170007 | None | None |
+| 7 | 0-1 | 0.058682 | 4-0 | 0.05792372457304211 | None | None |
+| 8 | 3-1 | 0.045061 | 0-0 | 0.05593264986970263 | None | None |
+| 9 | 4-0 | 0.035876 | 4-1 | 0.04272613732998833 | None | None |
+| 10 | 1-2 | 0.025509 | 2-2 | 0.03426623203486019 | None | None |
 
 ### Fixture 1494722 — Start vs Viking (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.19284 | None | None | None | None |
-| 2 | 0-2 | 0.167326 | None | None | None | None |
-| 3 | 0-0 | 0.111122 | None | None | None | None |
-| 4 | 0-3 | 0.096792 | None | None | None | None |
-| 5 | 1-1 | 0.089041 | None | None | None | None |
-| 6 | 1-2 | 0.077261 | None | None | None | None |
-| 7 | 1-0 | 0.051309 | None | None | None | None |
-| 8 | 1-3 | 0.044693 | None | None | None | None |
-| 9 | 0-4 | 0.041993 | None | None | None | None |
-| 10 | 2-1 | 0.020557 | None | None | None | None |
+| 1 | 0-1 | 0.19284 | 0-2 | 0.15063447077568645 | 1-2 | None |
+| 2 | 0-2 | 0.167326 | 0-3 | 0.10922498706864082 | 1-1 | None |
+| 3 | 0-0 | 0.111122 | 0-1 | 0.09933047650743895 | 0-3 | None |
+| 4 | 0-3 | 0.096792 | 1-1 | 0.09057979471097219 | 0-1 | None |
+| 5 | 1-1 | 0.089041 | 1-2 | 0.08718500235526322 | 1-3 | None |
+| 6 | 1-2 | 0.077261 | 0-0 | 0.07408800597644404 | None | None |
+| 7 | 1-0 | 0.051309 | 1-3 | 0.06321780602936267 | None | None |
+| 8 | 1-3 | 0.044693 | 0-4 | 0.059399241780671984 | None | None |
+| 9 | 0-4 | 0.041993 | 1-4 | 0.03437940205771694 | None | None |
+| 10 | 2-1 | 0.020557 | 1-0 | 0.0340770553142946 | None | None |
 
 ### Fixture 1495749 — Gnistan vs KuPS (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.167811 | None | None | None | None |
-| 2 | 0-0 | 0.148236 | None | None | None | None |
-| 3 | 1-1 | 0.130372 | None | None | None | None |
-| 4 | 1-0 | 0.115164 | None | None | None | None |
-| 5 | 0-2 | 0.094985 | None | None | None | None |
-| 6 | 1-2 | 0.073794 | None | None | None | None |
-| 7 | 2-1 | 0.050643 | None | None | None | None |
-| 8 | 2-0 | 0.044735 | None | None | None | None |
-| 9 | 0-3 | 0.035843 | None | None | None | None |
-| 10 | 2-2 | 0.028665 | None | None | None | None |
+| 1 | 0-1 | 0.167811 | 1-1 | 0.13604144420876652 | 1-1 | None |
+| 2 | 0-0 | 0.148236 | 1-2 | 0.09380315388665204 | 1-2 | None |
+| 3 | 1-1 | 0.130372 | 0-1 | 0.08976914092688754 | 2-1 | None |
+| 4 | 1-0 | 0.115164 | 0-0 | 0.08789210393908804 | 0-2 | None |
+| 5 | 0-2 | 0.094985 | 0-2 | 0.08771320075819558 | 0-0 | None |
+| 6 | 1-2 | 0.073794 | 1-0 | 0.06651631972341189 | None | None |
+| 7 | 2-1 | 0.050643 | 2-1 | 0.06437470857742886 | None | None |
+| 8 | 2-0 | 0.044735 | 2-2 | 0.05015796711910994 | None | None |
+| 9 | 0-3 | 0.035843 | 1-3 | 0.048724886033531166 | None | None |
+| 10 | 2-2 | 0.028665 | 0-3 | 0.04556153533753914 | None | None |
 
 ### Fixture 1556401 — Ekranas vs Žalgiris II (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-1 | 0.124032 | None | None | None | None |
-| 2 | 0-1 | 0.118959 | None | None | None | None |
-| 3 | 1-2 | 0.091472 | None | None | None | None |
-| 4 | 0-2 | 0.08773 | None | None | None | None |
-| 5 | 1-0 | 0.084091 | None | None | None | None |
-| 6 | 0-0 | 0.080652 | None | None | None | None |
-| 7 | 2-1 | 0.064661 | None | None | None | None |
-| 8 | 2-2 | 0.047686 | None | None | None | None |
-| 9 | 1-3 | 0.044972 | None | None | None | None |
-| 10 | 2-0 | 0.043839 | None | None | None | None |
+| 1 | 1-1 | 0.124032 | 1-1 | 0.12385423579321876 | 0-1 | None |
+| 2 | 0-1 | 0.118959 | 1-2 | 0.09553017547418907 | 1-1 | None |
+| 3 | 1-2 | 0.091472 | 0-2 | 0.07752588268234595 | 1-0 | None |
+| 4 | 0-2 | 0.08773 | 0-1 | 0.06879175739399716 | 1-2 | None |
+| 5 | 1-0 | 0.084091 | 2-1 | 0.06752992706124228 | 0-0 | None |
+| 6 | 0-0 | 0.080652 | 0-0 | 0.06527576182250625 | None | None |
+| 7 | 2-1 | 0.064661 | 2-2 | 0.0588578556630063 | None | None |
+| 8 | 2-2 | 0.047686 | 1-3 | 0.055508241794508945 | None | None |
+| 9 | 1-3 | 0.044972 | 1-0 | 0.05280499026341734 | None | None |
+| 10 | 2-0 | 0.043839 | 0-3 | 0.04504676579838474 | None | None |
 
 ### Fixture 1498685 — Acassuso vs Colon Santa Fe (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.232239 | None | None | None | None |
-| 2 | 0-1 | 0.225856 | None | None | None | None |
-| 3 | 1-0 | 0.11321 | None | None | None | None |
-| 4 | 1-1 | 0.110098 | None | None | None | None |
-| 5 | 0-2 | 0.109825 | None | None | None | None |
-| 6 | 1-2 | 0.053536 | None | None | None | None |
-| 7 | 0-3 | 0.035602 | None | None | None | None |
-| 8 | 2-0 | 0.027593 | None | None | None | None |
-| 9 | 2-1 | 0.026835 | None | None | None | None |
-| 10 | 1-3 | 0.017355 | None | None | None | None |
+| 1 | 0-0 | 0.232239 | 0-0 | 0.1679965714060369 | 0-1 | None |
+| 2 | 0-1 | 0.225856 | 0-1 | 0.15986614796322388 | 0-0 | None |
+| 3 | 1-0 | 0.11321 | 1-1 | 0.13555074034414763 | 1-1 | None |
+| 4 | 1-1 | 0.110098 | 0-2 | 0.11965803651915849 | 1-2 | None |
+| 5 | 0-2 | 0.109825 | 1-0 | 0.0879101134876519 | 1-0 | None |
+| 6 | 1-2 | 0.053536 | 1-2 | 0.07515947118371692 | None | None |
+| 7 | 0-3 | 0.035602 | 0-3 | 0.04998168331187895 | None | None |
+| 8 | 2-0 | 0.027593 | 2-1 | 0.037673441777776304 | None | None |
+| 9 | 2-1 | 0.026835 | 1-3 | 0.031394438650941436 | None | None |
+| 10 | 1-3 | 0.017355 | 2-0 | 0.030063880561462707 | None | None |
 
 ### Fixture 1498689 — Chacarita Juniors vs Agropecuario (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.257968 | None | None | None | None |
-| 2 | 1-0 | 0.215046 | None | None | None | None |
-| 3 | 0-1 | 0.13448 | None | None | None | None |
-| 4 | 1-1 | 0.112104 | None | None | None | None |
-| 5 | 2-0 | 0.089633 | None | None | None | None |
-| 6 | 2-1 | 0.046726 | None | None | None | None |
-| 7 | 0-2 | 0.035052 | None | None | None | None |
-| 8 | 1-2 | 0.02922 | None | None | None | None |
-| 9 | 3-0 | 0.024906 | None | None | None | None |
-| 10 | 3-1 | 0.012984 | None | None | None | None |
+| 1 | 0-0 | 0.257968 | 0-0 | 0.1964196062364096 | 1-1 | None |
+| 2 | 1-0 | 0.215046 | 1-0 | 0.16392126188451753 | 0-0 | None |
+| 3 | 0-1 | 0.13448 | 1-1 | 0.14156412285151165 | 1-0 | None |
+| 4 | 1-1 | 0.112104 | 0-1 | 0.10861009209734067 | 0-1 | None |
+| 5 | 2-0 | 0.089633 | 2-0 | 0.10016593739087215 | 2-1 | None |
+| 6 | 2-1 | 0.046726 | 2-1 | 0.0660575687552082 | None | None |
+| 7 | 0-2 | 0.035052 | 1-2 | 0.041309247991934306 | None | None |
+| 8 | 1-2 | 0.02922 | 0-2 | 0.03917143364915841 | None | None |
+| 9 | 3-0 | 0.024906 | 3-0 | 0.03521085956911359 | None | None |
+| 10 | 3-1 | 0.012984 | 3-1 | 0.023220905604270405 | None | None |
 
 ### Fixture 1498693 — Colegiales vs Gimnasia Jujuy (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.248517 | None | None | None | None |
-| 2 | 1-0 | 0.181359 | None | None | None | None |
-| 3 | 0-1 | 0.164637 | None | None | None | None |
-| 4 | 1-1 | 0.120147 | None | None | None | None |
-| 5 | 2-0 | 0.066175 | None | None | None | None |
-| 6 | 0-2 | 0.054535 | None | None | None | None |
-| 7 | 2-1 | 0.043839 | None | None | None | None |
-| 8 | 1-2 | 0.039797 | None | None | None | None |
-| 9 | 3-0 | 0.016097 | None | None | None | None |
-| 10 | 2-2 | 0.014521 | None | None | None | None |
+| 1 | 0-0 | 0.248517 | 1-1 | 0.15204359583199803 | 0-0 | None |
+| 2 | 1-0 | 0.181359 | 0-0 | 0.13751247742478134 | 1-1 | None |
+| 3 | 0-1 | 0.164637 | 1-0 | 0.11410776444715236 | 2-0 | None |
+| 4 | 1-1 | 0.120147 | 0-1 | 0.10519981118276295 | 1-0 | None |
+| 5 | 2-0 | 0.066175 | 2-1 | 0.07476204899817289 | 0-1 | None |
+| 6 | 0-2 | 0.054535 | 2-0 | 0.07410871727544355 | None | None |
+| 7 | 2-1 | 0.043839 | 1-2 | 0.0678690221953075 | None | None |
+| 8 | 1-2 | 0.039797 | 0-2 | 0.06107311755552893 | None | None |
+| 9 | 3-0 | 0.016097 | 2-2 | 0.03771057019939326 | None | None |
+| 10 | 2-2 | 0.014521 | 3-1 | 0.027693729341229118 | None | None |
 
 ### Fixture 1498694 — Defensores De Belgrano vs CA Estudiantes (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.264519 | None | None | None | None |
-| 2 | 1-0 | 0.188358 | None | None | None | None |
-| 3 | 0-1 | 0.16341 | None | None | None | None |
-| 4 | 1-1 | 0.116361 | None | None | None | None |
-| 5 | 2-0 | 0.067063 | None | None | None | None |
-| 6 | 0-2 | 0.050474 | None | None | None | None |
-| 7 | 2-1 | 0.041429 | None | None | None | None |
-| 8 | 1-2 | 0.035942 | None | None | None | None |
-| 9 | 3-0 | 0.015918 | None | None | None | None |
-| 10 | 2-2 | 0.012797 | None | None | None | None |
+| 1 | 0-0 | 0.264519 | 0-0 | 0.20132656870900464 | 0-0 | None |
+| 2 | 1-0 | 0.188358 | 1-1 | 0.14816546944413592 | 1-1 | None |
+| 3 | 0-1 | 0.16341 | 1-0 | 0.14724090584629687 | 1-0 | None |
+| 4 | 1-1 | 0.116361 | 0-1 | 0.12999648643230485 | 1-2 | None |
+| 5 | 2-0 | 0.067063 | 2-0 | 0.07556909776827052 | 0-1 | None |
+| 6 | 0-2 | 0.050474 | 2-1 | 0.059372511140159547 | None | None |
+| 7 | 2-1 | 0.041429 | 0-2 | 0.05687650312608549 | None | None |
+| 8 | 1-2 | 0.035942 | 1-2 | 0.051508599618972056 | None | None |
+| 9 | 3-0 | 0.015918 | 2-2 | 0.02332365466303387 | None | None |
+| 10 | 2-2 | 0.012797 | 3-0 | 0.02281234010867303 | None | None |
 
 ### Fixture 1498697 — Ferro Carril Oeste vs Godoy Cruz (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.241274 | None | None | None | None |
-| 2 | 1-0 | 0.237703 | None | None | None | None |
-| 3 | 2-0 | 0.117092 | None | None | None | None |
-| 4 | 0-1 | 0.105346 | None | None | None | None |
-| 5 | 1-1 | 0.103786 | None | None | None | None |
-| 6 | 2-1 | 0.051125 | None | None | None | None |
-| 7 | 3-0 | 0.038453 | None | None | None | None |
-| 8 | 0-2 | 0.022998 | None | None | None | None |
-| 9 | 1-2 | 0.022658 | None | None | None | None |
-| 10 | 3-1 | 0.016789 | None | None | None | None |
+| 1 | 0-0 | 0.241274 | 0-0 | 0.1821671371024656 | 1-1 | None |
+| 2 | 1-0 | 0.237703 | 1-0 | 0.17392858076734835 | 1-0 | None |
+| 3 | 2-0 | 0.117092 | 1-1 | 0.12859092056219046 | 2-0 | None |
+| 4 | 0-1 | 0.105346 | 2-0 | 0.12838675257886897 | 0-0 | None |
+| 5 | 1-1 | 0.103786 | 0-1 | 0.08531930968722679 | 2-1 | None |
+| 6 | 2-1 | 0.051125 | 2-1 | 0.07047476449556257 | None | None |
+| 7 | 3-0 | 0.038453 | 3-0 | 0.053006694964419065 | None | None |
+| 8 | 0-2 | 0.022998 | 1-2 | 0.031233113943052636 | None | None |
+| 9 | 1-2 | 0.022658 | 3-1 | 0.02909672742139597 | None | None |
+| 10 | 3-1 | 0.016789 | 0-2 | 0.025216425175260047 | None | None |
 
 ### Fixture 1498698 — Nueva Chicago vs San Martin Tucuman (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.267383 | None | None | None | None |
-| 2 | 1-0 | 0.179807 | None | None | None | None |
-| 3 | 0-1 | 0.172891 | None | None | None | None |
-| 4 | 1-1 | 0.116264 | None | None | None | None |
-| 5 | 2-0 | 0.060457 | None | None | None | None |
-| 6 | 0-2 | 0.055896 | None | None | None | None |
-| 7 | 2-1 | 0.039092 | None | None | None | None |
-| 8 | 1-2 | 0.037588 | None | None | None | None |
-| 9 | 3-0 | 0.013552 | None | None | None | None |
-| 10 | 2-2 | 0.012639 | None | None | None | None |
+| 1 | 0-0 | 0.267383 | 0-0 | 0.17943157981997895 | 1-1 | None |
+| 2 | 1-0 | 0.179807 | 1-1 | 0.15156059798415472 | 0-0 | None |
+| 3 | 0-1 | 0.172891 | 1-0 | 0.13218815524137745 | 1-0 | None |
+| 4 | 1-1 | 0.116264 | 0-1 | 0.12777465035529498 | 2-1 | None |
+| 5 | 2-0 | 0.060457 | 2-0 | 0.06974467921444191 | 0-1 | None |
+| 6 | 0-2 | 0.055896 | 0-2 | 0.0644829148485434 | None | None |
+| 7 | 2-1 | 0.039092 | 2-1 | 0.062229607476497355 | None | None |
+| 8 | 1-2 | 0.037588 | 1-2 | 0.0598361788310548 | None | None |
+| 9 | 3-0 | 0.013552 | 2-2 | 0.02776214680672772 | None | None |
+| 10 | 2-2 | 0.012639 | 3-0 | 0.021572924175817125 | None | None |
 
 ### Fixture 1498700 — San Martin S.J. vs Atletico DE Rafaela (2026-08-01)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.260466 | None | None | None | None |
-| 2 | 0-0 | 0.249728 | None | None | None | None |
-| 3 | 2-0 | 0.135832 | None | None | None | None |
-| 4 | 1-1 | 0.089701 | None | None | None | None |
-| 5 | 0-1 | 0.086003 | None | None | None | None |
-| 6 | 3-0 | 0.047224 | None | None | None | None |
-| 7 | 2-1 | 0.046779 | None | None | None | None |
-| 8 | 3-1 | 0.016263 | None | None | None | None |
-| 9 | 1-2 | 0.015446 | None | None | None | None |
-| 10 | 0-2 | 0.014809 | None | None | None | None |
+| 1 | 1-0 | 0.260466 | 1-0 | 0.15760592491802594 | 2-0 | None |
+| 2 | 0-0 | 0.249728 | 2-0 | 0.15283639751900627 | 1-0 | None |
+| 3 | 2-0 | 0.135832 | 0-0 | 0.1405264001706211 | 0-0 | None |
+| 4 | 1-1 | 0.089701 | 1-1 | 0.11405040080370153 | 1-1 | None |
+| 5 | 0-1 | 0.086003 | 3-0 | 0.07891139943429411 | 0-1 | None |
+| 6 | 3-0 | 0.047224 | 2-1 | 0.07816684520605843 | None | None |
+| 7 | 2-1 | 0.046779 | 0-1 | 0.06082811573754866 | None | None |
+| 8 | 3-1 | 0.016263 | 3-1 | 0.04035854838705452 | None | None |
+| 9 | 1-2 | 0.015446 | 4-0 | 0.030557228489556977 | None | None |
+| 10 | 0-2 | 0.014809 | 1-2 | 0.02580977202816542 | None | None |
 
 ### Fixture 1494226 — IF Brommapojkarna vs Malmo FF (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.159509 | None | None | None | None |
-| 2 | 0-0 | 0.134801 | None | None | None | None |
-| 3 | 1-1 | 0.130903 | None | None | None | None |
-| 4 | 1-0 | 0.110627 | None | None | None | None |
-| 5 | 0-2 | 0.094372 | None | None | None | None |
-| 6 | 1-2 | 0.077448 | None | None | None | None |
-| 7 | 2-1 | 0.053714 | None | None | None | None |
-| 8 | 2-0 | 0.045394 | None | None | None | None |
-| 9 | 0-3 | 0.037223 | None | None | None | None |
-| 10 | 2-2 | 0.031779 | None | None | None | None |
+| 1 | 0-1 | 0.159509 | 1-1 | 0.1275483301125009 | 1-2 | None |
+| 2 | 0-0 | 0.134801 | 1-2 | 0.09569906091602814 | 1-1 | None |
+| 3 | 1-1 | 0.130903 | 0-2 | 0.08137474171123821 | 0-1 | None |
+| 4 | 1-0 | 0.110627 | 0-1 | 0.07482202239067229 | 0-2 | None |
+| 5 | 0-2 | 0.094372 | 0-0 | 0.07127637491703252 | 2-1 | None |
+| 6 | 1-2 | 0.077448 | 2-1 | 0.0663719215183085 | None | None |
+| 7 | 2-1 | 0.053714 | 1-0 | 0.05638946758067935 | None | None |
+| 8 | 2-0 | 0.045394 | 2-2 | 0.05627243827518572 | None | None |
+| 9 | 0-3 | 0.037223 | 1-3 | 0.054091342394990895 | None | None |
+| 10 | 2-2 | 0.031779 | 0-3 | 0.04599490291831401 | None | None |
 
 ### Fixture 1494230 — IFK Goteborg vs Degerfors IF (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.208831 | None | None | None | None |
-| 2 | 0-0 | 0.154095 | None | None | None | None |
-| 3 | 2-0 | 0.141504 | None | None | None | None |
-| 4 | 1-1 | 0.107543 | None | None | None | None |
-| 5 | 0-1 | 0.079356 | None | None | None | None |
-| 6 | 2-1 | 0.072872 | None | None | None | None |
-| 7 | 3-0 | 0.063923 | None | None | None | None |
-| 8 | 3-1 | 0.032919 | None | None | None | None |
-| 9 | 1-2 | 0.027691 | None | None | None | None |
-| 10 | 4-0 | 0.021657 | None | None | None | None |
+| 1 | 1-0 | 0.208831 | 2-0 | 0.1360383526421112 | 2-0 | None |
+| 2 | 0-0 | 0.154095 | 1-0 | 0.11799067654945761 | 0-0 | None |
+| 3 | 2-0 | 0.141504 | 1-1 | 0.11682981438255317 | 2-1 | None |
+| 4 | 1-1 | 0.107543 | 0-0 | 0.09988492785969055 | 1-1 | None |
+| 5 | 0-1 | 0.079356 | 2-1 | 0.09171126246377112 | 1-0 | None |
+| 6 | 2-1 | 0.072872 | 3-0 | 0.08044842273163234 | None | None |
+| 7 | 3-0 | 0.063923 | 3-1 | 0.05423489970763764 | None | None |
+| 8 | 3-1 | 0.032919 | 0-1 | 0.05316965414993515 | None | None |
+| 9 | 1-2 | 0.027691 | 4-0 | 0.035680831513561 | None | None |
+| 10 | 4-0 | 0.021657 | 1-2 | 0.0348503027451381 | None | None |
 
 ### Fixture 1495746 — VPS vs Inter Turku (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.175316 | None | None | None | None |
-| 2 | 0-1 | 0.158258 | None | None | None | None |
-| 3 | 1-0 | 0.146996 | None | None | None | None |
-| 4 | 1-1 | 0.132694 | None | None | None | None |
-| 5 | 0-2 | 0.07143 | None | None | None | None |
-| 6 | 2-0 | 0.061626 | None | None | None | None |
-| 7 | 1-2 | 0.059891 | None | None | None | None |
-| 8 | 2-1 | 0.055629 | None | None | None | None |
-| 9 | 2-2 | 0.025108 | None | None | None | None |
-| 10 | 0-3 | 0.021493 | None | None | None | None |
+| 1 | 0-0 | 0.175316 | 1-1 | 0.13446933332160196 | 1-1 | None |
+| 2 | 0-1 | 0.158258 | 1-2 | 0.08639642176974732 | 0-1 | None |
+| 3 | 1-0 | 0.146996 | 2-1 | 0.08024838294273326 | 1-2 | None |
+| 4 | 1-1 | 0.132694 | 0-0 | 0.07623336819875427 | 1-0 | None |
+| 5 | 0-2 | 0.07143 | 0-1 | 0.07157631796968081 | 2-0 | None |
+| 6 | 2-0 | 0.061626 | 1-0 | 0.06758374182136537 | None | None |
+| 7 | 1-2 | 0.059891 | 0-2 | 0.06405813326917448 | None | None |
+| 8 | 2-1 | 0.055629 | 2-2 | 0.05826224800565642 | None | None |
+| 9 | 2-2 | 0.025108 | 2-0 | 0.055265658169406276 | None | None |
+| 10 | 0-3 | 0.021493 | 1-3 | 0.041817247628465566 | None | None |
 
 ### Fixture 1497642 — United Nordic vs Ljungskile SK (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.154505 | None | None | None | None |
-| 2 | 1-1 | 0.131983 | None | None | None | None |
-| 3 | 0-0 | 0.131821 | None | None | None | None |
-| 4 | 0-1 | 0.112605 | None | None | None | None |
-| 5 | 2-0 | 0.090546 | None | None | None | None |
-| 6 | 2-1 | 0.077347 | None | None | None | None |
-| 7 | 1-2 | 0.056372 | None | None | None | None |
-| 8 | 0-2 | 0.048095 | None | None | None | None |
-| 9 | 3-0 | 0.035376 | None | None | None | None |
-| 10 | 2-2 | 0.033036 | None | None | None | None |
+| 1 | 1-0 | 0.154505 | 1-1 | 0.12888351798815412 | 2-1 | None |
+| 2 | 1-1 | 0.131983 | 2-1 | 0.09450651439306179 | 1-1 | None |
+| 3 | 0-0 | 0.131821 | 2-0 | 0.07824793838791107 | 1-2 | None |
+| 4 | 0-1 | 0.112605 | 1-0 | 0.07408990806012221 | 2-2 | None |
+| 5 | 2-0 | 0.090546 | 0-0 | 0.07181187979412534 | 2-0 | None |
+| 6 | 2-1 | 0.077347 | 1-2 | 0.06887756490209031 | None | None |
+| 7 | 1-2 | 0.056372 | 0-1 | 0.05801865403800488 | None | None |
+| 8 | 0-2 | 0.048095 | 2-2 | 0.057071671450617194 | None | None |
+| 9 | 3-0 | 0.035376 | 3-1 | 0.05220514349920211 | None | None |
+| 10 | 2-2 | 0.033036 | 3-0 | 0.04322394999214488 | None | None |
 
 ### Fixture 1515895 — Tukums vs FK Liepaja (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-1 | 0.103155 | None | None | None | None |
-| 2 | 0-1 | 0.101723 | None | None | None | None |
-| 3 | 1-2 | 0.099432 | None | None | None | None |
-| 4 | 0-2 | 0.098051 | None | None | None | None |
-| 5 | 1-3 | 0.063895 | None | None | None | None |
-| 6 | 0-3 | 0.063008 | None | None | None | None |
-| 7 | 1-0 | 0.053509 | None | None | None | None |
-| 8 | 0-0 | 0.052766 | None | None | None | None |
-| 9 | 2-1 | 0.052304 | None | None | None | None |
-| 10 | 2-2 | 0.050416 | None | None | None | None |
+| 1 | 1-1 | 0.103155 | 1-1 | 0.10491857149911213 | 1-1 | None |
+| 2 | 0-1 | 0.101723 | 1-2 | 0.0985815545999696 | 0-1 | None |
+| 3 | 1-2 | 0.099432 | 0-2 | 0.08825418067096852 | 1-0 | None |
+| 4 | 0-2 | 0.098051 | 1-3 | 0.06977922483688409 | 0-0 | None |
+| 5 | 1-3 | 0.063895 | 0-3 | 0.062469174287462494 | 0-2 | None |
+| 6 | 0-3 | 0.063008 | 0-1 | 0.06017544717680242 | None | None |
+| 7 | 1-0 | 0.053509 | 2-2 | 0.055058711289717184 | None | None |
+| 8 | 0-0 | 0.052766 | 2-1 | 0.051856631787844006 | None | None |
+| 9 | 2-1 | 0.052304 | 0-0 | 0.05121397301434972 | None | None |
+| 10 | 2-2 | 0.050416 | 2-3 | 0.03897234335474203 | None | None |
 
 ### Fixture 1495747 — AC Oulu vs Ilves (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.169058 | None | None | None | None |
-| 2 | 1-0 | 0.157631 | None | None | None | None |
-| 3 | 0-1 | 0.142872 | None | None | None | None |
-| 4 | 1-1 | 0.133215 | None | None | None | None |
-| 5 | 2-0 | 0.073488 | None | None | None | None |
-| 6 | 2-1 | 0.062105 | None | None | None | None |
-| 7 | 0-2 | 0.060371 | None | None | None | None |
-| 8 | 1-2 | 0.05629 | None | None | None | None |
-| 9 | 2-2 | 0.026243 | None | None | None | None |
-| 10 | 3-0 | 0.02284 | None | None | None | None |
+| 1 | 0-0 | 0.169058 | 1-1 | 0.13011585850972124 | 1-1 | None |
+| 2 | 1-0 | 0.157631 | 2-1 | 0.08780093646915434 | 1-2 | None |
+| 3 | 0-1 | 0.142872 | 1-2 | 0.07957989510479271 | 2-1 | None |
+| 4 | 1-1 | 0.133215 | 0-0 | 0.06959425873378819 | 0-1 | None |
+| 5 | 2-0 | 0.073488 | 1-0 | 0.06678936727496321 | 0-0 | None |
+| 6 | 2-1 | 0.062105 | 2-0 | 0.06352103679905655 | None | None |
+| 7 | 0-2 | 0.060371 | 0-1 | 0.06193729241612203 | None | None |
+| 8 | 1-2 | 0.05629 | 2-2 | 0.06068071959567711 | None | None |
+| 9 | 2-2 | 0.026243 | 0-2 | 0.05218263516885657 | None | None |
+| 10 | 3-0 | 0.02284 | 3-1 | 0.04463291470881189 | None | None |
 
 ### Fixture 1556402 — Dainava vs Tauras (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.132874 | None | None | None | None |
-| 2 | 1-1 | 0.132131 | None | None | None | None |
-| 3 | 0-0 | 0.107584 | None | None | None | None |
-| 4 | 0-1 | 0.106983 | None | None | None | None |
-| 5 | 2-0 | 0.082054 | None | None | None | None |
-| 6 | 2-1 | 0.081596 | None | None | None | None |
-| 7 | 1-2 | 0.065697 | None | None | None | None |
-| 8 | 0-2 | 0.053193 | None | None | None | None |
-| 9 | 2-2 | 0.04057 | None | None | None | None |
-| 10 | 3-0 | 0.033781 | None | None | None | None |
+| 1 | 1-0 | 0.132874 | 1-1 | 0.14130838830702613 | 1-1 | None |
+| 2 | 1-1 | 0.132131 | 0-0 | 0.09320008675158815 | 2-1 | None |
+| 3 | 0-0 | 0.107584 | 1-0 | 0.0891272766301664 | 1-0 | None |
+| 4 | 0-1 | 0.106983 | 2-1 | 0.08883437332051186 | 2-2 | None |
+| 5 | 2-0 | 0.082054 | 2-0 | 0.07765765702286585 | 1-2 | None |
+| 6 | 2-1 | 0.081596 | 0-1 | 0.07492823510909206 | None | None |
+| 7 | 1-2 | 0.065697 | 1-2 | 0.07152473598805746 | None | None |
+| 8 | 0-2 | 0.053193 | 2-2 | 0.05080983759865718 | None | None |
+| 9 | 2-2 | 0.04057 | 0-2 | 0.050342493697485516 | None | None |
+| 10 | 3-0 | 0.033781 | 3-1 | 0.04207085394296168 | None | None |
 
 ### Fixture 1556403 — FA Šiauliai II vs BFA (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-2 | 0.134876 | None | None | None | None |
-| 2 | 0-1 | 0.131502 | None | None | None | None |
-| 3 | 1-2 | 0.09386 | None | None | None | None |
-| 4 | 0-3 | 0.092224 | None | None | None | None |
-| 5 | 1-1 | 0.091512 | None | None | None | None |
-| 6 | 1-3 | 0.064179 | None | None | None | None |
-| 7 | 0-0 | 0.064106 | None | None | None | None |
-| 8 | 0-4 | 0.047295 | None | None | None | None |
-| 9 | 1-0 | 0.044612 | None | None | None | None |
-| 10 | 1-4 | 0.032913 | None | None | None | None |
+| 1 | 0-2 | 0.134876 | 0-2 | 0.11127507768833315 | 0-2 | None |
+| 2 | 0-1 | 0.131502 | 1-2 | 0.09346230505402138 | 0-1 | None |
+| 3 | 1-2 | 0.09386 | 0-3 | 0.09183328443022211 | 0-0 | None |
+| 4 | 0-3 | 0.092224 | 1-1 | 0.08531422720341078 | 1-3 | None |
+| 5 | 1-1 | 0.091512 | 1-3 | 0.07713272928525688 | 1-0 | None |
+| 6 | 1-3 | 0.064179 | 0-1 | 0.06095704247464608 | None | None |
+| 7 | 0-0 | 0.064106 | 0-4 | 0.056841246290989675 | None | None |
+| 8 | 0-4 | 0.047295 | 1-4 | 0.04774217201967623 | None | None |
+| 9 | 1-0 | 0.044612 | 0-0 | 0.04612112569042061 | None | None |
+| 10 | 1-4 | 0.032913 | 2-2 | 0.03925048918176046 | None | None |
 
 ### Fixture 1494225 — AIK Stockholm vs Orgryte IS (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.199289 | None | None | None | None |
-| 2 | 2-0 | 0.171739 | None | None | None | None |
-| 3 | 0-0 | 0.115629 | None | None | None | None |
-| 4 | 3-0 | 0.098665 | None | None | None | None |
-| 5 | 1-1 | 0.086462 | None | None | None | None |
-| 6 | 2-1 | 0.074509 | None | None | None | None |
-| 7 | 0-1 | 0.050166 | None | None | None | None |
-| 8 | 3-1 | 0.042806 | None | None | None | None |
-| 9 | 4-0 | 0.042513 | None | None | None | None |
-| 10 | 1-2 | 0.018756 | None | None | None | None |
+| 1 | 1-0 | 0.199289 | 2-0 | 0.15171172157689766 | 2-0 | None |
+| 2 | 2-0 | 0.171739 | 3-0 | 0.11351913017902458 | 1-0 | None |
+| 3 | 0-0 | 0.115629 | 1-0 | 0.09572421961705571 | 1-1 | None |
+| 4 | 3-0 | 0.098665 | 1-1 | 0.08630835895132997 | 3-0 | None |
+| 5 | 1-1 | 0.086462 | 2-1 | 0.08572659867497598 | 4-0 | None |
+| 6 | 2-1 | 0.074509 | 0-0 | 0.0701445708278648 | None | None |
+| 7 | 0-1 | 0.050166 | 3-1 | 0.06414539900832227 | None | None |
+| 8 | 3-1 | 0.042806 | 4-0 | 0.06370598518686575 | None | None |
+| 9 | 4-0 | 0.042513 | 4-1 | 0.03599786073576559 | None | None |
+| 10 | 1-2 | 0.018756 | 0-1 | 0.03152595833006956 | None | None |
 
 ### Fixture 1494716 — Aalesund vs Tromso (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.183761 | None | None | None | None |
-| 2 | 0-0 | 0.140655 | None | None | None | None |
-| 3 | 1-1 | 0.120359 | None | None | None | None |
-| 4 | 0-2 | 0.120039 | None | None | None | None |
-| 5 | 1-0 | 0.092126 | None | None | None | None |
-| 6 | 1-2 | 0.078623 | None | None | None | None |
-| 7 | 0-3 | 0.052276 | None | None | None | None |
-| 8 | 2-1 | 0.039416 | None | None | None | None |
-| 9 | 1-3 | 0.034239 | None | None | None | None |
-| 10 | 2-0 | 0.03017 | None | None | None | None |
+| 1 | 0-1 | 0.183761 | 1-1 | 0.1214008551032182 | 1-1 | None |
+| 2 | 0-0 | 0.140655 | 0-2 | 0.10714864831971636 | 0-1 | None |
+| 3 | 1-1 | 0.120359 | 1-2 | 0.0985100532753108 | 1-2 | None |
+| 4 | 0-2 | 0.120039 | 0-1 | 0.08899692869135614 | 1-0 | None |
+| 5 | 1-0 | 0.092126 | 0-0 | 0.07768741357532136 | 1-3 | None |
+| 6 | 1-2 | 0.078623 | 0-3 | 0.06549870136844135 | None | None |
+| 7 | 0-3 | 0.052276 | 1-3 | 0.06021803039471055 | None | None |
+| 8 | 2-1 | 0.039416 | 1-0 | 0.05158174243559966 | None | None |
+| 9 | 1-3 | 0.034239 | 2-1 | 0.04938637659249977 | None | None |
+| 10 | 2-0 | 0.03017 | 2-2 | 0.0452839618067254 | None | None |
 
 ### Fixture 1494720 — KFUM Oslo vs Kristiansund BK (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.204169 | None | None | None | None |
-| 2 | 2-0 | 0.148112 | None | None | None | None |
-| 3 | 0-0 | 0.14072 | None | None | None | None |
-| 4 | 1-1 | 0.104146 | None | None | None | None |
-| 5 | 2-1 | 0.075552 | None | None | None | None |
-| 6 | 0-1 | 0.071781 | None | None | None | None |
-| 7 | 3-0 | 0.071631 | None | None | None | None |
-| 8 | 3-1 | 0.036539 | None | None | None | None |
-| 9 | 1-2 | 0.026562 | None | None | None | None |
-| 10 | 4-0 | 0.025982 | None | None | None | None |
+| 1 | 1-0 | 0.204169 | 2-0 | 0.143601977701332 | 1-0 | None |
+| 2 | 2-0 | 0.148112 | 1-0 | 0.12610249035048157 | 2-1 | None |
+| 3 | 0-0 | 0.14072 | 1-1 | 0.1141015486487494 | 1-1 | None |
+| 4 | 1-1 | 0.104146 | 0-0 | 0.10613487559802241 | 2-0 | None |
+| 5 | 2-1 | 0.075552 | 2-1 | 0.08871923902171773 | 3-1 | None |
+| 6 | 0-1 | 0.071781 | 3-0 | 0.08411508238666665 | None | None |
+| 7 | 3-0 | 0.071631 | 0-1 | 0.052846610129452964 | None | None |
+| 8 | 3-1 | 0.036539 | 3-1 | 0.05196743261513547 | None | None |
+| 9 | 1-2 | 0.026562 | 4-0 | 0.03695290551445913 | None | None |
+| 10 | 4-0 | 0.025982 | 1-2 | 0.031191803535740834 | None | None |
 
 ### Fixture 1494721 — Molde vs Sarpsborg 08 FF (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.173194 | None | None | None | None |
-| 2 | 2-0 | 0.145538 | None | None | None | None |
-| 3 | 0-0 | 0.103053 | None | None | None | None |
-| 4 | 1-1 | 0.10251 | None | None | None | None |
-| 5 | 2-1 | 0.086141 | None | None | None | None |
-| 6 | 3-0 | 0.081533 | None | None | None | None |
-| 7 | 0-1 | 0.060994 | None | None | None | None |
-| 8 | 3-1 | 0.048257 | None | None | None | None |
-| 9 | 4-0 | 0.034257 | None | None | None | None |
-| 10 | 1-2 | 0.030337 | None | None | None | None |
+| 1 | 1-0 | 0.173194 | 2-0 | 0.11710455531429559 | 1-1 | None |
+| 2 | 2-0 | 0.145538 | 2-1 | 0.0954798600556199 | 2-1 | None |
+| 3 | 0-0 | 0.103053 | 1-1 | 0.0932050094766432 | 2-0 | None |
+| 4 | 1-1 | 0.10251 | 3-0 | 0.09037191653221696 | 3-2 | None |
+| 5 | 2-1 | 0.086141 | 3-1 | 0.0736837087190654 | 1-0 | None |
+| 6 | 3-0 | 0.081533 | 1-0 | 0.07071607814184346 | None | None |
+| 7 | 0-1 | 0.060994 | 0-0 | 0.05441871893377127 | None | None |
+| 8 | 3-1 | 0.048257 | 4-0 | 0.05230635526380537 | None | None |
+| 9 | 4-0 | 0.034257 | 4-1 | 0.04264738862808358 | None | None |
+| 10 | 1-2 | 0.030337 | 2-2 | 0.038924206030129874 | None | None |
 
 ### Fixture 1515896 — Riga vs Grobiņa (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 2-0 | 0.217761 | None | None | None | None |
-| 2 | 1-0 | 0.181545 | None | None | None | None |
-| 3 | 3-0 | 0.174133 | None | None | None | None |
-| 4 | 4-0 | 0.104435 | None | None | None | None |
-| 5 | 0-0 | 0.075677 | None | None | None | None |
-| 6 | 5-0 | 0.050107 | None | None | None | None |
-| 7 | 2-1 | 0.039702 | None | None | None | None |
-| 8 | 1-1 | 0.0331 | None | None | None | None |
-| 9 | 3-1 | 0.031748 | None | None | None | None |
-| 10 | 6-0 | 0.020034 | None | None | None | None |
+| 1 | 2-0 | 0.217761 | 2-0 | 0.18145488262536827 | 3-0 | None |
+| 2 | 1-0 | 0.181545 | 3-0 | 0.17888732854402412 | 2-0 | None |
+| 3 | 3-0 | 0.174133 | 4-0 | 0.13226707866971352 | 3-1 | None |
+| 4 | 4-0 | 0.104435 | 5-0 | 0.07823731392138165 | 1-0 | None |
+| 5 | 0-0 | 0.075677 | 1-0 | 0.07552792290703875 | 2-1 | None |
+| 6 | 5-0 | 0.050107 | 0-0 | 0.045074668155815276 | None | None |
+| 7 | 2-1 | 0.039702 | 2-1 | 0.04078621784653267 | None | None |
+| 8 | 1-1 | 0.0331 | 3-1 | 0.0402091001708917 | None | None |
+| 9 | 3-1 | 0.031748 | 6-0 | 0.038565134972839483 | None | None |
+| 10 | 6-0 | 0.020034 | 1-1 | 0.031166619527169568 | None | None |
 
 ### Fixture 1547600 — Hegelmann Litauen vs TransINVEST Vilnius (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.168085 | None | None | None | None |
-| 2 | 0-2 | 0.121803 | None | None | None | None |
-| 3 | 1-1 | 0.118511 | None | None | None | None |
-| 4 | 0-0 | 0.115977 | None | None | None | None |
-| 5 | 1-2 | 0.085879 | None | None | None | None |
-| 6 | 1-0 | 0.081771 | None | None | None | None |
-| 7 | 0-3 | 0.058843 | None | None | None | None |
-| 8 | 2-1 | 0.041779 | None | None | None | None |
-| 9 | 1-3 | 0.041488 | None | None | None | None |
-| 10 | 2-2 | 0.030275 | None | None | None | None |
+| 1 | 0-1 | 0.168085 | 1-1 | 0.11605200943018854 | 1-1 | None |
+| 2 | 0-2 | 0.121803 | 0-2 | 0.10555367566197045 | 0-1 | None |
+| 3 | 1-1 | 0.118511 | 1-2 | 0.0992781782492409 | 0-2 | None |
+| 4 | 0-0 | 0.115977 | 0-1 | 0.08174878912703738 | 1-2 | None |
+| 5 | 1-2 | 0.085879 | 0-0 | 0.06982975338169026 | 2-0 | None |
+| 6 | 1-0 | 0.081771 | 0-3 | 0.06802392391085685 | None | None |
+| 7 | 0-3 | 0.058843 | 1-3 | 0.06397968806753707 | None | None |
+| 8 | 2-1 | 0.041779 | 2-1 | 0.04829750137811428 | None | None |
+| 9 | 1-3 | 0.041488 | 2-2 | 0.04668788943007452 | None | None |
+| 10 | 2-2 | 0.030275 | 1-0 | 0.04662566612724948 | None | None |
 
 ### Fixture 1515897 — Rīgas FS vs Super Nova (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | None | None | None | None | None | None |
-| 2 | None | None | None | None | None | None |
-| 3 | None | None | None | None | None | None |
-| 4 | None | None | None | None | None | None |
-| 5 | None | None | None | None | None | None |
-| 6 | None | None | None | None | None | None |
-| 7 | None | None | None | None | None | None |
-| 8 | None | None | None | None | None | None |
-| 9 | None | None | None | None | None | None |
-| 10 | None | None | None | None | None | None |
+| 1 | None | None | 1-1 | 0.1166346106702886 | None | None |
+| 2 | None | None | 2-1 | 0.08680854493832471 | None | None |
+| 3 | None | None | 1-2 | 0.07957449952679765 | None | None |
+| 4 | None | None | 2-2 | 0.06692484778414333 | None | None |
+| 5 | None | None | 2-0 | 0.05629989251984968 | None | None |
+| 6 | None | None | 0-0 | 0.053215166944150474 | None | None |
+| 7 | None | None | 1-0 | 0.052303319841822724 | None | None |
+| 8 | None | None | 0-1 | 0.04906288827588451 | None | None |
+| 9 | None | None | 3-1 | 0.04867261657028606 | None | None |
+| 10 | None | None | 0-2 | 0.04730754857570702 | None | None |
 
 ### Fixture 1494718 — Brann vs Rosenborg (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.165573 | None | None | None | None |
-| 2 | 2-0 | 0.122683 | None | None | None | None |
-| 3 | 1-1 | 0.117517 | None | None | None | None |
-| 4 | 0-0 | 0.111728 | None | None | None | None |
-| 5 | 2-1 | 0.087076 | None | None | None | None |
-| 6 | 0-1 | 0.0793 | None | None | None | None |
-| 7 | 3-0 | 0.060602 | None | None | None | None |
-| 8 | 3-1 | 0.043013 | None | None | None | None |
-| 9 | 1-2 | 0.041705 | None | None | None | None |
-| 10 | 2-2 | 0.030902 | None | None | None | None |
+| 1 | 1-0 | 0.165573 | 1-1 | 0.12311043601555739 | 1-1 | None |
+| 2 | 2-0 | 0.122683 | 2-0 | 0.1137362764591275 | 1-0 | None |
+| 3 | 1-1 | 0.117517 | 1-0 | 0.09793552866981953 | 2-1 | None |
+| 4 | 0-0 | 0.111728 | 2-1 | 0.09718103915268488 | 0-0 | None |
+| 5 | 2-1 | 0.087076 | 0-0 | 0.08563561651365521 | 3-1 | None |
+| 6 | 0-1 | 0.0793 | 3-0 | 0.06763521262980433 | None | None |
+| 7 | 3-0 | 0.060602 | 3-1 | 0.05779035898928182 | None | None |
+| 8 | 3-1 | 0.043013 | 0-1 | 0.05428567509320536 | None | None |
+| 9 | 1-2 | 0.041705 | 1-2 | 0.046544563616033666 | None | None |
+| 10 | 2-2 | 0.030902 | 2-2 | 0.041517775439877114 | None | None |
 
 ### Fixture 1498686 — Almagro vs Midland (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.270804 | None | None | None | None |
-| 2 | 0-1 | 0.177836 | None | None | None | None |
-| 3 | 1-0 | 0.175931 | None | None | None | None |
-| 4 | 1-1 | 0.115534 | None | None | None | None |
-| 5 | 0-2 | 0.058392 | None | None | None | None |
-| 6 | 2-0 | 0.057148 | None | None | None | None |
-| 7 | 1-2 | 0.037935 | None | None | None | None |
-| 8 | 2-1 | 0.037529 | None | None | None | None |
-| 9 | 0-3 | 0.012782 | None | None | None | None |
-| 10 | 3-0 | 0.012376 | None | None | None | None |
+| 1 | 0-0 | 0.270804 | 1-1 | 0.15292002192833373 | 1-1 | None |
+| 2 | 0-1 | 0.177836 | 0-0 | 0.1514792128364404 | 0-0 | None |
+| 3 | 1-0 | 0.175931 | 0-1 | 0.11754896036614869 | 1-0 | None |
+| 4 | 1-1 | 0.115534 | 1-0 | 0.11647800663948105 | 2-1 | None |
+| 5 | 0-2 | 0.058392 | 0-2 | 0.06839654139573473 | 0-1 | None |
+| 6 | 2-0 | 0.057148 | 1-2 | 0.06839421247407543 | None | None |
+| 7 | 1-2 | 0.037935 | 2-1 | 0.06766142254785729 | None | None |
+| 8 | 2-1 | 0.037529 | 2-0 | 0.06693876317038037 | None | None |
+| 9 | 0-3 | 0.012782 | 2-2 | 0.0341959418158583 | None | None |
+| 10 | 3-0 | 0.012376 | 0-3 | 0.02304497956542551 | None | None |
 
 ### Fixture 1498687 — Almirante Brown vs Racing Cordoba (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.280942 | None | None | None | None |
-| 2 | 1-0 | 0.218331 | None | None | None | None |
-| 3 | 0-1 | 0.138355 | None | None | None | None |
-| 4 | 1-1 | 0.107521 | None | None | None | None |
-| 5 | 2-0 | 0.084837 | None | None | None | None |
-| 6 | 2-1 | 0.041779 | None | None | None | None |
-| 7 | 0-2 | 0.034068 | None | None | None | None |
-| 8 | 1-2 | 0.026475 | None | None | None | None |
-| 9 | 3-0 | 0.021977 | None | None | None | None |
-| 10 | 3-1 | 0.010823 | None | None | None | None |
+| 1 | 0-0 | 0.280942 | 0-0 | 0.1597320636803684 | 1-1 | None |
+| 2 | 1-0 | 0.218331 | 1-1 | 0.14512704012533248 | 0-1 | None |
+| 3 | 0-1 | 0.138355 | 1-0 | 0.1439152160822762 | 1-0 | None |
+| 4 | 1-1 | 0.107521 | 2-0 | 0.10133572679443455 | 0-0 | None |
+| 5 | 2-0 | 0.084837 | 0-1 | 0.09731364153250956 | 2-1 | None |
+| 6 | 2-1 | 0.041779 | 2-1 | 0.07643872990250819 | None | None |
+| 7 | 0-2 | 0.034068 | 1-2 | 0.048438509870021663 | None | None |
+| 8 | 1-2 | 0.026475 | 0-2 | 0.04069276597794763 | None | None |
+| 9 | 3-0 | 0.021977 | 3-0 | 0.04020822443951583 | None | None |
+| 10 | 3-1 | 0.010823 | 3-1 | 0.030329536334468533 | None | None |
 
 ### Fixture 1498691 — Ciudad de Bolívar vs Atletico Mitre (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.26657 | None | None | None | None |
-| 2 | 1-0 | 0.221905 | None | None | None | None |
-| 3 | 0-1 | 0.130532 | None | None | None | None |
-| 4 | 1-1 | 0.108661 | None | None | None | None |
-| 5 | 2-0 | 0.092362 | None | None | None | None |
-| 6 | 2-1 | 0.045227 | None | None | None | None |
-| 7 | 0-2 | 0.031959 | None | None | None | None |
-| 8 | 1-2 | 0.026604 | None | None | None | None |
-| 9 | 3-0 | 0.025629 | None | None | None | None |
-| 10 | 3-1 | 0.01255 | None | None | None | None |
+| 1 | 0-0 | 0.26657 | 0-0 | 0.1789679377891181 | 0-0 | None |
+| 2 | 1-0 | 0.221905 | 1-0 | 0.1583714820699829 | 0-1 | None |
+| 3 | 0-1 | 0.130532 | 1-1 | 0.14136589710630243 | 1-1 | None |
+| 4 | 1-1 | 0.108661 | 2-0 | 0.10633729420608642 | 2-1 | None |
+| 5 | 2-0 | 0.092362 | 0-1 | 0.09985627160952476 | 1-0 | None |
+| 6 | 2-1 | 0.045227 | 2-1 | 0.07151449778791578 | None | None |
+| 7 | 0-2 | 0.031959 | 1-2 | 0.04206730615872772 | None | None |
+| 8 | 1-2 | 0.026604 | 3-0 | 0.04052492589344423 | None | None |
+| 9 | 3-0 | 0.025629 | 0-2 | 0.0367948319282166 | None | None |
+| 10 | 3-1 | 0.01255 | 3-1 | 0.027254029217120036 | None | None |
 
 ### Fixture 1498701 — San Telmo vs San Miguel (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | None | None | None | None | None | None |
-| 2 | None | None | None | None | None | None |
-| 3 | None | None | None | None | None | None |
-| 4 | None | None | None | None | None | None |
-| 5 | None | None | None | None | None | None |
-| 6 | None | None | None | None | None | None |
-| 7 | None | None | None | None | None | None |
-| 8 | None | None | None | None | None | None |
-| 9 | None | None | None | None | None | None |
-| 10 | None | None | None | None | None | None |
+| 1 | None | None | 1-1 | 0.15061326082069706 | None | None |
+| 2 | None | None | 0-0 | 0.12376308102900054 | None | None |
+| 3 | None | None | 1-0 | 0.10550057222662088 | None | None |
+| 4 | None | None | 0-1 | 0.09815279031589884 | None | None |
+| 5 | None | None | 2-1 | 0.0778928124153328 | None | None |
+| 6 | None | None | 2-0 | 0.07270149355785861 | None | None |
+| 7 | None | None | 1-2 | 0.07140174471405507 | None | None |
+| 8 | None | None | 0-2 | 0.06108944944792285 | None | None |
+| 9 | None | None | 2-2 | 0.041727411151062835 | None | None |
+| 10 | None | None | 3-1 | 0.030347208109863872 | None | None |
 
 ### Fixture 1498696 — Deportivo Maipu vs Atlanta (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.238286 | None | None | None | None |
-| 2 | 1-0 | 0.173398 | None | None | None | None |
-| 3 | 0-1 | 0.168372 | None | None | None | None |
-| 4 | 1-1 | 0.122522 | None | None | None | None |
-| 5 | 2-0 | 0.06309 | None | None | None | None |
-| 6 | 0-2 | 0.059485 | None | None | None | None |
-| 7 | 2-1 | 0.044579 | None | None | None | None |
-| 8 | 1-2 | 0.043287 | None | None | None | None |
-| 9 | 2-2 | 0.01575 | None | None | None | None |
-| 10 | 3-0 | 0.015303 | None | None | None | None |
+| 1 | 0-0 | 0.238286 | 0-0 | 0.15799420920309468 | 1-1 | None |
+| 2 | 1-0 | 0.173398 | 1-1 | 0.1528433570450865 | 0-0 | None |
+| 3 | 0-1 | 0.168372 | 1-0 | 0.12174405966710598 | 1-0 | None |
+| 4 | 1-1 | 0.122522 | 0-1 | 0.11872497831392359 | 2-1 | None |
+| 5 | 2-0 | 0.06309 | 2-0 | 0.06964856412262423 | 0-1 | None |
+| 6 | 0-2 | 0.059485 | 2-1 | 0.06736114784715604 | None | None |
+| 7 | 2-1 | 0.044579 | 0-2 | 0.06566955754220807 | None | None |
+| 8 | 1-2 | 0.043287 | 1-2 | 0.06540868837222692 | None | None |
+| 9 | 2-2 | 0.01575 | 2-2 | 0.0325744277462604 | None | None |
+| 10 | 3-0 | 0.015303 | 3-0 | 0.023123962846568282 | None | None |
 
 ### Fixture 1498699 — Patronato vs Quilmes (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.25601 | None | None | None | None |
-| 2 | 1-0 | 0.186418 | None | None | None | None |
-| 3 | 0-1 | 0.162405 | None | None | None | None |
-| 4 | 1-1 | 0.118258 | None | None | None | None |
-| 5 | 2-0 | 0.067872 | None | None | None | None |
-| 6 | 0-2 | 0.051512 | None | None | None | None |
-| 7 | 2-1 | 0.043056 | None | None | None | None |
-| 8 | 1-2 | 0.03751 | None | None | None | None |
-| 9 | 3-0 | 0.016474 | None | None | None | None |
-| 10 | 2-2 | 0.013657 | None | None | None | None |
+| 1 | 0-0 | 0.25601 | 0-0 | 0.18693542719183046 | 1-1 | None |
+| 2 | 1-0 | 0.186418 | 1-1 | 0.15011362087232924 | 0-0 | None |
+| 3 | 0-1 | 0.162405 | 1-0 | 0.14102356507845393 | 2-0 | None |
+| 4 | 1-1 | 0.118258 | 0-1 | 0.12508237536626166 | 0-1 | None |
+| 5 | 2-0 | 0.067872 | 2-0 | 0.0762431119965319 | 2-1 | None |
+| 6 | 0-2 | 0.051512 | 2-1 | 0.06296945233920007 | None | None |
+| 7 | 2-1 | 0.043056 | 0-2 | 0.057865899511361625 | None | None |
+| 8 | 1-2 | 0.03751 | 1-2 | 0.054858125433167 | None | None |
+| 9 | 3-0 | 0.016474 | 2-2 | 0.0260033452469723 | None | None |
+| 10 | 2-2 | 0.013657 | 3-0 | 0.0240933735679654 | None | None |
 
 ### Fixture 1498702 — Temperley vs Gimnasia Y Tiro (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.256703 | None | None | None | None |
-| 2 | 1-0 | 0.237503 | None | None | None | None |
-| 3 | 0-1 | 0.111571 | None | None | None | None |
-| 4 | 2-0 | 0.109869 | None | None | None | None |
-| 5 | 1-1 | 0.103226 | None | None | None | None |
-| 6 | 2-1 | 0.047753 | None | None | None | None |
-| 7 | 3-0 | 0.033884 | None | None | None | None |
-| 8 | 0-2 | 0.024246 | None | None | None | None |
-| 9 | 1-2 | 0.022433 | None | None | None | None |
-| 10 | 3-1 | 0.014727 | None | None | None | None |
+| 1 | 0-0 | 0.256703 | 1-0 | 0.14994267737036232 | 0-0 | None |
+| 2 | 1-0 | 0.237503 | 0-0 | 0.1482469209043041 | 1-0 | None |
+| 3 | 0-1 | 0.111571 | 1-1 | 0.1330150490223874 | 1-1 | None |
+| 4 | 2-0 | 0.109869 | 2-0 | 0.12528803899704924 | 0-1 | None |
+| 5 | 1-1 | 0.103226 | 2-1 | 0.08080296087495718 | 2-0 | None |
+| 6 | 2-1 | 0.047753 | 0-1 | 0.0785521062649953 | None | None |
+| 7 | 3-0 | 0.033884 | 3-0 | 0.05733545882700093 | None | None |
+| 8 | 0-2 | 0.024246 | 1-2 | 0.037958583976571154 | None | None |
+| 9 | 1-2 | 0.022433 | 3-1 | 0.036977790325658996 | None | None |
+| 10 | 3-1 | 0.014727 | 0-2 | 0.027648722371956154 | None | None |
 
 ### Fixture 1498690 — Chaco For Ever vs Deportivo Moron (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.250432 | None | None | None | None |
-| 2 | 0-1 | 0.174304 | None | None | None | None |
-| 3 | 1-0 | 0.172436 | None | None | None | None |
-| 4 | 1-1 | 0.120018 | None | None | None | None |
-| 5 | 0-2 | 0.060659 | None | None | None | None |
-| 6 | 2-0 | 0.059366 | None | None | None | None |
-| 7 | 1-2 | 0.041767 | None | None | None | None |
-| 8 | 2-1 | 0.04132 | None | None | None | None |
-| 9 | 2-2 | 0.014379 | None | None | None | None |
-| 10 | 0-3 | 0.014073 | None | None | None | None |
+| 1 | 0-0 | 0.250432 | 1-1 | 0.15210844252557465 | 1-1 | None |
+| 2 | 0-1 | 0.174304 | 0-0 | 0.13399751764685874 | 0-0 | None |
+| 3 | 1-0 | 0.172436 | 0-1 | 0.10821434937455937 | 1-0 | None |
+| 4 | 1-1 | 0.120018 | 1-0 | 0.10724243813324563 | 2-1 | None |
+| 5 | 0-2 | 0.060659 | 1-2 | 0.07273803025421936 | 0-1 | None |
+| 6 | 2-0 | 0.059366 | 2-1 | 0.07195872370160364 | None | None |
+| 7 | 1-2 | 0.041767 | 0-2 | 0.068033523617974 | None | None |
+| 8 | 2-1 | 0.04132 | 2-0 | 0.06658352693496225 | None | None |
+| 9 | 2-2 | 0.014379 | 2-2 | 0.038883926363810516 | None | None |
+| 10 | 0-3 | 0.014073 | 1-3 | 0.026203357209633744 | None | None |
 
 ### Fixture 1498692 — Club Atlético Güemes vs Tristan Suarez (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.27038 | None | None | None | None |
-| 2 | 0-1 | 0.179309 | None | None | None | None |
-| 3 | 1-0 | 0.174328 | None | None | None | None |
-| 4 | 1-1 | 0.11561 | None | None | None | None |
-| 5 | 0-2 | 0.059457 | None | None | None | None |
-| 6 | 2-0 | 0.056199 | None | None | None | None |
-| 7 | 1-2 | 0.038335 | None | None | None | None |
-| 8 | 2-1 | 0.03727 | None | None | None | None |
-| 9 | 0-3 | 0.013143 | None | None | None | None |
-| 10 | 2-2 | 0.012358 | None | None | None | None |
+| 1 | 0-0 | 0.27038 | 0-0 | 0.16512706616904396 | 1-1 | None |
+| 2 | 0-1 | 0.179309 | 1-1 | 0.15260391781411228 | 0-0 | None |
+| 3 | 1-0 | 0.174328 | 0-1 | 0.1251152433094164 | 1-0 | None |
+| 4 | 1-1 | 0.11561 | 1-0 | 0.12212741109375477 | 2-1 | None |
+| 5 | 0-2 | 0.059457 | 0-2 | 0.069453164369913 | 0-1 | None |
+| 6 | 2-0 | 0.056199 | 2-0 | 0.06564814382360104 | None | None |
+| 7 | 1-2 | 0.038335 | 1-2 | 0.06551156162526536 | None | None |
+| 8 | 2-1 | 0.03727 | 2-1 | 0.06369174663212532 | None | None |
+| 9 | 0-3 | 0.013143 | 2-2 | 0.030896826267862075 | None | None |
+| 10 | 2-2 | 0.012358 | 0-3 | 0.02246112426135617 | None | None |
 
 ### Fixture 1498695 — Deportivo Madryn vs All Boys (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.257314 | None | None | None | None |
-| 2 | 1-0 | 0.25024 | None | None | None | None |
-| 3 | 2-0 | 0.12168 | None | None | None | None |
-| 4 | 0-1 | 0.099053 | None | None | None | None |
-| 5 | 1-1 | 0.09633 | None | None | None | None |
-| 6 | 2-1 | 0.046841 | None | None | None | None |
-| 7 | 3-0 | 0.039445 | None | None | None | None |
-| 8 | 0-2 | 0.019065 | None | None | None | None |
-| 9 | 1-2 | 0.018541 | None | None | None | None |
-| 10 | 3-1 | 0.015184 | None | None | None | None |
+| 1 | 0-0 | 0.257314 | 1-0 | 0.14405887973561615 | 1-0 | None |
+| 2 | 1-0 | 0.25024 | 2-0 | 0.13823759437934094 | 2-0 | None |
+| 3 | 2-0 | 0.12168 | 0-0 | 0.13141735521222145 | 1-1 | None |
+| 4 | 0-1 | 0.099053 | 1-1 | 0.12366514836218452 | 2-1 | None |
+| 5 | 1-1 | 0.09633 | 2-1 | 0.08404675752149525 | 0-0 | None |
+| 6 | 2-1 | 0.046841 | 3-0 | 0.07077615940466601 | None | None |
+| 7 | 3-0 | 0.039445 | 0-1 | 0.0656188056805495 | None | None |
+| 8 | 0-2 | 0.019065 | 3-1 | 0.0430310346074399 | None | None |
+| 9 | 1-2 | 0.018541 | 1-2 | 0.03326853519271031 | None | None |
+| 10 | 3-1 | 0.015184 | 4-0 | 0.02717747347907757 | None | None |
 
 ### Fixture 1498688 — Central Norte vs Los Andes (2026-08-02)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | None | None | None | None | None | None |
-| 2 | None | None | None | None | None | None |
-| 3 | None | None | None | None | None | None |
-| 4 | None | None | None | None | None | None |
-| 5 | None | None | None | None | None | None |
-| 6 | None | None | None | None | None | None |
-| 7 | None | None | None | None | None | None |
-| 8 | None | None | None | None | None | None |
-| 9 | None | None | None | None | None | None |
-| 10 | None | None | None | None | None | None |
+| 1 | None | None | 1-1 | 0.15074418625158248 | None | None |
+| 2 | None | None | 0-0 | 0.12465767533527405 | None | None |
+| 3 | None | None | 1-0 | 0.10605136641818842 | None | None |
+| 4 | None | None | 0-1 | 0.09865894017631179 | None | None |
+| 5 | None | None | 2-1 | 0.0776741312532275 | None | None |
+| 6 | None | None | 2-0 | 0.07276469167413474 | None | None |
+| 7 | None | None | 1-2 | 0.07120128698212522 | None | None |
+| 8 | None | None | 0-2 | 0.061142553420627126 | None | None |
+| 9 | None | None | 2-2 | 0.04145740555709814 | None | None |
+| 10 | None | None | 3-1 | 0.030150840405162284 | None | None |
 
 ### Fixture 1514248 — Vestri vs Grotta (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.142573 | None | None | None | None |
-| 2 | 1-1 | 0.132205 | None | None | None | None |
-| 3 | 0-0 | 0.117146 | None | None | None | None |
-| 4 | 0-1 | 0.108627 | None | None | None | None |
-| 5 | 2-0 | 0.08676 | None | None | None | None |
-| 6 | 2-1 | 0.08045 | None | None | None | None |
-| 7 | 1-2 | 0.061296 | None | None | None | None |
-| 8 | 0-2 | 0.050364 | None | None | None | None |
-| 9 | 2-2 | 0.0373 | None | None | None | None |
-| 10 | 3-0 | 0.035197 | None | None | None | None |
+| 1 | 1-0 | 0.142573 | 1-1 | 0.1077700657521169 | 1-1 | None |
+| 2 | 1-1 | 0.132205 | 2-1 | 0.09154577838052311 | 2-1 | None |
+| 3 | 0-0 | 0.117146 | 1-2 | 0.06974916448039856 | 3-1 | None |
+| 4 | 0-1 | 0.108627 | 2-2 | 0.06695108614234922 | 1-2 | None |
+| 5 | 2-0 | 0.08676 | 2-0 | 0.06258770411489091 | 2-0 | None |
+| 6 | 2-1 | 0.08045 | 3-1 | 0.05858220037455556 | None | None |
+| 7 | 1-2 | 0.061296 | 1-0 | 0.04893062110577783 | None | None |
+| 8 | 0-2 | 0.050364 | 0-0 | 0.04636255749673741 | None | None |
+| 9 | 2-2 | 0.0373 | 3-2 | 0.042843504234376474 | None | None |
+| 10 | 3-0 | 0.035197 | 0-1 | 0.04023245563975303 | None | None |
 
 ### Fixture 1515898 — Auda vs Ogre United (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 2-0 | 0.207051 | None | None | None | None |
-| 2 | 1-0 | 0.199882 | None | None | None | None |
-| 3 | 3-0 | 0.142985 | None | None | None | None |
-| 4 | 0-0 | 0.09648 | None | None | None | None |
-| 5 | 4-0 | 0.074057 | None | None | None | None |
-| 6 | 2-1 | 0.055217 | None | None | None | None |
-| 7 | 1-1 | 0.053305 | None | None | None | None |
-| 8 | 3-1 | 0.038131 | None | None | None | None |
-| 9 | 5-0 | 0.030685 | None | None | None | None |
-| 10 | 0-1 | 0.025729 | None | None | None | None |
+| 1 | 2-0 | 0.207051 | 2-0 | 0.15474088101148062 | 3-0 | None |
+| 2 | 1-0 | 0.199882 | 3-0 | 0.1529293215650816 | 2-0 | None |
+| 3 | 3-0 | 0.142985 | 4-0 | 0.11335422760366548 | 4-0 | None |
+| 4 | 0-0 | 0.09648 | 5-0 | 0.06721631030138543 | 1-0 | None |
+| 5 | 4-0 | 0.074057 | 1-0 | 0.06414997073827522 | 2-1 | None |
+| 6 | 2-1 | 0.055217 | 2-1 | 0.05905679694212464 | None | None |
+| 7 | 1-1 | 0.053305 | 3-1 | 0.05836541598529373 | None | None |
+| 8 | 3-1 | 0.038131 | 1-1 | 0.045016463751006396 | None | None |
+| 9 | 5-0 | 0.030685 | 4-1 | 0.04326159679564175 | None | None |
+| 10 | 0-1 | 0.025729 | 0-0 | 0.040385247840675036 | None | None |
 
 ### Fixture 1556404 — Transinvest 2 vs Babrungas (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-2 | 0.186211 | None | None | None | None |
-| 2 | 0-1 | 0.15352 | None | None | None | None |
-| 3 | 0-3 | 0.150576 | None | None | None | None |
-| 4 | 0-4 | 0.09132 | None | None | None | None |
-| 5 | 0-0 | 0.063284 | None | None | None | None |
-| 6 | 1-2 | 0.062238 | None | None | None | None |
-| 7 | 1-1 | 0.051312 | None | None | None | None |
-| 8 | 1-3 | 0.050327 | None | None | None | None |
-| 9 | 0-5 | 0.044306 | None | None | None | None |
-| 10 | 1-4 | 0.030522 | None | None | None | None |
+| 1 | 0-2 | 0.186211 | 0-2 | 0.18621136216507664 | 0-2 | None |
+| 2 | 0-1 | 0.15352 | 0-3 | 0.15057596964663783 | 0-1 | None |
+| 3 | 0-3 | 0.150576 | 0-1 | 0.10510521013574238 | 1-3 | None |
+| 4 | 0-4 | 0.09132 | 0-4 | 0.09132010946353573 | 0-3 | None |
+| 5 | 0-0 | 0.063284 | 0-0 | 0.06995460617860243 | 0-4 | None |
+| 6 | 1-2 | 0.062238 | 1-2 | 0.06223798221052006 | None | None |
+| 7 | 1-1 | 0.051312 | 1-1 | 0.05798200073365931 | None | None |
+| 8 | 1-3 | 0.050327 | 1-3 | 0.050327458062904694 | None | None |
+| 9 | 0-5 | 0.044306 | 0-5 | 0.044306471541255554 | None | None |
+| 10 | 1-4 | 0.030522 | 1-4 | 0.030522194146325936 | None | None |
 
 ### Fixture 1547602 — Šiauliai vs Banga (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | None | None | None | None | None | None |
-| 2 | None | None | None | None | None | None |
-| 3 | None | None | None | None | None | None |
-| 4 | None | None | None | None | None | None |
-| 5 | None | None | None | None | None | None |
-| 6 | None | None | None | None | None | None |
-| 7 | None | None | None | None | None | None |
-| 8 | None | None | None | None | None | None |
-| 9 | None | None | None | None | None | None |
-| 10 | None | None | None | None | None | None |
+| 1 | None | None | 1-1 | 0.14954609129693405 | None | None |
+| 2 | None | None | 0-0 | 0.11746326130563689 | None | None |
+| 3 | None | None | 1-0 | 0.10154215692245565 | None | None |
+| 4 | None | None | 0-1 | 0.09451401197748709 | None | None |
+| 5 | None | None | 2-1 | 0.07940500422846057 | None | None |
+| 6 | None | None | 1-2 | 0.07278792054275551 | None | None |
+| 7 | None | None | 2-0 | 0.0721863674804187 | None | None |
+| 8 | None | None | 0-2 | 0.06065660045229626 | None | None |
+| 9 | None | None | 2-2 | 0.043672752325653305 | None | None |
+| 10 | None | None | 3-1 | 0.031762001691384226 | None | None |
 
 ### Fixture 1495750 — SJK vs HJK Helsinki (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.156668 | None | None | None | None |
-| 2 | 1-1 | 0.127145 | None | None | None | None |
-| 3 | 0-0 | 0.118798 | None | None | None | None |
-| 4 | 0-2 | 0.103305 | None | None | None | None |
-| 5 | 1-0 | 0.096411 | None | None | None | None |
-| 6 | 1-2 | 0.083838 | None | None | None | None |
-| 7 | 2-1 | 0.051592 | None | None | None | None |
-| 8 | 0-3 | 0.045412 | None | None | None | None |
-| 9 | 2-0 | 0.039121 | None | None | None | None |
-| 10 | 1-3 | 0.036854 | None | None | None | None |
+| 1 | 0-1 | 0.156668 | 1-1 | 0.11674733027872683 | 1-0 | None |
+| 2 | 1-1 | 0.127145 | 1-2 | 0.09805211682655797 | 2-1 | None |
+| 3 | 0-0 | 0.118798 | 0-2 | 0.08394450156695187 | 1-2 | None |
+| 4 | 0-2 | 0.103305 | 0-1 | 0.06662564306032993 | 1-1 | None |
+| 5 | 1-0 | 0.096411 | 1-3 | 0.06203748372988445 | 0-2 | None |
+| 6 | 1-2 | 0.083838 | 2-1 | 0.0603397127273713 | None | None |
+| 7 | 2-1 | 0.051592 | 0-0 | 0.06003104695390989 | None | None |
+| 8 | 0-3 | 0.045412 | 2-2 | 0.05726532074587956 | None | None |
+| 9 | 2-0 | 0.039121 | 0-3 | 0.053111608588571536 | None | None |
+| 10 | 1-3 | 0.036854 | 1-0 | 0.046166178878630636 | None | None |
 
 ### Fixture 1547603 — Panevėžys vs Džiugas Telšiai (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.190916 | None | None | None | None |
-| 2 | 0-1 | 0.184366 | None | None | None | None |
-| 3 | 1-0 | 0.131776 | None | None | None | None |
-| 4 | 1-1 | 0.127255 | None | None | None | None |
-| 5 | 0-2 | 0.08902 | None | None | None | None |
-| 6 | 1-2 | 0.061445 | None | None | None | None |
-| 7 | 2-0 | 0.045478 | None | None | None | None |
-| 8 | 2-1 | 0.043918 | None | None | None | None |
-| 9 | 0-3 | 0.028655 | None | None | None | None |
-| 10 | 2-2 | 0.021206 | None | None | None | None |
+| 1 | 0-0 | 0.190916 | 1-1 | 0.13890289832933092 | 1-1 | None |
+| 2 | 0-1 | 0.184366 | 0-0 | 0.09263534161189185 | 1-2 | None |
+| 3 | 1-0 | 0.131776 | 0-1 | 0.09246054592273606 | 2-2 | None |
+| 4 | 1-1 | 0.127255 | 1-2 | 0.09205975245199051 | 0-1 | None |
+| 5 | 0-2 | 0.08902 | 0-2 | 0.08598969576514343 | 2-1 | None |
+| 6 | 1-2 | 0.061445 | 1-0 | 0.07064475285462687 | None | None |
+| 7 | 2-0 | 0.045478 | 2-1 | 0.06580005535351055 | None | None |
+| 8 | 2-1 | 0.043918 | 2-2 | 0.04927914877538838 | None | None |
+| 9 | 0-3 | 0.028655 | 1-3 | 0.04596375299822122 | None | None |
+| 10 | 2-2 | 0.021206 | 2-0 | 0.04392980999184204 | None | None |
 
 ### Fixture 1494227 — Djurgardens IF vs Vasteras SK FK (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.188302 | None | None | None | None |
-| 2 | 2-0 | 0.172536 | None | None | None | None |
-| 3 | 3-0 | 0.105394 | None | None | None | None |
-| 4 | 0-0 | 0.102754 | None | None | None | None |
-| 5 | 1-1 | 0.083393 | None | None | None | None |
-| 6 | 2-1 | 0.076411 | None | None | None | None |
-| 7 | 4-0 | 0.048285 | None | None | None | None |
-| 8 | 3-1 | 0.046675 | None | None | None | None |
-| 9 | 0-1 | 0.045506 | None | None | None | None |
-| 10 | 4-1 | 0.021384 | None | None | None | None |
+| 1 | 1-0 | 0.188302 | 2-0 | 0.134813481922026 | 3-0 | None |
+| 2 | 2-0 | 0.172536 | 3-0 | 0.11620823623540748 | 1-0 | None |
+| 3 | 3-0 | 0.105394 | 2-1 | 0.08425106797606104 | 2-1 | None |
+| 4 | 0-0 | 0.102754 | 4-0 | 0.07512798781182906 | 1-1 | None |
+| 5 | 1-1 | 0.083393 | 1-1 | 0.07363071455817484 | 2-2 | None |
+| 6 | 2-1 | 0.076411 | 3-1 | 0.07262380491077475 | None | None |
+| 7 | 4-0 | 0.048285 | 1-0 | 0.06921347910363512 | None | None |
+| 8 | 3-1 | 0.046675 | 0-0 | 0.04879015147479676 | None | None |
+| 9 | 0-1 | 0.045506 | 4-1 | 0.046950891838102984 | None | None |
+| 10 | 4-1 | 0.021384 | 5-0 | 0.038855865886962666 | None | None |
 
 ### Fixture 1494232 — Halmstad vs Sirius (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.194496 | None | None | None | None |
-| 2 | 0-2 | 0.185441 | None | None | None | None |
-| 3 | 0-3 | 0.117872 | None | None | None | None |
-| 4 | 0-0 | 0.101997 | None | None | None | None |
-| 5 | 1-1 | 0.073117 | None | None | None | None |
-| 6 | 1-2 | 0.069713 | None | None | None | None |
-| 7 | 0-4 | 0.056192 | None | None | None | None |
-| 8 | 1-3 | 0.044311 | None | None | None | None |
-| 9 | 1-0 | 0.038343 | None | None | None | None |
-| 10 | 0-5 | 0.02143 | None | None | None | None |
+| 1 | 0-1 | 0.194496 | 0-2 | 0.1555971569853708 | 1-2 | None |
+| 2 | 0-2 | 0.185441 | 0-3 | 0.1305801262929467 | 2-2 | None |
+| 3 | 0-3 | 0.117872 | 0-1 | 0.08314943539214667 | 0-1 | None |
+| 4 | 0-0 | 0.101997 | 0-4 | 0.08218901479166352 | 1-3 | None |
+| 5 | 1-1 | 0.073117 | 1-2 | 0.07722878644174694 | 0-2 | None |
+| 6 | 1-2 | 0.069713 | 1-1 | 0.06932517396158178 | None | None |
+| 7 | 0-4 | 0.056192 | 1-3 | 0.0648118827001606 | None | None |
+| 8 | 1-3 | 0.044311 | 0-0 | 0.05707057843274434 | None | None |
+| 9 | 1-0 | 0.038343 | 0-5 | 0.04138476103029569 | None | None |
+| 10 | 0-5 | 0.02143 | 1-4 | 0.040793533726324695 | None | None |
 
 ### Fixture 1497645 — Orebro SK vs IFK Varnamo (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.167484 | None | None | None | None |
-| 2 | 0-0 | 0.148972 | None | None | None | None |
-| 3 | 1-1 | 0.130593 | None | None | None | None |
-| 4 | 0-1 | 0.116158 | None | None | None | None |
-| 5 | 2-0 | 0.094148 | None | None | None | None |
-| 6 | 2-1 | 0.07341 | None | None | None | None |
-| 7 | 1-2 | 0.050914 | None | None | None | None |
-| 8 | 0-2 | 0.045286 | None | None | None | None |
-| 9 | 3-0 | 0.035283 | None | None | None | None |
-| 10 | 2-2 | 0.02862 | None | None | None | None |
+| 1 | 1-0 | 0.167484 | 1-1 | 0.13113787788755496 | 1-1 | None |
+| 2 | 0-0 | 0.148972 | 2-1 | 0.09513292029366996 | 1-0 | None |
+| 3 | 1-1 | 0.130593 | 2-0 | 0.08366485160572532 | 2-0 | None |
+| 4 | 0-1 | 0.116158 | 1-0 | 0.08030863335468676 | 2-1 | None |
+| 5 | 2-0 | 0.094148 | 0-0 | 0.07733830012865814 | 2-3 | None |
+| 6 | 2-1 | 0.07341 | 1-2 | 0.06597926841663117 | None | None |
+| 7 | 1-2 | 0.050914 | 0-1 | 0.06032124367663456 | None | None |
+| 8 | 0-2 | 0.045286 | 2-2 | 0.05408646731516129 | None | None |
+| 9 | 3-0 | 0.035283 | 3-1 | 0.0519901044427913 | None | None |
+| 10 | 2-2 | 0.02862 | 3-0 | 0.04572280930454861 | None | None |
 
 ### Fixture 1556633 — Celtic vs Dundee (2026-08-03)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 2-0 | 0.213537 | None | None | None | None |
-| 2 | 1-0 | 0.194007 | None | None | None | None |
-| 3 | 3-0 | 0.156689 | None | None | None | None |
-| 4 | 0-0 | 0.088131 | None | None | None | None |
-| 5 | 4-0 | 0.086231 | None | None | None | None |
-| 6 | 2-1 | 0.048599 | None | None | None | None |
-| 7 | 1-1 | 0.044154 | None | None | None | None |
-| 8 | 5-0 | 0.037965 | None | None | None | None |
-| 9 | 3-1 | 0.035661 | None | None | None | None |
-| 10 | 0-1 | 0.020058 | None | None | None | None |
+| 1 | 2-0 | 0.213537 | 3-0 | 0.16407705694991928 | 2-1 | None |
+| 2 | 1-0 | 0.194007 | 2-0 | 0.16338934945824998 | 3-0 | None |
+| 3 | 3-0 | 0.156689 | 4-0 | 0.12357574425724478 | 3-1 | None |
+| 4 | 0-0 | 0.088131 | 5-0 | 0.07445752551933242 | 1-0 | None |
+| 5 | 4-0 | 0.086231 | 1-0 | 0.06598845207582088 | 5-0 | None |
+| 6 | 2-1 | 0.048599 | 3-1 | 0.05110508084774895 | None | None |
+| 7 | 1-1 | 0.044154 | 2-1 | 0.050890880595655885 | None | None |
+| 8 | 5-0 | 0.037965 | 0-0 | 0.04039707226092209 | None | None |
+| 9 | 3-1 | 0.035661 | 4-1 | 0.03849013700321829 | None | None |
+| 10 | 0-1 | 0.020058 | 1-1 | 0.0381771088623488 | None | None |
 
 ### Fixture 1605370 — Ararat-Armenia vs Celje (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.189825 | None | None | None | None |
-| 2 | 0-1 | 0.171941 | None | None | None | None |
-| 3 | 1-0 | 0.143482 | None | None | None | None |
-| 4 | 1-1 | 0.129964 | None | None | None | None |
-| 5 | 0-2 | 0.077871 | None | None | None | None |
-| 6 | 1-2 | 0.05886 | None | None | None | None |
-| 7 | 2-0 | 0.054226 | None | None | None | None |
-| 8 | 2-1 | 0.049118 | None | None | None | None |
-| 9 | 0-3 | 0.023512 | None | None | None | None |
-| 10 | 2-2 | 0.022245 | None | None | None | None |
+| 1 | 0-0 | 0.189825 | 1-1 | 0.1430530223284428 | 1-1 | None |
+| 2 | 0-1 | 0.171941 | 0-0 | 0.0966038808295147 | 1-0 | None |
+| 3 | 1-0 | 0.143482 | 0-1 | 0.0905445637241197 | 0-1 | None |
+| 4 | 1-1 | 0.129964 | 1-2 | 0.0870857210306148 | 0-0 | None |
+| 5 | 0-2 | 0.077871 | 1-0 | 0.07828189518616435 | 1-2 | None |
+| 6 | 1-2 | 0.05886 | 0-2 | 0.07585269584937579 | None | None |
+| 7 | 2-0 | 0.054226 | 2-1 | 0.07267156786428224 | None | None |
+| 8 | 2-1 | 0.049118 | 2-0 | 0.052820946207364564 | None | None |
+| 9 | 0-3 | 0.023512 | 2-2 | 0.04999112241496209 | None | None |
+| 10 | 2-2 | 0.022245 | 1-3 | 0.0399377919827564 | None | None |
 
 ### Fixture 1607168 — Mjallby AIF vs Slovan Bratislava (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.193703 | None | None | None | None |
-| 2 | 0-0 | 0.156845 | None | None | None | None |
-| 3 | 1-1 | 0.119612 | None | None | None | None |
-| 4 | 2-0 | 0.119612 | None | None | None | None |
-| 5 | 0-1 | 0.096852 | None | None | None | None |
-| 6 | 2-1 | 0.07386 | None | None | None | None |
-| 7 | 3-0 | 0.04924 | None | None | None | None |
-| 8 | 1-2 | 0.03693 | None | None | None | None |
-| 9 | 3-1 | 0.030406 | None | None | None | None |
-| 10 | 0-2 | 0.029903 | None | None | None | None |
+| 1 | 1-0 | 0.193703 | 1-1 | 0.1334309406951799 | 1-1 | None |
+| 2 | 0-0 | 0.156845 | 1-0 | 0.12430428903550327 | 0-1 | None |
+| 3 | 1-1 | 0.119612 | 2-0 | 0.11808038287943136 | 2-1 | None |
+| 4 | 2-0 | 0.119612 | 0-0 | 0.11708882001620267 | 0-0 | None |
+| 5 | 0-1 | 0.096852 | 2-1 | 0.08995175089426362 | 1-0 | None |
+| 6 | 2-1 | 0.07386 | 0-1 | 0.069827419730655 | None | None |
+| 7 | 3-0 | 0.04924 | 3-0 | 0.0599677853724799 | None | None |
+| 8 | 1-2 | 0.03693 | 3-1 | 0.045682501698981234 | None | None |
+| 9 | 3-1 | 0.030406 | 1-2 | 0.04497591186493318 | None | None |
+| 10 | 0-2 | 0.029903 | 2-2 | 0.03426190401671325 | None | None |
 
 ### Fixture 1607166 — Hapoel Beer Sheva vs FK Crvena Zvezda (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-0 | 0.182982 | None | None | None | None |
-| 2 | 0-1 | 0.181717 | None | None | None | None |
-| 3 | 1-0 | 0.129054 | None | None | None | None |
-| 4 | 1-1 | 0.128162 | None | None | None | None |
-| 5 | 0-2 | 0.09023 | None | None | None | None |
-| 6 | 1-2 | 0.063638 | None | None | None | None |
-| 7 | 2-0 | 0.04551 | None | None | None | None |
-| 8 | 2-1 | 0.045195 | None | None | None | None |
-| 9 | 0-3 | 0.029869 | None | None | None | None |
-| 10 | 2-2 | 0.022441 | None | None | None | None |
+| 1 | 0-0 | 0.182982 | 1-1 | 0.13330902859136906 | 1-1 | None |
+| 2 | 0-1 | 0.181717 | 1-2 | 0.09422175877789643 | 2-2 | None |
+| 3 | 1-0 | 0.129054 | 0-2 | 0.08305691573638409 | 1-0 | None |
+| 4 | 1-1 | 0.128162 | 0-1 | 0.08239858658892084 | 0-1 | None |
+| 5 | 0-2 | 0.09023 | 0-0 | 0.08044013094113506 | 0-2 | None |
+| 6 | 1-2 | 0.063638 | 2-1 | 0.06691546981090618 | None | None |
+| 7 | 2-0 | 0.04551 | 1-0 | 0.06296338965113595 | None | None |
+| 8 | 2-1 | 0.045195 | 2-2 | 0.05344371235369086 | None | None |
+| 9 | 0-3 | 0.029869 | 1-3 | 0.0501683749942481 | None | None |
+| 10 | 2-2 | 0.022441 | 0-3 | 0.044223654372137274 | None | None |
 
 ### Fixture 1607167 — Levski Sofia vs Kairat Almaty (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.217463 | None | None | None | None |
-| 2 | 0-0 | 0.181898 | None | None | None | None |
-| 3 | 2-0 | 0.12999 | None | None | None | None |
-| 4 | 1-1 | 0.110643 | None | None | None | None |
-| 5 | 0-1 | 0.092548 | None | None | None | None |
-| 6 | 2-1 | 0.066138 | None | None | None | None |
-| 7 | 3-0 | 0.051802 | None | None | None | None |
-| 8 | 1-2 | 0.028147 | None | None | None | None |
-| 9 | 3-1 | 0.026356 | None | None | None | None |
-| 10 | 0-2 | 0.023544 | None | None | None | None |
+| 1 | 1-0 | 0.217463 | 2-0 | 0.12477010346542025 | 2-1 | None |
+| 2 | 0-0 | 0.181898 | 1-1 | 0.12000567530976712 | 1-1 | None |
+| 3 | 2-0 | 0.12999 | 1-0 | 0.10677256268844248 | 1-0 | None |
+| 4 | 1-1 | 0.110643 | 2-1 | 0.09518198131149394 | 3-1 | None |
+| 5 | 0-1 | 0.092548 | 0-0 | 0.0914696026008716 | 4-0 | None |
+| 6 | 2-1 | 0.066138 | 3-0 | 0.07455051969808979 | None | None |
+| 7 | 3-0 | 0.051802 | 3-1 | 0.05687152591511913 | None | None |
+| 8 | 1-2 | 0.028147 | 0-1 | 0.05337083410811254 | None | None |
+| 9 | 3-1 | 0.026356 | 1-2 | 0.04050769689722106 | None | None |
+| 10 | 0-2 | 0.023544 | 2-2 | 0.036305209800889665 | None | None |
 
 ### Fixture 1598824 — Olympiakos Piraeus vs NEC Nijmegen (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.227633 | None | None | None | None |
-| 2 | 2-0 | 0.167088 | None | None | None | None |
-| 3 | 0-0 | 0.155058 | None | None | None | None |
-| 4 | 1-1 | 0.090121 | None | None | None | None |
-| 5 | 3-0 | 0.081765 | None | None | None | None |
-| 6 | 2-1 | 0.066151 | None | None | None | None |
-| 7 | 0-1 | 0.061388 | None | None | None | None |
-| 8 | 3-1 | 0.032371 | None | None | None | None |
-| 9 | 4-0 | 0.030009 | None | None | None | None |
-| 10 | 1-2 | 0.01784 | None | None | None | None |
+| 1 | 1-0 | 0.227633 | 2-0 | 0.15790838713187735 | 1-1 | None |
+| 2 | 2-0 | 0.167088 | 1-0 | 0.11699182174487432 | 1-0 | None |
+| 3 | 0-0 | 0.155058 | 3-0 | 0.1051792634645915 | 2-1 | None |
+| 4 | 1-1 | 0.090121 | 1-1 | 0.09624205176239405 | 0-1 | None |
+| 5 | 3-0 | 0.081765 | 0-0 | 0.09016596500443455 | 2-0 | None |
+| 6 | 2-1 | 0.066151 | 2-1 | 0.0850947205092726 | None | None |
+| 7 | 0-1 | 0.061388 | 3-1 | 0.056679700112545583 | None | None |
+| 8 | 3-1 | 0.032371 | 4-0 | 0.05254317549508127 | None | None |
+| 9 | 4-0 | 0.030009 | 0-1 | 0.03963669072055239 | None | None |
+| 10 | 1-2 | 0.01784 | 4-1 | 0.028314815410593226 | None | None |
 
 ### Fixture 1598825 — Union St. Gilloise vs Bodo/Glimt (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.156588 | None | None | None | None |
-| 2 | 0-0 | 0.13518 | None | None | None | None |
-| 3 | 1-1 | 0.13197 | None | None | None | None |
-| 4 | 0-1 | 0.113928 | None | None | None | None |
-| 5 | 2-0 | 0.090693 | None | None | None | None |
-| 6 | 2-1 | 0.076434 | None | None | None | None |
-| 7 | 1-2 | 0.055611 | None | None | None | None |
-| 8 | 0-2 | 0.048008 | None | None | None | None |
-| 9 | 3-0 | 0.035018 | None | None | None | None |
-| 10 | 2-2 | 0.032209 | None | None | None | None |
+| 1 | 1-0 | 0.156588 | 1-1 | 0.1265245700981613 | 1-1 | None |
+| 2 | 0-0 | 0.13518 | 2-1 | 0.09475290499792578 | 1-0 | None |
+| 3 | 1-1 | 0.13197 | 2-0 | 0.07694764655173704 | 2-1 | None |
+| 4 | 0-1 | 0.113928 | 1-0 | 0.07092194602540061 | 0-1 | None |
+| 5 | 2-0 | 0.090693 | 1-2 | 0.06893878476165663 | 2-0 | None |
+| 6 | 2-1 | 0.076434 | 0-0 | 0.06828051673918928 | None | None |
+| 7 | 1-2 | 0.055611 | 2-2 | 0.05833910072551318 | None | None |
+| 8 | 0-2 | 0.048008 | 0-1 | 0.05556580185228941 | None | None |
+| 9 | 3-0 | 0.035018 | 3-1 | 0.053456113640725736 | None | None |
+| 10 | 2-2 | 0.032209 | 3-0 | 0.04341103988892052 | None | None |
 
 ### Fixture 1598826 — Sparta Praha vs Lyon (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.201312 | None | None | None | None |
-| 2 | 0-0 | 0.158895 | None | None | None | None |
-| 3 | 0-2 | 0.127526 | None | None | None | None |
-| 4 | 1-1 | 0.115264 | None | None | None | None |
-| 5 | 1-0 | 0.090977 | None | None | None | None |
-| 6 | 1-2 | 0.073017 | None | None | None | None |
-| 7 | 0-3 | 0.053856 | None | None | None | None |
-| 8 | 2-1 | 0.032998 | None | None | None | None |
-| 9 | 1-3 | 0.030836 | None | None | None | None |
-| 10 | 2-0 | 0.026045 | None | None | None | None |
+| 1 | 0-1 | 0.201312 | 1-1 | 0.11834917223990017 | 1-2 | None |
+| 2 | 0-0 | 0.158895 | 0-2 | 0.1158755691755951 | 1-1 | None |
+| 3 | 0-2 | 0.127526 | 1-2 | 0.09777115165197386 | 0-0 | None |
+| 4 | 1-1 | 0.115264 | 0-1 | 0.09399982980798444 | 0-1 | None |
+| 5 | 1-0 | 0.090977 | 0-0 | 0.08009890848398141 | 1-3 | None |
+| 6 | 1-2 | 0.073017 | 0-3 | 0.07211482781215531 | None | None |
+| 7 | 0-3 | 0.053856 | 1-3 | 0.06084759554184954 | None | None |
+| 8 | 2-1 | 0.032998 | 1-0 | 0.04994300652872627 | None | None |
+| 9 | 1-3 | 0.030836 | 2-1 | 0.04418507901617253 | None | None |
+| 10 | 2-0 | 0.026045 | 2-2 | 0.04124768561381342 | None | None |
 
 ### Fixture 1607164 — Dinamo Zagreb vs Kauno Žalgiris (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-0 | 0.260867 | None | None | None | None |
-| 2 | 2-0 | 0.229278 | None | None | None | None |
-| 3 | 0-0 | 0.148404 | None | None | None | None |
-| 4 | 3-0 | 0.134343 | None | None | None | None |
-| 5 | 4-0 | 0.059038 | None | None | None | None |
-| 6 | 1-1 | 0.03913 | None | None | None | None |
-| 7 | 2-1 | 0.034392 | None | None | None | None |
-| 8 | 0-1 | 0.022261 | None | None | None | None |
-| 9 | 5-0 | 0.020755 | None | None | None | None |
-| 10 | 3-1 | 0.020151 | None | None | None | None |
+| 1 | 1-0 | 0.260867 | 2-0 | 0.18443702606363274 | 1-0 | None |
+| 2 | 2-0 | 0.229278 | 3-0 | 0.17501279107182502 | 2-0 | None |
+| 3 | 0-0 | 0.148404 | 4-0 | 0.12455258181801897 | 3-0 | None |
+| 4 | 3-0 | 0.134343 | 1-0 | 0.08162553664676053 | 2-1 | None |
+| 5 | 4-0 | 0.059038 | 5-0 | 0.07091296832660716 | 4-0 | None |
+| 6 | 1-1 | 0.03913 | 0-0 | 0.04961098250099607 | None | None |
+| 7 | 2-1 | 0.034392 | 2-1 | 0.044803159818298036 | None | None |
+| 8 | 0-1 | 0.022261 | 3-1 | 0.04251383909178901 | None | None |
+| 9 | 5-0 | 0.020755 | 1-1 | 0.035569204209295636 | None | None |
+| 10 | 3-1 | 0.020151 | 6-0 | 0.033644753374372977 | None | None |
 
 ### Fixture 1508822 — Thor Akureyri vs Breidablik (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 0-1 | 0.153393 | None | None | None | None |
-| 2 | 0-2 | 0.12998 | None | None | None | None |
-| 3 | 1-1 | 0.108533 | None | None | None | None |
-| 4 | 1-2 | 0.091967 | None | None | None | None |
-| 5 | 0-0 | 0.090513 | None | None | None | None |
-| 6 | 0-3 | 0.073426 | None | None | None | None |
-| 7 | 1-0 | 0.064042 | None | None | None | None |
-| 8 | 1-3 | 0.051953 | None | None | None | None |
-| 9 | 2-1 | 0.038396 | None | None | None | None |
-| 10 | 2-2 | 0.032535 | None | None | None | None |
+| 1 | 0-1 | 0.153393 | 0-2 | 0.10578751537449507 | 1-2 | None |
+| 2 | 0-2 | 0.12998 | 1-1 | 0.09981580766282308 | 0-2 | None |
+| 3 | 1-1 | 0.108533 | 1-2 | 0.0981636024336939 | 0-1 | None |
+| 4 | 1-2 | 0.091967 | 0-3 | 0.07837413561805272 | 1-3 | None |
+| 5 | 0-0 | 0.090513 | 1-3 | 0.07272585486727295 | 1-1 | None |
+| 6 | 0-3 | 0.073426 | 0-1 | 0.06768820152601182 | None | None |
+| 7 | 1-0 | 0.064042 | 0-0 | 0.0543129519354087 | None | None |
+| 8 | 1-3 | 0.051953 | 2-2 | 0.04554456548415891 | None | None |
+| 9 | 2-1 | 0.038396 | 0-4 | 0.04354841716528668 | None | None |
+| 10 | 2-2 | 0.032535 | 2-1 | 0.04098330300241183 | None | None |
 
 ### Fixture 1508823 — Valur Reykjavik vs Stjarnan (2026-08-04)
 
 | Rank | Canonical ECSE | p | Exact V2 proxy | p | Twins | p |
 |---:|---|---:|---|---:|---|---:|
-| 1 | 1-1 | 0.127969 | None | None | None | None |
-| 2 | 1-0 | 0.104955 | None | None | None | None |
-| 3 | 0-1 | 0.09934 | None | None | None | None |
-| 4 | 2-1 | 0.082424 | None | None | None | None |
-| 5 | 0-0 | 0.081475 | None | None | None | None |
-| 6 | 1-2 | 0.078014 | None | None | None | None |
-| 7 | 2-0 | 0.067601 | None | None | None | None |
-| 8 | 0-2 | 0.060561 | None | None | None | None |
-| 9 | 2-2 | 0.050249 | None | None | None | None |
-| 10 | 3-1 | 0.035392 | None | None | None | None |
+| 1 | 1-1 | 0.127969 | 1-1 | 0.09613900879749775 | 1-1 | None |
+| 2 | 1-0 | 0.104955 | 2-1 | 0.08056493591899536 | 0-0 | None |
+| 3 | 0-1 | 0.09934 | 1-2 | 0.07625489975277291 | 2-1 | None |
+| 4 | 2-1 | 0.082424 | 2-2 | 0.07220921500538867 | 1-3 | None |
+| 5 | 0-0 | 0.081475 | 3-1 | 0.050860388849601305 | 0-2 | None |
+| 6 | 1-2 | 0.078014 | 3-2 | 0.0455854487042746 | None | None |
+| 7 | 2-0 | 0.067601 | 1-3 | 0.045564126946398435 | None | None |
+| 8 | 0-2 | 0.060561 | 2-0 | 0.04494377136732101 | None | None |
+| 9 | 2-2 | 0.050249 | 2-3 | 0.04314673351971282 | None | None |
+| 10 | 3-1 | 0.035392 | 0-2 | 0.040263626573641 | None | None |
 
 
 ## Notes
@@ -1127,3 +1108,11 @@
 - Top10-to-5 monetary ROI marked unavailable without exact-score odds (no fabrication).
 
 **NOT DEPLOYED / NO ROUTING ACTIVATION**
+
+## Enrichment resume notes
+
+- Mode: `ENRICH_ONLY` — Canonical / freezes / odds not regenerated.
+- Exact V2 computed in-memory (Dixon–Coles selected); **not persisted**, **not promoted**.
+- NO_BET fixtures excluded from Best Picks / Best tables.
+- Freeze hashes unchanged: `True`
+- Duplicate freeze fixtures: `0`
