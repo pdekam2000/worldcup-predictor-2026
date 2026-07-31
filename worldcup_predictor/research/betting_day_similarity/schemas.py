@@ -1,0 +1,118 @@
+"""Schemas and typed helpers — research-only."""
+
+from __future__ import annotations
+
+from typing import Any
+
+
+def empty_provenance_row(**kwargs: Any) -> dict[str, Any]:
+    return {
+        "feature_name": kwargs.get("feature_name"),
+        "feature_value": kwargs.get("feature_value"),
+        "source_table_or_artifact": kwargs.get("source", "phase5_corpus+portfolio_manager"),
+        "source_timestamp": kwargs.get("source_timestamp"),
+        "cutoff_timestamp": kwargs.get("cutoff_timestamp"),
+        "lookback_period": kwargs.get("lookback_period"),
+        "fixture_or_day_level": kwargs.get("level", "day"),
+        "rolling_historical": bool(kwargs.get("rolling_historical", False)),
+        "feature_content_hash": kwargs.get("feature_content_hash"),
+        "leakage_check_status": kwargs.get("leakage_check_status", "PASS"),
+    }
+
+
+FEATURE_GROUPS = {
+    "slate_composition": [
+        "n_discovered_fixtures",
+        "n_eligible_fixtures",
+        "n_selected_fixtures",
+        "n_countries",
+        "n_leagues",
+        "league_concentration",
+        "max_league_share",
+        "avg_fixtures_per_league",
+        "reserve_youth_women_friendly_flag",
+        "avg_competition_tier",
+        "pct_tier_s",
+        "pct_tier_a",
+        "pct_tier_b",
+        "pct_tier_lower",
+        "avg_kickoff_distance_hours",
+        "kickoff_time_concentration",
+        "simultaneous_kickoff_count",
+        "evening_vs_daytime_ratio",
+    ],
+    "prediction_quality": [
+        "avg_wde_confidence",
+        "median_wde_confidence",
+        "min_wde_confidence",
+        "max_wde_confidence",
+        "confidence_dispersion",
+        "avg_ecse_entropy",
+        "median_entropy",
+        "avg_top5_mass",
+        "min_top5_mass",
+        "pct_no_bet",
+        "pct_consensus_high",
+        "pct_full_super_consensus",
+        "pct_model_conflict",
+        "pct_canonical_exact_v2_agreement",
+        "pct_high_goal_shift",
+        "avg_residual_risk",
+        "avg_insurance_gain",
+        "avg_primary_covered_mass",
+        "avg_final_covered_mass",
+    ],
+    "market_structure": [
+        "avg_favorite_odds",
+        "median_favorite_odds",
+        "avg_draw_odds",
+        "pct_balanced_market",
+        "pct_one_sided_market",
+        "favorite_strength_bucket",
+        "expected_total_bucket",
+        "pct_btts_yes",
+        "pct_over_direction",
+        "bookmaker_completeness",
+        "real_market_completeness",
+        "avg_market_families",
+        "pct_manually_transcribed_odds",
+        "odds_freshness_score",
+        "odds_volatility_proxy",
+    ],
+    "coupon_structure": [
+        "total_main_tickets",
+        "total_insurance_tickets",
+        "avg_insurance_legs",
+        "market_family_entropy",
+        "exact_score_concentration",
+        "avg_combined_odds",
+        "coupon_diversification_score",
+        "coupon_overlap_score",
+        "league_correlation_score",
+        "market_correlation_score",
+        "capital_concentration_baseline",
+        "capital_concentration_calibrated",
+    ],
+    "historical_reliability": [
+        "rolling_league_reliability",
+        "rolling_market_family_reliability",
+        "rolling_odds_bucket_reliability",
+        "rolling_dow_reliability",
+        "rolling_month_phase",
+        "rolling_model_calibration",
+        "rolling_insurance_rescue_rate",
+        "rolling_complete_coupon_failure_rate",
+    ],
+}
+
+LABEL_COLUMNS = [
+    "realized_roi",
+    "net_return",
+    "max_daily_loss",
+    "coupon_survival",
+    "complete_coupon_failure",
+    "insurance_rescue_count",
+    "drawdown_state",
+    "profitable_day",
+    "losing_day",
+]

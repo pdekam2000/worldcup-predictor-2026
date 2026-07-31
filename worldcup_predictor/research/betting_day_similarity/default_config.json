@@ -1,0 +1,35 @@
+{
+  "research_only": true,
+  "not_deployed": true,
+  "seed": 20260731,
+  "neighbors": 10,
+  "min_analog_count": 5,
+  "method": "mixed",
+  "regime_method": "kmeans",
+  "n_regimes_candidates": [3, 4, 5, 6],
+  "lookback_days": 90,
+  "favorable_analog_roi_min": 0.15,
+  "hostile_analog_roi_max": -0.05,
+  "ood_nn_distance_p95_multiplier": 1.25,
+  "ood_centroid_distance_p95_multiplier": 1.35,
+  "ood_range_violation_mild": 2,
+  "ood_range_violation_strong": 5,
+  "ood_missing_ratio_mild": 0.15,
+  "ood_missing_ratio_strong": 0.35,
+  "overlay": {
+    "supports_capital_multiplier": 1.15,
+    "reduce_capital_multiplier": 0.55,
+    "watch_micro_allocation": 0.10,
+    "max_exposure_uplift": 1.25,
+    "max_exposure_reduction": 0.40,
+    "skip_on_strong_ood": true
+  },
+  "grid": {
+    "neighbors": [5, 8, 10, 12],
+    "min_analog_count": [3, 5, 8],
+    "favorable_threshold": [0.10, 0.15, 0.20],
+    "hostile_threshold": [-0.10, -0.05, 0.0],
+    "capital_multipliers": [0.5, 0.7, 1.0, 1.15],
+    "watch_micro": [0.05, 0.10, 0.15]
+  }
+}
