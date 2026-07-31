@@ -1,0 +1,302 @@
+{
+  "policy_version": "baseline_v1_7e77aa3_mlock0.2",
+  "generated_timestamp": "20260731T140936Z",
+  "training_date_range": [
+    "2023-01-21",
+    "2025-04-18"
+  ],
+  "validation_date_range": [
+    "2025-04-20",
+    "2026-01-30"
+  ],
+  "holdout_date_range": [
+    "2026-01-31",
+    "2026-05-31"
+  ],
+  "locked_thresholds": {
+    "BET": 84.0,
+    "SMALL_BET": 72.0,
+    "WATCH": 55.0,
+    "SKIP": 0.0
+  },
+  "grade_boundaries": {
+    "S": 92.0,
+    "A": 84.0,
+    "B": 72.0,
+    "C": 60.0,
+    "D": 45.0,
+    "F": 0.0
+  },
+  "action_mapping": {
+    "BET": "full capital",
+    "SMALL_BET": "reduced capital",
+    "WATCH_POSITIVE": "micro allocation",
+    "WATCH_NO_CAPITAL": "zero capital observation",
+    "HARD_SKIP": "hard rejection"
+  },
+  "WATCH_POSITIVE_rules": {
+    "score_near_SMALL_BET": "score >= SMALL_BET - slack",
+    "slack": 6.0,
+    "residual_risk_ok": "low_residual_risk >= 45",
+    "insurance_contribution_ok": ">= 10",
+    "league_reliability_ok": ">= 40",
+    "correlation_ok": "not over_concentrated",
+    "eligible_fixtures": ">= 1",
+    "hard_gate_failures": "<= 1"
+  },
+  "WATCH_REJECT_rules": {
+    "zero_capital": true,
+    "applies_when": "WATCH_NO_CAPITAL and not WATCH_POSITIVE criteria"
+  },
+  "capital_allocation_mode": "score_weighted",
+  "maximum_exposure": 0.6,
+  "micro_allocation_ratio": 0.2,
+  "expected_active_day_ratio": 0.42857143,
+  "gates": {
+    "low_entropy_min": 35.0,
+    "mean_confidence_min": 35.0,
+    "insurance_contribution_min": 15.0,
+    "coverage_mass_min_when_weak_ins": 55.0,
+    "league_reliability_min": 35.0,
+    "min_fixture_score_to_bet": 55.0,
+    "correlation_over_concentrated": true,
+    "max_day_exposure_frac": 0.6,
+    "max_fixture_exposure_frac": 0.35
+  },
+  "training_metrics": {
+    "n_days": 292,
+    "n_active_days": 30,
+    "n_zero_capital_days": 262,
+    "active_day_ratio": 0.10273973,
+    "zero_capital_day_ratio": 0.89726027,
+    "total_staked": 58.2,
+    "net_return": 26.71,
+    "gross_return": 84.91,
+    "roi": 0.45893471,
+    "max_drawdown": 2.27,
+    "average_exposure": 0.199315,
+    "win_frequency": 0.72881356,
+    "wins": 43,
+    "losses": 16,
+    "action_distribution": {
+      "WATCH_NO_CAPITAL": 261,
+      "SMALL_BET": 29,
+      "WATCH_POSITIVE": 1,
+      "HARD_SKIP": 1
+    },
+    "grade_distribution": {
+      "C": 253,
+      "B": 30,
+      "D": 9
+    },
+    "avg_score": 67.6428,
+    "avg_fixtures_funded": 0.2021,
+    "max_daily_loss": -2.0
+  },
+  "validation_metrics": {
+    "n_days": 98,
+    "n_active_days": 34,
+    "n_zero_capital_days": 64,
+    "active_day_ratio": 0.34693878,
+    "zero_capital_day_ratio": 0.65306122,
+    "total_staked": 60.8,
+    "net_return": 27.25,
+    "gross_return": 88.05,
+    "roi": 0.44819079,
+    "max_drawdown": 2.31,
+    "average_exposure": 0.620408,
+    "win_frequency": 0.796875,
+    "wins": 51,
+    "losses": 13,
+    "action_distribution": {
+      "WATCH_NO_CAPITAL": 63,
+      "SMALL_BET": 30,
+      "HARD_SKIP": 1,
+      "WATCH_POSITIVE": 4
+    },
+    "grade_distribution": {
+      "D": 3,
+      "C": 61,
+      "B": 34
+    },
+    "avg_score": 70.3447,
+    "avg_fixtures_funded": 0.6531,
+    "max_daily_loss": -2.0
+  },
+  "final_holdout_metrics": {
+    "n_days": 98,
+    "n_active_days": 42,
+    "n_zero_capital_days": 56,
+    "active_day_ratio": 0.42857143,
+    "zero_capital_day_ratio": 0.57142857,
+    "total_staked": 46.2,
+    "net_return": 14.618,
+    "gross_return": 60.818,
+    "roi": 0.31640693,
+    "max_drawdown": 2.35,
+    "average_exposure": 0.471429,
+    "win_frequency": 0.6984127,
+    "wins": 44,
+    "losses": 19,
+    "action_distribution": {
+      "SMALL_BET": 21,
+      "WATCH_POSITIVE": 21,
+      "WATCH_NO_CAPITAL": 56
+    },
+    "grade_distribution": {
+      "B": 25,
+      "C": 71,
+      "D": 2
+    },
+    "avg_score": 69.8106,
+    "avg_fixtures_funded": 0.6429,
+    "max_daily_loss": -2.0
+  },
+  "comparison_with_baseline": {
+    "baseline_policy": "baseline_v1_7e77aa3",
+    "baseline_holdout": {
+      "n_days": 98,
+      "n_active_days": 21,
+      "n_zero_capital_days": 77,
+      "active_day_ratio": 0.21428571,
+      "zero_capital_day_ratio": 0.78571429,
+      "total_staked": 42.0,
+      "net_return": 13.8,
+      "gross_return": 55.8,
+      "roi": 0.32857143,
+      "max_drawdown": 2.35,
+      "average_exposure": 0.428571,
+      "win_frequency": 0.71428571,
+      "wins": 30,
+      "losses": 12,
+      "action_distribution": {
+        "SMALL_BET": 21,
+        "WATCH_NO_CAPITAL": 77
+      },
+      "grade_distribution": {
+        "B": 25,
+        "C": 71,
+        "D": 2
+      },
+      "avg_score": 69.8106,
+      "avg_fixtures_funded": 0.4286,
+      "max_daily_loss": -2.0
+    },
+    "calibrated_holdout": {
+      "n_days": 98,
+      "n_active_days": 42,
+      "n_zero_capital_days": 56,
+      "active_day_ratio": 0.42857143,
+      "zero_capital_day_ratio": 0.57142857,
+      "total_staked": 46.2,
+      "net_return": 14.618,
+      "gross_return": 60.818,
+      "roi": 0.31640693,
+      "max_drawdown": 2.35,
+      "average_exposure": 0.471429,
+      "win_frequency": 0.6984127,
+      "wins": 44,
+      "losses": 19,
+      "action_distribution": {
+        "SMALL_BET": 21,
+        "WATCH_POSITIVE": 21,
+        "WATCH_NO_CAPITAL": 56
+      },
+      "grade_distribution": {
+        "B": 25,
+        "C": 71,
+        "D": 2
+      },
+      "avg_score": 69.8106,
+      "avg_fixtures_funded": 0.6429,
+      "max_daily_loss": -2.0
+    }
+  },
+  "comparison_with_always_bet": {
+    "always_bet_holdout": {
+      "n_days": 98,
+      "n_active_days": 98,
+      "n_zero_capital_days": 0,
+      "active_day_ratio": 1.0,
+      "zero_capital_day_ratio": 0.0,
+      "total_staked": 424.0,
+      "net_return": 163.48,
+      "gross_return": 587.48,
+      "roi": 0.38556604,
+      "max_drawdown": 4.33,
+      "average_exposure": 4.326531,
+      "win_frequency": 0.75943396,
+      "wins": 322,
+      "losses": 102,
+      "action_distribution": {
+        "ALWAYS_BET": 98
+      },
+      "grade_distribution": {
+        "B": 25,
+        "C": 71,
+        "D": 2
+      },
+      "avg_score": 69.8106,
+      "avg_fixtures_funded": 4.3265,
+      "max_daily_loss": -3.43
+    },
+    "calibrated_holdout": {
+      "n_days": 98,
+      "n_active_days": 42,
+      "n_zero_capital_days": 56,
+      "active_day_ratio": 0.42857143,
+      "zero_capital_day_ratio": 0.57142857,
+      "total_staked": 46.2,
+      "net_return": 14.618,
+      "gross_return": 60.818,
+      "roi": 0.31640693,
+      "max_drawdown": 2.35,
+      "average_exposure": 0.471429,
+      "win_frequency": 0.6984127,
+      "wins": 44,
+      "losses": 19,
+      "action_distribution": {
+        "SMALL_BET": 21,
+        "WATCH_POSITIVE": 21,
+        "WATCH_NO_CAPITAL": 56
+      },
+      "grade_distribution": {
+        "B": 25,
+        "C": 71,
+        "D": 2
+      },
+      "avg_score": 69.8106,
+      "avg_fixtures_funded": 0.6429,
+      "max_daily_loss": -2.0
+    }
+  },
+  "failed_and_passed_guardrails": {
+    "passed": {
+      "drawdown_le_75pct_always": true,
+      "exposure_le_70pct_always": true,
+      "active_days_ge_20pct": true,
+      "active_days_le_65pct": true
+    },
+    "failed": {
+      "managed_roi_ge_always": false
+    },
+    "all_passed": false,
+    "checks": {
+      "managed_roi_ge_always": false,
+      "drawdown_le_75pct_always": true,
+      "exposure_le_70pct_always": true,
+      "active_days_ge_20pct": true,
+      "active_days_le_65pct": true
+    }
+  },
+  "known_limitations": [
+    "Unit-stake proxy; not live bankroll sizing.",
+    "Grade compression may persist if score components rarely exceed A/S thresholds.",
+    "Holdout is single chronological slice; regime shifts possible.",
+    "Kelly remains research-only and disabled by default."
+  ],
+  "readiness_recommendation": "CALIBRATION_HOLD",
+  "research_only": true,
+  "baseline_unchanged": true,
+  "not_deployed": true
+}

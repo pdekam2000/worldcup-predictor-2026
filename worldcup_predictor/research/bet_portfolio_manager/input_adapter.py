@@ -20,9 +20,23 @@ def normalize_fixture(raw: dict[str, Any]) -> dict[str, Any]:
         or 0.0
     )
     entropy = float(raw.get("entropy") or 0.0)
-    coverage = float(raw.get("coverage_ratio_with_insurance") or raw.get("coverage_ratio_primary") or 0.0)
-    residual = float(raw.get("residual_mass") or max(0.0, 1.0 - coverage))
-    ins_mass = float(raw.get("incremental_uncovered_mass") or 0.0)
+    # Accept both raw corpus fields and already-normalized portfolio fields (idempotent).
+    coverage = float(
+        raw.get("coverage_ratio_with_insurance")
+        or raw.get("coverage_ratio_primary")
+        or raw.get("coverage_mass")
+        or 0.0
+    )
+    residual = float(
+        raw.get("residual_mass")
+        if raw.get("residual_mass") is not None
+        else (raw.get("residual_risk") if raw.get("residual_risk") is not None else max(0.0, 1.0 - coverage))
+    )
+    ins_mass = float(
+        raw.get("incremental_uncovered_mass")
+        if raw.get("incremental_uncovered_mass") is not None
+        else (raw.get("insurance_contribution") or 0.0)
+    )
     odds_home = raw.get("odds_home")
     try:
         odds_home_f = float(odds_home) if odds_home is not None else None
