@@ -287,10 +287,22 @@ def classified_price_to_market(family: str, selection: str) -> tuple[str, dict[s
         team = "home" if "home" in sel else ("away" if "away" in sel else None)
         if team:
             return "win_to_nil", {"team": team}
-    if fam in {"result_total", "result_ou"}:
+    if fam in {"result_total", "result_ou", "win_and_total", "win_and_ou"}:
         return classify_raw_market("result/total goals", selection)
     if fam in {"double_chance_total", "dc_total"}:
         return classify_raw_market("double chance total", selection)
+    if fam == "win_to_nil":
+        team = normalize_result(sel) or (
+            "home" if "home" in sel else ("away" if "away" in sel else None)
+        )
+        if team in {"home", "away"}:
+            return "win_to_nil", {"team": team}
+    if fam == "team_total":
+        return classify_raw_market("team total", selection)
+    if fam in {"1x2", "match_winner"}:
+        res = normalize_result(sel)
+        if res:
+            return "1x2", {"result": res}
     if fam == "goal_parity":
         if "odd" in sel:
             return "goal_parity", {"parity": "odd"}
