@@ -1,0 +1,392 @@
+{
+  "train": {
+    "raw_wde_argmax_proxy_ft_marginal": {
+      "n": 32,
+      "hits": 18,
+      "accuracy": 0.5625,
+      "balanced_accuracy": 0.4389,
+      "ci95": [
+        0.3933,
+        0.7183
+      ],
+      "coverage_of_input": 1.0,
+      "priced_n": 3,
+      "roi": -1.0,
+      "max_drawdown": -3.0,
+      "avg_odds": 2.2733,
+      "class_recall": {
+        "home": 0.7333,
+        "away": 0.5833,
+        "draw": 0.0
+      },
+      "name": "raw_wde_argmax_proxy_ft_marginal"
+    },
+    "stored_wde_decision": {
+      "n": 32,
+      "hits": 17,
+      "accuracy": 0.5312,
+      "balanced_accuracy": 0.4167,
+      "ci95": [
+        0.3645,
+        0.6913
+      ],
+      "coverage_of_input": 1.0,
+      "priced_n": 3,
+      "roi": -1.0,
+      "max_drawdown": -3.0,
+      "avg_odds": 2.5367,
+      "class_recall": {
+        "home": 0.6667,
+        "away": 0.5833,
+        "draw": 0.0
+      },
+      "name": "stored_wde_decision"
+    },
+    "market_implied_favorite": {
+      "n": 3,
+      "hits": 0,
+      "accuracy": 0.0,
+      "balanced_accuracy": 0.0,
+      "ci95": [
+        0.0,
+        0.5615
+      ],
+      "coverage_of_input": 0.0938,
+      "priced_n": 3,
+      "roi": -1.0,
+      "max_drawdown": -3.0,
+      "avg_odds": 2.2733,
+      "class_recall": {
+        "away": 0.0
+      },
+      "name": "market_implied_favorite"
+    },
+    "simple_prob_argmax": {
+      "n": 32,
+      "hits": 18,
+      "accuracy": 0.5625,
+      "balanced_accuracy": 0.4389,
+      "ci95": [
+        0.3933,
+        0.7183
+      ],
+      "coverage_of_input": 1.0,
+      "priced_n": 3,
+      "roi": -1.0,
+      "max_drawdown": -3.0,
+      "avg_odds": 2.2733,
+      "class_recall": {
+        "home": 0.7333,
+        "away": 0.5833,
+        "draw": 0.0
+      },
+      "name": "simple_prob_argmax"
+    },
+    "current_no_bet_proxy_conf_ge_60": {
+      "n": 13,
+      "hits": 7,
+      "accuracy": 0.5385,
+      "balanced_accuracy": 0.4111,
+      "ci95": [
+        0.2914,
+        0.7679
+      ],
+      "coverage_of_input": 0.4062,
+      "priced_n": 1,
+      "roi": -1.0,
+      "max_drawdown": -1.0,
+      "avg_odds": 3.2,
+      "class_recall": {
+        "home": 0.8333,
+        "away": 0.4,
+        "draw": 0.0
+      },
+      "name": "current_no_bet_proxy_conf_ge_60"
+    },
+    "strict_selection_proxy_conf60_edge55": {
+      "n": 11,
+      "hits": 7,
+      "accuracy": 0.6364,
+      "balanced_accuracy": 0.5,
+      "ci95": [
+        0.3538,
+        0.8483
+      ],
+      "coverage_of_input": 0.3438,
+      "priced_n": 0,
+      "roi": null,
+      "max_drawdown": null,
+      "avg_odds": null,
+      "class_recall": {
+        "home": 1.0,
+        "away": 0.5,
+        "draw": 0.0
+      },
+      "name": "strict_selection_proxy_conf60_edge55"
+    },
+    "elo_baseline": {
+      "name": "elo_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "poisson_baseline": {
+      "name": "poisson_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "dixon_coles_baseline": {
+      "name": "dixon_coles_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "gradient_boosting_baseline": {
+      "name": "gradient_boosting_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "calibrated_logistic_baseline": {
+      "name": "calibrated_logistic_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "exact_v2_full_mass": {
+      "name": "exact_v2_full_mass",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "ecse_full_mass_direction": {
+      "name": "ecse_full_mass_direction",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "majority_model_vote": {
+      "name": "majority_model_vote",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "weighted_model_vote": {
+      "name": "weighted_model_vote",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "current_approved_forensic_reference": {
+      "name": "current_approved_forensic_reference",
+      "n": 11,
+      "hits": 5,
+      "accuracy": 0.4545,
+      "note": "From APPROVED_BETS_FORENSIC_EVALUATION; not recomputed here"
+    }
+  },
+  "validation": {
+    "raw_wde_argmax_proxy_ft_marginal": {
+      "n": 11,
+      "hits": 6,
+      "accuracy": 0.5455,
+      "balanced_accuracy": 0.4167,
+      "ci95": [
+        0.2801,
+        0.7873
+      ],
+      "coverage_of_input": 1.0,
+      "priced_n": 0,
+      "roi": null,
+      "max_drawdown": null,
+      "avg_odds": null,
+      "class_recall": {
+        "home": 1.0,
+        "draw": 0.0,
+        "away": 0.25
+      },
+      "name": "raw_wde_argmax_proxy_ft_marginal"
+    },
+    "stored_wde_decision": {
+      "n": 11,
+      "hits": 6,
+      "accuracy": 0.5455,
+      "balanced_accuracy": 0.4167,
+      "ci95": [
+        0.2801,
+        0.7873
+      ],
+      "coverage_of_input": 1.0,
+      "priced_n": 0,
+      "roi": null,
+      "max_drawdown": null,
+      "avg_odds": null,
+      "class_recall": {
+        "home": 1.0,
+        "draw": 0.0,
+        "away": 0.25
+      },
+      "name": "stored_wde_decision"
+    },
+    "market_implied_favorite": {
+      "n": 0,
+      "hits": 0,
+      "accuracy": null,
+      "balanced_accuracy": null,
+      "ci95": [
+        null,
+        null
+      ],
+      "coverage_of_input": 0.0,
+      "priced_n": 0,
+      "roi": null,
+      "max_drawdown": null,
+      "avg_odds": null,
+      "class_recall": {},
+      "name": "market_implied_favorite"
+    },
+    "simple_prob_argmax": {
+      "n": 11,
+      "hits": 6,
+      "accuracy": 0.5455,
+      "balanced_accuracy": 0.4167,
+      "ci95": [
+        0.2801,
+        0.7873
+      ],
+      "coverage_of_input": 1.0,
+      "priced_n": 0,
+      "roi": null,
+      "max_drawdown": null,
+      "avg_odds": null,
+      "class_recall": {
+        "home": 1.0,
+        "draw": 0.0,
+        "away": 0.25
+      },
+      "name": "simple_prob_argmax"
+    },
+    "current_no_bet_proxy_conf_ge_60": {
+      "n": 6,
+      "hits": 5,
+      "accuracy": 0.8333,
+      "balanced_accuracy": 0.5,
+      "ci95": [
+        0.4365,
+        0.9699
+      ],
+      "coverage_of_input": 0.5455,
+      "priced_n": 0,
+      "roi": null,
+      "max_drawdown": null,
+      "avg_odds": null,
+      "class_recall": {
+        "home": 1.0,
+        "away": 0.0
+      },
+      "name": "current_no_bet_proxy_conf_ge_60"
+    },
+    "strict_selection_proxy_conf60_edge55": {
+      "n": 6,
+      "hits": 5,
+      "accuracy": 0.8333,
+      "balanced_accuracy": 0.5,
+      "ci95": [
+        0.4365,
+        0.9699
+      ],
+      "coverage_of_input": 0.5455,
+      "priced_n": 0,
+      "roi": null,
+      "max_drawdown": null,
+      "avg_odds": null,
+      "class_recall": {
+        "home": 1.0,
+        "away": 0.0
+      },
+      "name": "strict_selection_proxy_conf60_edge55"
+    },
+    "elo_baseline": {
+      "name": "elo_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "poisson_baseline": {
+      "name": "poisson_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "dixon_coles_baseline": {
+      "name": "dixon_coles_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "gradient_boosting_baseline": {
+      "name": "gradient_boosting_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "calibrated_logistic_baseline": {
+      "name": "calibrated_logistic_baseline",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "exact_v2_full_mass": {
+      "name": "exact_v2_full_mass",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "ecse_full_mass_direction": {
+      "name": "ecse_full_mass_direction",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "majority_model_vote": {
+      "name": "majority_model_vote",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "weighted_model_vote": {
+      "name": "weighted_model_vote",
+      "status": "NOT_AVAILABLE_IN_PHASE1_DATASET",
+      "n": 0,
+      "accuracy": null,
+      "note": "Requires extended feature/model join; deferred to Phase 2+"
+    },
+    "current_approved_forensic_reference": {
+      "name": "current_approved_forensic_reference",
+      "n": 11,
+      "hits": 5,
+      "accuracy": 0.4545,
+      "note": "From APPROVED_BETS_FORENSIC_EVALUATION; not recomputed here"
+    }
+  },
+  "holdout": "SEALED_UNOPENED",
+  "current_approved_accuracy_reference": 0.4545
+}

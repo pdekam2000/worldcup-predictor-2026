@@ -1,0 +1,221 @@
+{
+  "features": [
+    {
+      "feature": "fixture_id",
+      "type": "id",
+      "available_phase1": true,
+      "source": "freeze/eval"
+    },
+    {
+      "feature": "kickoff_utc",
+      "type": "timestamp",
+      "available_phase1": true,
+      "source": "fixtures/freeze"
+    },
+    {
+      "feature": "frozen_at",
+      "type": "timestamp",
+      "available_phase1": true,
+      "source": "freeze"
+    },
+    {
+      "feature": "generated_at",
+      "type": "timestamp",
+      "available_phase1": true,
+      "source": "freeze"
+    },
+    {
+      "feature": "freeze_id",
+      "type": "id",
+      "available_phase1": true,
+      "source": "freeze"
+    },
+    {
+      "feature": "freeze_hash",
+      "type": "hash",
+      "available_phase1": true,
+      "source": "freeze"
+    },
+    {
+      "feature": "league",
+      "type": "categorical",
+      "available_phase1": true,
+      "source": "freeze/eval"
+    },
+    {
+      "feature": "competition",
+      "type": "categorical",
+      "available_phase1": true,
+      "source": "freeze"
+    },
+    {
+      "feature": "validation_tier",
+      "type": "categorical",
+      "available_phase1": false,
+      "source": "owner scope"
+    },
+    {
+      "feature": "wde_decision",
+      "type": "label",
+      "available_phase1": true,
+      "source": "WDE freeze"
+    },
+    {
+      "feature": "ft_marginal_direction",
+      "type": "label",
+      "available_phase1": true,
+      "source": "WDE freeze"
+    },
+    {
+      "feature": "home_probability",
+      "type": "float",
+      "available_phase1": true,
+      "source": "WDE"
+    },
+    {
+      "feature": "draw_probability",
+      "type": "float",
+      "available_phase1": true,
+      "source": "WDE"
+    },
+    {
+      "feature": "away_probability",
+      "type": "float",
+      "available_phase1": true,
+      "source": "WDE"
+    },
+    {
+      "feature": "wde_confidence",
+      "type": "float",
+      "available_phase1": true,
+      "source": "WDE"
+    },
+    {
+      "feature": "ecse_top1..top10",
+      "type": "scores",
+      "available_phase1": true,
+      "source": "ECSE freeze ranks"
+    },
+    {
+      "feature": "top5_mass",
+      "type": "float",
+      "available_phase1": true,
+      "source": "ECSE"
+    },
+    {
+      "feature": "top10_mass",
+      "type": "float",
+      "available_phase1": true,
+      "source": "ECSE"
+    },
+    {
+      "feature": "entropy",
+      "type": "float",
+      "available_phase1": false,
+      "source": "often missing in freeze overlay"
+    },
+    {
+      "feature": "lambda_home",
+      "type": "float",
+      "available_phase1": true,
+      "source": "ECSE"
+    },
+    {
+      "feature": "lambda_away",
+      "type": "float",
+      "available_phase1": true,
+      "source": "ECSE"
+    },
+    {
+      "feature": "odds_home/draw/away",
+      "type": "float",
+      "available_phase1": false,
+      "source": "often missing as decimal; reject implied-prob"
+    },
+    {
+      "feature": "exact_v2_direction",
+      "type": "label",
+      "available_phase1": false,
+      "source": "shadow; not on all freezes"
+    },
+    {
+      "feature": "dna_direction",
+      "type": "label",
+      "available_phase1": false,
+      "source": "shadow"
+    },
+    {
+      "feature": "twins_direction",
+      "type": "label",
+      "available_phase1": false,
+      "source": "shadow"
+    },
+    {
+      "feature": "hcee",
+      "type": "struct",
+      "available_phase1": false,
+      "source": "shadow"
+    },
+    {
+      "feature": "team_form_h2h",
+      "type": "struct",
+      "available_phase1": false,
+      "source": "shadow"
+    },
+    {
+      "feature": "xg",
+      "type": "float",
+      "available_phase1": false,
+      "source": "sparse"
+    },
+    {
+      "feature": "lineups",
+      "type": "struct",
+      "available_phase1": false,
+      "source": "sparse"
+    },
+    {
+      "feature": "injuries",
+      "type": "struct",
+      "available_phase1": false,
+      "source": "sparse"
+    },
+    {
+      "feature": "referee",
+      "type": "categorical",
+      "available_phase1": false,
+      "source": "sparse"
+    },
+    {
+      "feature": "weather",
+      "type": "struct",
+      "available_phase1": false,
+      "source": "sparse"
+    },
+    {
+      "feature": "odds_movement",
+      "type": "float",
+      "available_phase1": false,
+      "source": "not in Phase1 freeze overlay"
+    },
+    {
+      "feature": "actual_1x2",
+      "type": "label",
+      "available_phase1": true,
+      "source": "fixture_results / eval"
+    },
+    {
+      "feature": "final_score",
+      "type": "score",
+      "available_phase1": true,
+      "source": "fixture_results"
+    },
+    {
+      "feature": "cohort_type",
+      "type": "categorical",
+      "available_phase1": true,
+      "source": "assigned historical_replay"
+    }
+  ],
+  "label": "actual_1x2 regulation-time"
+}

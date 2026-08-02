@@ -1,0 +1,27 @@
+{
+  "findings": [
+    {
+      "severity": "INFO",
+      "issue": "holdout_sealed_for_strategy_selection",
+      "n": 11,
+      "note": "Phase1 must not use holdout metrics for ranking/tuning"
+    },
+    {
+      "severity": "MEDIUM",
+      "issue": "decimal_odds_sparse",
+      "n_with_odds": 3,
+      "note": "ROI baselines limited; reject values <1.01 as non-decimal"
+    },
+    {
+      "severity": "INFO",
+      "issue": "phase1_feature_set_limited",
+      "note": "xG/lineups/injuries/DNA/ExactV2 not joined; availability matrix marks missing"
+    },
+    {
+      "severity": "INFO",
+      "issue": "chronological_split_order",
+      "ok": true
+    }
+  ],
+  "passed": true
+}

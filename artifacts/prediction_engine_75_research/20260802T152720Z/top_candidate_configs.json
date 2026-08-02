@@ -1,0 +1,2857 @@
+{
+  "n": 50,
+  "rows": [
+    {
+      "experiment_id": 480,
+      "config_hash": "ad5730b0b4ca4249",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": null,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 27,
+        "hits": 14,
+        "accuracy": 0.5185,
+        "balanced_accuracy": 0.4066,
+        "ci95": [
+          0.3399,
+          0.6926
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.645,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 481,
+      "config_hash": "4079a88aac3b3670",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": null,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 27,
+        "hits": 15,
+        "accuracy": 0.5556,
+        "balanced_accuracy": 0.4343,
+        "ci95": [
+          0.3731,
+          0.7241
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.25,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 482,
+      "config_hash": "7da5c7cf3677d547",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": null,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 27,
+        "hits": 15,
+        "accuracy": 0.5556,
+        "balanced_accuracy": 0.4343,
+        "ci95": [
+          0.3731,
+          0.7241
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.25,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 483,
+      "config_hash": "2837482d6921183c",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.5,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4537,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 484,
+      "config_hash": "4826ee376445b442",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.5,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 25,
+        "hits": 15,
+        "accuracy": 0.6,
+        "balanced_accuracy": 0.4815,
+        "ci95": [
+          0.4074,
+          0.766
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 485,
+      "config_hash": "b850a9bca1a6ff20",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.5,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 25,
+        "hits": 15,
+        "accuracy": 0.6,
+        "balanced_accuracy": 0.4815,
+        "ci95": [
+          0.4074,
+          0.766
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 486,
+      "config_hash": "7a17a3bb7607ce08",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.8,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4537,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 487,
+      "config_hash": "52bf1228f84455a8",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.8,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 25,
+        "hits": 15,
+        "accuracy": 0.6,
+        "balanced_accuracy": 0.4815,
+        "ci95": [
+          0.4074,
+          0.766
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 488,
+      "config_hash": "9bbd325447ca2bb0",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.8,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 25,
+        "hits": 15,
+        "accuracy": 0.6,
+        "balanced_accuracy": 0.4815,
+        "ci95": [
+          0.4074,
+          0.766
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 489,
+      "config_hash": "604220d8078eb1a3",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 2.2,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 26,
+        "hits": 14,
+        "accuracy": 0.5385,
+        "balanced_accuracy": 0.4278,
+        "ci95": [
+          0.3546,
+          0.7124
+        ],
+        "coverage_of_input": 0.8125,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 490,
+      "config_hash": "14790f16cbc0093a",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 2.2,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 26,
+        "hits": 15,
+        "accuracy": 0.5769,
+        "balanced_accuracy": 0.4556,
+        "ci95": [
+          0.3895,
+          0.7446
+        ],
+        "coverage_of_input": 0.8125,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 491,
+      "config_hash": "fe24390cd2060e66",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 2.2,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 26,
+        "hits": 15,
+        "accuracy": 0.5769,
+        "balanced_accuracy": 0.4556,
+        "ci95": [
+          0.3895,
+          0.7446
+        ],
+        "coverage_of_input": 0.8125,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 492,
+      "config_hash": "8b7a20a700e48286",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 3.0,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 26,
+        "hits": 14,
+        "accuracy": 0.5385,
+        "balanced_accuracy": 0.4278,
+        "ci95": [
+          0.3546,
+          0.7124
+        ],
+        "coverage_of_input": 0.8125,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 493,
+      "config_hash": "fde8e5269610271c",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 3.0,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 27,
+        "hits": 15,
+        "accuracy": 0.5556,
+        "balanced_accuracy": 0.4343,
+        "ci95": [
+          0.3731,
+          0.7241
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.25,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 494,
+      "config_hash": "7ff664af6ad27771",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": false,
+        "odds_max": 3.0,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 27,
+        "hits": 15,
+        "accuracy": 0.5556,
+        "balanced_accuracy": 0.4343,
+        "ci95": [
+          0.3731,
+          0.7241
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.25,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 495,
+      "config_hash": "c3475a4e47fb95c9",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": null,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 496,
+      "config_hash": "549a9df26d280249",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": null,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 497,
+      "config_hash": "7eb2c4ea75870df7",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": null,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 498,
+      "config_hash": "9d740a6c9af605d4",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 1.5,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 24,
+        "hits": 14,
+        "accuracy": 0.5833,
+        "balanced_accuracy": 0.4714,
+        "ci95": [
+          0.3883,
+          0.7553
+        ],
+        "coverage_of_input": 0.75,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 499,
+      "config_hash": "2c0e8647eebd22e7",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 1.5,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 24,
+        "hits": 14,
+        "accuracy": 0.5833,
+        "balanced_accuracy": 0.4714,
+        "ci95": [
+          0.3883,
+          0.7553
+        ],
+        "coverage_of_input": 0.75,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 500,
+      "config_hash": "624d3e717fffd5dc",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 1.5,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 24,
+        "hits": 14,
+        "accuracy": 0.5833,
+        "balanced_accuracy": 0.4714,
+        "ci95": [
+          0.3883,
+          0.7553
+        ],
+        "coverage_of_input": 0.75,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 501,
+      "config_hash": "14f3392089d043fb",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 1.8,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 24,
+        "hits": 14,
+        "accuracy": 0.5833,
+        "balanced_accuracy": 0.4714,
+        "ci95": [
+          0.3883,
+          0.7553
+        ],
+        "coverage_of_input": 0.75,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 502,
+      "config_hash": "b8b3fed1d594fcb4",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 1.8,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 24,
+        "hits": 14,
+        "accuracy": 0.5833,
+        "balanced_accuracy": 0.4714,
+        "ci95": [
+          0.3883,
+          0.7553
+        ],
+        "coverage_of_input": 0.75,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 503,
+      "config_hash": "993da3cc40964184",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 1.8,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 24,
+        "hits": 14,
+        "accuracy": 0.5833,
+        "balanced_accuracy": 0.4714,
+        "ci95": [
+          0.3883,
+          0.7553
+        ],
+        "coverage_of_input": 0.75,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 504,
+      "config_hash": "c2f7e0db3def24d0",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 2.2,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 505,
+      "config_hash": "a526ece102e2f431",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 2.2,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 506,
+      "config_hash": "f174322ac64aa22f",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 2.2,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 507,
+      "config_hash": "cfcb5efbe96dbd96",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 3.0,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 508,
+      "config_hash": "9b3f1079e22fe858",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 3.0,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 509,
+      "config_hash": "e51e27ef40569831",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": null,
+        "require_decision_equals_marginal": true,
+        "odds_max": 3.0,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 510,
+      "config_hash": "93aeee3c719663cc",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": null,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 27,
+        "hits": 14,
+        "accuracy": 0.5185,
+        "balanced_accuracy": 0.4066,
+        "ci95": [
+          0.3399,
+          0.6926
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.645,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 511,
+      "config_hash": "8623f3e1455bb89c",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": null,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 27,
+        "hits": 15,
+        "accuracy": 0.5556,
+        "balanced_accuracy": 0.4343,
+        "ci95": [
+          0.3731,
+          0.7241
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.25,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 512,
+      "config_hash": "f28a17d8eb40498e",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": null,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 27,
+        "hits": 15,
+        "accuracy": 0.5556,
+        "balanced_accuracy": 0.4343,
+        "ci95": [
+          0.3731,
+          0.7241
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.25,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 513,
+      "config_hash": "26a1c6ff3b5fdbba",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.5,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4537,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 514,
+      "config_hash": "18ce3906f608e6fa",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.5,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 25,
+        "hits": 15,
+        "accuracy": 0.6,
+        "balanced_accuracy": 0.4815,
+        "ci95": [
+          0.4074,
+          0.766
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 515,
+      "config_hash": "ec1ded0a06990d3e",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.5,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 25,
+        "hits": 15,
+        "accuracy": 0.6,
+        "balanced_accuracy": 0.4815,
+        "ci95": [
+          0.4074,
+          0.766
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 516,
+      "config_hash": "2439300f6804ef97",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.8,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4537,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 517,
+      "config_hash": "d16f34c7d4e48de1",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.8,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 25,
+        "hits": 15,
+        "accuracy": 0.6,
+        "balanced_accuracy": 0.4815,
+        "ci95": [
+          0.4074,
+          0.766
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 518,
+      "config_hash": "cb6b617b22c611d0",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 1.8,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 25,
+        "hits": 15,
+        "accuracy": 0.6,
+        "balanced_accuracy": 0.4815,
+        "ci95": [
+          0.4074,
+          0.766
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 519,
+      "config_hash": "b919bf29539c3f93",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 2.2,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 26,
+        "hits": 14,
+        "accuracy": 0.5385,
+        "balanced_accuracy": 0.4278,
+        "ci95": [
+          0.3546,
+          0.7124
+        ],
+        "coverage_of_input": 0.8125,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 520,
+      "config_hash": "47444571faf4b209",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 2.2,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 26,
+        "hits": 15,
+        "accuracy": 0.5769,
+        "balanced_accuracy": 0.4556,
+        "ci95": [
+          0.3895,
+          0.7446
+        ],
+        "coverage_of_input": 0.8125,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 521,
+      "config_hash": "fa7cb15a4de9f0e9",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 2.2,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 26,
+        "hits": 15,
+        "accuracy": 0.5769,
+        "balanced_accuracy": 0.4556,
+        "ci95": [
+          0.3895,
+          0.7446
+        ],
+        "coverage_of_input": 0.8125,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 522,
+      "config_hash": "2220e97f7e40dda8",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 3.0,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 26,
+        "hits": 14,
+        "accuracy": 0.5385,
+        "balanced_accuracy": 0.4278,
+        "ci95": [
+          0.3546,
+          0.7124
+        ],
+        "coverage_of_input": 0.8125,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.5833,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 523,
+      "config_hash": "abda52c9ddac2034",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 3.0,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 27,
+        "hits": 15,
+        "accuracy": 0.5556,
+        "balanced_accuracy": 0.4343,
+        "ci95": [
+          0.3731,
+          0.7241
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.25,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 524,
+      "config_hash": "aca3b3c12045ec32",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": false,
+        "odds_max": 3.0,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 27,
+        "hits": 15,
+        "accuracy": 0.5556,
+        "balanced_accuracy": 0.4343,
+        "ci95": [
+          0.3731,
+          0.7241
+        ],
+        "coverage_of_input": 0.8438,
+        "priced_n": 2,
+        "roi": -1.0,
+        "max_drawdown": -2.0,
+        "avg_odds": 2.25,
+        "class_recall": {
+          "home": 0.6667,
+          "away": 0.6364,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 525,
+      "config_hash": "f686d2eb5854a2b8",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": true,
+        "odds_max": null,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 526,
+      "config_hash": "1d940d59a49172e4",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": true,
+        "odds_max": null,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 527,
+      "config_hash": "6d32c5d326e4ab5c",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": true,
+        "odds_max": null,
+        "direction_mode": "prob_argmax"
+      },
+      "train": {
+        "n": 25,
+        "hits": 14,
+        "accuracy": 0.56,
+        "balanced_accuracy": 0.4455,
+        "ci95": [
+          0.3707,
+          0.7333
+        ],
+        "coverage_of_input": 0.7812,
+        "priced_n": 1,
+        "roi": -1.0,
+        "max_drawdown": -1.0,
+        "avg_odds": 2.09,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 528,
+      "config_hash": "0ba415bc3837d42f",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": true,
+        "odds_max": 1.5,
+        "direction_mode": "wde"
+      },
+      "train": {
+        "n": 24,
+        "hits": 14,
+        "accuracy": 0.5833,
+        "balanced_accuracy": 0.4714,
+        "ci95": [
+          0.3883,
+          0.7553
+        ],
+        "coverage_of_input": 0.75,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    },
+    {
+      "experiment_id": 529,
+      "config_hash": "a2dc83d59f3b6b66",
+      "config": {
+        "min_confidence": 0.0,
+        "min_edge": 0.4,
+        "max_entropy": null,
+        "min_top5_mass": 0.45,
+        "require_decision_equals_marginal": true,
+        "odds_max": 1.5,
+        "direction_mode": "marginal"
+      },
+      "train": {
+        "n": 24,
+        "hits": 14,
+        "accuracy": 0.5833,
+        "balanced_accuracy": 0.4714,
+        "ci95": [
+          0.3883,
+          0.7553
+        ],
+        "coverage_of_input": 0.75,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 0.6364,
+          "away": 0.7778,
+          "draw": 0.0
+        }
+      },
+      "validation": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.4093,
+          0.9285
+        ],
+        "coverage_of_input": 0.7273,
+        "priced_n": 0,
+        "roi": null,
+        "max_drawdown": null,
+        "avg_odds": null,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.5,
+          "draw": 0.0
+        }
+      },
+      "flags": [],
+      "holdout": "SEALED_UNOPENED",
+      "selected_on": "validation_only",
+      "val_score": 80.273
+    }
+  ],
+  "selection_split": "validation_only",
+  "holdout": "SEALED"
+}

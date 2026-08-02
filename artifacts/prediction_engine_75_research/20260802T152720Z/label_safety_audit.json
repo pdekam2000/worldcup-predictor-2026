@@ -1,0 +1,27 @@
+{
+  "policy": "Downgrade user-facing betting suitability language in research/docs; production patch prepared but NOT deployed",
+  "wording_map": {
+    "Approved Bet": "Research Candidate",
+    "BETTABLE_CANDIDATE": "MODEL_CANDIDATE",
+    "Bettable": "Model Candidate",
+    "Strong Pick": "High Model Agreement",
+    "SELECTED_FOR_BETTING": "RESEARCH_SHORTLIST",
+    "APPROVED": "RESEARCH_CANDIDATE"
+  },
+  "hard_blockers_retained": [
+    "stale_odds",
+    "missing_odds",
+    "unsupported_competition",
+    "post_kickoff_prediction",
+    "incomplete_canonical_output",
+    "invalid_freeze",
+    "result_leakage_risk"
+  ],
+  "production_policy_preserved": true,
+  "deployed": false,
+  "evidence_against_current_approval": {
+    "strict_approved_accuracy": 0.4545,
+    "canonical_baseline_approx": 0.519,
+    "conclusion": "Current approved/selected/bettable labels are not proof of betting suitability"
+  }
+}
