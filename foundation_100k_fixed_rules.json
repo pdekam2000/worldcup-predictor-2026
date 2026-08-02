@@ -1,0 +1,259 @@
+{
+  "rules": [
+    {
+      "config_hash": "ea08ac971da53246",
+      "rule": {
+        "market": "home",
+        "eligible_when_all": [
+          "market_family = home",
+          "direction_source = wde",
+          "selected_odds <= 1.5",
+          "lambda_total >= 2.0"
+        ],
+        "abstain_when": [
+          "missing required model outputs for direction_source",
+          "missing odds when odds gates set",
+          "any eligibility condition fails",
+          "post-kickoff / leakage blocked rows (excluded from corpus)"
+        ],
+        "settlement": "regulation-time 1X2 on selected side",
+        "constants": {
+          "market": "home",
+          "direction_source": "wde",
+          "min_confidence": 0,
+          "min_edge": 0.0,
+          "max_entropy": null,
+          "min_top5": null,
+          "odds_min": null,
+          "odds_max": 1.5,
+          "require_wde_ecse_agree": false,
+          "require_market_agree": false,
+          "max_margin": null,
+          "balanced_only": false,
+          "exclude_no_bet": false,
+          "min_lambda_total": 2.0,
+          "max_lambda_total": null
+        },
+        "version": "massive_search_rule_v1"
+      },
+      "validation": {
+        "n": 8,
+        "accuracy": 0.875,
+        "roi": 0.1056,
+        "avg_odds": 1.2615,
+        "max_drawdown": -1.0,
+        "flags": [
+          "N_LT_50_NOT_DISCOVERY",
+          "SMALL_SAMPLE",
+          "LEAGUE_CONCENTRATION"
+        ]
+      },
+      "discovery_status": "NOT_PROMOTABLE_SMALL_SAMPLE"
+    },
+    {
+      "config_hash": "de9110e24996fc5a",
+      "rule": {
+        "market": "home",
+        "eligible_when_all": [
+          "market_family = home",
+          "direction_source = wde",
+          "selected_odds <= 1.5",
+          "lambda_total >= 2.0",
+          "lambda_total <= 3.5"
+        ],
+        "abstain_when": [
+          "missing required model outputs for direction_source",
+          "missing odds when odds gates set",
+          "any eligibility condition fails",
+          "post-kickoff / leakage blocked rows (excluded from corpus)"
+        ],
+        "settlement": "regulation-time 1X2 on selected side",
+        "constants": {
+          "market": "home",
+          "direction_source": "wde",
+          "min_confidence": 0,
+          "min_edge": 0.0,
+          "max_entropy": null,
+          "min_top5": null,
+          "odds_min": null,
+          "odds_max": 1.5,
+          "require_wde_ecse_agree": false,
+          "require_market_agree": false,
+          "max_margin": null,
+          "balanced_only": false,
+          "exclude_no_bet": false,
+          "min_lambda_total": 2.0,
+          "max_lambda_total": 3.5
+        },
+        "version": "massive_search_rule_v1"
+      },
+      "validation": {
+        "n": 8,
+        "accuracy": 0.875,
+        "roi": 0.1056,
+        "avg_odds": 1.2615,
+        "max_drawdown": -1.0,
+        "flags": [
+          "N_LT_50_NOT_DISCOVERY",
+          "SMALL_SAMPLE",
+          "LEAGUE_CONCENTRATION"
+        ]
+      },
+      "discovery_status": "NOT_PROMOTABLE_SMALL_SAMPLE"
+    },
+    {
+      "config_hash": "cd94fa9b9cd44136",
+      "rule": {
+        "market": "home",
+        "eligible_when_all": [
+          "market_family = home",
+          "direction_source = wde",
+          "selected_odds <= 1.5",
+          "model direction == market favorite",
+          "lambda_total >= 2.0"
+        ],
+        "abstain_when": [
+          "missing required model outputs for direction_source",
+          "missing odds when odds gates set",
+          "any eligibility condition fails",
+          "post-kickoff / leakage blocked rows (excluded from corpus)"
+        ],
+        "settlement": "regulation-time 1X2 on selected side",
+        "constants": {
+          "market": "home",
+          "direction_source": "wde",
+          "min_confidence": 0,
+          "min_edge": 0.0,
+          "max_entropy": null,
+          "min_top5": null,
+          "odds_min": null,
+          "odds_max": 1.5,
+          "require_wde_ecse_agree": false,
+          "require_market_agree": true,
+          "max_margin": null,
+          "balanced_only": false,
+          "exclude_no_bet": false,
+          "min_lambda_total": 2.0,
+          "max_lambda_total": null
+        },
+        "version": "massive_search_rule_v1"
+      },
+      "validation": {
+        "n": 8,
+        "accuracy": 0.875,
+        "roi": 0.1056,
+        "avg_odds": 1.2615,
+        "max_drawdown": -1.0,
+        "flags": [
+          "N_LT_50_NOT_DISCOVERY",
+          "SMALL_SAMPLE",
+          "LEAGUE_CONCENTRATION"
+        ]
+      },
+      "discovery_status": "NOT_PROMOTABLE_SMALL_SAMPLE"
+    },
+    {
+      "config_hash": "f92722cfa5f4dd74",
+      "rule": {
+        "market": "home",
+        "eligible_when_all": [
+          "market_family = home",
+          "direction_source = wde",
+          "selected_odds <= 1.5",
+          "model direction == market favorite",
+          "lambda_total >= 2.0",
+          "lambda_total <= 3.5"
+        ],
+        "abstain_when": [
+          "missing required model outputs for direction_source",
+          "missing odds when odds gates set",
+          "any eligibility condition fails",
+          "post-kickoff / leakage blocked rows (excluded from corpus)"
+        ],
+        "settlement": "regulation-time 1X2 on selected side",
+        "constants": {
+          "market": "home",
+          "direction_source": "wde",
+          "min_confidence": 0,
+          "min_edge": 0.0,
+          "max_entropy": null,
+          "min_top5": null,
+          "odds_min": null,
+          "odds_max": 1.5,
+          "require_wde_ecse_agree": false,
+          "require_market_agree": true,
+          "max_margin": null,
+          "balanced_only": false,
+          "exclude_no_bet": false,
+          "min_lambda_total": 2.0,
+          "max_lambda_total": 3.5
+        },
+        "version": "massive_search_rule_v1"
+      },
+      "validation": {
+        "n": 8,
+        "accuracy": 0.875,
+        "roi": 0.1056,
+        "avg_odds": 1.2615,
+        "max_drawdown": -1.0,
+        "flags": [
+          "N_LT_50_NOT_DISCOVERY",
+          "SMALL_SAMPLE",
+          "LEAGUE_CONCENTRATION"
+        ]
+      },
+      "discovery_status": "NOT_PROMOTABLE_SMALL_SAMPLE"
+    },
+    {
+      "config_hash": "56732695db7d58c6",
+      "rule": {
+        "market": "home",
+        "eligible_when_all": [
+          "market_family = home",
+          "direction_source = wde",
+          "selected_odds <= 1.5",
+          "WDE direction == ECSE direction",
+          "lambda_total >= 2.0"
+        ],
+        "abstain_when": [
+          "missing required model outputs for direction_source",
+          "missing odds when odds gates set",
+          "any eligibility condition fails",
+          "post-kickoff / leakage blocked rows (excluded from corpus)"
+        ],
+        "settlement": "regulation-time 1X2 on selected side",
+        "constants": {
+          "market": "home",
+          "direction_source": "wde",
+          "min_confidence": 0,
+          "min_edge": 0.0,
+          "max_entropy": null,
+          "min_top5": null,
+          "odds_min": null,
+          "odds_max": 1.5,
+          "require_wde_ecse_agree": true,
+          "require_market_agree": false,
+          "max_margin": null,
+          "balanced_only": false,
+          "exclude_no_bet": false,
+          "min_lambda_total": 2.0,
+          "max_lambda_total": null
+        },
+        "version": "massive_search_rule_v1"
+      },
+      "validation": {
+        "n": 8,
+        "accuracy": 0.875,
+        "roi": 0.1056,
+        "avg_odds": 1.2615,
+        "max_drawdown": -1.0,
+        "flags": [
+          "N_LT_50_NOT_DISCOVERY",
+          "SMALL_SAMPLE",
+          "LEAGUE_CONCENTRATION"
+        ]
+      },
+      "discovery_status": "NOT_PROMOTABLE_SMALL_SAMPLE"
+    }
+  ]
+}

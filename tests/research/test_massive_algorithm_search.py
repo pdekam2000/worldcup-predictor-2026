@@ -161,3 +161,52 @@ def test_foundation_smoke(tmp_path):
     assert v["sealed_holdout_status"] == "SEALED_UNOPENED"
     assert (tmp_path / "m" / "database_inventory.json").exists()
     assert (tmp_path / "m" / "experiment_checkpoint.json").exists()
+    # Regression: temp out_dir outside repo must not crash on Path.relative_to(ROOT)
+    assert "artifact_dir" in v
+    assert isinstance(v["artifact_dir"], str)
+
+
+def test_scale_decision_rejects_small_corpus():
+    from worldcup_predictor.research.massive_algorithm_search.audit_100k import scale_decision
+
+    decision, reasons = scale_decision(
+        {
+            "split": {"validation": 45},
+            "n_usable_prematch_labeled": 225,
+            "n_finished_unique": 2409,
+        },
+        {"max_validation_n_observed": 16, "acc75_counts": {"ge75_n_ge50": 0}},
+        leakage_ok=True,
+        tested=100000,
+    )
+    assert decision == "SCALE_TO_1M_NOT_STATISTICALLY_JUSTIFIED"
+    assert any("validation_split_n" in r for r in reasons)
+
+
+def test_fixed_rule_reproducible_text():
+    from worldcup_predictor.research.massive_algorithm_search.audit_100k import rule_text
+
+    cfg = {
+        "market": "home",
+        "direction_source": "wde",
+        "odds_max": 1.5,
+        "min_lambda_total": 2.0,
+        "require_wde_ecse_agree": False,
+    }
+    r1 = rule_text(cfg)
+    r2 = rule_text(cfg)
+    assert r1 == r2
+    assert "selected_odds <= 1.5" in r1["eligible_when_all"]
+    assert r1["version"] == "massive_search_rule_v1"
+
+
+def test_audit_identity_100k_when_artifacts_present():
+    from worldcup_predictor.research.massive_algorithm_search.audit_100k import RUN_DIR
+
+    ck = RUN_DIR / "experiment_checkpoint.json"
+    if not ck.exists():
+        return
+    data = json.loads(ck.read_text(encoding="utf-8"))
+    assert data.get("tested") == 100000
+    assert data.get("unique") == 100000
+    assert data.get("target_n") == 100000

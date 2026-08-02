@@ -1,0 +1,15 @@
+{
+  "risk": "HIGH",
+  "reasons": [
+    "100000 comparisons on validation n<=45",
+    "best accuracy candidate n=8",
+    "no N>=50 ge75 candidates",
+    "holdout sealed unused (correct) so no confirmation",
+    "corpus 225 vs 2409 finished — selection on scarce freezes",
+    "leading candidates carry LEAGUE_CONCENTRATION / SMALL_SAMPLE flags",
+    "removing one or two wins would collapse n<50 win rates; not discovery-grade"
+  ],
+  "parameter_neighborhood": "DEFERRED_NOT_NEEDED_FOR_REJECT_SCALE",
+  "collapse_risk": "HIGH_FOR_N_LT_50",
+  "sensitivity": "FAILS_REMOVE_ONE_OR_TWO_WINS_GATE_BY_SAMPLE_SIZE"
+}

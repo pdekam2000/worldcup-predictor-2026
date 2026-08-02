@@ -1,0 +1,57 @@
+{
+  "all_database_fixtures": 2979,
+  "unique_finished_fixtures": 2409,
+  "valid_prematch_labeled": 225,
+  "priced": 209,
+  "unpriced": 16,
+  "true_forward": 0,
+  "cohort_counts": {
+    "HISTORICAL_IMMUTABLE_PREMATCH_FREEZE": 223,
+    "HISTORICAL_PROVIDER_PREMATCH": 2
+  },
+  "date_range": {
+    "min": "2026-06-12T02:00:00",
+    "max": "2026-07-29T19:15:00"
+  },
+  "leagues_n": 15,
+  "leagues_sample": [
+    "a_lyga",
+    "allsvenskan",
+    "challenge_league",
+    "champions_league",
+    "conference_league",
+    "eliteserien",
+    "europa_league",
+    "one_deild",
+    "one_lyga",
+    "primera_nacional",
+    "superettan",
+    "urvalsdeild",
+    "veikkausliiga",
+    "virsliga",
+    "world_cup_2026"
+  ],
+  "country_count": "NOT_SEPARATELY_STORED_IN_MANIFEST",
+  "season_count": "NOT_SEPARATELY_STORED_IN_MANIFEST",
+  "markets": [
+    "1X2_home",
+    "1X2_draw",
+    "1X2_away",
+    "favorite",
+    "underdog"
+  ],
+  "features_core": 12,
+  "exclusions": {
+    "POST_KICKOFF_PREDICTION": 5,
+    "OK": 225
+  },
+  "split": {
+    "train": 135,
+    "validation": 45,
+    "holdout_sealed": 45
+  },
+  "leakage_passed": true,
+  "n_usable_prematch_labeled": 225,
+  "n_finished_unique": 2409,
+  "phase2_223_note": "Phase2 usable 223 is subset/overlap; massive corpus usable is 225 (not a reuse of Phase2 figure as full DB)"
+}

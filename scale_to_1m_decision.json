@@ -1,0 +1,14 @@
+{
+  "decision": "SCALE_TO_1M_NOT_STATISTICALLY_JUSTIFIED",
+  "reasons": [
+    "validation_split_n=45 < 50; cannot honestly evaluate Niche Discovery / Tier A/S sample gates on validation",
+    "usable_prematch_labeled=225 too small vs finished_fixtures=2409 (finished_without_usable_label≈2184); additional configs overfit the same tiny chronological slices",
+    "max_observed_validation_bet_n=16 < 50 across 100k strategies",
+    "zero_ge75_candidates_with_n_ge50_after_100k"
+  ],
+  "resource_ok": true,
+  "statistical_ok": false,
+  "holdout_opened": false,
+  "launch_1m": false,
+  "alternative": "Expand immutable prematch freeze coverage / true-forward N before brute-force scale-up"
+}
