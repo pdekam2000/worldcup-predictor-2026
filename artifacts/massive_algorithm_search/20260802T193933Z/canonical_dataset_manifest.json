@@ -1,0 +1,66 @@
+{
+  "phase2_inventory": {
+    "n_raw": 228,
+    "source_counts": {
+      "finished_match_evaluation": 54,
+      "worldcup_stored_predictions_new": 174,
+      "worldcup_stored_predictions_merge": 54
+    },
+    "cohort_counts_raw": {
+      "HISTORICAL_PREMATCH_FREEZE": 228
+    },
+    "exclusion_reason_counts": {
+      "POST_KICKOFF_PREDICTION": 5,
+      "OK": 223
+    },
+    "n_exclusions_logged": 5,
+    "phase1_usable_n": 54
+  },
+  "n_raw": 230,
+  "n_usable_prematch_labeled": 225,
+  "n_priced": 209,
+  "n_with_wde": 223,
+  "n_ecse_only_added": 2,
+  "n_true_forward": 0,
+  "cohort_counts": {
+    "HISTORICAL_IMMUTABLE_PREMATCH_FREEZE": 223,
+    "HISTORICAL_PROVIDER_PREMATCH": 2
+  },
+  "exclusion_counts": {
+    "POST_KICKOFF_PREDICTION": 5,
+    "OK": 225
+  },
+  "date_range": {
+    "min": "2026-06-12T02:00:00",
+    "max": "2026-07-29T19:15:00"
+  },
+  "leagues_n": 15,
+  "leagues_sample": [
+    "a_lyga",
+    "allsvenskan",
+    "challenge_league",
+    "champions_league",
+    "conference_league",
+    "eliteserien",
+    "europa_league",
+    "one_deild",
+    "one_lyga",
+    "primera_nacional",
+    "superettan",
+    "urvalsdeild",
+    "veikkausliiga",
+    "virsliga",
+    "world_cup_2026"
+  ],
+  "sources": [
+    "worldcup_stored_predictions",
+    "ecse_prediction_snapshots+fixture_results",
+    "finished_match_evaluation"
+  ],
+  "split": {
+    "train": 135,
+    "validation": 45,
+    "holdout_sealed": 45
+  },
+  "holdout_status": "SEALED_UNOPENED"
+}

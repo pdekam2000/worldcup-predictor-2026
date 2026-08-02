@@ -1,0 +1,140 @@
+{
+  "status": "MASSIVE_SEARCH_FOUNDATION_AND_100K_COMPLETE",
+  "program": "MASSIVE_DATABASE_PROFITABLE_BETTING_ALGORITHM_DISCOVERY",
+  "all_database_fixtures": 2979,
+  "unique_finished_fixtures": 2409,
+  "valid_prematch_labeled_fixtures": 225,
+  "priced_fixtures": 209,
+  "true_forward_fixtures": 0,
+  "date_range": {
+    "min": "2026-06-12T02:00:00",
+    "max": "2026-07-29T19:15:00"
+  },
+  "leagues_n": 15,
+  "markets_available_phase": [
+    "1X2_home",
+    "1X2_draw",
+    "1X2_away",
+    "favorite",
+    "underdog"
+  ],
+  "features_available_core": 12,
+  "database_sources_used": [
+    "worldcup_stored_predictions",
+    "ecse_prediction_snapshots+fixture_results",
+    "finished_match_evaluation"
+  ],
+  "exclusions_top": {
+    "POST_KICKOFF_PREDICTION": 5,
+    "OK": 225
+  },
+  "benchmark_100k_est_sec": 16.3,
+  "benchmark_rate_cfg_per_sec": 6135.1,
+  "est_1m_hours": 0.05,
+  "est_5m_hours": 0.23,
+  "disk_est_1m_mb": 800,
+  "disk_est_5m_mb": 4000,
+  "experiment_count_completed": 100000,
+  "best_accuracy_candidate": {
+    "config_hash": "666e89d9be1e066c",
+    "validation": {
+      "n": 11,
+      "hits": 8,
+      "accuracy": 0.7273,
+      "ci95": [
+        0.4343,
+        0.9025
+      ],
+      "coverage": 0.2444,
+      "priced_n": 11,
+      "roi": -0.0422,
+      "max_drawdown": -2.6505,
+      "avg_odds": 1.3587,
+      "median_odds": 1.3405,
+      "net_profit": -0.4643,
+      "top_league_share": 0.2727,
+      "extreme_fav_share": 0.2727,
+      "flags": [
+        "N_LT_50_NOT_DISCOVERY",
+        "SMALL_SAMPLE"
+      ]
+    },
+    "config": {
+      "market": "home",
+      "direction_source": "wde",
+      "min_confidence": 0,
+      "min_edge": 0.0,
+      "max_entropy": null,
+      "min_top5": null,
+      "odds_min": null,
+      "odds_max": 1.8,
+      "require_wde_ecse_agree": false,
+      "require_market_agree": false,
+      "max_margin": null,
+      "balanced_only": false,
+      "exclude_no_bet": false,
+      "min_lambda_total": 2.0,
+      "max_lambda_total": null
+    }
+  },
+  "best_profitable_candidate": {
+    "config_hash": "666e89d9be1e066c",
+    "validation": {
+      "n": 11,
+      "hits": 8,
+      "accuracy": 0.7273,
+      "ci95": [
+        0.4343,
+        0.9025
+      ],
+      "coverage": 0.2444,
+      "priced_n": 11,
+      "roi": -0.0422,
+      "max_drawdown": -2.6505,
+      "avg_odds": 1.3587,
+      "median_odds": 1.3405,
+      "net_profit": -0.4643,
+      "top_league_share": 0.2727,
+      "extreme_fav_share": 0.2727,
+      "flags": [
+        "N_LT_50_NOT_DISCOVERY",
+        "SMALL_SAMPLE"
+      ]
+    },
+    "config": {
+      "market": "home",
+      "direction_source": "wde",
+      "min_confidence": 0,
+      "min_edge": 0.0,
+      "max_entropy": null,
+      "min_top5": null,
+      "odds_min": null,
+      "odds_max": 1.8,
+      "require_wde_ecse_agree": false,
+      "require_market_agree": false,
+      "max_margin": null,
+      "balanced_only": false,
+      "exclude_no_bet": false,
+      "min_lambda_total": 2.0,
+      "max_lambda_total": null
+    }
+  },
+  "honest_ge_75_candidate_exists": false,
+  "multiple_testing_status": "WARNING_FDR_REQUIRED_BEFORE_CLAIM",
+  "overfit_risk": "HIGH",
+  "next_resume_command": "python scripts/run_massive_algorithm_search_foundation.py --resume --out artifacts/massive_algorithm_search/20260802T193933Z --target 1000000",
+  "sealed_holdout_status": "SEALED_UNOPENED",
+  "target_75_claimed": false,
+  "not_deployed": true,
+  "canonical_unchanged": true,
+  "wde_unchanged": true,
+  "ecse_unchanged": true,
+  "no_auto_promotion": true,
+  "no_result_leakage": true,
+  "artifact_dir": "artifacts/massive_algorithm_search/20260802T193933Z",
+  "split_sizes": {
+    "train": 135,
+    "validation": 45,
+    "holdout_sealed": 45
+  }
+}

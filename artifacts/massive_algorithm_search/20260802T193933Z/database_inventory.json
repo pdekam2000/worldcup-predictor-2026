@@ -1,0 +1,785 @@
+{
+  "generated_at": "2026-08-02T19:39:34.252406+00:00",
+  "databases": [
+    {
+      "path": "data/football_intelligence.db",
+      "exists": true,
+      "size_mb": 33382.79,
+      "tables": [
+        {
+          "table": "autonomous_prediction_snapshots",
+          "rows": 12,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 22,
+          "unique_fixtures": 3
+        },
+        {
+          "table": "autonomous_snapshot_evaluations",
+          "rows": 12,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 9,
+          "unique_fixtures": 3
+        },
+        {
+          "table": "cards_fixture_settlements",
+          "rows": 1611,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 18,
+          "unique_fixtures": 1611
+        },
+        {
+          "table": "cards_shadow_freezes",
+          "rows": 22,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 10,
+          "unique_fixtures": 22
+        },
+        {
+          "table": "cards_shadow_predictions",
+          "rows": 22,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 9,
+          "unique_fixtures": 22
+        },
+        {
+          "table": "challenger_evaluations",
+          "rows": 0,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 8,
+          "unique_fixtures": 0
+        },
+        {
+          "table": "challenger_freezes",
+          "rows": 1,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 13,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "challenger_predictions",
+          "rows": 4,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 12,
+          "unique_fixtures": 3
+        },
+        {
+          "table": "correct_score_forward_collection_plan",
+          "rows": 1000,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 7,
+          "unique_fixtures": 200
+        },
+        {
+          "table": "correct_score_odds_ingestion_runs",
+          "rows": 3,
+          "fixture_id_col": null,
+          "columns_n": 10
+        },
+        {
+          "table": "correct_score_odds_lines",
+          "rows": 439131,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 30,
+          "unique_fixtures": 136
+        },
+        {
+          "table": "correct_score_odds_manual_imports",
+          "rows": 0,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 11,
+          "unique_fixtures": 0
+        },
+        {
+          "table": "ecse_lambda_features",
+          "rows": 168233,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 16,
+          "unique_fixtures": 168233
+        },
+        {
+          "table": "ecse_live_api_log",
+          "rows": 163,
+          "fixture_id_col": null,
+          "columns_n": 9
+        },
+        {
+          "table": "ecse_live_cycle_runs",
+          "rows": 0,
+          "fixture_id_col": null,
+          "columns_n": 5
+        },
+        {
+          "table": "ecse_oddalerts_shadow_monitor",
+          "rows": 0,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 35,
+          "unique_fixtures": 0
+        },
+        {
+          "table": "ecse_oddalerts_shadow_predictions",
+          "rows": 197,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 31,
+          "unique_fixtures": 197
+        },
+        {
+          "table": "ecse_prediction_evaluations",
+          "rows": 16,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 13,
+          "unique_fixtures": 16
+        },
+        {
+          "table": "ecse_prediction_snapshots",
+          "rows": 339,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 24,
+          "unique_fixtures": 339
+        },
+        {
+          "table": "ecse_score_distributions",
+          "rows": 10935145,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 13
+        },
+        {
+          "table": "ecse_score_distributions_dc",
+          "rows": 10935145,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 14
+        },
+        {
+          "table": "ecse_score_distributions_m1",
+          "rows": 10935145,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 18
+        },
+        {
+          "table": "ecse_training_dataset",
+          "rows": 217518,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 140,
+          "unique_fixtures": 217518
+        },
+        {
+          "table": "euro_fixture_feed",
+          "rows": 381,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 11,
+          "unique_fixtures": 381
+        },
+        {
+          "table": "euro_fixture_raw_payload",
+          "rows": 381,
+          "fixture_id_col": null,
+          "columns_n": 5
+        },
+        {
+          "table": "external_match_odds_staging",
+          "rows": 1660836,
+          "fixture_id_col": null,
+          "columns_n": 16
+        },
+        {
+          "table": "fixture_enrichment",
+          "rows": 2040,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 10,
+          "unique_fixtures": 2040
+        },
+        {
+          "table": "fixture_goal_events",
+          "rows": 6239,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 12,
+          "unique_fixtures": 1900
+        },
+        {
+          "table": "fixture_results",
+          "rows": 2409,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 31,
+          "unique_fixtures": 2409
+        },
+        {
+          "table": "fixture_team_resolution",
+          "rows": 72,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 5,
+          "unique_fixtures": 72
+        },
+        {
+          "table": "fixture_unified_events",
+          "rows": 0,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 17,
+          "unique_fixtures": 0
+        },
+        {
+          "table": "fixtures",
+          "rows": 2979,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 18,
+          "unique_fixtures": 2979
+        },
+        {
+          "table": "goal_timing_split_predictions",
+          "rows": 8,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 19,
+          "unique_fixtures": 8
+        },
+        {
+          "table": "historical_csv_odds_imports",
+          "rows": 2063334,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 35,
+          "unique_fixtures": 223215
+        },
+        {
+          "table": "historical_csv_odds_prematch_clean",
+          "rows": 1908702,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 19,
+          "unique_fixtures": 217727
+        },
+        {
+          "table": "historical_fixture_registry",
+          "rows": 223215,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 25,
+          "unique_fixtures": 223215
+        },
+        {
+          "table": "historical_fixture_results",
+          "rows": 222985,
+          "fixture_id_col": "registry_fixture_id",
+          "columns_n": 24,
+          "unique_fixtures": 222985
+        },
+        {
+          "table": "l2f_forward_shadow_jobs",
+          "rows": 54,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 20,
+          "unique_fixtures": 54
+        },
+        {
+          "table": "lambda_v2_shadow_outputs",
+          "rows": 432,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 28,
+          "unique_fixtures": 54
+        },
+        {
+          "table": "oddalerts_enrichment_fixture_links",
+          "rows": 3078,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 9,
+          "unique_fixtures": 4
+        },
+        {
+          "table": "oddalerts_fixture_map",
+          "rows": 3,
+          "fixture_id_col": null,
+          "columns_n": 12
+        },
+        {
+          "table": "oddalerts_odds_history",
+          "rows": 902,
+          "fixture_id_col": null,
+          "columns_n": 15
+        },
+        {
+          "table": "odds_api_cache",
+          "rows": 48,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 4,
+          "unique_fixtures": 48
+        },
+        {
+          "table": "odds_api_usage",
+          "rows": 58,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 8,
+          "unique_fixtures": 48
+        },
+        {
+          "table": "odds_snapshots",
+          "rows": 4780,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 5,
+          "unique_fixtures": 1280
+        },
+        {
+          "table": "owner_league_batch_evaluations",
+          "rows": 0,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 6,
+          "unique_fixtures": 0
+        },
+        {
+          "table": "owner_league_batch_snapshots",
+          "rows": 15,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 10,
+          "unique_fixtures": 15
+        },
+        {
+          "table": "prediction_best_value_history",
+          "rows": 4,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 8,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "prediction_combo_history",
+          "rows": 1,
+          "fixture_id_col": null,
+          "columns_n": 11
+        },
+        {
+          "table": "prediction_fixture_results",
+          "rows": 1,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 14,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "prediction_knowledge_records",
+          "rows": 3,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 12,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "prediction_lifecycle_events",
+          "rows": 4,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 10,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "prediction_lifecycle_records",
+          "rows": 2,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 30,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "prediction_market_accuracy_rollup",
+          "rows": 52,
+          "fixture_id_col": null,
+          "columns_n": 15
+        },
+        {
+          "table": "prediction_market_evaluations",
+          "rows": 13,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 13,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "prediction_markets",
+          "rows": 85,
+          "fixture_id_col": null,
+          "columns_n": 4
+        },
+        {
+          "table": "prediction_model_registry",
+          "rows": 2,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 9,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "predictions",
+          "rows": 17,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 16,
+          "unique_fixtures": 5
+        },
+        {
+          "table": "sportmonks_fixture_enrichment",
+          "rows": 54,
+          "fixture_id_col": null,
+          "columns_n": 18
+        },
+        {
+          "table": "tfps_fixture_eligibility",
+          "rows": 97,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 9,
+          "unique_fixtures": 97
+        },
+        {
+          "table": "tfps_portfolio_evaluations",
+          "rows": 36,
+          "fixture_id_col": null,
+          "columns_n": 15
+        },
+        {
+          "table": "tfps_portfolio_freezes",
+          "rows": 36,
+          "fixture_id_col": null,
+          "columns_n": 40
+        },
+        {
+          "table": "totals_market_shadow_snapshots",
+          "rows": 162,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 19,
+          "unique_fixtures": 54
+        },
+        {
+          "table": "user_daily_prediction_usage",
+          "rows": 5,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 4,
+          "unique_fixtures": 1
+        },
+        {
+          "table": "user_prediction_usage",
+          "rows": 1173,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 4,
+          "unique_fixtures": 5
+        },
+        {
+          "table": "verification_results",
+          "rows": 70,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 10,
+          "unique_fixtures": 4
+        },
+        {
+          "table": "wc_fixture_mapping",
+          "rows": 329,
+          "fixture_id_col": null,
+          "columns_n": 9
+        },
+        {
+          "table": "worldcup_prediction_evaluations",
+          "rows": 48,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 25,
+          "unique_fixtures": 48
+        },
+        {
+          "table": "worldcup_stored_predictions",
+          "rows": 446,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 19,
+          "unique_fixtures": 446
+        }
+      ],
+      "safe_to_use": true,
+      "notes": [],
+      "fixture_results_n": 2409,
+      "fixture_results_finished": 2409,
+      "fixtures_n": 2979,
+      "fixtures_date_range": {
+        "min": "2005-09-14T22:00:00",
+        "max": "2026-08-29T18:45:00"
+      },
+      "stored_predictions_n": 446,
+      "stored_with_results": 228,
+      "odds_snapshots_n": 4780,
+      "odds_with_results": 1041,
+      "ecse_snapshots_n": 339,
+      "ecse_frozen_with_results": 195,
+      "lambda_v2_n": 432,
+      "historical_fixture_results_n": 222985,
+      "historical_csv_odds_prematch_clean_n": 1908702
+    },
+    {
+      "path": "data/evaluation/forward_prediction_tracking.db",
+      "exists": true,
+      "size_mb": 9.55,
+      "tables": [
+        {
+          "table": "actual_results",
+          "rows": 168,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 18,
+          "unique_fixtures": 168
+        },
+        {
+          "table": "ecse_prematch_risk_metadata",
+          "rows": 129,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 12,
+          "unique_fixtures": 59
+        },
+        {
+          "table": "evaluation_batches",
+          "rows": 1,
+          "fixture_id_col": null,
+          "columns_n": 11
+        },
+        {
+          "table": "exact_score_rankings",
+          "rows": 2300,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 5,
+          "unique_fixtures": 304
+        },
+        {
+          "table": "forward_evaluation_runs",
+          "rows": 1,
+          "fixture_id_col": null,
+          "columns_n": 25
+        },
+        {
+          "table": "freeze_derived_research_metadata",
+          "rows": 362,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 19,
+          "unique_fixtures": 251
+        },
+        {
+          "table": "freeze_quarantine",
+          "rows": 0,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 5,
+          "unique_fixtures": 0
+        },
+        {
+          "table": "frozen_predictions",
+          "rows": 460,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 92,
+          "unique_fixtures": 304
+        },
+        {
+          "table": "high_score_tail_shadow_outputs",
+          "rows": 504,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 22,
+          "unique_fixtures": 168
+        },
+        {
+          "table": "lambda_team_strength_shadow_outputs",
+          "rows": 1344,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 25,
+          "unique_fixtures": 168
+        },
+        {
+          "table": "lambda_v2_shadow_outputs",
+          "rows": 1216,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 28,
+          "unique_fixtures": 168
+        },
+        {
+          "table": "market_evaluations",
+          "rows": 145,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 25,
+          "unique_fixtures": 142
+        },
+        {
+          "table": "prediction_context",
+          "rows": 145,
+          "fixture_id_col": null,
+          "columns_n": 18
+        },
+        {
+          "table": "totals_market_shadow_snapshots",
+          "rows": 0,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 18,
+          "unique_fixtures": 0
+        },
+        {
+          "table": "wde_ecse_direction_conflicts",
+          "rows": 27,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 34,
+          "unique_fixtures": 27
+        }
+      ],
+      "safe_to_use": true,
+      "notes": [],
+      "lambda_v2_n": 1216
+    },
+    {
+      "path": "data/worldcup_predictor.db",
+      "exists": true,
+      "size_mb": 0.0,
+      "tables": [],
+      "safe_to_use": true,
+      "notes": []
+    },
+    {
+      "path": "data/research/ecse_timing_experiment.db",
+      "exists": true,
+      "size_mb": 0.1,
+      "tables": [
+        {
+          "table": "timing_experiment_fixtures",
+          "rows": 16,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 17,
+          "unique_fixtures": 16
+        },
+        {
+          "table": "timing_prediction_snapshots",
+          "rows": 4,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 20,
+          "unique_fixtures": 4
+        },
+        {
+          "table": "timing_result_evaluations",
+          "rows": 0,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 9,
+          "unique_fixtures": 0
+        },
+        {
+          "table": "timing_stable_union_predictions",
+          "rows": 4,
+          "fixture_id_col": "fixture_id",
+          "columns_n": 9,
+          "unique_fixtures": 4
+        }
+      ],
+      "safe_to_use": true,
+      "notes": []
+    },
+    {
+      "path": "data/backups/football_intelligence_before_oddalerts_csv_promotion_20260701_034614.db",
+      "exists": true,
+      "size_mb": 28894.5,
+      "tables": [],
+      "safe_to_use": false,
+      "notes": [
+        "backup_duplicate_skip_for_primary_corpus"
+      ],
+      "cohort_hint": "BACKUP_ONLY"
+    },
+    {
+      "path": "data/backups/football_intelligence_pre_data1b_20260629_061845.db",
+      "exists": true,
+      "size_mb": 493.27,
+      "tables": [],
+      "safe_to_use": false,
+      "notes": [
+        "backup_duplicate_skip_for_primary_corpus"
+      ],
+      "cohort_hint": "BACKUP_ONLY"
+    },
+    {
+      "path": "data/backups/football_intelligence_pre_data1c_20260629_084215.db",
+      "exists": true,
+      "size_mb": 3788.53,
+      "tables": [],
+      "safe_to_use": false,
+      "notes": [
+        "backup_duplicate_skip_for_primary_corpus"
+      ],
+      "cohort_hint": "BACKUP_ONLY"
+    },
+    {
+      "path": "data/backups/football_intelligence_pre_data1c_20260629_084258.db",
+      "exists": true,
+      "size_mb": 3788.55,
+      "tables": [],
+      "safe_to_use": false,
+      "notes": [
+        "backup_duplicate_skip_for_primary_corpus"
+      ],
+      "cohort_hint": "BACKUP_ONLY"
+    },
+    {
+      "path": "data/backups/football_intelligence_pre_data1d_20260629_090902.db",
+      "exists": true,
+      "size_mb": 5300.85,
+      "tables": [],
+      "safe_to_use": false,
+      "notes": [
+        "backup_duplicate_skip_for_primary_corpus"
+      ],
+      "cohort_hint": "BACKUP_ONLY"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/finished_match_evaluation/finished_eval_20260727T204739Z/complete_fixture_evaluations.json",
+      "size_mb": 0.212,
+      "kind": "artifact",
+      "rows": 54,
+      "unique_fixtures": 54
+    },
+    {
+      "path": "artifacts/finished_match_evaluation/finished_eval_20260727T204938Z/complete_fixture_evaluations.json",
+      "size_mb": 0.212,
+      "kind": "artifact",
+      "rows": 54,
+      "unique_fixtures": 54
+    },
+    {
+      "path": "artifacts/finished_match_evaluation/finished_eval_20260727T205131Z/complete_fixture_evaluations.json",
+      "size_mb": 0.212,
+      "kind": "artifact",
+      "rows": 54,
+      "unique_fixtures": 54
+    },
+    {
+      "path": "artifacts/prediction_engine_75_phase2/20260802T154615Z/feature_store_v2.parquet",
+      "size_mb": 0.073,
+      "kind": "artifact"
+    },
+    {
+      "path": "artifacts/prediction_engine_75_phase2/20260802T154643Z/feature_store_v2.parquet",
+      "size_mb": 0.073,
+      "kind": "artifact"
+    },
+    {
+      "path": "artifacts/prediction_engine_75_phase2/20260802T154746Z/feature_store_v2.parquet",
+      "size_mb": 0.0729,
+      "kind": "artifact"
+    },
+    {
+      "path": "artifacts/prediction_engine_75_phase3/20260802T171321Z/validation_report.json",
+      "size_mb": 0.0025,
+      "kind": "artifact"
+    },
+    {
+      "path": "artifacts/prediction_engine_75_phase4/20260802T173402Z/validation_report.json",
+      "size_mb": 0.004,
+      "kind": "artifact"
+    },
+    {
+      "path": "artifacts/owner_balanced_odds_picks_20260714_20260714T110956Z/selected_matches.json",
+      "size_mb": 0.0129,
+      "kind": "artifact"
+    },
+    {
+      "path": "artifacts/today_owner_picks_20260714/selected_matches.json",
+      "size_mb": 0.0358,
+      "kind": "artifact"
+    },
+    {
+      "path": "artifacts/coverage_optimizer/phase4_20260731T005312Z/forward_shadow.db",
+      "size_mb": 0.172,
+      "kind": "artifact"
+    },
+    {
+      "path": "artifacts/coverage_optimizer/phase5_20260731T114215Z/forward_shadow.db",
+      "size_mb": 0.0655,
+      "kind": "artifact"
+    }
+  ],
+  "reconciliation": {
+    "fixtures_n": 2979,
+    "fixture_results_finished": 2409,
+    "stored_with_results": 228,
+    "odds_with_results": 1041,
+    "ecse_frozen_with_results": 195,
+    "note": "Valid immutable prematch corpus requires prediction/freeze before kickoff + regulation result; market-only rows are separate cohort"
+  },
+  "primary_db": "data/football_intelligence.db"
+}

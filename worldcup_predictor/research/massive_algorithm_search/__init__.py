@@ -1,0 +1,21 @@
+"""
+MASSIVE_DATABASE_PROFITABLE_BETTING_ALGORITHM_DISCOVERY
+
+Research-only. Read-only DB access. No Canonical/WDE/ECSE mutation. No deploy.
+"""
+from __future__ import annotations
+
+from worldcup_predictor.research.massive_algorithm_search.foundation import run_foundation
+
+STATUS_FOUNDATION = "MASSIVE_SEARCH_FOUNDATION_AND_100K_COMPLETE"
+STATUS_BLOCKED = "MASSIVE_SEARCH_DATA_CORPUS_BLOCKED"
+STATUS_FAILED = "MASSIVE_SEARCH_VALIDATION_FAILED"
+PROGRAM = "MASSIVE_DATABASE_PROFITABLE_BETTING_ALGORITHM_DISCOVERY"
+
+__all__ = [
+    "PROGRAM",
+    "STATUS_FOUNDATION",
+    "STATUS_BLOCKED",
+    "STATUS_FAILED",
+    "run_foundation",
+]
