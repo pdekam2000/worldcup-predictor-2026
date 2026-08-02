@@ -1,0 +1,118 @@
+{
+  "status": "PHASE4_LOCKED_HOLDOUT_EVALUATED_TRUE_FORWARD_READY",
+  "phase": "PHASE4_LOCKED_HOLDOUT_AND_TRUE_FORWARD",
+  "candidate_lock_status": "LOCKED_IMMUTABLE",
+  "manifest_sha256": "8e245773e68508bc11a4fc600c1a1979ab76a366ea98cfb997df1ac3cce8bb3f",
+  "holdout_integrity_status": "SEALED_HOLDOUT_INTEGRITY_PASS",
+  "holdout_n": 11,
+  "per_candidate_holdout_accuracy": {
+    "canonical_wde_raw_argmax": 0.4545,
+    "canonical_wde_stored_decision": 0.4545,
+    "canonical_ecse_direction": 0.5455,
+    "phase2_best_strategy": 1.0,
+    "market_favorite_baseline": 0.5455,
+    "ecse_direction": 0.5455,
+    "Favorite_Specialist": 0.4545,
+    "League_Specialist": 0.5455,
+    "High_Goal_Specialist": 0.8,
+    "meta_model": 0.3636
+  },
+  "per_candidate_coverage": {
+    "canonical_wde_raw_argmax": 1.0,
+    "canonical_wde_stored_decision": 1.0,
+    "canonical_ecse_direction": 1.0,
+    "phase2_best_strategy": 0.0909,
+    "market_favorite_baseline": 1.0,
+    "ecse_direction": 1.0,
+    "Favorite_Specialist": 1.0,
+    "League_Specialist": 1.0,
+    "High_Goal_Specialist": 0.4545,
+    "meta_model": 1.0
+  },
+  "per_candidate_roi": {
+    "canonical_wde_raw_argmax": 0.146,
+    "canonical_wde_stored_decision": 0.146,
+    "canonical_ecse_direction": -0.222,
+    "phase2_best_strategy": 0.0753,
+    "market_favorite_baseline": -0.222,
+    "ecse_direction": -0.222,
+    "Favorite_Specialist": 0.0198,
+    "League_Specialist": 0.183,
+    "High_Goal_Specialist": 0.6995,
+    "meta_model": -0.549
+  },
+  "locked_candidate_accuracy": {
+    "ecse_direction": 0.5455,
+    "Favorite_Specialist": 0.4545,
+    "League_Specialist": 0.5455,
+    "High_Goal_Specialist": 0.8,
+    "meta_model": 0.3636
+  },
+  "locked_candidate_coverage": {
+    "ecse_direction": 1.0,
+    "Favorite_Specialist": 1.0,
+    "League_Specialist": 1.0,
+    "High_Goal_Specialist": 0.4545,
+    "meta_model": 1.0
+  },
+  "locked_candidate_roi": {
+    "ecse_direction": -0.222,
+    "Favorite_Specialist": 0.0198,
+    "League_Specialist": 0.183,
+    "High_Goal_Specialist": 0.6995,
+    "meta_model": -0.549
+  },
+  "holdout_verdicts": {
+    "canonical_wde_raw_argmax": "HOLDOUT_NEUTRAL",
+    "canonical_wde_stored_decision": "HOLDOUT_NEUTRAL",
+    "canonical_ecse_direction": "HOLDOUT_NEUTRAL",
+    "phase2_best_strategy": "INSUFFICIENT_HOLDOUT_COVERAGE",
+    "market_favorite_baseline": "HOLDOUT_NEUTRAL",
+    "ecse_direction": "HOLDOUT_NEUTRAL",
+    "Favorite_Specialist": "HOLDOUT_NEUTRAL",
+    "League_Specialist": "HOLDOUT_NEUTRAL",
+    "High_Goal_Specialist": "HOLDOUT_NEUTRAL",
+    "meta_model": "HOLDOUT_NEUTRAL"
+  },
+  "best_holdout_candidate": {
+    "name": "High_Goal_Specialist",
+    "accuracy": 0.8,
+    "n": 5
+  },
+  "small_sample_warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+  "true_forward_pipeline_readiness": "PLAN_READY_COLLECTION_NOT_AUTO_ENABLED",
+  "model_readiness": {
+    "Canonical_WDE": "READY",
+    "Canonical_ECSE": "READY",
+    "Exact_V2": "MISSING_DEPENDENCY",
+    "Lambda_V2": "READY",
+    "L2-F": "PARTIAL",
+    "DNA_V2": "MISSING_DEPENDENCY",
+    "Twins": "MISSING_DEPENDENCY",
+    "HCEE": "MISSING_DEPENDENCY",
+    "Favorite_Specialist": "READY",
+    "League_Specialist": "READY",
+    "High_Goal_Specialist": "READY",
+    "meta_model": "READY",
+    "ecse_direction": "READY",
+    "market_odds": "READY",
+    "explicit_no_bet_reasons": "PARTIAL"
+  },
+  "timers_prepared": true,
+  "timers_enabled": false,
+  "current_evaluated_true_forward_n": 0,
+  "gate_progress": {
+    "A": "0/30",
+    "B": "0/100",
+    "C": "0/250"
+  },
+  "target_75_claimed": false,
+  "not_deployed": true,
+  "canonical_unchanged": true,
+  "wde_unchanged": true,
+  "ecse_unchanged": true,
+  "no_retuning_after_holdout": true,
+  "no_auto_promotion": true,
+  "opening_commit": "94b0e8817e439b664f21d203a746fa0dd43f5616",
+  "artifact_dir": "artifacts/prediction_engine_75_phase4/20260802T173402Z"
+}

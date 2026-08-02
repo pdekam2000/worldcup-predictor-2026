@@ -1,0 +1,62 @@
+{
+  "Canonical_WDE": {
+    "status": "READY",
+    "note": "worldcup_stored_predictions / owner_daily"
+  },
+  "Canonical_ECSE": {
+    "status": "READY",
+    "note": "ecse_prediction_snapshots frozen"
+  },
+  "Exact_V2": {
+    "status": "MISSING_DEPENDENCY",
+    "note": "not joined in Phase2/3 local corpus; shadow path only if existing runner available"
+  },
+  "Lambda_V2": {
+    "status": "READY",
+    "note": "lambda_v2_shadow_outputs"
+  },
+  "L2-F": {
+    "status": "PARTIAL",
+    "note": "infra_l2f_forward true_forward hook exists; confirm remote enablement"
+  },
+  "DNA_V2": {
+    "status": "MISSING_DEPENDENCY",
+    "note": "unavailable in Phase3 local joins; do not fabricate"
+  },
+  "Twins": {
+    "status": "MISSING_DEPENDENCY",
+    "note": "unavailable locally"
+  },
+  "HCEE": {
+    "status": "MISSING_DEPENDENCY",
+    "note": "unavailable locally"
+  },
+  "Favorite_Specialist": {
+    "status": "READY",
+    "note": "research module phase3/4; freeze outputs in research store"
+  },
+  "League_Specialist": {
+    "status": "READY",
+    "note": "research module"
+  },
+  "High_Goal_Specialist": {
+    "status": "READY",
+    "note": "research module"
+  },
+  "meta_model": {
+    "status": "READY",
+    "note": "rule router + blend; research-only"
+  },
+  "ecse_direction": {
+    "status": "READY",
+    "note": "derived from Canonical ECSE"
+  },
+  "market_odds": {
+    "status": "READY",
+    "note": "odds_snapshots prematch"
+  },
+  "explicit_no_bet_reasons": {
+    "status": "PARTIAL",
+    "note": "reconstructed historically; native codes preferred prospectively"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "status": "SEALED_HOLDOUT_INTEGRITY_PASS",
+  "n": 11,
+  "fixture_ids": [
+    1554450,
+    1554419,
+    1554434,
+    1554447,
+    1554449,
+    1554452,
+    1554415,
+    1554427,
+    1554438,
+    1514231,
+    1554451
+  ],
+  "expected_ids": [
+    1554450,
+    1554419,
+    1554434,
+    1554447,
+    1554449,
+    1554452,
+    1554415,
+    1554427,
+    1554438,
+    1514231,
+    1554451
+  ],
+  "findings": [
+    {
+      "severity": "INFO",
+      "issue": "lock_hash_matches_phase1",
+      "hash": "db1deb8f71ce4afcc5c94ca33ccb8408fa471e4632c72c2a3b06c4a165f642fe"
+    },
+    {
+      "severity": "INFO",
+      "issue": "regulation_time_labels",
+      "policy": "fixture_results home/away goals / regulation when present"
+    },
+    {
+      "severity": "INFO",
+      "issue": "no_tuning_on_holdout",
+      "confirmed": true
+    }
+  ],
+  "passed": true,
+  "research_n": 212,
+  "holdout_present_in_usable": 11
+}

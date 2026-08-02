@@ -1,0 +1,34 @@
+{
+  "gates": {
+    "A": {
+      "n": 30,
+      "purpose": "early diagnostic only",
+      "progress": 0,
+      "passed": false
+    },
+    "B": {
+      "n": 100,
+      "purpose": "intermediate stability",
+      "progress": 0,
+      "passed": false
+    },
+    "C": {
+      "n": 250,
+      "purpose": "minimum promotion review",
+      "progress": 0,
+      "passed": false
+    }
+  },
+  "auto_promotion": false,
+  "holdout_n11_satisfies_75_target": false,
+  "target_75_requirements": [
+    "true_forward N>=250",
+    "accuracy>=75%",
+    "meaningful coverage",
+    "no severe league/odds concentration",
+    "calibration acceptable",
+    "priced performance reported",
+    "no leakage",
+    "owner approval"
+  ]
+}

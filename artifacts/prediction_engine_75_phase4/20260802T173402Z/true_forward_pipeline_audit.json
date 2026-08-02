@@ -1,0 +1,44 @@
+{
+  "code_paths": {
+    "l2f_forward_hook": true,
+    "hv_batch": true,
+    "forward_evaluation_automation": true,
+    "phase3_specialists": true
+  },
+  "timers": [
+    {
+      "unit": "worldcup-l2f-true-forward-followup.timer",
+      "unit_file_present": true,
+      "enabled_on_this_host": "UNKNOWN_NOT_PROBED_REMOTE",
+      "prepared_in_repo": true
+    },
+    {
+      "unit": "worldcup-forward-evaluation.timer",
+      "unit_file_present": true,
+      "enabled_on_this_host": "UNKNOWN_NOT_PROBED_REMOTE",
+      "prepared_in_repo": true
+    },
+    {
+      "unit": "worldcup-two-fixture-shadow.timer",
+      "unit_file_present": true,
+      "enabled_on_this_host": "UNKNOWN_NOT_PROBED_REMOTE",
+      "prepared_in_repo": true
+    },
+    {
+      "unit": "worldcup-prediction-daily.timer",
+      "unit_file_present": true,
+      "enabled_on_this_host": "UNKNOWN_NOT_PROBED_REMOTE",
+      "prepared_in_repo": true
+    },
+    {
+      "unit": "worldcup-results-hourly.timer",
+      "unit_file_present": true,
+      "enabled_on_this_host": "UNKNOWN_NOT_PROBED_REMOTE",
+      "prepared_in_repo": true
+    }
+  ],
+  "assumption": "Code presence != active collection; remote enablement requires owner approval",
+  "current_evaluated_true_forward_n": 0,
+  "auto_promotion": false,
+  "writes_to_canonical": false
+}

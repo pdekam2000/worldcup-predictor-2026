@@ -1,0 +1,28 @@
+{
+  "cohort_type": "true_forward",
+  "labels": [
+    "RESEARCH_SELECTION",
+    "RESEARCH_ABSTAIN",
+    "DATA_BLOCKED",
+    "PENDING_EVALUATION"
+  ],
+  "workflow": [
+    "A Discovery daily",
+    "B Early freeze 24-48h pre-kickoff",
+    "C Refresh freeze only with immutable versioning",
+    "D Final prematch freeze",
+    "E Result follow-up after FT",
+    "F Evaluation after regulation result"
+  ],
+  "rules": [
+    "no prediction after kickoff",
+    "no duplicate freeze mutation",
+    "idempotent jobs",
+    "disk stop gate",
+    "quota protection",
+    "no auto-promotion",
+    "no public betting recommendation"
+  ],
+  "timers_enablement": "PREPARED_NOT_ENABLED_WITHOUT_OWNER_APPROVAL",
+  "current_evaluated_n": 0
+}

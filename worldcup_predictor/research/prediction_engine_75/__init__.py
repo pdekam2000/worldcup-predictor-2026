@@ -1,4 +1,4 @@
-"""Prediction Engine 75% research program (Phase 1–3)."""
+"""Prediction Engine 75% research program (Phase 1–4)."""
 
 from worldcup_predictor.research.prediction_engine_75.phase1 import (
     STATUS_BLOCKED,
@@ -15,6 +15,10 @@ from worldcup_predictor.research.prediction_engine_75.phase3 import (
     STATUS_LIMITED as PHASE3_LIMITED,
     run_phase3,
 )
+from worldcup_predictor.research.prediction_engine_75.phase4 import (
+    STATUS_READY as PHASE4_READY,
+    run_phase4,
+)
 
 __all__ = [
     "STATUS_BLOCKED",
@@ -23,7 +27,9 @@ __all__ = [
     "PHASE2_PARTIAL",
     "PHASE3_COMPLETE",
     "PHASE3_LIMITED",
+    "PHASE4_READY",
     "run_phase1",
     "run_phase2",
     "run_phase3",
+    "run_phase4",
 ]

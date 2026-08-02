@@ -1,0 +1,403 @@
+{
+  "results": {
+    "canonical_wde_raw_argmax": {
+      "candidate": "canonical_wde_raw_argmax",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 11,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 1.0,
+      "correct": 5,
+      "wrong": 6,
+      "accuracy": 0.4545,
+      "balanced_accuracy": 0.4667,
+      "class_prf": {
+        "home": {
+          "precision": 0.6667,
+          "recall": 0.4
+        },
+        "draw": {
+          "precision": 0.3333,
+          "recall": 0.5
+        },
+        "away": {
+          "precision": 0.4,
+          "recall": 0.5
+        }
+      },
+      "log_loss": 1.2386,
+      "brier": 0.2273,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 2.8721,
+      "priced_n": 11,
+      "flat_stake_roi": 0.146,
+      "max_drawdown": -3.6657,
+      "wilson_ci95": [
+        0.2127,
+        0.7199
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "canonical_wde_stored_decision": {
+      "candidate": "canonical_wde_stored_decision",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 11,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 1.0,
+      "correct": 5,
+      "wrong": 6,
+      "accuracy": 0.4545,
+      "balanced_accuracy": 0.4667,
+      "class_prf": {
+        "home": {
+          "precision": 0.6667,
+          "recall": 0.4
+        },
+        "draw": {
+          "precision": 0.3333,
+          "recall": 0.5
+        },
+        "away": {
+          "precision": 0.4,
+          "recall": 0.5
+        }
+      },
+      "log_loss": 1.2386,
+      "brier": 0.2273,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 2.8721,
+      "priced_n": 11,
+      "flat_stake_roi": 0.146,
+      "max_drawdown": -3.6657,
+      "wilson_ci95": [
+        0.2127,
+        0.7199
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "canonical_ecse_direction": {
+      "candidate": "canonical_ecse_direction",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 11,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 1.0,
+      "correct": 6,
+      "wrong": 5,
+      "accuracy": 0.5455,
+      "balanced_accuracy": 0.45,
+      "class_prf": {
+        "home": {
+          "precision": 0.6,
+          "recall": 0.6
+        },
+        "draw": {
+          "precision": null,
+          "recall": 0.0
+        },
+        "away": {
+          "precision": 0.5,
+          "recall": 0.75
+        }
+      },
+      "log_loss": null,
+      "brier": null,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 1.4767,
+      "priced_n": 11,
+      "flat_stake_roi": -0.222,
+      "max_drawdown": -4.0,
+      "wilson_ci95": [
+        0.2801,
+        0.7873
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "phase2_best_strategy": {
+      "candidate": "phase2_best_strategy",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 1,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 0.0909,
+      "correct": 1,
+      "wrong": 0,
+      "accuracy": 1.0,
+      "balanced_accuracy": 1.0,
+      "class_prf": {
+        "home": {
+          "precision": null,
+          "recall": null
+        },
+        "draw": {
+          "precision": null,
+          "recall": null
+        },
+        "away": {
+          "precision": 1.0,
+          "recall": 1.0
+        }
+      },
+      "log_loss": null,
+      "brier": null,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 1.0753,
+      "priced_n": 1,
+      "flat_stake_roi": 0.0753,
+      "max_drawdown": 0.0,
+      "wilson_ci95": [
+        0.2065,
+        1.0
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "market_favorite_baseline": {
+      "candidate": "market_favorite_baseline",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 11,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 1.0,
+      "correct": 6,
+      "wrong": 5,
+      "accuracy": 0.5455,
+      "balanced_accuracy": 0.45,
+      "class_prf": {
+        "home": {
+          "precision": 0.6,
+          "recall": 0.6
+        },
+        "draw": {
+          "precision": null,
+          "recall": 0.0
+        },
+        "away": {
+          "precision": 0.5,
+          "recall": 0.75
+        }
+      },
+      "log_loss": null,
+      "brier": null,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 1.4767,
+      "priced_n": 11,
+      "flat_stake_roi": -0.222,
+      "max_drawdown": -4.0,
+      "wilson_ci95": [
+        0.2801,
+        0.7873
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "ecse_direction": {
+      "candidate": "ecse_direction",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 11,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 1.0,
+      "correct": 6,
+      "wrong": 5,
+      "accuracy": 0.5455,
+      "balanced_accuracy": 0.45,
+      "class_prf": {
+        "home": {
+          "precision": 0.6,
+          "recall": 0.6
+        },
+        "draw": {
+          "precision": null,
+          "recall": 0.0
+        },
+        "away": {
+          "precision": 0.5,
+          "recall": 0.75
+        }
+      },
+      "log_loss": null,
+      "brier": null,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 1.4767,
+      "priced_n": 11,
+      "flat_stake_roi": -0.222,
+      "max_drawdown": -4.0,
+      "wilson_ci95": [
+        0.2801,
+        0.7873
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "Favorite_Specialist": {
+      "candidate": "Favorite_Specialist",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 11,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 1.0,
+      "correct": 5,
+      "wrong": 6,
+      "accuracy": 0.4545,
+      "balanced_accuracy": 0.3333,
+      "class_prf": {
+        "home": {
+          "precision": 0.4545,
+          "recall": 1.0
+        },
+        "draw": {
+          "precision": null,
+          "recall": 0.0
+        },
+        "away": {
+          "precision": null,
+          "recall": 0.0
+        }
+      },
+      "log_loss": 1.0398,
+      "brier": 0.2086,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 3.9119,
+      "priced_n": 11,
+      "flat_stake_roi": 0.0198,
+      "max_drawdown": -2.7214,
+      "wilson_ci95": [
+        0.2127,
+        0.7199
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "League_Specialist": {
+      "candidate": "League_Specialist",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 11,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 1.0,
+      "correct": 6,
+      "wrong": 5,
+      "accuracy": 0.5455,
+      "balanced_accuracy": 0.4167,
+      "class_prf": {
+        "home": {
+          "precision": 0.5,
+          "recall": 1.0
+        },
+        "draw": {
+          "precision": null,
+          "recall": 0.0
+        },
+        "away": {
+          "precision": 1.0,
+          "recall": 0.25
+        }
+      },
+      "log_loss": 1.0243,
+      "brier": 0.2047,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 3.7718,
+      "priced_n": 11,
+      "flat_stake_roi": 0.183,
+      "max_drawdown": -2.0,
+      "wilson_ci95": [
+        0.2801,
+        0.7873
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "High_Goal_Specialist": {
+      "candidate": "High_Goal_Specialist",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 5,
+      "abstained_fixtures": 6,
+      "abstained_ids": [
+        1554450,
+        1554434,
+        1554447,
+        1554452,
+        1554415,
+        1554427
+      ],
+      "coverage": 0.4545,
+      "correct": 4,
+      "wrong": 1,
+      "accuracy": 0.8,
+      "balanced_accuracy": 0.5,
+      "class_prf": {
+        "home": {
+          "precision": 0.8,
+          "recall": 1.0
+        },
+        "draw": {
+          "precision": null,
+          "recall": null
+        },
+        "away": {
+          "precision": null,
+          "recall": 0.0
+        }
+      },
+      "log_loss": 0.7117,
+      "brier": 0.1348,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 5.2705,
+      "priced_n": 5,
+      "flat_stake_roi": 0.6995,
+      "max_drawdown": -1.0,
+      "wilson_ci95": [
+        0.3755,
+        0.9638
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    },
+    "meta_model": {
+      "candidate": "meta_model",
+      "eligible_holdout_fixtures": 11,
+      "selected_fixtures": 11,
+      "abstained_fixtures": 0,
+      "abstained_ids": [],
+      "coverage": 1.0,
+      "correct": 4,
+      "wrong": 7,
+      "accuracy": 0.3636,
+      "balanced_accuracy": 0.2833,
+      "class_prf": {
+        "home": {
+          "precision": 0.375,
+          "recall": 0.6
+        },
+        "draw": {
+          "precision": null,
+          "recall": 0.0
+        },
+        "away": {
+          "precision": 0.3333,
+          "recall": 0.25
+        }
+      },
+      "log_loss": 1.0552,
+      "brier": 0.2138,
+      "calibration": "diagnostic_only_n11",
+      "average_odds": 2.023,
+      "priced_n": 11,
+      "flat_stake_roi": -0.549,
+      "max_drawdown": -6.3871,
+      "wilson_ci95": [
+        0.1517,
+        0.6462
+      ],
+      "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+      "promotable": false
+    }
+  },
+  "warning": "SMALL_HOLDOUT_NOT_PROMOTABLE",
+  "n_holdout": 11
+}
