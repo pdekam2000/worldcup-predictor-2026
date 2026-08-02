@@ -1,0 +1,165 @@
+{
+  "specialists": [
+    {
+      "name": "Favorite_Specialist",
+      "status": "FITTED",
+      "train_n": 128,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {},
+      "research_only": true
+    },
+    {
+      "name": "Draw_Specialist",
+      "status": "FITTED",
+      "train_n": 43,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {},
+      "research_only": true
+    },
+    {
+      "name": "Underdog_Specialist",
+      "status": "FITTED",
+      "train_n": 68,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {},
+      "research_only": true
+    },
+    {
+      "name": "Balanced_Odds_Specialist",
+      "status": "DATA_LIMITED",
+      "train_n": 9,
+      "classes": [],
+      "note": "eligible_train_n=9 < 15",
+      "feature_importance_top": {},
+      "research_only": true
+    },
+    {
+      "name": "Heavy_Favorite_Specialist",
+      "status": "FITTED",
+      "train_n": 52,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {},
+      "research_only": true
+    },
+    {
+      "name": "Low_Goal_Specialist",
+      "status": "FITTED",
+      "train_n": 23,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {
+        "book_margin": 0.4328,
+        "implied_home": 0.39036,
+        "draw_p": 0.38541,
+        "home_p": 0.3304,
+        "wde_ecse_conflict": 0.31825,
+        "fav_odds": 0.31632,
+        "no_bet": 0.30666,
+        "confidence_norm": 0.2755
+      },
+      "research_only": true
+    },
+    {
+      "name": "High_Goal_Specialist",
+      "status": "FITTED",
+      "train_n": 57,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {},
+      "research_only": true
+    },
+    {
+      "name": "League_Specialist",
+      "status": "FITTED",
+      "train_n": 148,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {},
+      "research_only": true
+    },
+    {
+      "name": "Market_Contradiction_Detector",
+      "status": "FITTED",
+      "train_n": 36,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {
+        "wde_ecse_conflict": 0.73362,
+        "implied_draw": 0.54201,
+        "no_bet": 0.48889,
+        "entropy": 0.45924,
+        "implied_home": 0.33393,
+        "ecse_a_mass": 0.33307,
+        "home_p": 0.32154,
+        "implied_away": 0.29665
+      },
+      "research_only": true
+    },
+    {
+      "name": "Upset_Risk_Detector",
+      "status": "FITTED",
+      "train_n": 83,
+      "classes": [
+        "away",
+        "draw",
+        "home"
+      ],
+      "note": "",
+      "feature_importance_top": {},
+      "research_only": true
+    }
+  ],
+  "shadow_inputs_unavailable": [
+    "Exact_V2",
+    "DNA",
+    "Twins",
+    "HCEE"
+  ],
+  "available_inputs": [
+    "WDE",
+    "ECSE",
+    "Lambda_V2",
+    "Market",
+    "Odds",
+    "Top5",
+    "Entropy",
+    "League",
+    "Confidence"
+  ]
+}

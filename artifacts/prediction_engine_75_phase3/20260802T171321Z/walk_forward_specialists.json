@@ -1,0 +1,3645 @@
+{
+  "folds": [
+    {
+      "fold": 1,
+      "train_n": 50,
+      "test_n": 20,
+      "train_end": "2026-07-09T20:00:00",
+      "test_start": "2026-07-12T12:00:00+00:00",
+      "test_end": "2026-07-15T18:15:00+00:00",
+      "metrics": {
+        "canonical_wde": {
+          "n": 20,
+          "hits": 9,
+          "accuracy": 0.45,
+          "balanced_accuracy": 0.3429,
+          "ci95": [
+            0.2582,
+            0.6579
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3445,
+          "max_drawdown": -9.305,
+          "avg_odds": 2.4921,
+          "class_recall": {
+            "home": 0.6,
+            "away": 0.4286,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.6,
+            "draw": 0.0,
+            "away": 0.375
+          },
+          "top_league_share": 0.6
+        },
+        "ecse_direction": {
+          "n": 20,
+          "hits": 13,
+          "accuracy": 0.65,
+          "balanced_accuracy": 0.4762,
+          "ci95": [
+            0.4329,
+            0.8188
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.0364,
+          "max_drawdown": -4.5297,
+          "avg_odds": 1.5619,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.4286,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5882,
+            "away": 1.0
+          },
+          "top_league_share": 0.6
+        },
+        "phase2_best_proxy_ecse_top5": {
+          "n": 2,
+          "hits": 2,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "ci95": [
+            0.3424,
+            1.0
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": 0.1669,
+          "max_drawdown": 0.0,
+          "avg_odds": 1.1669,
+          "class_recall": {
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 1.0
+          },
+          "top_league_share": 1.0
+        },
+        "Favorite_Specialist": {
+          "n": 19,
+          "hits": 12,
+          "accuracy": 0.6316,
+          "balanced_accuracy": 0.4444,
+          "ci95": [
+            0.4104,
+            0.8085
+          ],
+          "coverage_of_input": 0.95,
+          "priced_n": 19,
+          "roi": -0.1029,
+          "max_drawdown": -4.5297,
+          "avg_odds": 1.738,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.3333,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.7143,
+            "away": 1.0,
+            "draw": 0.0
+          },
+          "top_league_share": 0.5789
+        },
+        "Draw_Specialist": {
+          "n": 5,
+          "hits": 1,
+          "accuracy": 0.2,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.0362,
+            0.6245
+          ],
+          "coverage_of_input": 0.25,
+          "priced_n": 5,
+          "roi": -0.1945,
+          "max_drawdown": -4.0,
+          "avg_odds": 3.6739,
+          "class_recall": {
+            "draw": 1.0,
+            "home": 0.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "draw": 0.2
+          },
+          "top_league_share": 0.8
+        },
+        "Underdog_Specialist": {
+          "n": 11,
+          "hits": 7,
+          "accuracy": 0.6364,
+          "balanced_accuracy": 0.5556,
+          "ci95": [
+            0.3538,
+            0.8483
+          ],
+          "coverage_of_input": 0.55,
+          "priced_n": 11,
+          "roi": -0.0978,
+          "max_drawdown": -2.4465,
+          "avg_odds": 1.4829,
+          "class_recall": {
+            "draw": 0.0,
+            "home": 1.0,
+            "away": 0.6667
+          },
+          "class_precision": {
+            "home": 0.5556,
+            "away": 1.0
+          },
+          "top_league_share": 0.6364
+        },
+        "Balanced_Odds_Specialist": {
+          "n": 1,
+          "hits": 1,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "ci95": [
+            0.2065,
+            1.0
+          ],
+          "coverage_of_input": 0.05,
+          "priced_n": 1,
+          "roi": 1.2277,
+          "max_drawdown": 0.0,
+          "avg_odds": 2.2277,
+          "class_recall": {
+            "away": 1.0
+          },
+          "class_precision": {
+            "away": 1.0
+          },
+          "top_league_share": 1.0
+        },
+        "Heavy_Favorite_Specialist": {
+          "n": 9,
+          "hits": 5,
+          "accuracy": 0.5556,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2666,
+            0.8112
+          ],
+          "coverage_of_input": 0.45,
+          "priced_n": 9,
+          "roi": -0.3306,
+          "max_drawdown": -3.4567,
+          "avg_odds": 2.0841,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5556
+          },
+          "top_league_share": 0.7778
+        },
+        "Low_Goal_Specialist": {
+          "n": 0,
+          "hits": 0,
+          "accuracy": null,
+          "balanced_accuracy": null,
+          "ci95": [
+            null,
+            null
+          ],
+          "coverage_of_input": 0.0,
+          "priced_n": 0,
+          "roi": null,
+          "max_drawdown": null,
+          "avg_odds": null,
+          "class_recall": {},
+          "class_precision": {},
+          "top_league_share": null
+        },
+        "High_Goal_Specialist": {
+          "n": 13,
+          "hits": 7,
+          "accuracy": 0.5385,
+          "balanced_accuracy": 0.4444,
+          "ci95": [
+            0.2914,
+            0.7679
+          ],
+          "coverage_of_input": 0.65,
+          "priced_n": 13,
+          "roi": -0.1905,
+          "max_drawdown": -4.8917,
+          "avg_odds": 2.3775,
+          "class_recall": {
+            "home": 0.8333,
+            "away": 0.5,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.625,
+            "away": 0.4
+          },
+          "top_league_share": 0.6923
+        },
+        "League_Specialist": {
+          "n": 20,
+          "hits": 13,
+          "accuracy": 0.65,
+          "balanced_accuracy": 0.4762,
+          "ci95": [
+            0.4329,
+            0.8188
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.0364,
+          "max_drawdown": -4.5297,
+          "avg_odds": 1.5619,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.4286,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5882,
+            "away": 1.0
+          },
+          "top_league_share": 0.6
+        },
+        "Market_Contradiction_Detector": {
+          "n": 7,
+          "hits": 4,
+          "accuracy": 0.5714,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2505,
+            0.8418
+          ],
+          "coverage_of_input": 0.35,
+          "priced_n": 7,
+          "roi": -0.1196,
+          "max_drawdown": -2.2247,
+          "avg_odds": 1.6216,
+          "class_recall": {
+            "home": 1.0,
+            "draw": 0.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "home": 0.5714
+          },
+          "top_league_share": 0.5714
+        },
+        "Upset_Risk_Detector": {
+          "n": 14,
+          "hits": 10,
+          "accuracy": 0.7143,
+          "balanced_accuracy": 0.5556,
+          "ci95": [
+            0.4535,
+            0.8828
+          ],
+          "coverage_of_input": 0.7,
+          "priced_n": 14,
+          "roi": -0.0346,
+          "max_drawdown": -3.4465,
+          "avg_odds": 1.3882,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.6667,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.6667,
+            "away": 1.0
+          },
+          "top_league_share": 0.7143
+        },
+        "meta_model": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.381,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2159,
+          "max_drawdown": -6.1465,
+          "avg_odds": 1.8291,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.1429,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5556,
+            "away": 1.0,
+            "draw": 0.0
+          },
+          "top_league_share": 0.6
+        },
+        "meta_model_no_abstain": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.381,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2159,
+          "max_drawdown": -6.1465,
+          "avg_odds": 1.8291,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.1429,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5556,
+            "away": 1.0,
+            "draw": 0.0
+          },
+          "top_league_share": 0.6
+        }
+      },
+      "specialist_fit_status": {
+        "Favorite_Specialist": "FITTED",
+        "Draw_Specialist": "DATA_LIMITED",
+        "Underdog_Specialist": "FITTED",
+        "Balanced_Odds_Specialist": "DATA_LIMITED",
+        "Heavy_Favorite_Specialist": "FITTED",
+        "Low_Goal_Specialist": "DATA_LIMITED",
+        "High_Goal_Specialist": "DATA_LIMITED",
+        "League_Specialist": "FITTED",
+        "Market_Contradiction_Detector": "DATA_LIMITED",
+        "Upset_Risk_Detector": "FITTED"
+      }
+    },
+    {
+      "fold": 2,
+      "train_n": 70,
+      "test_n": 20,
+      "train_end": "2026-07-15T18:15:00+00:00",
+      "test_start": "2026-07-15T18:30:00+00:00",
+      "test_end": "2026-07-16T17:00:00+00:00",
+      "metrics": {
+        "canonical_wde": {
+          "n": 20,
+          "hits": 12,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.4868,
+          "ci95": [
+            0.3866,
+            0.7812
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.0124,
+          "max_drawdown": -4.1177,
+          "avg_odds": 1.7486,
+          "class_recall": {
+            "away": 0.5714,
+            "home": 0.8889,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "away": 0.5714,
+            "home": 0.6667,
+            "draw": 0.0
+          },
+          "top_league_share": 0.8
+        },
+        "ecse_direction": {
+          "n": 20,
+          "hits": 12,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.4762,
+          "ci95": [
+            0.3866,
+            0.7812
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.0693,
+          "max_drawdown": -3.6858,
+          "avg_odds": 1.6175,
+          "class_recall": {
+            "away": 0.4286,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "away": 0.5,
+            "home": 0.6429
+          },
+          "top_league_share": 0.8
+        },
+        "phase2_best_proxy_ecse_top5": {
+          "n": 1,
+          "hits": 1,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "ci95": [
+            0.2065,
+            1.0
+          ],
+          "coverage_of_input": 0.05,
+          "priced_n": 1,
+          "roi": 0.1238,
+          "max_drawdown": 0.0,
+          "avg_odds": 1.1238,
+          "class_recall": {
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 1.0
+          },
+          "top_league_share": 1.0
+        },
+        "Favorite_Specialist": {
+          "n": 18,
+          "hits": 11,
+          "accuracy": 0.6111,
+          "balanced_accuracy": 0.4667,
+          "ci95": [
+            0.3862,
+            0.797
+          ],
+          "coverage_of_input": 0.9,
+          "priced_n": 18,
+          "roi": -0.0891,
+          "max_drawdown": -3.5319,
+          "avg_odds": 1.544,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.4,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.6923,
+            "away": 0.4
+          },
+          "top_league_share": 0.8333
+        },
+        "Draw_Specialist": {
+          "n": 11,
+          "hits": 3,
+          "accuracy": 0.2727,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.0975,
+            0.5657
+          ],
+          "coverage_of_input": 0.55,
+          "priced_n": 11,
+          "roi": -0.0391,
+          "max_drawdown": -4.51,
+          "avg_odds": 3.3853,
+          "class_recall": {
+            "away": 0.0,
+            "home": 0.0,
+            "draw": 1.0
+          },
+          "class_precision": {
+            "draw": 0.2727
+          },
+          "top_league_share": 0.8182
+        },
+        "Underdog_Specialist": {
+          "n": 7,
+          "hits": 3,
+          "accuracy": 0.4286,
+          "balanced_accuracy": 0.375,
+          "ci95": [
+            0.1582,
+            0.7495
+          ],
+          "coverage_of_input": 0.35,
+          "priced_n": 7,
+          "roi": -0.3002,
+          "max_drawdown": -3.3119,
+          "avg_odds": 1.9344,
+          "class_recall": {
+            "home": 0.75,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.75,
+            "draw": 0.0,
+            "away": 0.0
+          },
+          "top_league_share": 0.8571
+        },
+        "Balanced_Odds_Specialist": {
+          "n": 2,
+          "hits": 2,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "ci95": [
+            0.3424,
+            1.0
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": 1.394,
+          "max_drawdown": 0.0,
+          "avg_odds": 2.394,
+          "class_recall": {
+            "away": 1.0
+          },
+          "class_precision": {
+            "away": 1.0
+          },
+          "top_league_share": 0.5
+        },
+        "Heavy_Favorite_Specialist": {
+          "n": 6,
+          "hits": 4,
+          "accuracy": 0.6667,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.3,
+            0.9032
+          ],
+          "coverage_of_input": 0.3,
+          "priced_n": 6,
+          "roi": -0.1573,
+          "max_drawdown": -1.0,
+          "avg_odds": 1.2807,
+          "class_recall": {
+            "away": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 0.6667
+          },
+          "top_league_share": 1.0
+        },
+        "Low_Goal_Specialist": {
+          "n": 0,
+          "hits": 0,
+          "accuracy": null,
+          "balanced_accuracy": null,
+          "ci95": [
+            null,
+            null
+          ],
+          "coverage_of_input": 0.0,
+          "priced_n": 0,
+          "roi": null,
+          "max_drawdown": null,
+          "avg_odds": null,
+          "class_recall": {},
+          "class_precision": {},
+          "top_league_share": null
+        },
+        "High_Goal_Specialist": {
+          "n": 10,
+          "hits": 5,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.3778,
+          "ci95": [
+            0.2366,
+            0.7634
+          ],
+          "coverage_of_input": 0.5,
+          "priced_n": 10,
+          "roi": -0.3424,
+          "max_drawdown": -3.9438,
+          "avg_odds": 1.6539,
+          "class_recall": {
+            "away": 0.3333,
+            "home": 0.8,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "away": 0.25,
+            "home": 0.6667
+          },
+          "top_league_share": 0.8
+        },
+        "League_Specialist": {
+          "n": 20,
+          "hits": 13,
+          "accuracy": 0.65,
+          "balanced_accuracy": 0.5238,
+          "ci95": [
+            0.4329,
+            0.8188
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": 0.0592,
+          "max_drawdown": -3.5319,
+          "avg_odds": 1.629,
+          "class_recall": {
+            "away": 0.5714,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "away": 0.5714,
+            "home": 0.6923
+          },
+          "top_league_share": 0.8
+        },
+        "Market_Contradiction_Detector": {
+          "n": 2,
+          "hits": 1,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.0945,
+            0.9055
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": 0.2848,
+          "max_drawdown": -1.0,
+          "avg_odds": 3.1963,
+          "class_recall": {
+            "away": 1.0,
+            "home": 0.0
+          },
+          "class_precision": {
+            "away": 1.0,
+            "draw": 0.0
+          },
+          "top_league_share": 0.5
+        },
+        "Upset_Risk_Detector": {
+          "n": 14,
+          "hits": 10,
+          "accuracy": 0.7143,
+          "balanced_accuracy": 0.4444,
+          "ci95": [
+            0.4535,
+            0.8828
+          ],
+          "coverage_of_input": 0.7,
+          "priced_n": 14,
+          "roi": 0.0345,
+          "max_drawdown": -1.3519,
+          "avg_odds": 1.4358,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.3333,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.75,
+            "away": 0.5
+          },
+          "top_league_share": 0.7857
+        },
+        "meta_model": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.4286,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.1802,
+          "max_drawdown": -3.6858,
+          "avg_odds": 1.6973,
+          "class_recall": {
+            "away": 0.2857,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "draw": 0.0,
+            "home": 0.6923,
+            "away": 0.4
+          },
+          "top_league_share": 0.8
+        },
+        "meta_model_no_abstain": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.4286,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.1802,
+          "max_drawdown": -3.6858,
+          "avg_odds": 1.6973,
+          "class_recall": {
+            "away": 0.2857,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "draw": 0.0,
+            "home": 0.6923,
+            "away": 0.4
+          },
+          "top_league_share": 0.8
+        }
+      },
+      "specialist_fit_status": {
+        "Favorite_Specialist": "FITTED",
+        "Draw_Specialist": "DATA_LIMITED",
+        "Underdog_Specialist": "FITTED",
+        "Balanced_Odds_Specialist": "DATA_LIMITED",
+        "Heavy_Favorite_Specialist": "FITTED",
+        "Low_Goal_Specialist": "DATA_LIMITED",
+        "High_Goal_Specialist": "FITTED",
+        "League_Specialist": "FITTED",
+        "Market_Contradiction_Detector": "FITTED",
+        "Upset_Risk_Detector": "FITTED"
+      }
+    },
+    {
+      "fold": 3,
+      "train_n": 90,
+      "test_n": 20,
+      "train_end": "2026-07-16T17:00:00+00:00",
+      "test_start": "2026-07-16T17:00:00+00:00",
+      "test_end": "2026-07-18T14:00:00",
+      "metrics": {
+        "canonical_wde": {
+          "n": 20,
+          "hits": 12,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.6048,
+          "ci95": [
+            0.3866,
+            0.7812
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": 0.2876,
+          "max_drawdown": -4.0,
+          "avg_odds": 2.4105,
+          "class_recall": {
+            "home": 0.5,
+            "away": 0.7143,
+            "draw": 0.6
+          },
+          "class_precision": {
+            "home": 0.6667,
+            "away": 0.7143,
+            "draw": 0.4286
+          },
+          "top_league_share": 0.25
+        },
+        "ecse_direction": {
+          "n": 20,
+          "hits": 12,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.5488,
+          "ci95": [
+            0.3866,
+            0.7812
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": 0.0493,
+          "max_drawdown": -2.0,
+          "avg_odds": 1.809,
+          "class_recall": {
+            "home": 0.875,
+            "away": 0.5714,
+            "draw": 0.2
+          },
+          "class_precision": {
+            "home": 0.5385,
+            "away": 0.6667,
+            "draw": 1.0
+          },
+          "top_league_share": 0.25
+        },
+        "phase2_best_proxy_ecse_top5": {
+          "n": 2,
+          "hits": 0,
+          "accuracy": 0.0,
+          "balanced_accuracy": 0.0,
+          "ci95": [
+            0.0,
+            0.6576
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": -1.0,
+          "max_drawdown": -2.0,
+          "avg_odds": 1.9,
+          "class_recall": {
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.0,
+            "away": 0.0
+          },
+          "top_league_share": 0.5
+        },
+        "Favorite_Specialist": {
+          "n": 18,
+          "hits": 12,
+          "accuracy": 0.6667,
+          "balanced_accuracy": 0.5714,
+          "ci95": [
+            0.4375,
+            0.8372
+          ],
+          "coverage_of_input": 0.9,
+          "priced_n": 18,
+          "roi": 0.1742,
+          "max_drawdown": -2.2422,
+          "avg_odds": 1.8016,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.7143,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.6364,
+            "away": 0.7143
+          },
+          "top_league_share": 0.2778
+        },
+        "Draw_Specialist": {
+          "n": 10,
+          "hits": 3,
+          "accuracy": 0.3,
+          "balanced_accuracy": 0.2167,
+          "ci95": [
+            0.1078,
+            0.6032
+          ],
+          "coverage_of_input": 0.5,
+          "priced_n": 10,
+          "roi": -0.1022,
+          "max_drawdown": -3.0,
+          "avg_odds": 2.6772,
+          "class_recall": {
+            "away": 0.4,
+            "draw": 0.25,
+            "home": 0.0
+          },
+          "class_precision": {
+            "home": 0.0,
+            "away": 0.4,
+            "draw": 0.3333
+          },
+          "top_league_share": 0.2
+        },
+        "Underdog_Specialist": {
+          "n": 8,
+          "hits": 5,
+          "accuracy": 0.625,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.3057,
+            0.8632
+          ],
+          "coverage_of_input": 0.4,
+          "priced_n": 8,
+          "roi": 0.0869,
+          "max_drawdown": -1.336,
+          "avg_odds": 1.7136,
+          "class_recall": {
+            "away": 0.5,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5714,
+            "away": 1.0
+          },
+          "top_league_share": 0.25
+        },
+        "Balanced_Odds_Specialist": {
+          "n": 3,
+          "hits": 2,
+          "accuracy": 0.6667,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.2077,
+            0.9385
+          ],
+          "coverage_of_input": 0.15,
+          "priced_n": 3,
+          "roi": 1.1199,
+          "max_drawdown": -1.0,
+          "avg_odds": 3.2525,
+          "class_recall": {
+            "draw": 1.0,
+            "home": 0.0
+          },
+          "class_precision": {
+            "draw": 0.6667
+          },
+          "top_league_share": 0.3333
+        },
+        "Heavy_Favorite_Specialist": {
+          "n": 2,
+          "hits": 2,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "ci95": [
+            0.3424,
+            1.0
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": 0.1903,
+          "max_drawdown": 0.0,
+          "avg_odds": 1.1903,
+          "class_recall": {
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 1.0
+          },
+          "top_league_share": 0.5
+        },
+        "Low_Goal_Specialist": {
+          "n": 3,
+          "hits": 1,
+          "accuracy": 0.3333,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.0615,
+            0.7923
+          ],
+          "coverage_of_input": 0.15,
+          "priced_n": 3,
+          "roi": -0.1256,
+          "max_drawdown": -2.0,
+          "avg_odds": 2.1411,
+          "class_recall": {
+            "draw": 0.3333
+          },
+          "class_precision": {
+            "draw": 1.0,
+            "home": 0.0,
+            "away": 0.0
+          },
+          "top_league_share": 0.6667
+        },
+        "High_Goal_Specialist": {
+          "n": 12,
+          "hits": 7,
+          "accuracy": 0.5833,
+          "balanced_accuracy": 0.4603,
+          "ci95": [
+            0.3195,
+            0.8067
+          ],
+          "coverage_of_input": 0.6,
+          "priced_n": 12,
+          "roi": -0.0332,
+          "max_drawdown": -2.9062,
+          "avg_odds": 2.185,
+          "class_recall": {
+            "home": 0.7143,
+            "away": 0.6667,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.8333,
+            "away": 0.5,
+            "draw": 0.0
+          },
+          "top_league_share": 0.25
+        },
+        "League_Specialist": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.4821,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.0819,
+          "max_drawdown": -3.2422,
+          "avg_odds": 1.8273,
+          "class_recall": {
+            "home": 0.875,
+            "away": 0.5714,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5833,
+            "away": 0.5
+          },
+          "top_league_share": 0.25
+        },
+        "Market_Contradiction_Detector": {
+          "n": 9,
+          "hits": 3,
+          "accuracy": 0.3333,
+          "balanced_accuracy": 0.4167,
+          "ci95": [
+            0.1206,
+            0.6458
+          ],
+          "coverage_of_input": 0.45,
+          "priced_n": 9,
+          "roi": -0.1902,
+          "max_drawdown": -3.3483,
+          "avg_odds": 2.6207,
+          "class_recall": {
+            "home": 0.25,
+            "draw": 0.0,
+            "away": 1.0
+          },
+          "class_precision": {
+            "draw": 0.0,
+            "home": 0.5,
+            "away": 0.4
+          },
+          "top_league_share": 0.3333
+        },
+        "Upset_Risk_Detector": {
+          "n": 7,
+          "hits": 4,
+          "accuracy": 0.5714,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2505,
+            0.8418
+          ],
+          "coverage_of_input": 0.35,
+          "priced_n": 7,
+          "roi": -0.2075,
+          "max_drawdown": -3.0,
+          "avg_odds": 1.7229,
+          "class_recall": {
+            "home": 1.0,
+            "away": 0.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5714
+          },
+          "top_league_share": 0.2857
+        },
+        "meta_model": {
+          "n": 20,
+          "hits": 9,
+          "accuracy": 0.45,
+          "balanced_accuracy": 0.4107,
+          "ci95": [
+            0.2582,
+            0.6579
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.1625,
+          "max_drawdown": -6.7251,
+          "avg_odds": 2.2275,
+          "class_recall": {
+            "home": 0.375,
+            "away": 0.8571,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5,
+            "away": 0.5,
+            "draw": 0.0
+          },
+          "top_league_share": 0.25
+        },
+        "meta_model_no_abstain": {
+          "n": 20,
+          "hits": 9,
+          "accuracy": 0.45,
+          "balanced_accuracy": 0.4107,
+          "ci95": [
+            0.2582,
+            0.6579
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.1625,
+          "max_drawdown": -6.7251,
+          "avg_odds": 2.2275,
+          "class_recall": {
+            "home": 0.375,
+            "away": 0.8571,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5,
+            "away": 0.5,
+            "draw": 0.0
+          },
+          "top_league_share": 0.25
+        }
+      },
+      "specialist_fit_status": {
+        "Favorite_Specialist": "FITTED",
+        "Draw_Specialist": "FITTED",
+        "Underdog_Specialist": "FITTED",
+        "Balanced_Odds_Specialist": "DATA_LIMITED",
+        "Heavy_Favorite_Specialist": "FITTED",
+        "Low_Goal_Specialist": "DATA_LIMITED",
+        "High_Goal_Specialist": "FITTED",
+        "League_Specialist": "FITTED",
+        "Market_Contradiction_Detector": "FITTED",
+        "Upset_Risk_Detector": "FITTED"
+      }
+    },
+    {
+      "fold": 4,
+      "train_n": 110,
+      "test_n": 20,
+      "train_end": "2026-07-18T14:00:00",
+      "test_start": "2026-07-18T14:00:00",
+      "test_end": "2026-07-25T12:00:00",
+      "metrics": {
+        "canonical_wde": {
+          "n": 20,
+          "hits": 12,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.3714,
+          "ci95": [
+            0.3866,
+            0.7812
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.1585,
+          "max_drawdown": -4.9845,
+          "avg_odds": 1.7013,
+          "class_recall": {
+            "home": 0.7143,
+            "away": 0.4,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.8333,
+            "away": 0.2857,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        },
+        "ecse_direction": {
+          "n": 20,
+          "hits": 13,
+          "accuracy": 0.65,
+          "balanced_accuracy": 0.3952,
+          "ci95": [
+            0.4329,
+            0.8188
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.0812,
+          "max_drawdown": -4.3023,
+          "avg_odds": 1.5443,
+          "class_recall": {
+            "home": 0.7857,
+            "away": 0.4,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.7333,
+            "away": 0.4
+          },
+          "top_league_share": 0.2
+        },
+        "phase2_best_proxy_ecse_top5": {
+          "n": 5,
+          "hits": 4,
+          "accuracy": 0.8,
+          "balanced_accuracy": 0.8,
+          "ci95": [
+            0.3755,
+            0.9638
+          ],
+          "coverage_of_input": 0.25,
+          "priced_n": 5,
+          "roi": -0.0324,
+          "max_drawdown": -1.0,
+          "avg_odds": 1.1847,
+          "class_recall": {
+            "home": 0.8
+          },
+          "class_precision": {
+            "home": 1.0,
+            "away": 0.0
+          },
+          "top_league_share": 0.4
+        },
+        "Favorite_Specialist": {
+          "n": 20,
+          "hits": 14,
+          "accuracy": 0.7,
+          "balanced_accuracy": 0.4619,
+          "ci95": [
+            0.481,
+            0.8545
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": 0.0368,
+          "max_drawdown": -2.7751,
+          "avg_odds": 1.5542,
+          "class_recall": {
+            "home": 0.7857,
+            "away": 0.6,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.7857,
+            "away": 0.5
+          },
+          "top_league_share": 0.2
+        },
+        "Draw_Specialist": {
+          "n": 4,
+          "hits": 1,
+          "accuracy": 0.25,
+          "balanced_accuracy": 0.1667,
+          "ci95": [
+            0.0456,
+            0.6994
+          ],
+          "coverage_of_input": 0.2,
+          "priced_n": 4,
+          "roi": -0.4097,
+          "max_drawdown": -2.0,
+          "avg_odds": 3.0198,
+          "class_recall": {
+            "home": 0.0,
+            "away": 0.5,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "draw": 0.0,
+            "away": 0.5
+          },
+          "top_league_share": 0.5
+        },
+        "Underdog_Specialist": {
+          "n": 9,
+          "hits": 7,
+          "accuracy": 0.7778,
+          "balanced_accuracy": 0.4375,
+          "ci95": [
+            0.4526,
+            0.9368
+          ],
+          "coverage_of_input": 0.45,
+          "priced_n": 9,
+          "roi": 0.3029,
+          "max_drawdown": -2.0,
+          "avg_odds": 1.7778,
+          "class_recall": {
+            "home": 0.875,
+            "away": 0.0
+          },
+          "class_precision": {
+            "home": 0.875,
+            "away": 0.0
+          },
+          "top_league_share": 0.3333
+        },
+        "Balanced_Odds_Specialist": {
+          "n": 2,
+          "hits": 1,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.0945,
+            0.9055
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": 0.1805,
+          "max_drawdown": -1.0,
+          "avg_odds": 2.9397,
+          "class_recall": {
+            "away": 0.5
+          },
+          "class_precision": {
+            "away": 1.0,
+            "draw": 0.0
+          },
+          "top_league_share": 0.5
+        },
+        "Heavy_Favorite_Specialist": {
+          "n": 10,
+          "hits": 8,
+          "accuracy": 0.8,
+          "balanced_accuracy": 0.8,
+          "ci95": [
+            0.4902,
+            0.9433
+          ],
+          "coverage_of_input": 0.5,
+          "priced_n": 10,
+          "roi": -0.0237,
+          "max_drawdown": -1.0,
+          "avg_odds": 1.6778,
+          "class_recall": {
+            "home": 0.8
+          },
+          "class_precision": {
+            "home": 1.0,
+            "away": 0.0
+          },
+          "top_league_share": 0.3
+        },
+        "Low_Goal_Specialist": {
+          "n": 4,
+          "hits": 1,
+          "accuracy": 0.25,
+          "balanced_accuracy": 0.1667,
+          "ci95": [
+            0.0456,
+            0.6994
+          ],
+          "coverage_of_input": 0.2,
+          "priced_n": 4,
+          "roi": -0.6426,
+          "max_drawdown": -2.5705,
+          "avg_odds": 2.3647,
+          "class_recall": {
+            "home": 0.5,
+            "away": 0.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "away": 0.0,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "top_league_share": 0.5
+        },
+        "High_Goal_Specialist": {
+          "n": 13,
+          "hits": 9,
+          "accuracy": 0.6923,
+          "balanced_accuracy": 0.5667,
+          "ci95": [
+            0.4237,
+            0.8732
+          ],
+          "coverage_of_input": 0.65,
+          "priced_n": 13,
+          "roi": -0.0339,
+          "max_drawdown": -2.7751,
+          "avg_odds": 1.4644,
+          "class_recall": {
+            "home": 0.8,
+            "away": 0.3333
+          },
+          "class_precision": {
+            "home": 0.8,
+            "away": 0.3333
+          },
+          "top_league_share": 0.3077
+        },
+        "League_Specialist": {
+          "n": 20,
+          "hits": 14,
+          "accuracy": 0.7,
+          "balanced_accuracy": 0.4619,
+          "ci95": [
+            0.481,
+            0.8545
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": 0.0368,
+          "max_drawdown": -2.7751,
+          "avg_odds": 1.5863,
+          "class_recall": {
+            "home": 0.7857,
+            "away": 0.6,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.8462,
+            "away": 0.4286
+          },
+          "top_league_share": 0.2
+        },
+        "Market_Contradiction_Detector": {
+          "n": 4,
+          "hits": 2,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.15,
+            0.85
+          ],
+          "coverage_of_input": 0.2,
+          "priced_n": 4,
+          "roi": -0.0233,
+          "max_drawdown": -1.0,
+          "avg_odds": 2.4223,
+          "class_recall": {
+            "away": 0.5,
+            "draw": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "draw": 0.0,
+            "away": 0.5,
+            "home": 1.0
+          },
+          "top_league_share": 0.5
+        },
+        "Upset_Risk_Detector": {
+          "n": 12,
+          "hits": 9,
+          "accuracy": 0.75,
+          "balanced_accuracy": 0.45,
+          "ci95": [
+            0.4677,
+            0.9111
+          ],
+          "coverage_of_input": 0.6,
+          "priced_n": 12,
+          "roi": -0.0839,
+          "max_drawdown": -2.8115,
+          "avg_odds": 1.4133,
+          "class_recall": {
+            "home": 0.9,
+            "away": 0.0
+          },
+          "class_precision": {
+            "home": 0.8182,
+            "away": 0.0
+          },
+          "top_league_share": 0.25
+        },
+        "meta_model": {
+          "n": 20,
+          "hits": 12,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.3714,
+          "ci95": [
+            0.3866,
+            0.7812
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.1585,
+          "max_drawdown": -4.9845,
+          "avg_odds": 1.7013,
+          "class_recall": {
+            "home": 0.7143,
+            "away": 0.4,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.8333,
+            "away": 0.2857,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        },
+        "meta_model_no_abstain": {
+          "n": 20,
+          "hits": 12,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.3714,
+          "ci95": [
+            0.3866,
+            0.7812
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.1585,
+          "max_drawdown": -4.9845,
+          "avg_odds": 1.7013,
+          "class_recall": {
+            "home": 0.7143,
+            "away": 0.4,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.8333,
+            "away": 0.2857,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        }
+      },
+      "specialist_fit_status": {
+        "Favorite_Specialist": "FITTED",
+        "Draw_Specialist": "FITTED",
+        "Underdog_Specialist": "FITTED",
+        "Balanced_Odds_Specialist": "DATA_LIMITED",
+        "Heavy_Favorite_Specialist": "FITTED",
+        "Low_Goal_Specialist": "DATA_LIMITED",
+        "High_Goal_Specialist": "FITTED",
+        "League_Specialist": "FITTED",
+        "Market_Contradiction_Detector": "FITTED",
+        "Upset_Risk_Detector": "FITTED"
+      }
+    },
+    {
+      "fold": 5,
+      "train_n": 130,
+      "test_n": 20,
+      "train_end": "2026-07-25T12:00:00",
+      "test_start": "2026-07-25T13:00:00",
+      "test_end": "2026-07-26T13:00:00",
+      "metrics": {
+        "canonical_wde": {
+          "n": 20,
+          "hits": 6,
+          "accuracy": 0.3,
+          "balanced_accuracy": 0.2323,
+          "ci95": [
+            0.1455,
+            0.519
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.5596,
+          "max_drawdown": -11.7858,
+          "avg_odds": 2.0224,
+          "class_recall": {
+            "away": 0.3333,
+            "draw": 0.0,
+            "home": 0.3636
+          },
+          "class_precision": {
+            "away": 0.2222,
+            "home": 0.5714,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        },
+        "ecse_direction": {
+          "n": 20,
+          "hits": 9,
+          "accuracy": 0.45,
+          "balanced_accuracy": 0.3232,
+          "ci95": [
+            0.2582,
+            0.6579
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2661,
+          "max_drawdown": -6.7218,
+          "avg_odds": 1.715,
+          "class_recall": {
+            "away": 0.3333,
+            "draw": 0.0,
+            "home": 0.6364
+          },
+          "class_precision": {
+            "away": 0.2857,
+            "home": 0.5833,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        },
+        "phase2_best_proxy_ecse_top5": {
+          "n": 9,
+          "hits": 5,
+          "accuracy": 0.5556,
+          "balanced_accuracy": 0.4722,
+          "ci95": [
+            0.2666,
+            0.8112
+          ],
+          "coverage_of_input": 0.45,
+          "priced_n": 9,
+          "roi": -0.066,
+          "max_drawdown": -2.1925,
+          "avg_odds": 1.7212,
+          "class_recall": {
+            "away": 0.6667,
+            "draw": 0.0,
+            "home": 0.75
+          },
+          "class_precision": {
+            "away": 0.5,
+            "home": 0.75,
+            "draw": 0.0
+          },
+          "top_league_share": 0.3333
+        },
+        "Favorite_Specialist": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": 0.112,
+          "max_drawdown": -4.0,
+          "avg_odds": 2.4044,
+          "class_recall": {
+            "away": 0.0,
+            "draw": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 0.55
+          },
+          "top_league_share": 0.2
+        },
+        "Draw_Specialist": {
+          "n": 8,
+          "hits": 1,
+          "accuracy": 0.125,
+          "balanced_accuracy": 0.1667,
+          "ci95": [
+            0.0224,
+            0.4709
+          ],
+          "coverage_of_input": 0.4,
+          "priced_n": 8,
+          "roi": -0.6626,
+          "max_drawdown": -6.0,
+          "avg_odds": 2.6593,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.5,
+            "home": 0.0
+          },
+          "class_precision": {
+            "away": 0.25,
+            "draw": 0.0,
+            "home": 0.0
+          },
+          "top_league_share": 0.25
+        },
+        "Underdog_Specialist": {
+          "n": 9,
+          "hits": 5,
+          "accuracy": 0.5556,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2666,
+            0.8112
+          ],
+          "coverage_of_input": 0.45,
+          "priced_n": 9,
+          "roi": 0.0572,
+          "max_drawdown": -3.0,
+          "avg_odds": 2.7121,
+          "class_recall": {
+            "draw": 0.0,
+            "home": 1.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "home": 0.5556
+          },
+          "top_league_share": 0.2222
+        },
+        "Balanced_Odds_Specialist": {
+          "n": 0,
+          "hits": 0,
+          "accuracy": null,
+          "balanced_accuracy": null,
+          "ci95": [
+            null,
+            null
+          ],
+          "coverage_of_input": 0.0,
+          "priced_n": 0,
+          "roi": null,
+          "max_drawdown": null,
+          "avg_odds": null,
+          "class_recall": {},
+          "class_precision": {},
+          "top_league_share": null
+        },
+        "Heavy_Favorite_Specialist": {
+          "n": 4,
+          "hits": 3,
+          "accuracy": 0.75,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.3006,
+            0.9544
+          ],
+          "coverage_of_input": 0.2,
+          "priced_n": 4,
+          "roi": -0.0839,
+          "max_drawdown": -1.0,
+          "avg_odds": 2.3398,
+          "class_recall": {
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.75
+          },
+          "top_league_share": 0.5
+        },
+        "Low_Goal_Specialist": {
+          "n": 12,
+          "hits": 3,
+          "accuracy": 0.25,
+          "balanced_accuracy": 0.2,
+          "ci95": [
+            0.0889,
+            0.5323
+          ],
+          "coverage_of_input": 0.6,
+          "priced_n": 12,
+          "roi": -0.5714,
+          "max_drawdown": -7.45,
+          "avg_odds": 2.4359,
+          "class_recall": {
+            "away": 0.4,
+            "draw": 0.0,
+            "home": 0.2
+          },
+          "class_precision": {
+            "away": 0.5,
+            "home": 0.3333,
+            "draw": 0.0
+          },
+          "top_league_share": 0.3333
+        },
+        "High_Goal_Specialist": {
+          "n": 3,
+          "hits": 3,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "ci95": [
+            0.4385,
+            1.0
+          ],
+          "coverage_of_input": 0.15,
+          "priced_n": 3,
+          "roi": 1.5164,
+          "max_drawdown": 0.0,
+          "avg_odds": 2.5164,
+          "class_recall": {
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 1.0
+          },
+          "top_league_share": 0.6667
+        },
+        "League_Specialist": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.2424,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3363,
+          "max_drawdown": -7.5311,
+          "avg_odds": 1.8519,
+          "class_recall": {
+            "away": 0.0,
+            "draw": 0.0,
+            "home": 0.7273
+          },
+          "class_precision": {
+            "home": 0.5333,
+            "away": 0.0
+          },
+          "top_league_share": 0.2
+        },
+        "Market_Contradiction_Detector": {
+          "n": 6,
+          "hits": 1,
+          "accuracy": 0.1667,
+          "balanced_accuracy": 0.0833,
+          "ci95": [
+            0.0301,
+            0.5635
+          ],
+          "coverage_of_input": 0.3,
+          "priced_n": 6,
+          "roi": -0.699,
+          "max_drawdown": -5.0,
+          "avg_odds": 2.3302,
+          "class_recall": {
+            "draw": 0.0,
+            "home": 0.25,
+            "away": 0.0
+          },
+          "class_precision": {
+            "away": 0.0,
+            "home": 0.5,
+            "draw": 0.0
+          },
+          "top_league_share": 0.3333
+        },
+        "Upset_Risk_Detector": {
+          "n": 10,
+          "hits": 4,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.1682,
+            0.6873
+          ],
+          "coverage_of_input": 0.5,
+          "priced_n": 10,
+          "roi": -0.2889,
+          "max_drawdown": -3.6595,
+          "avg_odds": 2.5969,
+          "class_recall": {
+            "away": 0.0,
+            "draw": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 0.4
+          },
+          "top_league_share": 0.3
+        },
+        "meta_model": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.2929,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3214,
+          "max_drawdown": -7.8278,
+          "avg_odds": 2.0769,
+          "class_recall": {
+            "away": 0.3333,
+            "draw": 0.0,
+            "home": 0.5455
+          },
+          "class_precision": {
+            "away": 0.25,
+            "home": 0.5455,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        },
+        "meta_model_no_abstain": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.2929,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3214,
+          "max_drawdown": -7.8278,
+          "avg_odds": 2.0769,
+          "class_recall": {
+            "away": 0.3333,
+            "draw": 0.0,
+            "home": 0.5455
+          },
+          "class_precision": {
+            "away": 0.25,
+            "home": 0.5455,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        }
+      },
+      "specialist_fit_status": {
+        "Favorite_Specialist": "FITTED",
+        "Draw_Specialist": "FITTED",
+        "Underdog_Specialist": "FITTED",
+        "Balanced_Odds_Specialist": "DATA_LIMITED",
+        "Heavy_Favorite_Specialist": "FITTED",
+        "Low_Goal_Specialist": "DATA_LIMITED",
+        "High_Goal_Specialist": "FITTED",
+        "League_Specialist": "FITTED",
+        "Market_Contradiction_Detector": "FITTED",
+        "Upset_Risk_Detector": "FITTED"
+      }
+    },
+    {
+      "fold": 6,
+      "train_n": 150,
+      "test_n": 20,
+      "train_end": "2026-07-26T13:00:00",
+      "test_start": "2026-07-26T14:00:00",
+      "test_end": "2026-07-26T19:00:00",
+      "metrics": {
+        "canonical_wde": {
+          "n": 20,
+          "hits": 9,
+          "accuracy": 0.45,
+          "balanced_accuracy": 0.4407,
+          "ci95": [
+            0.2582,
+            0.6579
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2218,
+          "max_drawdown": -5.7923,
+          "avg_odds": 2.1436,
+          "class_recall": {
+            "home": 0.5556,
+            "draw": 0.1667,
+            "away": 0.6
+          },
+          "class_precision": {
+            "home": 0.625,
+            "draw": 0.25,
+            "away": 0.375
+          },
+          "top_league_share": 0.45
+        },
+        "ecse_direction": {
+          "n": 20,
+          "hits": 14,
+          "accuracy": 0.7,
+          "balanced_accuracy": 0.6444,
+          "ci95": [
+            0.481,
+            0.8545
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": 0.2941,
+          "max_drawdown": -2.0,
+          "avg_odds": 1.7734,
+          "class_recall": {
+            "home": 1.0,
+            "draw": 0.3333,
+            "away": 0.6
+          },
+          "class_precision": {
+            "home": 0.6923,
+            "away": 0.6,
+            "draw": 1.0
+          },
+          "top_league_share": 0.45
+        },
+        "phase2_best_proxy_ecse_top5": {
+          "n": 10,
+          "hits": 7,
+          "accuracy": 0.7,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.3968,
+            0.8922
+          ],
+          "coverage_of_input": 0.5,
+          "priced_n": 10,
+          "roi": 0.4488,
+          "max_drawdown": -1.2371,
+          "avg_odds": 1.9791,
+          "class_recall": {
+            "draw": 0.5,
+            "home": 1.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "away": 0.0,
+            "home": 0.7143,
+            "draw": 1.0
+          },
+          "top_league_share": 0.9
+        },
+        "Favorite_Specialist": {
+          "n": 19,
+          "hits": 8,
+          "accuracy": 0.4211,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2314,
+            0.6372
+          ],
+          "coverage_of_input": 0.95,
+          "priced_n": 19,
+          "roi": -0.3052,
+          "max_drawdown": -7.1567,
+          "avg_odds": 2.2575,
+          "class_recall": {
+            "home": 1.0,
+            "draw": 0.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "home": 0.4211
+          },
+          "top_league_share": 0.4211
+        },
+        "Draw_Specialist": {
+          "n": 8,
+          "hits": 2,
+          "accuracy": 0.25,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.0715,
+            0.5907
+          ],
+          "coverage_of_input": 0.4,
+          "priced_n": 8,
+          "roi": -0.5184,
+          "max_drawdown": -5.0975,
+          "avg_odds": 2.6354,
+          "class_recall": {
+            "away": 1.0,
+            "draw": 0.0,
+            "home": 0.0
+          },
+          "class_precision": {
+            "away": 0.25
+          },
+          "top_league_share": 0.625
+        },
+        "Underdog_Specialist": {
+          "n": 9,
+          "hits": 6,
+          "accuracy": 0.6667,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.3542,
+            0.8794
+          ],
+          "coverage_of_input": 0.45,
+          "priced_n": 9,
+          "roi": 0.076,
+          "max_drawdown": -1.2371,
+          "avg_odds": 2.1269,
+          "class_recall": {
+            "away": 0.0,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.6667
+          },
+          "top_league_share": 0.5556
+        },
+        "Balanced_Odds_Specialist": {
+          "n": 2,
+          "hits": 1,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.0945,
+            0.9055
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": 0.3123,
+          "max_drawdown": -1.0,
+          "avg_odds": 2.6848,
+          "class_recall": {
+            "draw": 1.0,
+            "home": 0.0
+          },
+          "class_precision": {
+            "draw": 1.0,
+            "away": 0.0
+          },
+          "top_league_share": 1.0
+        },
+        "Heavy_Favorite_Specialist": {
+          "n": 5,
+          "hits": 2,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.1176,
+            0.7693
+          ],
+          "coverage_of_input": 0.25,
+          "priced_n": 5,
+          "roi": -0.4638,
+          "max_drawdown": -3.0,
+          "avg_odds": 3.0532,
+          "class_recall": {
+            "home": 1.0,
+            "draw": 0.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "home": 0.4
+          },
+          "top_league_share": 0.4
+        },
+        "Low_Goal_Specialist": {
+          "n": 13,
+          "hits": 7,
+          "accuracy": 0.5385,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.2914,
+            0.7679
+          ],
+          "coverage_of_input": 0.65,
+          "priced_n": 13,
+          "roi": 0.4241,
+          "max_drawdown": -2.0,
+          "avg_odds": 2.8387,
+          "class_recall": {
+            "away": 0.3333,
+            "home": 0.6667,
+            "draw": 0.5
+          },
+          "class_precision": {
+            "home": 0.5714,
+            "draw": 0.6667,
+            "away": 0.3333
+          },
+          "top_league_share": 0.6923
+        },
+        "High_Goal_Specialist": {
+          "n": 0,
+          "hits": 0,
+          "accuracy": null,
+          "balanced_accuracy": null,
+          "ci95": [
+            null,
+            null
+          ],
+          "coverage_of_input": 0.0,
+          "priced_n": 0,
+          "roi": null,
+          "max_drawdown": null,
+          "avg_odds": null,
+          "class_recall": {},
+          "class_precision": {},
+          "top_league_share": null
+        },
+        "League_Specialist": {
+          "n": 20,
+          "hits": 9,
+          "accuracy": 0.45,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2582,
+            0.6579
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2295,
+          "max_drawdown": -5.9472,
+          "avg_odds": 2.2551,
+          "class_recall": {
+            "home": 1.0,
+            "draw": 0.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "home": 0.45
+          },
+          "top_league_share": 0.45
+        },
+        "Market_Contradiction_Detector": {
+          "n": 7,
+          "hits": 3,
+          "accuracy": 0.4286,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.1582,
+            0.7495
+          ],
+          "coverage_of_input": 0.35,
+          "priced_n": 7,
+          "roi": -0.1646,
+          "max_drawdown": -2.0,
+          "avg_odds": 2.2878,
+          "class_recall": {
+            "away": 0.0,
+            "home": 0.5,
+            "draw": 0.5
+          },
+          "class_precision": {
+            "home": 0.6667,
+            "away": 0.0,
+            "draw": 1.0
+          },
+          "top_league_share": 0.5714
+        },
+        "Upset_Risk_Detector": {
+          "n": 11,
+          "hits": 6,
+          "accuracy": 0.5455,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2801,
+            0.7873
+          ],
+          "coverage_of_input": 0.55,
+          "priced_n": 11,
+          "roi": -0.1572,
+          "max_drawdown": -3.0861,
+          "avg_odds": 2.2717,
+          "class_recall": {
+            "home": 1.0,
+            "draw": 0.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "home": 0.5455
+          },
+          "top_league_share": 0.2727
+        },
+        "meta_model": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.3444,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2687,
+          "max_drawdown": -6.7302,
+          "avg_odds": 2.5286,
+          "class_recall": {
+            "home": 0.6667,
+            "draw": 0.1667,
+            "away": 0.2
+          },
+          "class_precision": {
+            "home": 0.5,
+            "draw": 0.5,
+            "away": 0.1667
+          },
+          "top_league_share": 0.45
+        },
+        "meta_model_no_abstain": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.3444,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2687,
+          "max_drawdown": -6.7302,
+          "avg_odds": 2.5286,
+          "class_recall": {
+            "home": 0.6667,
+            "draw": 0.1667,
+            "away": 0.2
+          },
+          "class_precision": {
+            "home": 0.5,
+            "draw": 0.5,
+            "away": 0.1667
+          },
+          "top_league_share": 0.45
+        }
+      },
+      "specialist_fit_status": {
+        "Favorite_Specialist": "FITTED",
+        "Draw_Specialist": "FITTED",
+        "Underdog_Specialist": "FITTED",
+        "Balanced_Odds_Specialist": "DATA_LIMITED",
+        "Heavy_Favorite_Specialist": "FITTED",
+        "Low_Goal_Specialist": "FITTED",
+        "High_Goal_Specialist": "FITTED",
+        "League_Specialist": "FITTED",
+        "Market_Contradiction_Detector": "FITTED",
+        "Upset_Risk_Detector": "FITTED"
+      }
+    },
+    {
+      "fold": 7,
+      "train_n": 170,
+      "test_n": 20,
+      "train_end": "2026-07-26T19:00:00",
+      "test_start": "2026-07-26T19:00:00",
+      "test_end": "2026-07-28T17:00:00",
+      "metrics": {
+        "canonical_wde": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.4333,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3758,
+          "max_drawdown": -8.433,
+          "avg_odds": 1.8396,
+          "class_recall": {
+            "away": 0.8,
+            "home": 0.5,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "draw": 0.0,
+            "home": 0.5,
+            "away": 0.3636
+          },
+          "top_league_share": 0.2
+        },
+        "ecse_direction": {
+          "n": 20,
+          "hits": 10,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.5167,
+          "ci95": [
+            0.2993,
+            0.7007
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.1885,
+          "max_drawdown": -5.8009,
+          "avg_odds": 1.6393,
+          "class_recall": {
+            "away": 0.8,
+            "home": 0.75,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5,
+            "away": 0.5
+          },
+          "top_league_share": 0.2
+        },
+        "phase2_best_proxy_ecse_top5": {
+          "n": 5,
+          "hits": 3,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.2307,
+            0.8824
+          ],
+          "coverage_of_input": 0.25,
+          "priced_n": 5,
+          "roi": -0.1044,
+          "max_drawdown": -1.0,
+          "avg_odds": 1.4977,
+          "class_recall": {
+            "away": 0.5,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.6667,
+            "away": 0.5
+          },
+          "top_league_share": 0.6
+        },
+        "Favorite_Specialist": {
+          "n": 20,
+          "hits": 7,
+          "accuracy": 0.35,
+          "balanced_accuracy": 0.3167,
+          "ci95": [
+            0.1812,
+            0.5671
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.054,
+          "max_drawdown": -7.2552,
+          "avg_odds": 2.5265,
+          "class_recall": {
+            "away": 0.2,
+            "home": 0.75,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.3529,
+            "away": 0.3333
+          },
+          "top_league_share": 0.2
+        },
+        "Draw_Specialist": {
+          "n": 9,
+          "hits": 3,
+          "accuracy": 0.3333,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.1206,
+            0.6458
+          ],
+          "coverage_of_input": 0.45,
+          "priced_n": 9,
+          "roi": -0.0983,
+          "max_drawdown": -5.0677,
+          "avg_odds": 3.0238,
+          "class_recall": {
+            "away": 1.0,
+            "home": 0.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "away": 0.375,
+            "draw": 0.0
+          },
+          "top_league_share": 0.4444
+        },
+        "Underdog_Specialist": {
+          "n": 11,
+          "hits": 5,
+          "accuracy": 0.4545,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2127,
+            0.7199
+          ],
+          "coverage_of_input": 0.55,
+          "priced_n": 11,
+          "roi": 0.4712,
+          "max_drawdown": -3.465,
+          "avg_odds": 2.8924,
+          "class_recall": {
+            "away": 0.0,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.4545
+          },
+          "top_league_share": 0.2727
+        },
+        "Balanced_Odds_Specialist": {
+          "n": 4,
+          "hits": 0,
+          "accuracy": 0.0,
+          "balanced_accuracy": 0.0,
+          "ci95": [
+            0.0,
+            0.4899
+          ],
+          "coverage_of_input": 0.2,
+          "priced_n": 4,
+          "roi": -1.0,
+          "max_drawdown": -4.0,
+          "avg_odds": 2.2789,
+          "class_recall": {
+            "home": 0.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "away": 0.0
+          },
+          "top_league_share": 0.75
+        },
+        "Heavy_Favorite_Specialist": {
+          "n": 5,
+          "hits": 2,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.1176,
+            0.7693
+          ],
+          "coverage_of_input": 0.25,
+          "priced_n": 5,
+          "roi": 1.2745,
+          "max_drawdown": -2.0,
+          "avg_odds": 5.1916,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 0.4
+          },
+          "top_league_share": 0.4
+        },
+        "Low_Goal_Specialist": {
+          "n": 12,
+          "hits": 4,
+          "accuracy": 0.3333,
+          "balanced_accuracy": 0.3444,
+          "ci95": [
+            0.1381,
+            0.6094
+          ],
+          "coverage_of_input": 0.6,
+          "priced_n": 12,
+          "roi": -0.3092,
+          "max_drawdown": -4.6146,
+          "avg_odds": 2.516,
+          "class_recall": {
+            "away": 0.3333,
+            "home": 0.5,
+            "draw": 0.2
+          },
+          "class_precision": {
+            "home": 0.4,
+            "away": 0.25,
+            "draw": 0.3333
+          },
+          "top_league_share": 0.3333
+        },
+        "High_Goal_Specialist": {
+          "n": 2,
+          "hits": 2,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "ci95": [
+            0.3424,
+            1.0
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": 4.6863,
+          "max_drawdown": 0.0,
+          "avg_odds": 5.6863,
+          "class_recall": {
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 1.0
+          },
+          "top_league_share": 1.0
+        },
+        "League_Specialist": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": 0.112,
+          "max_drawdown": -4.4657,
+          "avg_odds": 2.8439,
+          "class_recall": {
+            "away": 0.0,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.4
+          },
+          "top_league_share": 0.2
+        },
+        "Market_Contradiction_Detector": {
+          "n": 4,
+          "hits": 2,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.15,
+            0.85
+          ],
+          "coverage_of_input": 0.2,
+          "priced_n": 4,
+          "roi": -0.0634,
+          "max_drawdown": -1.0,
+          "avg_odds": 1.8793,
+          "class_recall": {
+            "away": 0.0,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5
+          },
+          "top_league_share": 0.5
+        },
+        "Upset_Risk_Detector": {
+          "n": 13,
+          "hits": 5,
+          "accuracy": 0.3846,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.1771,
+            0.6448
+          ],
+          "coverage_of_input": 0.65,
+          "priced_n": 13,
+          "roi": 0.2291,
+          "max_drawdown": -5.4635,
+          "avg_odds": 3.1147,
+          "class_recall": {
+            "away": 0.0,
+            "home": 1.0,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.3846
+          },
+          "top_league_share": 0.2308
+        },
+        "meta_model": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.4083,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3847,
+          "max_drawdown": -7.694,
+          "avg_odds": 1.7593,
+          "class_recall": {
+            "away": 0.6,
+            "home": 0.625,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5,
+            "away": 0.3333,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        },
+        "meta_model_no_abstain": {
+          "n": 20,
+          "hits": 8,
+          "accuracy": 0.4,
+          "balanced_accuracy": 0.4083,
+          "ci95": [
+            0.2188,
+            0.6134
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3847,
+          "max_drawdown": -7.694,
+          "avg_odds": 1.7593,
+          "class_recall": {
+            "away": 0.6,
+            "home": 0.625,
+            "draw": 0.0
+          },
+          "class_precision": {
+            "home": 0.5,
+            "away": 0.3333,
+            "draw": 0.0
+          },
+          "top_league_share": 0.2
+        }
+      },
+      "specialist_fit_status": {
+        "Favorite_Specialist": "FITTED",
+        "Draw_Specialist": "FITTED",
+        "Underdog_Specialist": "FITTED",
+        "Balanced_Odds_Specialist": "DATA_LIMITED",
+        "Heavy_Favorite_Specialist": "FITTED",
+        "Low_Goal_Specialist": "FITTED",
+        "High_Goal_Specialist": "FITTED",
+        "League_Specialist": "FITTED",
+        "Market_Contradiction_Detector": "FITTED",
+        "Upset_Risk_Detector": "FITTED"
+      }
+    },
+    {
+      "fold": 8,
+      "train_n": 190,
+      "test_n": 20,
+      "train_end": "2026-07-28T17:00:00",
+      "test_start": "2026-07-28T17:00:00",
+      "test_end": "2026-07-29T18:30:00",
+      "metrics": {
+        "canonical_wde": {
+          "n": 20,
+          "hits": 9,
+          "accuracy": 0.45,
+          "balanced_accuracy": 0.4407,
+          "ci95": [
+            0.2582,
+            0.6579
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2227,
+          "max_drawdown": -4.6057,
+          "avg_odds": 2.384,
+          "class_recall": {
+            "draw": 0.1667,
+            "away": 0.6,
+            "home": 0.5556
+          },
+          "class_precision": {
+            "away": 0.3333,
+            "home": 0.5556,
+            "draw": 0.5
+          },
+          "top_league_share": 0.6
+        },
+        "ecse_direction": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.4667,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.2343,
+          "max_drawdown": -6.7575,
+          "avg_odds": 1.4206,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.4,
+            "home": 1.0
+          },
+          "class_precision": {
+            "away": 0.6667,
+            "home": 0.5294
+          },
+          "top_league_share": 0.6
+        },
+        "phase2_best_proxy_ecse_top5": {
+          "n": 10,
+          "hits": 6,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.3127,
+            0.8318
+          ],
+          "coverage_of_input": 0.5,
+          "priced_n": 10,
+          "roi": -0.1733,
+          "max_drawdown": -3.7575,
+          "avg_odds": 1.3917,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "away": 0.0,
+            "home": 0.6667
+          },
+          "top_league_share": 0.5
+        },
+        "Favorite_Specialist": {
+          "n": 20,
+          "hits": 10,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.4,
+          "ci95": [
+            0.2993,
+            0.7007
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3064,
+          "max_drawdown": -7.1127,
+          "avg_odds": 1.5625,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.2,
+            "home": 1.0
+          },
+          "class_precision": {
+            "away": 0.5,
+            "home": 0.5
+          },
+          "top_league_share": 0.6
+        },
+        "Draw_Specialist": {
+          "n": 5,
+          "hits": 1,
+          "accuracy": 0.2,
+          "balanced_accuracy": 0.1667,
+          "ci95": [
+            0.0362,
+            0.6245
+          ],
+          "coverage_of_input": 0.25,
+          "priced_n": 5,
+          "roi": -0.6901,
+          "max_drawdown": -4.0,
+          "avg_odds": 2.5443,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.0,
+            "home": 0.5
+          },
+          "class_precision": {
+            "away": 0.0,
+            "home": 0.5,
+            "draw": 0.0
+          },
+          "top_league_share": 0.6
+        },
+        "Underdog_Specialist": {
+          "n": 12,
+          "hits": 5,
+          "accuracy": 0.4167,
+          "balanced_accuracy": 0.4444,
+          "ci95": [
+            0.1933,
+            0.6805
+          ],
+          "coverage_of_input": 0.6,
+          "priced_n": 12,
+          "roi": -0.3834,
+          "max_drawdown": -5.3552,
+          "avg_odds": 1.7204,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.3333,
+            "home": 1.0
+          },
+          "class_precision": {
+            "away": 0.5,
+            "home": 0.4
+          },
+          "top_league_share": 0.6667
+        },
+        "Balanced_Odds_Specialist": {
+          "n": 0,
+          "hits": 0,
+          "accuracy": null,
+          "balanced_accuracy": null,
+          "ci95": [
+            null,
+            null
+          ],
+          "coverage_of_input": 0.0,
+          "priced_n": 0,
+          "roi": null,
+          "max_drawdown": null,
+          "avg_odds": null,
+          "class_recall": {},
+          "class_precision": {},
+          "top_league_share": null
+        },
+        "Heavy_Favorite_Specialist": {
+          "n": 12,
+          "hits": 6,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2538,
+            0.7462
+          ],
+          "coverage_of_input": 0.6,
+          "priced_n": 12,
+          "roi": -0.394,
+          "max_drawdown": -4.8265,
+          "avg_odds": 1.8613,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 0.5
+          },
+          "top_league_share": 0.5
+        },
+        "Low_Goal_Specialist": {
+          "n": 9,
+          "hits": 5,
+          "accuracy": 0.5556,
+          "balanced_accuracy": 0.4167,
+          "ci95": [
+            0.2666,
+            0.8112
+          ],
+          "coverage_of_input": 0.45,
+          "priced_n": 9,
+          "roi": 0.1437,
+          "max_drawdown": -2.3552,
+          "avg_odds": 2.0806,
+          "class_recall": {
+            "draw": 0.25,
+            "home": 1.0,
+            "away": 0.0
+          },
+          "class_precision": {
+            "draw": 0.5,
+            "home": 0.5714
+          },
+          "top_league_share": 0.5556
+        },
+        "High_Goal_Specialist": {
+          "n": 2,
+          "hits": 1,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.5,
+          "ci95": [
+            0.0945,
+            0.9055
+          ],
+          "coverage_of_input": 0.1,
+          "priced_n": 2,
+          "roi": -0.4266,
+          "max_drawdown": -1.0,
+          "avg_odds": 2.7138,
+          "class_recall": {
+            "away": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 0.5
+          },
+          "top_league_share": 1.0
+        },
+        "League_Specialist": {
+          "n": 20,
+          "hits": 10,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.4,
+          "ci95": [
+            0.2993,
+            0.7007
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.3064,
+          "max_drawdown": -7.1127,
+          "avg_odds": 1.5625,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.2,
+            "home": 1.0
+          },
+          "class_precision": {
+            "away": 0.5,
+            "home": 0.5
+          },
+          "top_league_share": 0.6
+        },
+        "Market_Contradiction_Detector": {
+          "n": 8,
+          "hits": 4,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2152,
+            0.7848
+          ],
+          "coverage_of_input": 0.4,
+          "priced_n": 8,
+          "roi": -0.1777,
+          "max_drawdown": -3.0,
+          "avg_odds": 2.2292,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "home": 0.5714,
+            "away": 0.0
+          },
+          "top_league_share": 0.875
+        },
+        "Upset_Risk_Detector": {
+          "n": 18,
+          "hits": 8,
+          "accuracy": 0.4444,
+          "balanced_accuracy": 0.3333,
+          "ci95": [
+            0.2456,
+            0.6628
+          ],
+          "coverage_of_input": 0.9,
+          "priced_n": 18,
+          "roi": -0.4185,
+          "max_drawdown": -7.6322,
+          "avg_odds": 1.7041,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.0,
+            "home": 1.0
+          },
+          "class_precision": {
+            "away": 0.0,
+            "home": 0.4706
+          },
+          "top_league_share": 0.6111
+        },
+        "meta_model": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.4963,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.148,
+          "max_drawdown": -5.7575,
+          "avg_odds": 1.6002,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.6,
+            "home": 0.8889
+          },
+          "class_precision": {
+            "away": 0.6,
+            "home": 0.5333
+          },
+          "top_league_share": 0.6
+        },
+        "meta_model_no_abstain": {
+          "n": 20,
+          "hits": 11,
+          "accuracy": 0.55,
+          "balanced_accuracy": 0.4963,
+          "ci95": [
+            0.3421,
+            0.7418
+          ],
+          "coverage_of_input": 1.0,
+          "priced_n": 20,
+          "roi": -0.148,
+          "max_drawdown": -5.7575,
+          "avg_odds": 1.6002,
+          "class_recall": {
+            "draw": 0.0,
+            "away": 0.6,
+            "home": 0.8889
+          },
+          "class_precision": {
+            "away": 0.6,
+            "home": 0.5333
+          },
+          "top_league_share": 0.6
+        }
+      },
+      "specialist_fit_status": {
+        "Favorite_Specialist": "FITTED",
+        "Draw_Specialist": "FITTED",
+        "Underdog_Specialist": "FITTED",
+        "Balanced_Odds_Specialist": "FITTED",
+        "Heavy_Favorite_Specialist": "FITTED",
+        "Low_Goal_Specialist": "FITTED",
+        "High_Goal_Specialist": "FITTED",
+        "League_Specialist": "FITTED",
+        "Market_Contradiction_Detector": "FITTED",
+        "Upset_Risk_Detector": "FITTED"
+      }
+    }
+  ],
+  "summary": {
+    "n_folds": 8,
+    "models": {
+      "canonical_wde": {
+        "mean_accuracy": 0.4813,
+        "median_accuracy": 0.45,
+        "worst_accuracy": 0.3,
+        "mean_n": 20.0,
+        "folds_with_metric": 8
+      },
+      "ecse_direction": {
+        "mean_accuracy": 0.5875,
+        "median_accuracy": 0.6,
+        "worst_accuracy": 0.45,
+        "mean_n": 20.0,
+        "folds_with_metric": 8
+      },
+      "phase2_best_proxy_ecse_top5": {
+        "mean_accuracy": 0.657,
+        "median_accuracy": 0.7,
+        "worst_accuracy": 0.0,
+        "mean_n": 5.5,
+        "folds_with_metric": 8
+      },
+      "meta_model": {
+        "mean_accuracy": 0.4875,
+        "median_accuracy": 0.55,
+        "worst_accuracy": 0.4,
+        "mean_n": 20.0,
+        "folds_with_metric": 8
+      },
+      "meta_model_no_abstain": {
+        "mean_accuracy": 0.4875,
+        "median_accuracy": 0.55,
+        "worst_accuracy": 0.4,
+        "mean_n": 20.0,
+        "folds_with_metric": 8
+      },
+      "Favorite_Specialist": {
+        "mean_accuracy": 0.5538,
+        "median_accuracy": 0.6111,
+        "worst_accuracy": 0.35,
+        "mean_n": 19.25,
+        "folds_with_metric": 8
+      },
+      "Draw_Specialist": {
+        "mean_accuracy": 0.2414,
+        "median_accuracy": 0.25,
+        "worst_accuracy": 0.125,
+        "mean_n": 7.5,
+        "folds_with_metric": 8
+      },
+      "Underdog_Specialist": {
+        "mean_accuracy": 0.5702,
+        "median_accuracy": 0.625,
+        "worst_accuracy": 0.4167,
+        "mean_n": 9.5,
+        "folds_with_metric": 8
+      },
+      "Balanced_Odds_Specialist": {
+        "mean_accuracy": 0.6111,
+        "median_accuracy": 0.6667,
+        "worst_accuracy": 0.0,
+        "mean_n": 2.33,
+        "folds_with_metric": 6
+      },
+      "Heavy_Favorite_Specialist": {
+        "mean_accuracy": 0.634,
+        "median_accuracy": 0.6667,
+        "worst_accuracy": 0.4,
+        "mean_n": 6.62,
+        "folds_with_metric": 8
+      },
+      "Low_Goal_Specialist": {
+        "mean_accuracy": 0.3768,
+        "median_accuracy": 0.3333,
+        "worst_accuracy": 0.25,
+        "mean_n": 8.83,
+        "folds_with_metric": 6
+      },
+      "High_Goal_Specialist": {
+        "mean_accuracy": 0.6877,
+        "median_accuracy": 0.5833,
+        "worst_accuracy": 0.5,
+        "mean_n": 7.86,
+        "folds_with_metric": 7
+      },
+      "League_Specialist": {
+        "mean_accuracy": 0.5375,
+        "median_accuracy": 0.55,
+        "worst_accuracy": 0.4,
+        "mean_n": 20.0,
+        "folds_with_metric": 8
+      },
+      "Market_Contradiction_Detector": {
+        "mean_accuracy": 0.4375,
+        "median_accuracy": 0.5,
+        "worst_accuracy": 0.1667,
+        "mean_n": 5.88,
+        "folds_with_metric": 8
+      },
+      "Upset_Risk_Detector": {
+        "mean_accuracy": 0.5656,
+        "median_accuracy": 0.5714,
+        "worst_accuracy": 0.3846,
+        "mean_n": 12.38,
+        "folds_with_metric": 8
+      }
+    }
+  },
+  "routing": {
+    "n_events": 160,
+    "chosen_counts": {
+      "Heavy_Favorite_Specialist": 53,
+      "High_Goal_Specialist": 15,
+      "Market_Contradiction_Detector": 33,
+      "Upset_Risk_Detector": 19,
+      "Favorite_Specialist": 12,
+      "Draw_Specialist": 14,
+      "Low_Goal_Specialist": 14
+    },
+    "sample": [
+      {
+        "fold": 1,
+        "fixture_id": 1494204,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1494205,
+        "chosen": "High_Goal_Specialist",
+        "reason": "lambda_total>=2.8",
+        "abstain": 0.25,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1494208,
+        "chosen": "Market_Contradiction_Detector",
+        "reason": "wde_vs_market_conflict",
+        "abstain": 0.25,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554381,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554379,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "draw",
+        "correct": false
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554380,
+        "chosen": "Market_Contradiction_Detector",
+        "reason": "wde_vs_market_conflict",
+        "abstain": 0.55,
+        "direction": "home",
+        "actual": "draw",
+        "correct": false
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1514244,
+        "chosen": "Upset_Risk_Detector",
+        "reason": "short_favorite_low_confidence",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554378,
+        "chosen": "Market_Contradiction_Detector",
+        "reason": "wde_vs_market_conflict",
+        "abstain": 0.55,
+        "direction": "home",
+        "actual": "draw",
+        "correct": false
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554384,
+        "chosen": "Market_Contradiction_Detector",
+        "reason": "wde_vs_market_conflict",
+        "abstain": 0.55,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554383,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554387,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "away",
+        "actual": "away",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1514200,
+        "chosen": "High_Goal_Specialist",
+        "reason": "lambda_total>=2.8",
+        "abstain": 0.25,
+        "direction": "home",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554376,
+        "chosen": "Favorite_Specialist",
+        "reason": "default_favorite_eligible",
+        "abstain": 0.3788,
+        "direction": "home",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554382,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.2465,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554385,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554425,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1585131,
+        "chosen": "Market_Contradiction_Detector",
+        "reason": "wde_vs_market_conflict",
+        "abstain": 0.25,
+        "direction": "home",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554428,
+        "chosen": "Market_Contradiction_Detector",
+        "reason": "wde_vs_market_conflict",
+        "abstain": 0.55,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554388,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 1,
+        "fixture_id": 1554375,
+        "chosen": "Draw_Specialist",
+        "reason": "balanced_market",
+        "abstain": 0.25,
+        "direction": "draw",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554421,
+        "chosen": "Draw_Specialist",
+        "reason": "balanced_market",
+        "abstain": 0.25,
+        "direction": "draw",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554377,
+        "chosen": "Upset_Risk_Detector",
+        "reason": "short_favorite_low_confidence",
+        "abstain": 0.2387,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554386,
+        "chosen": "High_Goal_Specialist",
+        "reason": "lambda_total>=2.8",
+        "abstain": 0.05,
+        "direction": "away",
+        "actual": "away",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1586077,
+        "chosen": "Draw_Specialist",
+        "reason": "balanced_market",
+        "abstain": 0.25,
+        "direction": "draw",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554418,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.056,
+        "direction": "home",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554424,
+        "chosen": "Upset_Risk_Detector",
+        "reason": "short_favorite_low_confidence",
+        "abstain": 0.2555,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554439,
+        "chosen": "Upset_Risk_Detector",
+        "reason": "short_favorite_low_confidence",
+        "abstain": 0.2427,
+        "direction": "home",
+        "actual": "draw",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554423,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.05,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554430,
+        "chosen": "Upset_Risk_Detector",
+        "reason": "short_favorite_low_confidence",
+        "abstain": 0.2507,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554431,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.3921,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554436,
+        "chosen": "High_Goal_Specialist",
+        "reason": "lambda_total>=2.8",
+        "abstain": 0.05,
+        "direction": "away",
+        "actual": "draw",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554437,
+        "chosen": "Favorite_Specialist",
+        "reason": "default_favorite_eligible",
+        "abstain": 0.5451,
+        "direction": "away",
+        "actual": "away",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554426,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.3912,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554432,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.2043,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1494706,
+        "chosen": "High_Goal_Specialist",
+        "reason": "lambda_total>=2.8",
+        "abstain": 0.5602,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554416,
+        "chosen": "Favorite_Specialist",
+        "reason": "default_favorite_eligible",
+        "abstain": 0.4294,
+        "direction": "away",
+        "actual": "draw",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554417,
+        "chosen": "Heavy_Favorite_Specialist",
+        "reason": "heavy_favorite_odds<=1.45",
+        "abstain": 0.1628,
+        "direction": "home",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554420,
+        "chosen": "Favorite_Specialist",
+        "reason": "default_favorite_eligible",
+        "abstain": 0.3563,
+        "direction": "home",
+        "actual": "home",
+        "correct": true
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554429,
+        "chosen": "Favorite_Specialist",
+        "reason": "default_favorite_eligible",
+        "abstain": 0.5363,
+        "direction": "home",
+        "actual": "away",
+        "correct": false
+      },
+      {
+        "fold": 2,
+        "fixture_id": 1554435,
+        "chosen": "High_Goal_Specialist",
+        "reason": "lambda_total>=2.8",
+        "abstain": 0.0557,
+        "direction": "away",
+        "actual": "draw",
+        "correct": false
+      }
+    ],
+    "events_path_note": "full events embedded in walk_forward folds routing sample"
+  }
+}

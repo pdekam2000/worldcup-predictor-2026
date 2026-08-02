@@ -1,0 +1,99 @@
+{
+  "status": "PHASE3_SPECIALIST_MODELS_COMPLETE",
+  "phase": "PHASE3_SPECIALIST_MODELS_META_ENSEMBLE",
+  "usable_n_excl_sealed": 212,
+  "priced_n": 198,
+  "specialists_fitted": 9,
+  "specialists_total": 10,
+  "walk_forward_folds": 8,
+  "meta_walk_forward_mean_accuracy": 0.4875,
+  "canonical_walk_forward_mean_accuracy": 0.4813,
+  "locked_candidates": [
+    {
+      "model": "ecse_direction",
+      "mean_accuracy": 0.5875,
+      "median_accuracy": 0.6,
+      "worst_accuracy": 0.45,
+      "mean_n": 20.0,
+      "folds": 8,
+      "score": 1.788656932162511,
+      "locked": true,
+      "tuning_allowed_after_lock": false
+    },
+    {
+      "model": "Favorite_Specialist",
+      "mean_accuracy": 0.5538,
+      "median_accuracy": 0.6111,
+      "worst_accuracy": 0.35,
+      "mean_n": 19.25,
+      "folds": 8,
+      "score": 1.6659161246694012,
+      "locked": true,
+      "tuning_allowed_after_lock": false
+    },
+    {
+      "model": "League_Specialist",
+      "mean_accuracy": 0.5375,
+      "median_accuracy": 0.55,
+      "worst_accuracy": 0.4,
+      "mean_n": 20.0,
+      "folds": 8,
+      "score": 1.6364308102763399,
+      "locked": true,
+      "tuning_allowed_after_lock": false
+    },
+    {
+      "model": "High_Goal_Specialist",
+      "mean_accuracy": 0.6877,
+      "median_accuracy": 0.5833,
+      "worst_accuracy": 0.5,
+      "mean_n": 7.86,
+      "folds": 7,
+      "score": 1.5002497100271037,
+      "locked": true,
+      "tuning_allowed_after_lock": false
+    },
+    {
+      "model": "meta_model",
+      "mean_accuracy": 0.4875,
+      "median_accuracy": 0.55,
+      "worst_accuracy": 0.4,
+      "mean_n": 20.0,
+      "folds": 8,
+      "score": 1.4842046883901687,
+      "locked": true,
+      "tuning_allowed_after_lock": false
+    }
+  ],
+  "primary_error_regimes": [
+    [
+      "Underdog_Breakout",
+      68
+    ],
+    [
+      "Favorite_Failure",
+      54
+    ],
+    [
+      "Market_Contradiction",
+      47
+    ],
+    [
+      "Draw_Underranked",
+      44
+    ],
+    [
+      "Direction_Reversal",
+      43
+    ]
+  ],
+  "sealed_holdout_status": "SEALED_UNOPENED",
+  "target_75_claimed": false,
+  "not_deployed": true,
+  "canonical_unchanged": true,
+  "wde_unchanged": true,
+  "ecse_unchanged": true,
+  "no_auto_promotion": true,
+  "no_more_tuning_after_lock": true,
+  "artifact_dir": "artifacts/prediction_engine_75_phase3/20260802T171321Z"
+}

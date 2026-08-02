@@ -1,0 +1,372 @@
+{
+  "chosen_counts": {
+    "Favorite_Specialist": 5,
+    "Market_Contradiction_Detector": 16,
+    "Heavy_Favorite_Specialist": 22,
+    "Low_Goal_Specialist": 6,
+    "Upset_Risk_Detector": 9,
+    "Draw_Specialist": 6
+  },
+  "sample": [
+    {
+      "rule": "default_favorite_eligible",
+      "chosen": "Favorite_Specialist",
+      "specialist_abstain": 0.4271,
+      "fixture_id": 1494710,
+      "reason": "default_favorite_eligible"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.3092,
+      "fixture_id": 1497635,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.2165,
+      "fixture_id": 1495744,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.1319,
+      "fixture_id": 1494219,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.05,
+      "fixture_id": 1494222,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "lambda_total<=2.2",
+      "chosen": "Low_Goal_Specialist",
+      "specialist_abstain": 0.2361,
+      "fixture_id": 1494711,
+      "reason": "lambda_total<=2.2"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.319,
+      "fixture_id": 1494714,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.2255,
+      "fixture_id": 1494715,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "lambda_total<=2.2",
+      "chosen": "Low_Goal_Specialist",
+      "specialist_abstain": 0.2739,
+      "fixture_id": 1497636,
+      "reason": "lambda_total<=2.2"
+    },
+    {
+      "rule": "default_favorite_eligible",
+      "chosen": "Favorite_Specialist",
+      "specialist_abstain": 0.5094,
+      "fixture_id": 1515890,
+      "reason": "default_favorite_eligible"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.504,
+      "fixture_id": 1547595,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "short_favorite_low_confidence",
+      "chosen": "Upset_Risk_Detector",
+      "specialist_abstain": 0.2987,
+      "fixture_id": 1515892,
+      "reason": "short_favorite_low_confidence"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.3167,
+      "fixture_id": 1494709,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.151,
+      "fixture_id": 1498667,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "balanced_market",
+      "chosen": "Draw_Specialist",
+      "specialist_abstain": 0.6111,
+      "fixture_id": 1498668,
+      "reason": "balanced_market"
+    },
+    {
+      "rule": "balanced_market",
+      "chosen": "Draw_Specialist",
+      "specialist_abstain": 0.6202,
+      "fixture_id": 1498674,
+      "reason": "balanced_market"
+    },
+    {
+      "rule": "lambda_total<=2.2",
+      "chosen": "Low_Goal_Specialist",
+      "specialist_abstain": 0.2922,
+      "fixture_id": 1498678,
+      "reason": "lambda_total<=2.2"
+    },
+    {
+      "rule": "lambda_total<=2.2",
+      "chosen": "Low_Goal_Specialist",
+      "specialist_abstain": 0.1595,
+      "fixture_id": 1498684,
+      "reason": "lambda_total<=2.2"
+    },
+    {
+      "rule": "short_favorite_low_confidence",
+      "chosen": "Upset_Risk_Detector",
+      "specialist_abstain": 0.2942,
+      "fixture_id": 1498673,
+      "reason": "short_favorite_low_confidence"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.1303,
+      "fixture_id": 1498672,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.178,
+      "fixture_id": 1498675,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "short_favorite_low_confidence",
+      "chosen": "Upset_Risk_Detector",
+      "specialist_abstain": 0.3134,
+      "fixture_id": 1498679,
+      "reason": "short_favorite_low_confidence"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.1489,
+      "fixture_id": 1498680,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "short_favorite_low_confidence",
+      "chosen": "Upset_Risk_Detector",
+      "specialist_abstain": 0.3187,
+      "fixture_id": 1498681,
+      "reason": "short_favorite_low_confidence"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.2164,
+      "fixture_id": 1508815,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "balanced_market",
+      "chosen": "Draw_Specialist",
+      "specialist_abstain": 0.5625,
+      "fixture_id": 1508816,
+      "reason": "balanced_market"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.3887,
+      "fixture_id": 1498676,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.3079,
+      "fixture_id": 1515891,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "short_favorite_low_confidence",
+      "chosen": "Upset_Risk_Detector",
+      "specialist_abstain": 0.3867,
+      "fixture_id": 1547597,
+      "reason": "short_favorite_low_confidence"
+    },
+    {
+      "rule": "short_favorite_low_confidence",
+      "chosen": "Upset_Risk_Detector",
+      "specialist_abstain": 0.2891,
+      "fixture_id": 1515893,
+      "reason": "short_favorite_low_confidence"
+    },
+    {
+      "rule": "short_favorite_low_confidence",
+      "chosen": "Upset_Risk_Detector",
+      "specialist_abstain": 0.3076,
+      "fixture_id": 1494220,
+      "reason": "short_favorite_low_confidence"
+    },
+    {
+      "rule": "lambda_total<=2.2",
+      "chosen": "Low_Goal_Specialist",
+      "specialist_abstain": 0.3693,
+      "fixture_id": 1494713,
+      "reason": "lambda_total<=2.2"
+    },
+    {
+      "rule": "balanced_market",
+      "chosen": "Draw_Specialist",
+      "specialist_abstain": 0.5672,
+      "fixture_id": 1497637,
+      "reason": "balanced_market"
+    },
+    {
+      "rule": "balanced_market",
+      "chosen": "Draw_Specialist",
+      "specialist_abstain": 0.565,
+      "fixture_id": 1497638,
+      "reason": "balanced_market"
+    },
+    {
+      "rule": "default_favorite_eligible",
+      "chosen": "Favorite_Specialist",
+      "specialist_abstain": 0.4449,
+      "fixture_id": 1508818,
+      "reason": "default_favorite_eligible"
+    },
+    {
+      "rule": "short_favorite_low_confidence",
+      "chosen": "Upset_Risk_Detector",
+      "specialist_abstain": 0.2953,
+      "fixture_id": 1508819,
+      "reason": "short_favorite_low_confidence"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.132,
+      "fixture_id": 1556395,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "default_favorite_eligible",
+      "chosen": "Favorite_Specialist",
+      "specialist_abstain": 0.5077,
+      "fixture_id": 1589423,
+      "reason": "default_favorite_eligible"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.2557,
+      "fixture_id": 1556396,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.335,
+      "fixture_id": 1589424,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "balanced_market",
+      "chosen": "Draw_Specialist",
+      "specialist_abstain": 0.571,
+      "fixture_id": 1497633,
+      "reason": "balanced_market"
+    },
+    {
+      "rule": "lambda_total<=2.2",
+      "chosen": "Low_Goal_Specialist",
+      "specialist_abstain": 0.1912,
+      "fixture_id": 1497634,
+      "reason": "lambda_total<=2.2"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.3805,
+      "fixture_id": 1556506,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "default_favorite_eligible",
+      "chosen": "Favorite_Specialist",
+      "specialist_abstain": 0.4068,
+      "fixture_id": 1556508,
+      "reason": "default_favorite_eligible"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.1776,
+      "fixture_id": 1589432,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.1523,
+      "fixture_id": 1593498,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.2004,
+      "fixture_id": 1556530,
+      "reason": "wde_vs_market_conflict"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.2004,
+      "fixture_id": 1556505,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "heavy_favorite_odds<=1.45",
+      "chosen": "Heavy_Favorite_Specialist",
+      "specialist_abstain": 0.1388,
+      "fixture_id": 1591937,
+      "reason": "heavy_favorite_odds<=1.45"
+    },
+    {
+      "rule": "wde_vs_market_conflict",
+      "chosen": "Market_Contradiction_Detector",
+      "specialist_abstain": 0.1585,
+      "fixture_id": 1556507,
+      "reason": "wde_vs_market_conflict"
+    }
+  ],
+  "rules": [
+    "high_entropy -> ABSTAIN",
+    "balanced_market -> Draw_Specialist",
+    "fav_odds<=1.45 -> Heavy_Favorite_Specialist",
+    "wde!=market -> Market_Contradiction_Detector",
+    "short fav + low conf -> Upset_Risk_Detector",
+    "lambda_total<=2.2 -> Low_Goal_Specialist",
+    "lambda_total>=2.8 -> High_Goal_Specialist",
+    "else Favorite_Specialist / League / Canonical_WDE"
+  ]
+}

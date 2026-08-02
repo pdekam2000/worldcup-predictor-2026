@@ -1,0 +1,297 @@
+{
+  "regimes": {
+    "Favorite_Failure": {
+      "n": 54,
+      "wde_accuracy_on_regime": 0.0,
+      "mean_confidence": 58.019,
+      "avg_odds": 1.59,
+      "roi_if_bet_wde": -1.0,
+      "common_leagues": [
+        "world_cup_2026",
+        "conference_league",
+        "champions_league",
+        "eliteserien",
+        "one_deild"
+      ],
+      "common_lambda_home_mean": 1.385,
+      "common_lambda_away_mean": 1.0923,
+      "common_ecse_pattern": {
+        "home": 28,
+        "away": 20,
+        "?": 6
+      },
+      "common_wde_pattern": {
+        "home": 31,
+        "away": 23
+      },
+      "common_features": {
+        "mean_draw_p": 0.1624,
+        "mean_top5_mass": 0.5245,
+        "mean_entropy": 0.731,
+        "balanced_share": 0.037
+      },
+      "note": null
+    },
+    "Underdog_Breakout": {
+      "n": 68,
+      "wde_accuracy_on_regime": 0.0,
+      "mean_confidence": 57.175,
+      "avg_odds": 1.9631,
+      "roi_if_bet_wde": -1.0,
+      "common_leagues": [
+        "champions_league",
+        "world_cup_2026",
+        "conference_league",
+        "primera_nacional",
+        "allsvenskan"
+      ],
+      "common_lambda_home_mean": 1.4044,
+      "common_lambda_away_mean": 1.031,
+      "common_ecse_pattern": {
+        "home": 40,
+        "away": 21,
+        "?": 6
+      },
+      "common_wde_pattern": {
+        "away": 31,
+        "home": 31,
+        "draw": 6
+      },
+      "common_features": {
+        "mean_draw_p": 0.1785,
+        "mean_top5_mass": 0.5398,
+        "mean_entropy": 0.7791,
+        "balanced_share": 0.0588
+      },
+      "note": null
+    },
+    "Draw_Underranked": {
+      "n": 44,
+      "wde_accuracy_on_regime": 0.0,
+      "mean_confidence": 54.764,
+      "avg_odds": 1.9988,
+      "roi_if_bet_wde": -1.0,
+      "common_leagues": [
+        "world_cup_2026",
+        "champions_league",
+        "conference_league",
+        "superettan",
+        "primera_nacional"
+      ],
+      "common_lambda_home_mean": 1.3638,
+      "common_lambda_away_mean": 0.9264,
+      "common_ecse_pattern": {
+        "home": 22,
+        "away": 12,
+        "?": 9
+      },
+      "common_wde_pattern": {
+        "away": 24,
+        "home": 20
+      },
+      "common_features": {
+        "mean_draw_p": 0.1566,
+        "mean_top5_mass": 0.4981,
+        "mean_entropy": 0.6751,
+        "balanced_share": 0.0682
+      },
+      "note": null
+    },
+    "Direction_Reversal": {
+      "n": 43,
+      "wde_accuracy_on_regime": 0.0,
+      "mean_confidence": 52.626,
+      "avg_odds": 3.5567,
+      "roi_if_bet_wde": -1.0,
+      "common_leagues": [
+        "champions_league",
+        "primera_nacional",
+        "allsvenskan",
+        "superettan",
+        "world_cup_2026"
+      ],
+      "common_lambda_home_mean": 1.4462,
+      "common_lambda_away_mean": 0.8601,
+      "common_ecse_pattern": {
+        "home": 37,
+        "away": 5,
+        "draw": 1
+      },
+      "common_wde_pattern": {
+        "away": 22,
+        "draw": 21
+      },
+      "common_features": {
+        "mean_draw_p": 0.2381,
+        "mean_top5_mass": 0.5957,
+        "mean_entropy": 0.9687,
+        "balanced_share": 0.1163
+      },
+      "note": null
+    },
+    "Market_Contradiction": {
+      "n": 47,
+      "wde_accuracy_on_regime": 0.0,
+      "mean_confidence": 51.096,
+      "avg_odds": 3.5607,
+      "roi_if_bet_wde": -1.0,
+      "common_leagues": [
+        "champions_league",
+        "primera_nacional",
+        "world_cup_2026",
+        "allsvenskan",
+        "superettan"
+      ],
+      "common_lambda_home_mean": 1.4314,
+      "common_lambda_away_mean": 0.8522,
+      "common_ecse_pattern": {
+        "home": 37,
+        "away": 5,
+        "?": 3
+      },
+      "common_wde_pattern": {
+        "draw": 24,
+        "away": 23
+      },
+      "common_features": {
+        "mean_draw_p": 0.2306,
+        "mean_top5_mass": 0.5624,
+        "mean_entropy": 0.9088,
+        "balanced_share": 0.1277
+      },
+      "note": null
+    },
+    "Low_Goal_Surprise": {
+      "n": 12,
+      "wde_accuracy_on_regime": 0.0,
+      "mean_confidence": 55.617,
+      "avg_odds": 2.1637,
+      "roi_if_bet_wde": -1.0,
+      "common_leagues": [
+        "conference_league",
+        "one_lyga",
+        "urvalsdeild",
+        "europa_league",
+        "a_lyga"
+      ],
+      "common_lambda_home_mean": 1.4674,
+      "common_lambda_away_mean": 1.1939,
+      "common_ecse_pattern": {
+        "home": 8,
+        "away": 4
+      },
+      "common_wde_pattern": {
+        "home": 5,
+        "away": 5,
+        "draw": 2
+      },
+      "common_features": {
+        "mean_draw_p": 0.1947,
+        "mean_top5_mass": 0.5541,
+        "mean_entropy": 0.7795,
+        "balanced_share": 0.0
+      },
+      "note": null
+    },
+    "High_Goal_Explosion": {
+      "n": 14,
+      "wde_accuracy_on_regime": 0.0,
+      "mean_confidence": 53.3,
+      "avg_odds": 2.6154,
+      "roi_if_bet_wde": -1.0,
+      "common_leagues": [
+        "world_cup_2026",
+        "challenge_league",
+        "europa_league",
+        "eliteserien",
+        "superettan"
+      ],
+      "common_lambda_home_mean": 1.3335,
+      "common_lambda_away_mean": 0.7333,
+      "common_ecse_pattern": {
+        "home": 8,
+        "?": 4,
+        "away": 2
+      },
+      "common_wde_pattern": {
+        "home": 5,
+        "away": 5,
+        "draw": 4
+      },
+      "common_features": {
+        "mean_draw_p": 0.1591,
+        "mean_top5_mass": 0.4594,
+        "mean_entropy": 0.6806,
+        "balanced_share": 0.1429
+      },
+      "note": null
+    },
+    "Late_Goal_Pattern": {
+      "n": 0,
+      "wde_accuracy_on_regime": null,
+      "mean_confidence": null,
+      "avg_odds": null,
+      "roi_if_bet_wde": null,
+      "common_leagues": [],
+      "common_lambda_home_mean": null,
+      "common_lambda_away_mean": null,
+      "common_ecse_pattern": {},
+      "common_wde_pattern": {},
+      "common_features": {
+        "mean_draw_p": null,
+        "mean_top5_mass": null,
+        "mean_entropy": null,
+        "balanced_share": null
+      },
+      "note": "Late_Goal_Pattern unavailable without prematch HT/event features",
+      "status": "UNAVAILABLE_NO_PREMATCH_EVENT_FEATURES"
+    },
+    "League_Specific_Drift": {
+      "n": 0,
+      "wde_accuracy_on_regime": null,
+      "mean_confidence": null,
+      "avg_odds": null,
+      "roi_if_bet_wde": null,
+      "common_leagues": [],
+      "common_lambda_home_mean": null,
+      "common_lambda_away_mean": null,
+      "common_ecse_pattern": {},
+      "common_wde_pattern": {},
+      "common_features": {
+        "mean_draw_p": null,
+        "mean_top5_mass": null,
+        "mean_entropy": null,
+        "balanced_share": null
+      },
+      "note": null
+    },
+    "Unknown": {
+      "n": 2,
+      "wde_accuracy_on_regime": 0.0,
+      "mean_confidence": 40.1,
+      "avg_odds": null,
+      "roi_if_bet_wde": null,
+      "common_leagues": [
+        "world_cup_2026"
+      ],
+      "common_lambda_home_mean": null,
+      "common_lambda_away_mean": null,
+      "common_ecse_pattern": {
+        "?": 2
+      },
+      "common_wde_pattern": {
+        "draw": 1,
+        "away": 1
+      },
+      "common_features": {
+        "mean_draw_p": 0.0,
+        "mean_top5_mass": 0.0,
+        "mean_entropy": 0.0,
+        "balanced_share": 0.0
+      },
+      "note": null
+    }
+  },
+  "overall_miss_rate": 0.5189,
+  "n_rows": 212
+}

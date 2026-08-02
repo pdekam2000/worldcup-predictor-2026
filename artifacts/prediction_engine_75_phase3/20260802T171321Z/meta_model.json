@@ -1,0 +1,2078 @@
+{
+  "type": "rule_router_plus_specialist_probability_blend",
+  "blend": "0.7*specialist + 0.3*WDE",
+  "outputs": [
+    "p_home",
+    "p_draw",
+    "p_away",
+    "expected_correctness",
+    "abstain_probability",
+    "chosen_specialist",
+    "reason"
+  ],
+  "n_validation_decisions": 64,
+  "sample_decisions": [
+    {
+      "fixture_id": 1494710,
+      "p_home": 0.5882,
+      "p_draw": 0.1817,
+      "p_away": 0.2301,
+      "direction": "home",
+      "expected_correctness": 0.5128,
+      "abstain_probability": 0.4271,
+      "chosen_specialist": "Favorite_Specialist",
+      "reason": "default_favorite_eligible",
+      "rejected": [
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "default_favorite_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "default_favorite_eligible",
+        "why_others_rejected": [
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "default_favorite_route"
+          }
+        ],
+        "expected_accuracy": 0.5128,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "moderate",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.5334
+      },
+      "routing_log": {
+        "rule": "default_favorite_eligible",
+        "chosen": "Favorite_Specialist",
+        "specialist_abstain": 0.4271
+      }
+    },
+    {
+      "fixture_id": 1497635,
+      "p_home": 0.5314,
+      "p_draw": 0.1825,
+      "p_away": 0.2861,
+      "direction": "home",
+      "expected_correctness": 0.4821,
+      "abstain_probability": 0.3092,
+      "chosen_specialist": "Market_Contradiction_Detector",
+      "reason": "wde_vs_market_conflict",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "market_contradiction_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "wde_vs_market_conflict",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "market_contradiction_route"
+          }
+        ],
+        "expected_accuracy": 0.4821,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "wde_ecse_conflict",
+          "implied_draw",
+          "no_bet",
+          "entropy",
+          "implied_home"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.628
+      },
+      "routing_log": {
+        "rule": "wde_vs_market_conflict",
+        "chosen": "Market_Contradiction_Detector",
+        "specialist_abstain": 0.3092
+      }
+    },
+    {
+      "fixture_id": 1495744,
+      "p_home": 0.6781,
+      "p_draw": 0.1488,
+      "p_away": 0.173,
+      "direction": "home",
+      "expected_correctness": 0.6341,
+      "abstain_probability": 0.2165,
+      "chosen_specialist": "Heavy_Favorite_Specialist",
+      "reason": "heavy_favorite_odds<=1.45",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "heavy_favorite_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "heavy_favorite_odds<=1.45",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "heavy_favorite_route"
+          }
+        ],
+        "expected_accuracy": 0.6341,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.7047
+      },
+      "routing_log": {
+        "rule": "heavy_favorite_odds<=1.45",
+        "chosen": "Heavy_Favorite_Specialist",
+        "specialist_abstain": 0.2165
+      }
+    },
+    {
+      "fixture_id": 1494219,
+      "p_home": 0.8013,
+      "p_draw": 0.1016,
+      "p_away": 0.0972,
+      "direction": "home",
+      "expected_correctness": 0.7696,
+      "abstain_probability": 0.1319,
+      "chosen_specialist": "Heavy_Favorite_Specialist",
+      "reason": "heavy_favorite_odds<=1.45",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "heavy_favorite_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "heavy_favorite_odds<=1.45",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "heavy_favorite_route"
+          }
+        ],
+        "expected_accuracy": 0.7696,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.7839
+      },
+      "routing_log": {
+        "rule": "heavy_favorite_odds<=1.45",
+        "chosen": "Heavy_Favorite_Specialist",
+        "specialist_abstain": 0.1319
+      }
+    },
+    {
+      "fixture_id": 1494222,
+      "p_home": 0.7936,
+      "p_draw": 0.0769,
+      "p_away": 0.1295,
+      "direction": "home",
+      "expected_correctness": 0.7817,
+      "abstain_probability": 0.05,
+      "chosen_specialist": "Market_Contradiction_Detector",
+      "reason": "wde_vs_market_conflict",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "market_contradiction_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "wde_vs_market_conflict",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "market_contradiction_route"
+          }
+        ],
+        "expected_accuracy": 0.7817,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "wde_ecse_conflict",
+          "implied_draw",
+          "no_bet",
+          "entropy",
+          "implied_home"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.9834
+      },
+      "routing_log": {
+        "rule": "wde_vs_market_conflict",
+        "chosen": "Market_Contradiction_Detector",
+        "specialist_abstain": 0.05
+      }
+    },
+    {
+      "fixture_id": 1494711,
+      "p_home": 0.1815,
+      "p_draw": 0.5342,
+      "p_away": 0.2843,
+      "direction": "draw",
+      "expected_correctness": 0.4964,
+      "abstain_probability": 0.2361,
+      "chosen_specialist": "Low_Goal_Specialist",
+      "reason": "lambda_total<=2.2",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "low_goal_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "lambda_total<=2.2",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "low_goal_route"
+          }
+        ],
+        "expected_accuracy": 0.4964,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "book_margin",
+          "implied_home",
+          "draw_p",
+          "home_p",
+          "wde_ecse_conflict"
+        ],
+        "specialist_direction": "draw",
+        "specialist_confidence": 0.6847
+      },
+      "routing_log": {
+        "rule": "lambda_total<=2.2",
+        "chosen": "Low_Goal_Specialist",
+        "specialist_abstain": 0.2361
+      }
+    },
+    {
+      "fixture_id": 1494714,
+      "p_home": 0.4448,
+      "p_draw": 0.1539,
+      "p_away": 0.4012,
+      "direction": "home",
+      "expected_correctness": 0.4023,
+      "abstain_probability": 0.319,
+      "chosen_specialist": "Heavy_Favorite_Specialist",
+      "reason": "heavy_favorite_odds<=1.45",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "heavy_favorite_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "heavy_favorite_odds<=1.45",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "heavy_favorite_route"
+          }
+        ],
+        "expected_accuracy": 0.4023,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.6213
+      },
+      "routing_log": {
+        "rule": "heavy_favorite_odds<=1.45",
+        "chosen": "Heavy_Favorite_Specialist",
+        "specialist_abstain": 0.319
+      }
+    },
+    {
+      "fixture_id": 1494715,
+      "p_home": 0.6343,
+      "p_draw": 0.1588,
+      "p_away": 0.2069,
+      "direction": "home",
+      "expected_correctness": 0.5914,
+      "abstain_probability": 0.2255,
+      "chosen_specialist": "Market_Contradiction_Detector",
+      "reason": "wde_vs_market_conflict",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "market_contradiction_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "wde_vs_market_conflict",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "market_contradiction_route"
+          }
+        ],
+        "expected_accuracy": 0.5914,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "wde_ecse_conflict",
+          "implied_draw",
+          "no_bet",
+          "entropy",
+          "implied_home"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.6972
+      },
+      "routing_log": {
+        "rule": "wde_vs_market_conflict",
+        "chosen": "Market_Contradiction_Detector",
+        "specialist_abstain": 0.2255
+      }
+    },
+    {
+      "fixture_id": 1497636,
+      "p_home": 0.2252,
+      "p_draw": 0.5091,
+      "p_away": 0.2657,
+      "direction": "draw",
+      "expected_correctness": 0.4673,
+      "abstain_probability": 0.2739,
+      "chosen_specialist": "Low_Goal_Specialist",
+      "reason": "lambda_total<=2.2",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "low_goal_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "lambda_total<=2.2",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "low_goal_route"
+          }
+        ],
+        "expected_accuracy": 0.4673,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "book_margin",
+          "implied_home",
+          "draw_p",
+          "home_p",
+          "wde_ecse_conflict"
+        ],
+        "specialist_direction": "draw",
+        "specialist_confidence": 0.6445
+      },
+      "routing_log": {
+        "rule": "lambda_total<=2.2",
+        "chosen": "Low_Goal_Specialist",
+        "specialist_abstain": 0.2739
+      }
+    },
+    {
+      "fixture_id": 1515890,
+      "p_home": 0.3712,
+      "p_draw": 0.1961,
+      "p_away": 0.4327,
+      "direction": "away",
+      "expected_correctness": 0.3665,
+      "abstain_probability": 0.5094,
+      "chosen_specialist": "Favorite_Specialist",
+      "reason": "default_favorite_eligible",
+      "rejected": [
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "default_favorite_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "default_favorite_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "default_favorite_eligible",
+        "why_others_rejected": [
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "default_favorite_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "default_favorite_route"
+          }
+        ],
+        "expected_accuracy": 0.3665,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "moderate",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.4613
+      },
+      "routing_log": {
+        "rule": "default_favorite_eligible",
+        "chosen": "Favorite_Specialist",
+        "specialist_abstain": 0.5094
+      }
+    },
+    {
+      "fixture_id": 1547595,
+      "p_home": 0.3917,
+      "p_draw": 0.1672,
+      "p_away": 0.4411,
+      "direction": "away",
+      "expected_correctness": 0.3744,
+      "abstain_probability": 0.504,
+      "chosen_specialist": "Market_Contradiction_Detector",
+      "reason": "wde_vs_market_conflict",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "market_contradiction_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "wde_vs_market_conflict",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "market_contradiction_route"
+          }
+        ],
+        "expected_accuracy": 0.3744,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "moderate",
+        "top_features": [
+          "wde_ecse_conflict",
+          "implied_draw",
+          "no_bet",
+          "entropy",
+          "implied_home"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.4408
+      },
+      "routing_log": {
+        "rule": "wde_vs_market_conflict",
+        "chosen": "Market_Contradiction_Detector",
+        "specialist_abstain": 0.504
+      }
+    },
+    {
+      "fixture_id": 1515892,
+      "p_home": 0.6584,
+      "p_draw": 0.148,
+      "p_away": 0.1936,
+      "direction": "home",
+      "expected_correctness": 0.5994,
+      "abstain_probability": 0.2987,
+      "chosen_specialist": "Upset_Risk_Detector",
+      "reason": "short_favorite_low_confidence",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "upset_risk_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "short_favorite_low_confidence",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "upset_risk_route"
+          }
+        ],
+        "expected_accuracy": 0.5994,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.634
+      },
+      "routing_log": {
+        "rule": "short_favorite_low_confidence",
+        "chosen": "Upset_Risk_Detector",
+        "specialist_abstain": 0.2987
+      }
+    },
+    {
+      "fixture_id": 1494709,
+      "p_home": 0.4421,
+      "p_draw": 0.1699,
+      "p_away": 0.388,
+      "direction": "home",
+      "expected_correctness": 0.4001,
+      "abstain_probability": 0.3167,
+      "chosen_specialist": "Heavy_Favorite_Specialist",
+      "reason": "heavy_favorite_odds<=1.45",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "heavy_favorite_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "heavy_favorite_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "heavy_favorite_odds<=1.45",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "heavy_favorite_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "heavy_favorite_route"
+          }
+        ],
+        "expected_accuracy": 0.4001,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.6222
+      },
+      "routing_log": {
+        "rule": "heavy_favorite_odds<=1.45",
+        "chosen": "Heavy_Favorite_Specialist",
+        "specialist_abstain": 0.3167
+      }
+    },
+    {
+      "fixture_id": 1498667,
+      "p_home": 0.1692,
+      "p_draw": 0.1201,
+      "p_away": 0.7106,
+      "direction": "away",
+      "expected_correctness": 0.6784,
+      "abstain_probability": 0.151,
+      "chosen_specialist": "Market_Contradiction_Detector",
+      "reason": "wde_vs_market_conflict",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "market_contradiction_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "wde_vs_market_conflict",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "market_contradiction_route"
+          }
+        ],
+        "expected_accuracy": 0.6784,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "wde_ecse_conflict",
+          "implied_draw",
+          "no_bet",
+          "entropy",
+          "implied_home"
+        ],
+        "specialist_direction": "away",
+        "specialist_confidence": 0.7588
+      },
+      "routing_log": {
+        "rule": "wde_vs_market_conflict",
+        "chosen": "Market_Contradiction_Detector",
+        "specialist_abstain": 0.151
+      }
+    },
+    {
+      "fixture_id": 1498668,
+      "p_home": 0.2928,
+      "p_draw": 0.3312,
+      "p_away": 0.3759,
+      "direction": "away",
+      "expected_correctness": 0.307,
+      "abstain_probability": 0.6111,
+      "chosen_specialist": "Draw_Specialist",
+      "reason": "balanced_market",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        }
+      ],
+      "explain": {
+        "why_selected": "balanced_market",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          }
+        ],
+        "expected_accuracy": 0.307,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "high",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "away",
+        "specialist_confidence": 0.3852
+      },
+      "routing_log": {
+        "rule": "balanced_market",
+        "chosen": "Draw_Specialist",
+        "specialist_abstain": 0.6111
+      }
+    },
+    {
+      "fixture_id": 1498674,
+      "p_home": 0.2487,
+      "p_draw": 0.3107,
+      "p_away": 0.4406,
+      "direction": "away",
+      "expected_correctness": 0.3586,
+      "abstain_probability": 0.6202,
+      "chosen_specialist": "Draw_Specialist",
+      "reason": "balanced_market",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "balanced_market_routes_to_draw_specialist"
+        }
+      ],
+      "explain": {
+        "why_selected": "balanced_market",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "balanced_market_routes_to_draw_specialist"
+          }
+        ],
+        "expected_accuracy": 0.3586,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "high",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "away",
+        "specialist_confidence": 0.3766
+      },
+      "routing_log": {
+        "rule": "balanced_market",
+        "chosen": "Draw_Specialist",
+        "specialist_abstain": 0.6202
+      }
+    },
+    {
+      "fixture_id": 1498678,
+      "p_home": 0.5813,
+      "p_draw": 0.1636,
+      "p_away": 0.2551,
+      "direction": "home",
+      "expected_correctness": 0.5304,
+      "abstain_probability": 0.2922,
+      "chosen_specialist": "Low_Goal_Specialist",
+      "reason": "lambda_total<=2.2",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "low_goal_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "lambda_total<=2.2",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "low_goal_route"
+          }
+        ],
+        "expected_accuracy": 0.5304,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "book_margin",
+          "implied_home",
+          "draw_p",
+          "home_p",
+          "wde_ecse_conflict"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.6331
+      },
+      "routing_log": {
+        "rule": "lambda_total<=2.2",
+        "chosen": "Low_Goal_Specialist",
+        "specialist_abstain": 0.2922
+      }
+    },
+    {
+      "fixture_id": 1498684,
+      "p_home": 0.7049,
+      "p_draw": 0.1159,
+      "p_away": 0.1792,
+      "direction": "home",
+      "expected_correctness": 0.6712,
+      "abstain_probability": 0.1595,
+      "chosen_specialist": "Low_Goal_Specialist",
+      "reason": "lambda_total<=2.2",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "low_goal_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "low_goal_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "lambda_total<=2.2",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "low_goal_route"
+          },
+          {
+            "specialist": "Market_Contradiction_Detector",
+            "reason": "low_goal_route"
+          }
+        ],
+        "expected_accuracy": 0.6712,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "book_margin",
+          "implied_home",
+          "draw_p",
+          "home_p",
+          "wde_ecse_conflict"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.7476
+      },
+      "routing_log": {
+        "rule": "lambda_total<=2.2",
+        "chosen": "Low_Goal_Specialist",
+        "specialist_abstain": 0.1595
+      }
+    },
+    {
+      "fixture_id": 1498673,
+      "p_home": 0.6924,
+      "p_draw": 0.1506,
+      "p_away": 0.157,
+      "direction": "home",
+      "expected_correctness": 0.6313,
+      "abstain_probability": 0.2942,
+      "chosen_specialist": "Upset_Risk_Detector",
+      "reason": "short_favorite_low_confidence",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "upset_risk_route"
+        },
+        {
+          "specialist": "Market_Contradiction_Detector",
+          "reason": "upset_risk_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "short_favorite_low_confidence",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "upset_risk_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "upset_risk_route"
+          }
+        ],
+        "expected_accuracy": 0.6313,
+        "expected_calibration": "calibrated_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "home_p",
+          "draw_p",
+          "away_p",
+          "confidence_norm",
+          "top5_mass"
+        ],
+        "specialist_direction": "home",
+        "specialist_confidence": 0.6407
+      },
+      "routing_log": {
+        "rule": "short_favorite_low_confidence",
+        "chosen": "Upset_Risk_Detector",
+        "specialist_abstain": 0.2942
+      }
+    },
+    {
+      "fixture_id": 1498672,
+      "p_home": 0.1722,
+      "p_draw": 0.1017,
+      "p_away": 0.7261,
+      "direction": "away",
+      "expected_correctness": 0.6978,
+      "abstain_probability": 0.1303,
+      "chosen_specialist": "Market_Contradiction_Detector",
+      "reason": "wde_vs_market_conflict",
+      "rejected": [
+        {
+          "specialist": "Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Draw_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Underdog_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Balanced_Odds_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Heavy_Favorite_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Low_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "High_Goal_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "League_Specialist",
+          "reason": "market_contradiction_route"
+        },
+        {
+          "specialist": "Upset_Risk_Detector",
+          "reason": "market_contradiction_route"
+        }
+      ],
+      "explain": {
+        "why_selected": "wde_vs_market_conflict",
+        "why_others_rejected": [
+          {
+            "specialist": "Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Draw_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Underdog_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Balanced_Odds_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Heavy_Favorite_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "Low_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "High_Goal_Specialist",
+            "reason": "market_contradiction_route"
+          },
+          {
+            "specialist": "League_Specialist",
+            "reason": "market_contradiction_route"
+          }
+        ],
+        "expected_accuracy": 0.6978,
+        "expected_calibration": "fitted_specialist",
+        "expected_uncertainty": "low",
+        "top_features": [
+          "wde_ecse_conflict",
+          "implied_draw",
+          "no_bet",
+          "entropy",
+          "implied_home"
+        ],
+        "specialist_direction": "away",
+        "specialist_confidence": 0.7736
+      },
+      "routing_log": {
+        "rule": "wde_vs_market_conflict",
+        "chosen": "Market_Contradiction_Detector",
+        "specialist_abstain": 0.1303
+      }
+    }
+  ],
+  "research_only": true,
+  "canonical_unchanged": true
+}
