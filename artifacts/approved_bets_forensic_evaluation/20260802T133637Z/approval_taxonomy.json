@@ -1,0 +1,162 @@
+{
+  "entries": [
+    {
+      "field": "selected_matches.json / selected[]",
+      "values": [
+        "fixture cards in owner pick artifacts"
+      ],
+      "sources": [
+        "artifacts/today_owner_picks_*",
+        "artifacts/owner_balanced_odds_picks_*"
+      ],
+      "represents": "final betting approval (owner day shortlist)",
+      "enter_official_approved": true,
+      "cohort": "STRICT_OWNER_APPROVED",
+      "reason": "Explicit owner final selection artifact for that Vienna day."
+    },
+    {
+      "field": "dayN_best_three.json / selected[]",
+      "values": [
+        "top-3 per day"
+      ],
+      "sources": [
+        "artifacts/three_day_complete_predictions/*/day*_best_three.json"
+      ],
+      "represents": "final owner/research day shortlist",
+      "enter_official_approved": true,
+      "cohort": "STRICT_OWNER_APPROVED",
+      "reason": "Named best-three shortlist written before kickoff as day selection."
+    },
+    {
+      "field": "selected_top3.json / selected[]",
+      "values": [
+        "top-3"
+      ],
+      "sources": [
+        "artifacts/tomorrow_best_three_top10/*/selected_top3.json"
+      ],
+      "represents": "final day shortlist",
+      "enter_official_approved": true,
+      "cohort": "STRICT_OWNER_APPROVED",
+      "reason": "Explicit selected_top3 policy output."
+    },
+    {
+      "field": "freeze_selection.json",
+      "values": [
+        "freeze_id rows"
+      ],
+      "sources": [
+        "artifacts/mandatory_three_match_prediction_*"
+      ],
+      "represents": "final mandated trio selection",
+      "enter_official_approved": true,
+      "cohort": "STRICT_OWNER_APPROVED",
+      "reason": "Mandatory three-match freeze selection."
+    },
+    {
+      "field": "betting_quality",
+      "values": [
+        "BETTABLE_CANDIDATE",
+        "WATCHLIST",
+        "MODEL_ANALYSIS_ONLY",
+        "NO_BET",
+        "BLOCKED"
+      ],
+      "sources": [
+        "three_day complete_predictions.json"
+      ],
+      "represents": "model recommendation / soft bettable (not capital approval alone)",
+      "enter_official_approved": "BETTABLE_CANDIDATE_ONLY_IF_NO_BET_FALSE",
+      "cohort": "STRICT_OWNER_APPROVED if BETTABLE_CANDIDATE+no_bet=false else WATCHLIST_ONLY/NO_BET",
+      "reason": "BETTABLE_CANDIDATE is closest structured bet label; still candidate-grade."
+    },
+    {
+      "field": "final_12_1x2.json / research_classification",
+      "values": [
+        "STRONG_RESEARCH_CANDIDATE",
+        "RESEARCH_CANDIDATE"
+      ],
+      "sources": [
+        "artifacts/next_5_days_12_1x2_2_exact/*"
+      ],
+      "represents": "research final 1X2 shortlist",
+      "enter_official_approved": false,
+      "cohort": "RESEARCH_APPROVED",
+      "reason": "Mission explicitly research-only; no_promotion; not production capital approval."
+    },
+    {
+      "field": "final_owner_shortlist.json",
+      "values": [
+        "best_3_end_result",
+        "best_3_exact_score",
+        "best_3_model_consensus"
+      ],
+      "sources": [
+        "artifacts/next_4_days_complete_predictions/*"
+      ],
+      "represents": "research owner shortlist",
+      "enter_official_approved": false,
+      "cohort": "RESEARCH_APPROVED",
+      "reason": "Artifact flags no_promotion=true."
+    },
+    {
+      "field": "final_2_low_goal_exact.json / primary_top_2",
+      "values": [
+        "exact primary/additional"
+      ],
+      "sources": [
+        "next_5_days exact finals",
+        "today exact score selection"
+      ],
+      "represents": "exact-score selection",
+      "enter_official_approved": false,
+      "cohort": "EXACT_SCORE_APPROVED",
+      "reason": "Separate Exact Score cohort; not 1X2 approval."
+    },
+    {
+      "field": "no_bet / no_bet_flag",
+      "values": [
+        "true",
+        "false"
+      ],
+      "sources": [
+        "freezes",
+        "predictions",
+        "scans"
+      ],
+      "represents": "technical eligibility / abstention gate",
+      "enter_official_approved": false,
+      "cohort": "gate only",
+      "reason": "no_bet=false is necessary but not sufficient for approval."
+    },
+    {
+      "field": "selection_level (selection_decisions)",
+      "values": [
+        "AUTO_PREDICT",
+        "WATCHLIST",
+        "SKIP_*"
+      ],
+      "sources": [
+        "selection_decisions table"
+      ],
+      "represents": "prediction eligibility",
+      "enter_official_approved": false,
+      "cohort": "eligibility only",
+      "reason": "Decides whether to predict, not whether to bet."
+    },
+    {
+      "field": "final_selection / APPROVED bet enum",
+      "values": [
+        "not found as durable field"
+      ],
+      "sources": [
+        "searched codebase"
+      ],
+      "represents": "absent",
+      "enter_official_approved": false,
+      "cohort": "N/A",
+      "reason": "No single durable APPROVED_BET ledger exists; shortlist artifacts are source of truth."
+    }
+  ],
+  "conclusion": "Shortlist artifacts are source of truth; no_bet=false is gate only."
+}

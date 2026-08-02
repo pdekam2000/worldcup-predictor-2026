@@ -1,0 +1,83 @@
+{
+  "status": "APPROVED_BETS_FORENSIC_EVALUATION_COMPLETE",
+  "phase": "APPROVED_BETS_FORENSIC_EVALUATION",
+  "taxonomy_conclusion": "No durable APPROVED_BET field; strict cohort = owner/production final shortlist artifacts with no_bet≠true and pre-kickoff integrity.",
+  "strict_unique_fixtures": 23,
+  "strict_finished": 11,
+  "strict_pending": 6,
+  "strict_excluded": 6,
+  "1x2_hits": 5,
+  "1x2_misses": 6,
+  "1x2_accuracy": 0.4545,
+  "1x2_ci95": [
+    0.2127,
+    0.7199
+  ],
+  "priced_n": 6,
+  "roi": 0.29,
+  "max_drawdown": -3.0,
+  "exact_finished_n": 7,
+  "exact_top1": [
+    0,
+    0.0
+  ],
+  "exact_top3": [
+    2,
+    0.2857
+  ],
+  "exact_top5": [
+    3,
+    0.4286
+  ],
+  "exact_top10": [
+    3,
+    0.4286
+  ],
+  "cohort_summaries": {
+    "STRICT_OWNER_APPROVED": {
+      "unique": 23,
+      "finished": 14,
+      "accuracy": 0.5,
+      "roi": 0.29
+    },
+    "WATCHLIST_ONLY": {
+      "unique": 21,
+      "finished": 6,
+      "accuracy": 0.0,
+      "roi": null
+    },
+    "RESEARCH_APPROVED": {
+      "unique": 7,
+      "finished": 0,
+      "accuracy": null,
+      "roi": null
+    },
+    "EXACT_SCORE_APPROVED": {
+      "unique": 6,
+      "finished": 0,
+      "accuracy": null,
+      "roi": null
+    },
+    "STRICT_PRODUCTION_APPROVED": {
+      "unique": 12,
+      "finished": 3,
+      "accuracy": 0.0,
+      "roi": -1.0
+    },
+    "STRICT_COMBINED_HEADLINE": {
+      "unique": 23,
+      "finished": 11,
+      "accuracy": 0.4545,
+      "roi": 0.29
+    }
+  },
+  "baseline_all_canonical_accuracy": 0.5185,
+  "approval_improves_vs_baseline": false,
+  "sample_size_sufficient": false,
+  "reconciliation_ok": true,
+  "not_deployed": true,
+  "canonical_unchanged": true,
+  "freezes_unchanged": true,
+  "no_predictions_regenerated": true,
+  "artifact_dir": "artifacts/approved_bets_forensic_evaluation/20260802T133637Z"
+}
