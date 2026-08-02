@@ -1,0 +1,11 @@
+{
+  "decision": "SCALE_SEARCH_NOT_YET_JUSTIFIED",
+  "reasons": [
+    "model_labeled_n=225 < 500",
+    "priced_n=233 < 500",
+    "true_forward_n=0 < 30 (Gate5)",
+    "validation_folds_cannot_honestly_support_N_ge_50_discovery_gates"
+  ],
+  "launch_million_search": false,
+  "blocker": "DATA_VOLUME_AND_PREMATCH_PROVENANCE"
+}

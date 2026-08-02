@@ -1,0 +1,44 @@
+{
+  "previous_valid_n": 225,
+  "new_valid_model_labeled_n": 225,
+  "newly_recovered_model_labeled_n": 0,
+  "previous_priced_n": 209,
+  "new_priced_n": 233,
+  "research_usable_n": 249,
+  "odds_only_rows_added": 24,
+  "as_of_enriched_n": 246,
+  "true_forward_n": 0,
+  "date_range": {
+    "min": "2026-06-12T02:00:00",
+    "max": "2026-07-29T19:15:00"
+  },
+  "leagues_n": 15,
+  "leagues": [
+    "a_lyga",
+    "allsvenskan",
+    "challenge_league",
+    "champions_league",
+    "conference_league",
+    "eliteserien",
+    "europa_league",
+    "one_deild",
+    "one_lyga",
+    "primera_nacional",
+    "superettan",
+    "urvalsdeild",
+    "veikkausliiga",
+    "virsliga",
+    "world_cup_2026"
+  ],
+  "parquet": "artifacts/massive_dataset_recovery/20260802T214917Z/massive_research_dataset_v2.parquet",
+  "cohorts": {
+    "dataset_A_immutable_freeze": 223,
+    "dataset_B_timestamped_prematch": 2,
+    "dataset_C_provider_odds_asof": 24,
+    "dataset_D_true_forward": 0,
+    "model_labeled_total": 225,
+    "research_usable_total": 249,
+    "priced_total": 233,
+    "note": "Headline model discovery uses A+B; market-only uses C separately; official TF proof uses D only"
+  }
+}

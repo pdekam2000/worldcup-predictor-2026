@@ -1,0 +1,113 @@
+{
+  "status": "MASSIVE_DATASET_RECOVERY_PARTIAL",
+  "program": "MASSIVE_SEARCH_DATASET_RECOVERY_AND_TRUE_FORWARD_EXPANSION",
+  "previous_valid_n": 225,
+  "final_valid_model_labeled_n": 225,
+  "newly_recovered_model_labeled_n": 0,
+  "previous_priced_n": 209,
+  "final_priced_n": 233,
+  "research_usable_n": 249,
+  "cohort_counts": {
+    "dataset_A_immutable_freeze": 223,
+    "dataset_B_timestamped_prematch": 2,
+    "dataset_C_provider_odds_asof": 24,
+    "dataset_D_true_forward": 0,
+    "model_labeled_total": 225,
+    "research_usable_total": 249,
+    "priced_total": 233,
+    "note": "Headline model discovery uses A+B; market-only uses C separately; official TF proof uses D only"
+  },
+  "main_exclusion_reasons": {
+    "ODDS_TIMESTAMP_INVALID": 789,
+    "RESULT_ONLY_FIXTURE": 1094,
+    "POST_KICKOFF_PREDICTION": 8,
+    "RECOVERABLE_FROM_PROVIDER_CACHE": 272,
+    "VALID_ALREADY_INCLUDED": 222,
+    "NO_PREMATCH_PREDICTION": 24
+  },
+  "recoverable_count": 296,
+  "unrecoverable_count": 1891,
+  "date_range": {
+    "min": "2026-06-12T02:00:00",
+    "max": "2026-07-29T19:15:00"
+  },
+  "league_count": 15,
+  "feature_count": 34,
+  "leakage_status": "PASSED",
+  "gates": {
+    "gate1_valid_labeled_ge_500": false,
+    "gate2_valid_labeled_ge_1000": false,
+    "gate3_priced_ge_500": false,
+    "gate4_priced_ge_1000": false,
+    "gate5_tf_ge_30": false,
+    "gate6_tf_ge_100": false,
+    "gate7_tf_ge_250": false,
+    "model_labeled_n": 225,
+    "priced_n": 233,
+    "true_forward_n": 0,
+    "research_usable_n": 249
+  },
+  "scale_decision": "SCALE_SEARCH_NOT_YET_JUSTIFIED",
+  "true_forward_collection_active": false,
+  "timers_active": false,
+  "current_true_forward_n": 0,
+  "million_search_launched": false,
+  "not_publicly_deployed": true,
+  "canonical_unchanged": true,
+  "wde_unchanged": true,
+  "ecse_unchanged": true,
+  "sealed_holdout_unopened": true,
+  "no_auto_promotion": true,
+  "no_result_leakage": true,
+  "artifact_dir": "artifacts/massive_dataset_recovery/20260802T214917Z",
+  "baseline_before_wde_acc": 0.4798,
+  "baseline_after_wde_acc": 0.4798,
+  "fixed_rule_before": {
+    "n": 49,
+    "hits": 37,
+    "accuracy": 0.7551,
+    "ci95": [
+      0.6191,
+      0.854
+    ],
+    "coverage": 0.2178,
+    "priced_n": 49,
+    "roi": -0.0682,
+    "max_drawdown": -4.4697,
+    "avg_odds": 1.258,
+    "median_odds": 1.247,
+    "net_profit": -3.3422,
+    "top_league_share": 0.2653,
+    "extreme_fav_share": 0.3673,
+    "flags": [
+      "N_LT_50_NOT_DISCOVERY",
+      "SMALL_SAMPLE"
+    ],
+    "name": "fixed_rule_home_wde_odds_le_1_5_lambda_ge_2",
+    "universe": 225
+  },
+  "fixed_rule_after": {
+    "n": 49,
+    "hits": 37,
+    "accuracy": 0.7551,
+    "ci95": [
+      0.6191,
+      0.854
+    ],
+    "coverage": 0.2178,
+    "priced_n": 49,
+    "roi": -0.0682,
+    "max_drawdown": -4.4697,
+    "avg_odds": 1.258,
+    "median_odds": 1.247,
+    "net_profit": -3.3422,
+    "top_league_share": 0.2653,
+    "extreme_fav_share": 0.3673,
+    "flags": [
+      "N_LT_50_NOT_DISCOVERY",
+      "SMALL_SAMPLE"
+    ],
+    "name": "fixed_rule_home_wde_odds_le_1_5_lambda_ge_2",
+    "universe": 225
+  }
+}
