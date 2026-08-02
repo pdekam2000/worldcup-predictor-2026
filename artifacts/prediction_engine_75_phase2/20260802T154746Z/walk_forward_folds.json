@@ -1,0 +1,513 @@
+{
+  "folds": [
+    {
+      "fold": 1,
+      "train_n": 40,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-03T18:00:00",
+      "test_start": "2026-07-03T22:00:00",
+      "test_end": "2026-07-14T16:00:00+00:00",
+      "selected_config_hash": "2b0904e71a9677d1",
+      "test_metrics": {
+        "n": 7,
+        "hits": 4,
+        "accuracy": 0.5714,
+        "balanced_accuracy": 0.3333,
+        "ci95": [
+          0.2505,
+          0.8418
+        ],
+        "coverage_of_input": 0.4667,
+        "priced_n": 7,
+        "roi": -0.1694,
+        "max_drawdown": -2.0,
+        "avg_odds": 1.3937,
+        "class_recall": {
+          "draw": 0.0,
+          "home": 1.0,
+          "away": 0.0
+        },
+        "class_precision": {
+          "home": 0.5714
+        },
+        "top_league_share": 0.4286
+      },
+      "league_composition": {
+        "world_cup_2026": 4,
+        "europa_league": 6,
+        "allsvenskan": 3,
+        "champions_league": 2
+      }
+    },
+    {
+      "fold": 2,
+      "train_n": 55,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-14T16:00:00+00:00",
+      "test_start": "2026-07-14T16:00:00+00:00",
+      "test_end": "2026-07-15T18:15:00+00:00",
+      "selected_config_hash": "f2877c63af2bbb86",
+      "test_metrics": {
+        "n": 7,
+        "hits": 6,
+        "accuracy": 0.8571,
+        "balanced_accuracy": 0.8333,
+        "ci95": [
+          0.4869,
+          0.9743
+        ],
+        "coverage_of_input": 0.4667,
+        "priced_n": 7,
+        "roi": 0.1253,
+        "max_drawdown": -1.0,
+        "avg_odds": 1.394,
+        "class_recall": {
+          "home": 1.0,
+          "away": 0.6667
+        },
+        "class_precision": {
+          "home": 0.8,
+          "away": 1.0
+        },
+        "top_league_share": 0.5714
+      },
+      "league_composition": {
+        "champions_league": 10,
+        "one_deild": 2,
+        "conference_league": 2,
+        "world_cup_2026": 1
+      }
+    },
+    {
+      "fold": 3,
+      "train_n": 70,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-15T18:15:00+00:00",
+      "test_start": "2026-07-15T18:30:00+00:00",
+      "test_end": "2026-07-16T17:00:00+00:00",
+      "selected_config_hash": "e3cae0d320ddf202",
+      "test_metrics": {
+        "n": 6,
+        "hits": 4,
+        "accuracy": 0.6667,
+        "balanced_accuracy": 0.3333,
+        "ci95": [
+          0.3,
+          0.9032
+        ],
+        "coverage_of_input": 0.4,
+        "priced_n": 6,
+        "roi": -0.1573,
+        "max_drawdown": -2.0,
+        "avg_odds": 1.3124,
+        "class_recall": {
+          "away": 0.0,
+          "draw": 0.0,
+          "home": 1.0
+        },
+        "class_precision": {
+          "home": 0.6667
+        },
+        "top_league_share": 1.0
+      },
+      "league_composition": {
+        "conference_league": 11,
+        "champions_league": 2,
+        "world_cup_2026": 1,
+        "eliteserien": 1
+      }
+    },
+    {
+      "fold": 4,
+      "train_n": 85,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-16T17:00:00+00:00",
+      "test_start": "2026-07-16T17:00:00+00:00",
+      "test_end": "2026-07-18T11:00:00",
+      "selected_config_hash": "b5a9b672adb3f8c6",
+      "test_metrics": {
+        "n": 13,
+        "hits": 7,
+        "accuracy": 0.5385,
+        "balanced_accuracy": 0.55,
+        "ci95": [
+          0.2914,
+          0.7679
+        ],
+        "coverage_of_input": 0.8667,
+        "priced_n": 13,
+        "roi": -0.0427,
+        "max_drawdown": -4.2452,
+        "avg_odds": 1.7601,
+        "class_recall": {
+          "draw": 0.25,
+          "away": 0.4,
+          "home": 1.0
+        },
+        "class_precision": {
+          "away": 0.5,
+          "home": 0.5,
+          "draw": 1.0
+        },
+        "top_league_share": 0.5385
+      },
+      "league_composition": {
+        "conference_league": 7,
+        "europa_league": 1,
+        "allsvenskan": 2,
+        "eliteserien": 1,
+        "primera_nacional": 2,
+        "one_deild": 1,
+        "superettan": 1
+      }
+    },
+    {
+      "fold": 5,
+      "train_n": 100,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-18T11:00:00",
+      "test_start": "2026-07-18T12:00:00",
+      "test_end": "2026-07-18T16:00:00",
+      "selected_config_hash": "2b0904e71a9677d1",
+      "test_metrics": {
+        "n": 4,
+        "hits": 4,
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "ci95": [
+          0.5101,
+          1.0
+        ],
+        "coverage_of_input": 0.2667,
+        "priced_n": 4,
+        "roi": 0.3154,
+        "max_drawdown": 0.0,
+        "avg_odds": 1.3154,
+        "class_recall": {
+          "home": 1.0
+        },
+        "class_precision": {
+          "home": 1.0
+        },
+        "top_league_share": 0.5
+      },
+      "league_composition": {
+        "eliteserien": 6,
+        "veikkausliiga": 3,
+        "allsvenskan": 1,
+        "superettan": 2,
+        "one_deild": 2,
+        "one_lyga": 1
+      }
+    },
+    {
+      "fold": 6,
+      "train_n": 115,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-18T16:00:00",
+      "test_start": "2026-07-18T16:00:00",
+      "test_end": "2026-07-25T12:00:00",
+      "selected_config_hash": "2b0904e71a9677d1",
+      "test_metrics": {
+        "n": 9,
+        "hits": 7,
+        "accuracy": 0.7778,
+        "balanced_accuracy": 0.6786,
+        "ci95": [
+          0.4526,
+          0.9368
+        ],
+        "coverage_of_input": 0.6,
+        "priced_n": 9,
+        "roi": -0.0147,
+        "max_drawdown": -1.179,
+        "avg_odds": 1.2939,
+        "class_recall": {
+          "home": 0.8571,
+          "away": 0.5
+        },
+        "class_precision": {
+          "away": 0.5,
+          "home": 0.8571
+        },
+        "top_league_share": 0.3333
+      },
+      "league_composition": {
+        "urvalsdeild": 3,
+        "one_deild": 3,
+        "virsliga": 1,
+        "world_cup_2026": 1,
+        "one_lyga": 2,
+        "veikkausliiga": 1,
+        "a_lyga": 1,
+        "allsvenskan": 1,
+        "challenge_league": 2
+      }
+    },
+    {
+      "fold": 7,
+      "train_n": 130,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-25T12:00:00",
+      "test_start": "2026-07-25T13:00:00",
+      "test_end": "2026-07-26T12:00:00",
+      "selected_config_hash": "03f6056399256f2c",
+      "test_metrics": {
+        "n": 8,
+        "hits": 5,
+        "accuracy": 0.625,
+        "balanced_accuracy": 0.6,
+        "ci95": [
+          0.3057,
+          0.8632
+        ],
+        "coverage_of_input": 0.5333,
+        "priced_n": 8,
+        "roi": -0.125,
+        "max_drawdown": -1.9338,
+        "avg_odds": 1.4206,
+        "class_recall": {
+          "away": 1.0,
+          "draw": 0.0,
+          "home": 0.8
+        },
+        "class_precision": {
+          "away": 0.25,
+          "home": 1.0
+        },
+        "top_league_share": 0.375
+      },
+      "league_composition": {
+        "allsvenskan": 4,
+        "superettan": 2,
+        "veikkausliiga": 2,
+        "eliteserien": 1,
+        "one_deild": 1,
+        "one_lyga": 3,
+        "primera_nacional": 2
+      }
+    },
+    {
+      "fold": 8,
+      "train_n": 145,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-26T12:00:00",
+      "test_start": "2026-07-26T12:00:00",
+      "test_end": "2026-07-26T16:00:00",
+      "selected_config_hash": "08e7aa5c463da2a7",
+      "test_metrics": {
+        "n": 3,
+        "hits": 2,
+        "accuracy": 0.6667,
+        "balanced_accuracy": 0.6667,
+        "ci95": [
+          0.2077,
+          0.9385
+        ],
+        "coverage_of_input": 0.2,
+        "priced_n": 3,
+        "roi": -0.1246,
+        "max_drawdown": -1.0,
+        "avg_odds": 1.2911,
+        "class_recall": {
+          "home": 1.0,
+          "draw": 0.0,
+          "away": 1.0
+        },
+        "class_precision": {
+          "home": 0.5,
+          "away": 1.0
+        },
+        "top_league_share": 0.3333
+      },
+      "league_composition": {
+        "veikkausliiga": 3,
+        "one_lyga": 1,
+        "eliteserien": 4,
+        "superettan": 2,
+        "allsvenskan": 2,
+        "virsliga": 2,
+        "a_lyga": 1
+      }
+    },
+    {
+      "fold": 9,
+      "train_n": 160,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-26T16:00:00",
+      "test_start": "2026-07-26T17:15:00",
+      "test_end": "2026-07-26T21:00:00",
+      "selected_config_hash": "08e7aa5c463da2a7",
+      "test_metrics": {
+        "n": 4,
+        "hits": 1,
+        "accuracy": 0.25,
+        "balanced_accuracy": 0.3333,
+        "ci95": [
+          0.0456,
+          0.6994
+        ],
+        "coverage_of_input": 0.2667,
+        "priced_n": 4,
+        "roi": -0.6671,
+        "max_drawdown": -2.6685,
+        "avg_odds": 1.3851,
+        "class_recall": {
+          "draw": 0.0,
+          "away": 0.0,
+          "home": 1.0
+        },
+        "class_precision": {
+          "away": 0.0,
+          "home": 0.3333
+        },
+        "top_league_share": 0.5
+      },
+      "league_composition": {
+        "eliteserien": 1,
+        "primera_nacional": 12,
+        "urvalsdeild": 2
+      }
+    },
+    {
+      "fold": 10,
+      "train_n": 175,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-26T21:00:00",
+      "test_start": "2026-07-27T15:00:00",
+      "test_end": "2026-07-28T17:00:00",
+      "selected_config_hash": "54f3d6810c50e45b",
+      "test_metrics": {
+        "n": 15,
+        "hits": 7,
+        "accuracy": 0.4667,
+        "balanced_accuracy": 0.5333,
+        "ci95": [
+          0.2481,
+          0.6988
+        ],
+        "coverage_of_input": 1.0,
+        "priced_n": 15,
+        "roi": -0.2702,
+        "max_drawdown": -5.8009,
+        "avg_odds": 1.6287,
+        "class_recall": {
+          "away": 1.0,
+          "draw": 0.0,
+          "home": 0.6
+        },
+        "class_precision": {
+          "away": 0.5,
+          "home": 0.4286
+        },
+        "top_league_share": 0.2667
+      },
+      "league_composition": {
+        "virsliga": 2,
+        "a_lyga": 1,
+        "allsvenskan": 1,
+        "eliteserien": 1,
+        "superettan": 4,
+        "urvalsdeild": 2,
+        "one_lyga": 2,
+        "champions_league": 2
+      }
+    },
+    {
+      "fold": 11,
+      "train_n": 190,
+      "test_n": 15,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-28T17:00:00",
+      "test_start": "2026-07-28T17:00:00",
+      "test_end": "2026-07-29T17:30:00",
+      "selected_config_hash": "2569d66bea99c043",
+      "test_metrics": {
+        "n": 8,
+        "hits": 4,
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.2152,
+          0.7848
+        ],
+        "coverage_of_input": 0.5333,
+        "priced_n": 8,
+        "roi": -0.3192,
+        "max_drawdown": -3.7575,
+        "avg_odds": 1.3673,
+        "class_recall": {
+          "draw": 0.0,
+          "away": 0.5,
+          "home": 1.0
+        },
+        "class_precision": {
+          "away": 0.6667,
+          "home": 0.4
+        },
+        "top_league_share": 0.5
+      },
+      "league_composition": {
+        "champions_league": 9,
+        "conference_league": 5,
+        "one_deild": 1
+      }
+    },
+    {
+      "fold": 12,
+      "train_n": 205,
+      "test_n": 7,
+      "train_start": "2026-06-12T02:00:00",
+      "train_end": "2026-07-29T17:30:00",
+      "test_start": "2026-07-29T17:30:00",
+      "test_end": "2026-07-29T19:15:00",
+      "selected_config_hash": "3204c3925a29e9f6",
+      "test_metrics": {
+        "n": 7,
+        "hits": 5,
+        "accuracy": 0.7143,
+        "balanced_accuracy": 0.5,
+        "ci95": [
+          0.3589,
+          0.9178
+        ],
+        "coverage_of_input": 1.0,
+        "priced_n": 7,
+        "roi": 0.0213,
+        "max_drawdown": -1.81,
+        "avg_odds": 1.4433,
+        "class_recall": {
+          "draw": 0.0,
+          "home": 1.0
+        },
+        "class_precision": {
+          "home": 0.7143
+        },
+        "top_league_share": 0.4286
+      },
+      "league_composition": {
+        "champions_league": 3,
+        "one_deild": 3,
+        "conference_league": 1
+      }
+    }
+  ],
+  "summary": {
+    "n_folds": 12,
+    "mean_accuracy": 0.6362,
+    "median_accuracy": 0.6667,
+    "worst_fold_accuracy": 0.25,
+    "std_accuracy": 0.187,
+    "scheme": "expanding_window_block15_min_train40_exclude_phase1_sealed"
+  }
+}

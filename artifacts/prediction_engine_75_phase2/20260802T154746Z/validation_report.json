@@ -1,0 +1,116 @@
+{
+  "status": "PHASE2_FEATURE_EXPANSION_AND_WALK_FORWARD_COMPLETE",
+  "phase": "PHASE2_FEATURE_EXPANSION_AND_WALK_FORWARD",
+  "phase1_usable_n": 54,
+  "phase2_usable_n": 223,
+  "cohort_counts": {
+    "HISTORICAL_PREMATCH_FREEZE": 223
+  },
+  "priced_n_before": 3,
+  "priced_n_after": 209,
+  "features_before": 22,
+  "features_after": 32,
+  "no_bet_reason_coverage": {
+    "usable_with_no_bet_true": 181,
+    "with_reasons": 181,
+    "reason_source_counts": {
+      "none": 42,
+      "reconstructed": 181
+    },
+    "code_counts": {
+      "OTHER": 89,
+      "LOW_CONFIDENCE": 77,
+      "DIRECTION_CONFLICT": 39,
+      "LOW_EDGE": 14,
+      "MISSING_ODDS": 4
+    }
+  },
+  "walk_forward_fold_count": 12,
+  "walk_forward_mean_accuracy": 0.6362,
+  "strategies_tested": 50000,
+  "search_meta": {
+    "n_space_built": 150000,
+    "n_run": 50000,
+    "skipped_empty": 27184,
+    "max_experiments": 50000,
+    "note": "Full Phase2 experiment target",
+    "justified_cap": 50000
+  },
+  "best_n25": {
+    "config_hash": "270d57e1962b0d8f",
+    "accuracy": 0.64,
+    "n": 25,
+    "coverage": 0.3906,
+    "avg_odds": 1.6479,
+    "roi": 0.0894,
+    "max_drawdown": -4.7575,
+    "flags": [],
+    "config": {
+      "min_confidence": 0,
+      "min_edge": 0.0,
+      "max_entropy": null,
+      "min_top5": 0.65,
+      "require_agree_ecse": false,
+      "odds_max": null,
+      "direction_mode": "ecse",
+      "exclude_no_bet": false,
+      "balanced_only": false
+    }
+  },
+  "best_n50": {
+    "config_hash": "cf3df7912f6076f2",
+    "accuracy": 0.6038,
+    "n": 53,
+    "coverage": 0.8281,
+    "avg_odds": 1.5139,
+    "roi": -0.0674,
+    "max_drawdown": -8.7641,
+    "flags": [],
+    "config": {
+      "min_confidence": 0,
+      "min_edge": 0.4,
+      "max_entropy": null,
+      "min_top5": null,
+      "require_agree_ecse": false,
+      "odds_max": 2.0,
+      "direction_mode": "ecse",
+      "exclude_no_bet": false,
+      "balanced_only": false
+    }
+  },
+  "best_n100": null,
+  "feature_families_helped": [
+    "canonical_plus_ecse_agree",
+    "canonical_plus_conf55",
+    "canonical_plus_top5",
+    "canonical_plus_odds_cap",
+    "ecse_direction"
+  ],
+  "feature_families_hurt": [],
+  "primary_error_clusters": [
+    "underdog_breakout",
+    "favorite_failure",
+    "market_contradiction",
+    "draw_underranked",
+    "direction_reversal"
+  ],
+  "sealed_holdout_status": "SEALED_UNOPENED",
+  "true_forward_status": "PLAN_READY_N0",
+  "baseline_stored_wde_accuracy": 0.4811,
+  "phase1_small_sample_note": {
+    "phase1_best_val_75pct_n8": "SMALL_SAMPLE_NOT_PROMOTABLE"
+  },
+  "target_75_claimed": false,
+  "not_deployed": true,
+  "canonical_unchanged": true,
+  "wde_unchanged": true,
+  "ecse_unchanged": true,
+  "no_auto_promotion": true,
+  "artifact_dir": "artifacts/prediction_engine_75_phase2/20260802T154746Z",
+  "compute": {
+    "strategies_tested": 50000,
+    "walk_forward_folds": 12,
+    "api_calls": 0,
+    "db_mode": "read_only"
+  }
+}

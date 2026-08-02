@@ -1,0 +1,214 @@
+{
+  "features": [
+    {
+      "feature": "fixture_id",
+      "family": "id",
+      "source": "fixture_id",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "kickoff_utc",
+      "family": "time",
+      "source": "fixtures/store timestamps",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "predicted_at",
+      "family": "time",
+      "source": "fixtures/store timestamps",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "cohort",
+      "family": "meta",
+      "source": "assigned",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "wde_decision",
+      "family": "canonical",
+      "source": "worldcup_stored_predictions/finished_match_evaluation",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "home_p",
+      "family": "canonical",
+      "source": "worldcup_stored_predictions/finished_match_evaluation",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "draw_p",
+      "family": "canonical",
+      "source": "worldcup_stored_predictions/finished_match_evaluation",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "away_p",
+      "family": "canonical",
+      "source": "worldcup_stored_predictions/finished_match_evaluation",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "confidence",
+      "family": "canonical",
+      "source": "worldcup_stored_predictions/finished_match_evaluation",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "no_bet",
+      "family": "canonical",
+      "source": "worldcup_stored_predictions/finished_match_evaluation",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "no_bet_reasons",
+      "family": "canonical",
+      "source": "worldcup_stored_predictions/finished_match_evaluation",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "no_bet_reason_source",
+      "family": "canonical",
+      "source": "worldcup_stored_predictions/finished_match_evaluation",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "top3_mass",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "top5_mass",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "top10_mass",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "entropy",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "lambda_home",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "lambda_away",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "ecse_h_mass",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "ecse_d_mass",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "ecse_a_mass",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "ecse_direction",
+      "family": "ecse",
+      "source": "ecse_prediction_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "lambda_v2_home",
+      "family": "shadow",
+      "source": "lambda_v2_shadow_outputs",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "lambda_v2_away",
+      "family": "shadow",
+      "source": "lambda_v2_shadow_outputs",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "lambda_v2_direction",
+      "family": "shadow",
+      "source": "lambda_v2_shadow_outputs",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "odds_home",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "odds_draw",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "odds_away",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "implied_home",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "implied_draw",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "implied_away",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "book_margin",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "favorite_strength",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "balanced_market",
+      "family": "market",
+      "source": "odds_snapshots",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    },
+    {
+      "feature": "actual_1x2",
+      "family": "label",
+      "source": "fixture_results",
+      "timestamp_field": "predicted_at/odds_snapshot_at/kickoff_utc"
+    }
+  ]
+}

@@ -1,0 +1,270 @@
+{
+  "base_canonical_only": {
+    "n": 64,
+    "hits": 26,
+    "accuracy": 0.4062,
+    "balanced_accuracy": 0.4043,
+    "ci95": [
+      0.2946,
+      0.5286
+    ],
+    "coverage_of_input": 1.0,
+    "priced_n": 64,
+    "roi": -0.3188,
+    "max_drawdown": -20.405,
+    "avg_odds": 2.1679,
+    "class_recall": {
+      "away": 0.625,
+      "home": 0.4828,
+      "draw": 0.1053
+    },
+    "class_precision": {
+      "home": 0.5385,
+      "draw": 0.2222,
+      "away": 0.3448
+    },
+    "top_league_share": 0.2188
+  },
+  "deltas": {
+    "canonical_only": {
+      "metrics": {
+        "n": 64,
+        "hits": 26,
+        "accuracy": 0.4062,
+        "balanced_accuracy": 0.4043,
+        "ci95": [
+          0.2946,
+          0.5286
+        ],
+        "coverage_of_input": 1.0,
+        "priced_n": 64,
+        "roi": -0.3188,
+        "max_drawdown": -20.405,
+        "avg_odds": 2.1679,
+        "class_recall": {
+          "away": 0.625,
+          "home": 0.4828,
+          "draw": 0.1053
+        },
+        "class_precision": {
+          "home": 0.5385,
+          "draw": 0.2222,
+          "away": 0.3448
+        },
+        "top_league_share": 0.2188
+      },
+      "accuracy_delta": 0.0
+    },
+    "canonical_plus_ecse_agree": {
+      "metrics": {
+        "n": 43,
+        "hits": 24,
+        "accuracy": 0.5581,
+        "balanced_accuracy": 0.5462,
+        "ci95": [
+          0.4111,
+          0.6957
+        ],
+        "coverage_of_input": 0.6719,
+        "priced_n": 43,
+        "roi": -0.1445,
+        "max_drawdown": -7.81,
+        "avg_odds": 1.5307,
+        "class_recall": {
+          "away": 0.6923,
+          "home": 0.875,
+          "draw": 0.0714
+        },
+        "class_precision": {
+          "home": 0.5385,
+          "away": 0.5625,
+          "draw": 1.0
+        },
+        "top_league_share": 0.1628
+      },
+      "accuracy_delta": 0.1519
+    },
+    "canonical_plus_conf55": {
+      "metrics": {
+        "n": 38,
+        "hits": 19,
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.4692,
+        "ci95": [
+          0.3485,
+          0.6515
+        ],
+        "coverage_of_input": 0.5938,
+        "priced_n": 38,
+        "roi": -0.2424,
+        "max_drawdown": -11.3858,
+        "avg_odds": 1.6615,
+        "class_recall": {
+          "away": 0.5833,
+          "home": 0.7333,
+          "draw": 0.0909
+        },
+        "class_precision": {
+          "home": 0.5,
+          "draw": 0.3333,
+          "away": 0.5385
+        },
+        "top_league_share": 0.1842
+      },
+      "accuracy_delta": 0.0938
+    },
+    "canonical_plus_entropy": {
+      "metrics": {
+        "n": 64,
+        "hits": 26,
+        "accuracy": 0.4062,
+        "balanced_accuracy": 0.4043,
+        "ci95": [
+          0.2946,
+          0.5286
+        ],
+        "coverage_of_input": 1.0,
+        "priced_n": 64,
+        "roi": -0.3188,
+        "max_drawdown": -20.405,
+        "avg_odds": 2.1679,
+        "class_recall": {
+          "away": 0.625,
+          "home": 0.4828,
+          "draw": 0.1053
+        },
+        "class_precision": {
+          "home": 0.5385,
+          "draw": 0.2222,
+          "away": 0.3448
+        },
+        "top_league_share": 0.2188
+      },
+      "accuracy_delta": 0.0
+    },
+    "canonical_plus_top5": {
+      "metrics": {
+        "n": 62,
+        "hits": 26,
+        "accuracy": 0.4194,
+        "balanced_accuracy": 0.4163,
+        "ci95": [
+          0.3048,
+          0.5433
+        ],
+        "coverage_of_input": 0.9688,
+        "priced_n": 62,
+        "roi": -0.2969,
+        "max_drawdown": -18.504,
+        "avg_odds": 2.138,
+        "class_recall": {
+          "away": 0.625,
+          "home": 0.5185,
+          "draw": 0.1053
+        },
+        "class_precision": {
+          "home": 0.5385,
+          "draw": 0.25,
+          "away": 0.3571
+        },
+        "top_league_share": 0.2258
+      },
+      "accuracy_delta": 0.0132
+    },
+    "canonical_plus_odds_cap": {
+      "metrics": {
+        "n": 49,
+        "hits": 24,
+        "accuracy": 0.4898,
+        "balanced_accuracy": 0.4698,
+        "ci95": [
+          0.3557,
+          0.6253
+        ],
+        "coverage_of_input": 0.7656,
+        "priced_n": 49,
+        "roi": -0.2493,
+        "max_drawdown": -12.3852,
+        "avg_odds": 1.6665,
+        "class_recall": {
+          "away": 0.6429,
+          "home": 0.7,
+          "draw": 0.0667
+        },
+        "class_precision": {
+          "home": 0.5385,
+          "away": 0.4286,
+          "draw": 0.5
+        },
+        "top_league_share": 0.2041
+      },
+      "accuracy_delta": 0.0836
+    },
+    "majority_blend": {
+      "metrics": {
+        "n": 64,
+        "hits": 26,
+        "accuracy": 0.4062,
+        "balanced_accuracy": 0.4043,
+        "ci95": [
+          0.2946,
+          0.5286
+        ],
+        "coverage_of_input": 1.0,
+        "priced_n": 64,
+        "roi": -0.3188,
+        "max_drawdown": -20.405,
+        "avg_odds": 2.1679,
+        "class_recall": {
+          "away": 0.625,
+          "home": 0.4828,
+          "draw": 0.1053
+        },
+        "class_precision": {
+          "home": 0.5385,
+          "draw": 0.2222,
+          "away": 0.3448
+        },
+        "top_league_share": 0.2188
+      },
+      "accuracy_delta": 0.0
+    },
+    "ecse_direction": {
+      "metrics": {
+        "n": 64,
+        "hits": 38,
+        "accuracy": 0.5938,
+        "balanced_accuracy": 0.5329,
+        "ci95": [
+          0.4714,
+          0.7054
+        ],
+        "coverage_of_input": 1.0,
+        "priced_n": 64,
+        "roi": -0.0142,
+        "max_drawdown": -11.6414,
+        "avg_odds": 1.6237,
+        "class_recall": {
+          "away": 0.5625,
+          "home": 0.931,
+          "draw": 0.1053
+        },
+        "class_precision": {
+          "home": 0.587,
+          "away": 0.5625,
+          "draw": 1.0
+        },
+        "top_league_share": 0.2188
+      },
+      "accuracy_delta": 0.1876
+    }
+  },
+  "helped": [
+    "canonical_plus_ecse_agree",
+    "canonical_plus_conf55",
+    "canonical_plus_top5",
+    "canonical_plus_odds_cap",
+    "ecse_direction"
+  ],
+  "hurt": []
+}

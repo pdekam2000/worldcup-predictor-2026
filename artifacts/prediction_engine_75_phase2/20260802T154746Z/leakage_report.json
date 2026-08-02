@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "findings": [
+    {
+      "severity": "INFO",
+      "issue": "phase1_holdout_sealed_ids",
+      "n": 11,
+      "ids_sample": [
+        1514231,
+        1554415,
+        1554419,
+        1554427,
+        1554434,
+        1554438,
+        1554447,
+        1554449,
+        1554450,
+        1554451,
+        1554452
+      ]
+    },
+    {
+      "severity": "INFO",
+      "issue": "true_forward_count",
+      "n": 0
+    },
+    {
+      "severity": "INFO",
+      "issue": "priced_odds_coverage",
+      "priced_usable": 209,
+      "usable": 223
+    },
+    {
+      "severity": "INFO",
+      "issue": "shadow_features_partial",
+      "note": "Exact V2 / DNA / Twins / HCEE / xG / lineups largely unavailable in local joins"
+    }
+  ],
+  "sealed_holdout_opened": false,
+  "no_result_as_feature": true
+}

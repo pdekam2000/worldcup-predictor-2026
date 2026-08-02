@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "rules": [
+    "odds only if snapshot_at < kickoff",
+    "lambda_v2 only if feature_cutoff < kickoff",
+    "labels never used as features",
+    "phase1 sealed holdout excluded from strategy selection"
+  ]
+}
