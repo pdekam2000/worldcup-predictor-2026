@@ -1,0 +1,147 @@
+{
+  "phase": "NEXT_5_DAYS_1X2_SELECTION_FUNNEL_FORENSIC_AUDIT",
+  "dates": [
+    "2026-08-02",
+    "2026-08-03",
+    "2026-08-04",
+    "2026-08-05",
+    "2026-08-06"
+  ],
+  "timezone": "Europe/Vienna",
+  "mission_artifact": "artifacts/next_5_days_12_1x2_2_exact/2026-08-02_2026-08-06/20260801T213441Z",
+  "counts": {
+    "raw_provider_fixtures": 1070,
+    "deduplicated_raw_fixtures": 1004,
+    "football_prematch_fixtures": 1004,
+    "target_date_fixtures_vienna_sum": 1004,
+    "timezone_adjusted_vienna_date_fixtures": 1004,
+    "supported_league_fixtures_tier_a_plus_b": 93,
+    "owner_scope_fixtures": 93,
+    "mission_discovered_rows": 93,
+    "mission_discovered_unique_fixtures": 92,
+    "canonical_eligible_fixtures": 78,
+    "odds_fresh_among_agreement_rows": 78,
+    "predicted_fixtures": 78,
+    "frozen_fixtures": 78,
+    "model_complete_core_trio": 78,
+    "agreement_eligible_unanimous_or_strong": 26,
+    "no_bet_false_fixtures": 2,
+    "final_selected_1x2_fixtures": 1
+  },
+  "approx_890_reconciliation": {
+    "owner_stated_approx": 890,
+    "traced_candidates": {
+      "provider_raw_5_day_sum": 1070,
+      "deduplicated_5_day_sum": 1004,
+      "unsupported_5_day_sum": 826,
+      "friendly_5_day_sum": 85,
+      "unsupported_plus_friendly": 911,
+      "prediction_candidates_tier_ab": 93
+    },
+    "best_match_interpretation": "Owner ~890 most closely matches the worldwide/provider football fixture volume (raw=1070, unsupported+friendly=911) NOT the owner Tier A/B prediction universe (93).",
+    "why_mission_93": "discover_today_matches(scope=owner) keeps only Tier A (DAILY_SUPPORTED_COMPETITIONS) + Tier B shadow domains; friendlies and unsupported leagues are listed in broad audit but excluded from prediction candidates.",
+    "discovery_too_narrow": "Narrow relative to worldwide calendars by design (policy allowlist), not by pagination failure. Provider fetch_ok across all five days; prediction_candidate_count sums to 93."
+  },
+  "per_day_broad": [
+    {
+      "date": "2026-08-02",
+      "provider_raw_count": 495,
+      "deduplicated_count": 472,
+      "prematch_count": 472,
+      "tier_a_count": 0,
+      "tier_b_count": 27,
+      "friendly_count": 27,
+      "unsupported_count": 418,
+      "odds_missing_count": 418,
+      "prediction_candidate_count": 27,
+      "synced_to_db_count": 27,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 0
+    },
+    {
+      "date": "2026-08-03",
+      "provider_raw_count": 116,
+      "deduplicated_count": 106,
+      "prematch_count": 106,
+      "tier_a_count": 0,
+      "tier_b_count": 11,
+      "friendly_count": 3,
+      "unsupported_count": 92,
+      "odds_missing_count": 92,
+      "prediction_candidate_count": 11,
+      "synced_to_db_count": 11,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 0
+    },
+    {
+      "date": "2026-08-04",
+      "provider_raw_count": 135,
+      "deduplicated_count": 125,
+      "prematch_count": 125,
+      "tier_a_count": 8,
+      "tier_b_count": 2,
+      "friendly_count": 22,
+      "unsupported_count": 93,
+      "odds_missing_count": 93,
+      "prediction_candidate_count": 10,
+      "synced_to_db_count": 10,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 0
+    },
+    {
+      "date": "2026-08-05",
+      "provider_raw_count": 186,
+      "deduplicated_count": 172,
+      "prematch_count": 172,
+      "tier_a_count": 5,
+      "tier_b_count": 2,
+      "friendly_count": 25,
+      "unsupported_count": 140,
+      "odds_missing_count": 140,
+      "prediction_candidate_count": 7,
+      "synced_to_db_count": 7,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 7
+    },
+    {
+      "date": "2026-08-06",
+      "provider_raw_count": 138,
+      "deduplicated_count": 129,
+      "prematch_count": 129,
+      "tier_a_count": 37,
+      "tier_b_count": 1,
+      "friendly_count": 8,
+      "unsupported_count": 83,
+      "odds_missing_count": 83,
+      "prediction_candidate_count": 38,
+      "synced_to_db_count": 38,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 0
+    }
+  ]
+}

@@ -1,0 +1,412 @@
+{
+  "A_baseline": {
+    "candidate_count": 1,
+    "selected_fixture_ids": [
+      1494227
+    ],
+    "note": "Current production selection logic",
+    "confidence_distribution": {
+      "n": 1,
+      "mean": 69.0,
+      "min": 69.0,
+      "max": 69.0
+    },
+    "entropy_distribution": {
+      "n": 1,
+      "mean": 1.559
+    },
+    "no_bet_distribution": {
+      "False": 1
+    },
+    "league_distribution": {
+      "Allsvenskan": 1
+    },
+    "conflict_distribution": {
+      "0": 1
+    },
+    "out_of_five_day_discovered_universe": "1 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "B_available_unanimity": {
+    "candidate_count": 1,
+    "selected_fixture_ids": [
+      1494227
+    ],
+    "ignore_no_bet": false,
+    "agreement_keys": [
+      "STRONG_MULTI_MODEL_AGREEMENT",
+      "UNANIMOUS_DIRECTION"
+    ],
+    "confidence_distribution": {
+      "n": 1,
+      "mean": 69.0,
+      "min": 69.0,
+      "max": 69.0
+    },
+    "entropy_distribution": {
+      "n": 1,
+      "mean": 1.559
+    },
+    "no_bet_distribution": {
+      "False": 1
+    },
+    "league_distribution": {
+      "Allsvenskan": 1
+    },
+    "conflict_distribution": {
+      "0": 1
+    },
+    "out_of_five_day_discovered_universe": "1 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "C_supermajority_80": {
+    "candidate_count": 2,
+    "selected_fixture_ids": [
+      1494227,
+      1494232
+    ],
+    "ignore_no_bet": false,
+    "agreement_keys": [
+      "STRONG_MULTI_MODEL_AGREEMENT",
+      "UNANIMOUS_DIRECTION"
+    ],
+    "confidence_distribution": {
+      "n": 2,
+      "mean": 70.25,
+      "min": 69.0,
+      "max": 71.5
+    },
+    "entropy_distribution": {
+      "n": 2,
+      "mean": 1.553
+    },
+    "no_bet_distribution": {
+      "False": 2
+    },
+    "league_distribution": {
+      "Allsvenskan": 2
+    },
+    "conflict_distribution": {
+      "0": 1,
+      "1": 1
+    },
+    "out_of_five_day_discovered_universe": "2 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "D_core_plus_market": {
+    "candidate_count": 2,
+    "selected_fixture_ids": [
+      1494227,
+      1494232
+    ],
+    "ignore_no_bet": false,
+    "agreement_keys": [
+      "UNANIMOUS_DIRECTION"
+    ],
+    "confidence_distribution": {
+      "n": 2,
+      "mean": 70.25,
+      "min": 69.0,
+      "max": 71.5
+    },
+    "entropy_distribution": {
+      "n": 2,
+      "mean": 1.553
+    },
+    "no_bet_distribution": {
+      "False": 2
+    },
+    "league_distribution": {
+      "Allsvenskan": 2
+    },
+    "conflict_distribution": {
+      "0": 1,
+      "1": 1
+    },
+    "out_of_five_day_discovered_universe": "2 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "E_weighted_proxy": {
+    "candidate_count": 2,
+    "selected_fixture_ids": [
+      1494227,
+      1494232
+    ],
+    "ignore_no_bet": false,
+    "agreement_keys": [
+      "STRONG_MULTI_MODEL_AGREEMENT",
+      "UNANIMOUS_DIRECTION"
+    ],
+    "confidence_distribution": {
+      "n": 2,
+      "mean": 70.25,
+      "min": 69.0,
+      "max": 71.5
+    },
+    "entropy_distribution": {
+      "n": 2,
+      "mean": 1.553
+    },
+    "no_bet_distribution": {
+      "False": 2
+    },
+    "league_distribution": {
+      "Allsvenskan": 2
+    },
+    "conflict_distribution": {
+      "0": 1,
+      "1": 1
+    },
+    "out_of_five_day_discovered_universe": "2 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "F_no_bet_advisory": {
+    "candidate_count": 26,
+    "selected_fixture_ids": [
+      1494230,
+      1497642,
+      1494225,
+      1494720,
+      1494721,
+      1515896,
+      1494718,
+      1498691,
+      1498702,
+      1498695,
+      1515898,
+      1494227
+    ],
+    "ignore_no_bet": true,
+    "agreement_keys": [
+      "STRONG_MULTI_MODEL_AGREEMENT",
+      "UNANIMOUS_DIRECTION"
+    ],
+    "confidence_distribution": {
+      "n": 26,
+      "mean": 56.63,
+      "min": 43.7,
+      "max": 69.0
+    },
+    "entropy_distribution": {
+      "n": 26,
+      "mean": 1.554
+    },
+    "no_bet_distribution": {
+      "True": 25,
+      "False": 1
+    },
+    "league_distribution": {
+      "Allsvenskan": 3,
+      "Superettan": 2,
+      "Eliteserien": 3,
+      "Virsliga": 2,
+      "Primera Nacional": 3,
+      "Scottish Premiership": 1,
+      "UEFA Champions League": 3,
+      "Úrvalsdeild": 1,
+      "UEFA Europa League": 4,
+      "UEFA Conference League": 4
+    },
+    "conflict_distribution": {
+      "0": 26
+    },
+    "out_of_five_day_discovered_universe": "26 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "G_partial_one_lowinfo": {
+    "candidate_count": 2,
+    "selected_fixture_ids": [
+      1494227,
+      1494232
+    ],
+    "ignore_no_bet": false,
+    "agreement_keys": [
+      "STRONG_MULTI_MODEL_AGREEMENT",
+      "UNANIMOUS_DIRECTION"
+    ],
+    "confidence_distribution": {
+      "n": 2,
+      "mean": 70.25,
+      "min": 69.0,
+      "max": 71.5
+    },
+    "entropy_distribution": {
+      "n": 2,
+      "mean": 1.553
+    },
+    "no_bet_distribution": {
+      "False": 2
+    },
+    "league_distribution": {
+      "Allsvenskan": 2
+    },
+    "conflict_distribution": {
+      "0": 1,
+      "1": 1
+    },
+    "out_of_five_day_discovered_universe": "2 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "G_plus_F_partial_one_lowinfo_no_bet_advisory": {
+    "candidate_count": 41,
+    "selected_fixture_ids": [
+      1494226,
+      1494230,
+      1497642,
+      1515895,
+      1556403,
+      1494225,
+      1494720,
+      1494721,
+      1515896,
+      1547600,
+      1494718,
+      1498691
+    ],
+    "ignore_no_bet": true,
+    "agreement_keys": [
+      "STRONG_MULTI_MODEL_AGREEMENT",
+      "UNANIMOUS_DIRECTION"
+    ],
+    "confidence_distribution": {
+      "n": 41,
+      "mean": 56.03,
+      "min": 42.9,
+      "max": 71.5
+    },
+    "entropy_distribution": {
+      "n": 41,
+      "mean": 1.56
+    },
+    "no_bet_distribution": {
+      "True": 39,
+      "False": 2
+    },
+    "league_distribution": {
+      "Allsvenskan": 5,
+      "Superettan": 2,
+      "Virsliga": 3,
+      "1 Lyga": 2,
+      "Eliteserien": 3,
+      "A Lyga": 1,
+      "Primera Nacional": 3,
+      "Veikkausliiga": 1,
+      "Scottish Premiership": 1,
+      "UEFA Champions League": 5,
+      "Úrvalsdeild": 3,
+      "UEFA Europa League": 6,
+      "UEFA Conference League": 6
+    },
+    "conflict_distribution": {
+      "1": 15,
+      "0": 26
+    },
+    "out_of_five_day_discovered_universe": "41 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "F_no_bet_advisory_conf_ge_60": {
+    "candidate_count": 10,
+    "selected_fixture_ids": [
+      1494230,
+      1494225,
+      1515896,
+      1515898,
+      1494227,
+      1556633,
+      1598824,
+      1607592,
+      1607177,
+      1607572
+    ],
+    "parent_policy": "F_no_bet_advisory",
+    "min_confidence": 60.0,
+    "note": "Research honesty filter — still advisory; does not clear Canonical no_bet semantics.",
+    "confidence_distribution": {
+      "n": 10,
+      "mean": 63.62,
+      "min": 60.4,
+      "max": 69.0
+    },
+    "entropy_distribution": {
+      "n": 10,
+      "mean": 1.54
+    },
+    "no_bet_distribution": {
+      "True": 9,
+      "False": 1
+    },
+    "league_distribution": {
+      "Allsvenskan": 3,
+      "Virsliga": 2,
+      "Scottish Premiership": 1,
+      "UEFA Champions League": 1,
+      "UEFA Conference League": 2,
+      "UEFA Europa League": 1
+    },
+    "conflict_distribution": {
+      "0": 10
+    },
+    "out_of_five_day_discovered_universe": "10 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  },
+  "G_plus_F_conf_ge_60": {
+    "candidate_count": 13,
+    "selected_fixture_ids": [
+      1494230,
+      1494225,
+      1515896,
+      1515898,
+      1556404,
+      1495750,
+      1494227,
+      1494232,
+      1556633,
+      1598824,
+      1607592,
+      1607177
+    ],
+    "parent_policy": "G_plus_F_partial_one_lowinfo_no_bet_advisory",
+    "min_confidence": 60.0,
+    "note": "Research honesty filter — still advisory; does not clear Canonical no_bet semantics.",
+    "confidence_distribution": {
+      "n": 13,
+      "mean": 64.09,
+      "min": 60.4,
+      "max": 71.5
+    },
+    "entropy_distribution": {
+      "n": 13,
+      "mean": 1.545
+    },
+    "no_bet_distribution": {
+      "True": 11,
+      "False": 2
+    },
+    "league_distribution": {
+      "Allsvenskan": 4,
+      "Virsliga": 2,
+      "1 Lyga": 1,
+      "Veikkausliiga": 1,
+      "Scottish Premiership": 1,
+      "UEFA Champions League": 1,
+      "UEFA Conference League": 2,
+      "UEFA Europa League": 1
+    },
+    "conflict_distribution": {
+      "0": 10,
+      "1": 3
+    },
+    "out_of_five_day_discovered_universe": "13 / 93",
+    "historical_wde_hit_rate": null,
+    "fp_fn_tradeoff": "Higher candidate count increases recall risk; validate on chronological holdout before adopting."
+  }
+}

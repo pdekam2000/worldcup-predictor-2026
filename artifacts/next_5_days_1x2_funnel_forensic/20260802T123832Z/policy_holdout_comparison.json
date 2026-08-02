@@ -1,0 +1,67 @@
+{
+  "historical": {
+    "status": "OK",
+    "method": "chronological_split_on_local_evaluations",
+    "leakage_controls": [
+      "uses only completed evaluations",
+      "no target-window Aug 2-6 2026 outcomes",
+      "does not join post-kickoff features for selection simulation"
+    ],
+    "splits": {
+      "train": {
+        "n": 28,
+        "no_bet_true": 7,
+        "no_bet_false": 21,
+        "confidence_ge_60_among_bettable": 16,
+        "1x2_status_bettable": {
+          "labeled": 21,
+          "hits": 10,
+          "rate": 0.4762
+        },
+        "1x2_status_conf_gate": {
+          "labeled": 16,
+          "hits": 7,
+          "rate": 0.4375
+        }
+      },
+      "validation": {
+        "n": 10,
+        "no_bet_true": 7,
+        "no_bet_false": 3,
+        "confidence_ge_60_among_bettable": 3,
+        "1x2_status_bettable": {
+          "labeled": 3,
+          "hits": 2,
+          "rate": null,
+          "note": "market_1x2_status sparse"
+        },
+        "1x2_status_conf_gate": {
+          "labeled": 3,
+          "hits": 2,
+          "rate": null,
+          "note": "market_1x2_status sparse"
+        }
+      },
+      "holdout": {
+        "n": 10,
+        "no_bet_true": 0,
+        "no_bet_false": 10,
+        "confidence_ge_60_among_bettable": 10,
+        "1x2_status_bettable": {
+          "labeled": 10,
+          "hits": 8,
+          "rate": 0.8
+        },
+        "1x2_status_conf_gate": {
+          "labeled": 10,
+          "hits": 8,
+          "rate": 0.8
+        }
+      }
+    },
+    "sample_size": 48,
+    "caveat": "Historical labels are evaluation-table proxies, not a full re-run of the multi-model 1X2 funnel. Use for directional evidence only."
+  },
+  "note": "Full multi-model funnel holdout not available without regenerating shadows on historical freezes; evaluation-table proxy only.",
+  "chronological_split_used": true
+}

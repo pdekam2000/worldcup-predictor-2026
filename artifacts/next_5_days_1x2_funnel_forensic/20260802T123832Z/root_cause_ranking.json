@@ -1,0 +1,230 @@
+{
+  "causes": [
+    {
+      "rank": 1,
+      "cause": "discovery_universe_intentionally_narrow_vs_worldwide",
+      "fixtures_affected": 911,
+      "fixtures_affected_exclusively": 911,
+      "severity": "HIGH",
+      "confidence": 0.95,
+      "expected_or_defect": "EXPECTED_POLICY",
+      "recommended_action": "Document that ~890–1070 worldwide/provider fixtures are not the prediction universe; owner Tier A/B allowlist yields 93.",
+      "implementation_risk": "NONE",
+      "evidence": {
+        "provider_raw_5d": 1070,
+        "unsupported": 826,
+        "friendly": 85,
+        "prediction_candidates": 93
+      },
+      "policy_candidate_counts": {
+        "A_baseline": 1,
+        "B_available_unanimity": 1,
+        "C_supermajority_80": 2,
+        "D_core_plus_market": 2,
+        "E_weighted_proxy": 2,
+        "F_no_bet_advisory": 26,
+        "G_partial_one_lowinfo": 2,
+        "G_plus_F_partial_one_lowinfo_no_bet_advisory": 41,
+        "F_no_bet_advisory_conf_ge_60": 10,
+        "G_plus_F_conf_ge_60": 13
+      }
+    },
+    {
+      "rank": 2,
+      "cause": "no_bet_hard_exclusion_dominates_post_agreement",
+      "fixtures_affected": 76,
+      "fixtures_affected_exclusively": 25,
+      "severity": "HIGH",
+      "confidence": 0.93,
+      "expected_or_defect": "EXPECTED_POLICY_POSSIBLY_OVERSTRICT",
+      "recommended_action": "Keep production no_bet; research Policy F for advisory mode. Audit CONFIDENCE_BELOW_60 dominance.",
+      "implementation_risk": "MEDIUM",
+      "evidence": {
+        "unanimous_but_no_bet": 25,
+        "no_bet_false_total": 2
+      },
+      "policy_candidate_counts": {
+        "A_baseline": 1,
+        "B_available_unanimity": 1,
+        "C_supermajority_80": 2,
+        "D_core_plus_market": 2,
+        "E_weighted_proxy": 2,
+        "F_no_bet_advisory": 26,
+        "G_partial_one_lowinfo": 2,
+        "G_plus_F_partial_one_lowinfo_no_bet_advisory": 41,
+        "F_no_bet_advisory_conf_ge_60": 10,
+        "G_plus_F_conf_ge_60": 13
+      }
+    },
+    {
+      "rank": 3,
+      "cause": "dna_unweighted_top5_sole_dissent_blocks_partial_to_final",
+      "fixtures_affected": 16,
+      "fixtures_affected_exclusively": 16,
+      "severity": "HIGH",
+      "confidence": 0.9,
+      "expected_or_defect": "DIRECTION_INFERENCE_DEFECT_OR_OVERSTRICT",
+      "recommended_action": "Prefer DNA winner_distribution when present; treat DNA/Twins as advisory (Policy G) after historical validation.",
+      "implementation_risk": "MEDIUM",
+      "evidence": {
+        "sole_dna_fixture_ids": [
+          1494226,
+          1515895,
+          1556403,
+          1547600,
+          1556404,
+          1495750,
+          1494232,
+          1607166,
+          1598826,
+          1508822,
+          1508825,
+          1607178,
+          1607591,
+          1607562,
+          1607564,
+          1607580
+        ],
+        "includes_halmstad": true
+      },
+      "policy_candidate_counts": {
+        "A_baseline": 1,
+        "B_available_unanimity": 1,
+        "C_supermajority_80": 2,
+        "D_core_plus_market": 2,
+        "E_weighted_proxy": 2,
+        "F_no_bet_advisory": 26,
+        "G_partial_one_lowinfo": 2,
+        "G_plus_F_partial_one_lowinfo_no_bet_advisory": 41,
+        "F_no_bet_advisory_conf_ge_60": 10,
+        "G_plus_F_conf_ge_60": 13
+      }
+    },
+    {
+      "rank": 4,
+      "cause": "strict_agreement_requires_extras_alignment",
+      "fixtures_affected": 52,
+      "fixtures_affected_exclusively": 36,
+      "severity": "MEDIUM",
+      "confidence": 0.85,
+      "expected_or_defect": "EXPECTED_POLICY",
+      "recommended_action": "Counterfactual core-model agreement (Policy D/G) before any production change.",
+      "implementation_risk": "MEDIUM",
+      "policy_candidate_counts": {
+        "A_baseline": 1,
+        "B_available_unanimity": 1,
+        "C_supermajority_80": 2,
+        "D_core_plus_market": 2,
+        "E_weighted_proxy": 2,
+        "F_no_bet_advisory": 26,
+        "G_partial_one_lowinfo": 2,
+        "G_plus_F_partial_one_lowinfo_no_bet_advisory": 41,
+        "F_no_bet_advisory_conf_ge_60": 10,
+        "G_plus_F_conf_ge_60": 13
+      }
+    },
+    {
+      "rank": 5,
+      "cause": "legitimate_scarcity_among_no_bet_false",
+      "fixtures_affected": 2,
+      "fixtures_affected_exclusively": 1,
+      "severity": "MEDIUM",
+      "confidence": 0.8,
+      "expected_or_defect": "EXPECTED",
+      "recommended_action": "Only 2 fixtures have no_bet=false; after DNA gate, 1 remains — scarcity is real inside curated+canonical gates.",
+      "implementation_risk": "NONE",
+      "evidence": {
+        "no_bet_false_ids": [
+          1494227,
+          1494232
+        ]
+      },
+      "policy_candidate_counts": {
+        "A_baseline": 1,
+        "B_available_unanimity": 1,
+        "C_supermajority_80": 2,
+        "D_core_plus_market": 2,
+        "E_weighted_proxy": 2,
+        "F_no_bet_advisory": 26,
+        "G_partial_one_lowinfo": 2,
+        "G_plus_F_partial_one_lowinfo_no_bet_advisory": 41,
+        "F_no_bet_advisory_conf_ge_60": 10,
+        "G_plus_F_conf_ge_60": 13
+      }
+    },
+    {
+      "rank": 6,
+      "cause": "missing_output_denominator",
+      "fixtures_affected": 15,
+      "fixtures_affected_exclusively": 15,
+      "severity": "LOW",
+      "confidence": 0.75,
+      "expected_or_defect": "EXPECTED_TECHNICAL",
+      "recommended_action": "Keep missing ≠ disagreement; blocked/incomplete already separated.",
+      "implementation_risk": "LOW",
+      "policy_candidate_counts": {
+        "A_baseline": 1,
+        "B_available_unanimity": 1,
+        "C_supermajority_80": 2,
+        "D_core_plus_market": 2,
+        "E_weighted_proxy": 2,
+        "F_no_bet_advisory": 26,
+        "G_partial_one_lowinfo": 2,
+        "G_plus_F_partial_one_lowinfo_no_bet_advisory": 41,
+        "F_no_bet_advisory_conf_ge_60": 10,
+        "G_plus_F_conf_ge_60": 13
+      }
+    },
+    {
+      "rank": 7,
+      "cause": "reporting_aggregation_bug",
+      "fixtures_affected": 1,
+      "fixtures_affected_exclusively": 1,
+      "severity": "LOW",
+      "confidence": 0.85,
+      "expected_or_defect": "MINOR_REPORTING_DEFECT",
+      "recommended_action": "Deduplicate discovered_universe by fixture_id across days; document Vienna date-boundary duplicates (1498692).",
+      "implementation_risk": "LOW",
+      "evidence": {
+        "duplicate_fixture_id": 1498692,
+        "rows_93_unique_92": true
+      },
+      "policy_candidate_counts": {
+        "A_baseline": 1,
+        "B_available_unanimity": 1,
+        "C_supermajority_80": 2,
+        "D_core_plus_market": 2,
+        "E_weighted_proxy": 2,
+        "F_no_bet_advisory": 26,
+        "G_partial_one_lowinfo": 2,
+        "G_plus_F_partial_one_lowinfo_no_bet_advisory": 41,
+        "F_no_bet_advisory_conf_ge_60": 10,
+        "G_plus_F_conf_ge_60": 13
+      }
+    },
+    {
+      "rank": 8,
+      "cause": "selection_undercount_of_final_1x2",
+      "fixtures_affected": 0,
+      "fixtures_affected_exclusively": 0,
+      "severity": "LOW",
+      "confidence": 0.9,
+      "expected_or_defect": "NOT_FOUND",
+      "recommended_action": "None — baseline reproduces 1 final 1X2 (Djurgården).",
+      "implementation_risk": "NONE",
+      "policy_candidate_counts": {
+        "A_baseline": 1,
+        "B_available_unanimity": 1,
+        "C_supermajority_80": 2,
+        "D_core_plus_market": 2,
+        "E_weighted_proxy": 2,
+        "F_no_bet_advisory": 26,
+        "G_partial_one_lowinfo": 2,
+        "G_plus_F_partial_one_lowinfo_no_bet_advisory": 41,
+        "F_no_bet_advisory_conf_ge_60": 10,
+        "G_plus_F_conf_ge_60": 13
+      }
+    }
+  ],
+  "recommendation": "FUNNEL_MIXED_ROOT_CAUSES"
+}

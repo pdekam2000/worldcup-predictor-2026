@@ -1,0 +1,40 @@
+{
+  "CONFIDENCE_NO_BET_THRESHOLD": {
+    "value": 60.0,
+    "source": "worldcup_predictor/decision/no_bet_reasons.py",
+    "removed_sole": 65,
+    "validated": "inherited_production"
+  },
+  "agreement_requires_unanimous_or_strong": {
+    "value": [
+      "UNANIMOUS_DIRECTION",
+      "STRONG_MULTI_MODEL_AGREEMENT"
+    ],
+    "source": "scripts/run_next_5_days_12_1x2_2_exact_selection.py",
+    "removed_sole": 1,
+    "validated": "mission_policy"
+  },
+  "no_bet_hard_exclude": {
+    "value": true,
+    "source": "scripts/run_next_5_days_12_1x2_2_exact_selection.py cands_1x2",
+    "removed_sole": 25,
+    "validated": "mission_policy"
+  },
+  "fresh_odds_required": {
+    "value": "FRESH + has_1x2",
+    "source": "selection refresh_odds_for_selection",
+    "removed": 15,
+    "validated": "technical"
+  },
+  "research_class_min_quality": {
+    "value": "STRONG/RESEARCH_CANDIDATE via q thresholds 55/35",
+    "source": "research_class()",
+    "validated": "mission_heuristic"
+  },
+  "extras_opposing_one_is_partial": {
+    "value": 1,
+    "source": "classify_1x2_agreement",
+    "removed_sole": 16,
+    "validated": "mission_policy"
+  }
+}

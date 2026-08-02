@@ -1,0 +1,82 @@
+{
+  "days": [
+    {
+      "date": "2026-08-02",
+      "provider_raw_count": 495,
+      "provider_fetch_attempted": true,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 0,
+      "note": "API-Football fixtures?date=YYYY-MM-DD via broad discovery; cache-first. No explicit page cursor in audit — single date fetch per Vienna day."
+    },
+    {
+      "date": "2026-08-03",
+      "provider_raw_count": 116,
+      "provider_fetch_attempted": true,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 0,
+      "note": "API-Football fixtures?date=YYYY-MM-DD via broad discovery; cache-first. No explicit page cursor in audit — single date fetch per Vienna day."
+    },
+    {
+      "date": "2026-08-04",
+      "provider_raw_count": 135,
+      "provider_fetch_attempted": true,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 0,
+      "note": "API-Football fixtures?date=YYYY-MM-DD via broad discovery; cache-first. No explicit page cursor in audit — single date fetch per Vienna day."
+    },
+    {
+      "date": "2026-08-05",
+      "provider_raw_count": 186,
+      "provider_fetch_attempted": true,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 7,
+      "note": "API-Football fixtures?date=YYYY-MM-DD via broad discovery; cache-first. No explicit page cursor in audit — single date fetch per Vienna day."
+    },
+    {
+      "date": "2026-08-06",
+      "provider_raw_count": 138,
+      "provider_fetch_attempted": true,
+      "provider_fetch_ok": true,
+      "provider_error": null,
+      "source_order": [
+        "api_football_cache",
+        "local_db"
+      ],
+      "db_window_count": 0,
+      "note": "API-Football fixtures?date=YYYY-MM-DD via broad discovery; cache-first. No explicit page cursor in audit — single date fetch per Vienna day."
+    }
+  ],
+  "totals": {
+    "provider_raw_count": 1070,
+    "deduplicated_count": 1004,
+    "prematch_count": 1004,
+    "tier_a_count": 50,
+    "tier_b_count": 43,
+    "friendly_count": 85,
+    "unsupported_count": 826,
+    "odds_missing_count": 826,
+    "prediction_candidate_count": 93,
+    "synced_to_db_count": 93
+  },
+  "finding": "No pagination truncation indicated; per-day provider_fetch_ok true in stored audits."
+}

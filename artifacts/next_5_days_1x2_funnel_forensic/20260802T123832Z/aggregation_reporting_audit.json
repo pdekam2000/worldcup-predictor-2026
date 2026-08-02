@@ -1,0 +1,16 @@
+{
+  "candidate_list_generation": "cands_1x2 filter then sort rank_1x2; final_12 = ranked[:12]",
+  "undercount_bug_found": false,
+  "discovered_row_double_count": {
+    "rows": 93,
+    "unique_fixture_ids": 92,
+    "duplicate_fixture_ids": [
+      1498692
+    ],
+    "note": "Fixture 1498692 listed on both Aug 2 and Aug 3 Vienna dates (kickoff near midnight boundary). Mission count 93 is row-sum; unique fixtures=92. Does not change final 1X2=1."
+  },
+  "light_evidence_leftovers": false,
+  "in_memory_shadow_not_in_builder": "DNA tops not persisted for all fixtures (only low-goal exact tops file) — reporting gap for forensic replay, not selection undercount",
+  "stale_cache": "Odds refreshed at selection time; discovery used provider cache-first",
+  "conclusion": "Mission report counts match artifact row lengths; duplicate date-boundary row inflates discovered by +1; no aggregation bug for 1-final-candidate."
+}

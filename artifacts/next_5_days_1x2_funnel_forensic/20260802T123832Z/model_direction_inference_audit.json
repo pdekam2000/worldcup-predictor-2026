@@ -1,0 +1,79 @@
+{
+  "models": {
+    "Canonical_WDE_raw_argmax": {
+      "source": "wde.raw_argmax / ft_marginal",
+      "method": "norm_dir string",
+      "probabilities": true
+    },
+    "Canonical_WDE_stored_decision": {
+      "source": "wde.decision",
+      "method": "norm_dir",
+      "may_differ_from_argmax": true
+    },
+    "Canonical_ECSE_full": {
+      "source": "ecse full_mass_1x2 or top10 mass",
+      "method": "argmax home/draw/away mass"
+    },
+    "Exact_V2": {
+      "source": "exact full_mass_1x2",
+      "method": "argmax mass",
+      "shadow_only": true
+    },
+    "Lambda_V2_L2F": {
+      "source": "selected_lambda home/away",
+      "method": "diff with draw_band=0.15"
+    },
+    "DNA_V2": {
+      "source": "dna.top5 score labels",
+      "method": "dir_from_scores unweighted (equal weight if no probability)",
+      "probabilities_usually_absent": true,
+      "winner_distribution_available_but_unused": true,
+      "valid": "Weak — unweighted Top5 counts are low-information vs full cluster winner_distribution"
+    },
+    "Twins": {
+      "source": "twins.top5",
+      "method": "dir_from_scores unweighted",
+      "probabilities_usually_absent": true,
+      "valid": "Weak — same unweighted count risk"
+    },
+    "market": {
+      "source": "1X2 odds",
+      "method": "lowest odds favorite"
+    },
+    "TeamFormH2H": {
+      "source": "forensic agent",
+      "method": "severe classification blocks",
+      "directional": false
+    }
+  },
+  "halmstad_replay": {
+    "status": "OK",
+    "fixture_id": 1494232,
+    "top5": [
+      "1-1",
+      "0-1",
+      "1-2",
+      "0-0",
+      "1-0"
+    ],
+    "unweighted_dir_from_scores": "draw",
+    "unweighted_mass": {
+      "home": 1.0,
+      "draw": 2.0,
+      "away": 2.0
+    },
+    "rank_weighted_dir": "draw",
+    "rank_weighted_mass": {
+      "home": 1.0,
+      "draw": 7.0,
+      "away": 7.0
+    },
+    "winner_distribution": null,
+    "dir_from_winner_distribution": null,
+    "engine_errors": [],
+    "probabilities_in_top5": false,
+    "tie_between_draw_and_away": true,
+    "tie_break_behavior": "max(mass.items()) returns first key among ties in insertion order (home, draw, away) — so draw beats away on equal counts",
+    "conclusion": "Mission used unweighted Top5 score-count inference. Halmstad Top5=['1-1','0-1','1-2','0-0','1-0'] → mass draw=2, away=2, home=1. Inferred DNA=draw is a TIE ARTIFACT (draw preferred over away on equal unweighted counts), not a robust full-distribution dissent. Winner_distribution was null in this replay."
+  }
+}

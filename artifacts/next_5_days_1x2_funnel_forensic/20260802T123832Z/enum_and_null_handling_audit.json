@@ -1,0 +1,52 @@
+{
+  "norm_dir_aliases": {
+    "home_win": "home",
+    "away_win": "away",
+    "x": "draw",
+    "1": "home",
+    "2": "away"
+  },
+  "null_handling": "None/unknown/no_bet strings → None (missing), not opposing",
+  "boolean_no_bet": {
+    "True": 76,
+    "None": 15,
+    "False": 2
+  },
+  "fixture_id_types": "JSON numbers; compared as int in audit",
+  "baseline_reproduces_single_selection": true,
+  "selected_match": {
+    "rank": 1,
+    "date": "2026-08-03",
+    "kickoff_vienna": "2026-08-03 19:00 CEST",
+    "country": "Sweden",
+    "league": "Allsvenskan",
+    "fixture_id": 1494227,
+    "home": "Djurgardens IF",
+    "away": "Vasteras SK FK",
+    "odds_h": 1.45,
+    "odds_d": 4.7,
+    "odds_a": 6.0,
+    "selected_1x2_direction": "home",
+    "wde_h": 76.6,
+    "wde_d": 14.7,
+    "wde_a": 8.7,
+    "raw_argmax": "home_win",
+    "canonical_decision": "home_win",
+    "confidence": 69.0,
+    "no_bet": false,
+    "ecse_direction": "home",
+    "exact_v2_direction": "home",
+    "lambda_v2_direction": "home",
+    "dna_direction": "home",
+    "twins_direction": "home",
+    "market_direction": "home",
+    "forensic_verdict": "TOP5_SUPPORTED_WITH_RISK",
+    "agreement_status": "UNANIMOUS_DIRECTION",
+    "models_supporting": 6,
+    "models_opposing": 0,
+    "main_risk": "low",
+    "research_classification": "STRONG_RESEARCH_CANDIDATE",
+    "freeze_id": "ea957992-e387-4514-9930-0bedf288b536",
+    "score": 159.34
+  }
+}
