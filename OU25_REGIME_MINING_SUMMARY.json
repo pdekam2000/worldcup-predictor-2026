@@ -1,0 +1,277 @@
+{
+  "status": "OU25_REGIME_MINING_PARTIAL_ODDS_LIMITED",
+  "artifact": "C:\\Users\\kaman\\Desktop\\Footbal\\artifacts\\ou25_regime_mining\\20260803T182138Z",
+  "headline": {
+    "historical_ou_n": 52,
+    "true_forward_ou_n": 168,
+    "total_evaluable_ou_n": 220,
+    "raw_ou_accuracy": 0.5318181818181819,
+    "over_only": {
+      "label": "over_2_5",
+      "n": 98,
+      "hits": 58,
+      "misses": 40,
+      "accuracy": 0.5918367346938775,
+      "wilson_95": {
+        "low": 0.49285190219841635,
+        "high": 0.683893160722826,
+        "center": 0.5883725314606212
+      },
+      "average_predicted_probability": 0.7066585365853658,
+      "actual_hit_frequency": 0.5918367346938775,
+      "priced": {
+        "priced_n": 0,
+        "wins": 0,
+        "losses": 0,
+        "average_odds": null,
+        "median_odds": null,
+        "total_stake": 0.0,
+        "total_return": 0.0,
+        "net_profit": 0.0,
+        "roi": null,
+        "profit_factor": null,
+        "max_drawdown": 0.0,
+        "longest_winning_streak": 0,
+        "longest_losing_streak": 0,
+        "cumulative_bankroll": []
+      },
+      "odds_class_counts": {
+        "UNPRICED": 98
+      }
+    },
+    "under_only": {
+      "label": "under_2_5",
+      "n": 122,
+      "hits": 59,
+      "misses": 63,
+      "accuracy": 0.48360655737704916,
+      "wilson_95": {
+        "low": 0.39679226961314173,
+        "high": 0.5714217391089342,
+        "center": 0.484107004361038
+      },
+      "average_predicted_probability": 0.6063103448275863,
+      "actual_hit_frequency": 0.48360655737704916,
+      "priced": {
+        "priced_n": 0,
+        "wins": 0,
+        "losses": 0,
+        "average_odds": null,
+        "median_odds": null,
+        "total_stake": 0.0,
+        "total_return": 0.0,
+        "net_profit": 0.0,
+        "roi": null,
+        "profit_factor": null,
+        "max_drawdown": 0.0,
+        "longest_winning_streak": 0,
+        "longest_losing_streak": 0,
+        "cumulative_bankroll": []
+      },
+      "odds_class_counts": {
+        "UNPRICED": 122
+      }
+    },
+    "best_n30": {
+      "config_hash": "a9b936ed77c42d26",
+      "side": "over_2_5",
+      "name": "over_lambda_ge_2_5_prob_ge_60",
+      "conditions": [
+        "total_lambda>=2.5",
+        "over_probability>=0.60",
+        "selected=over_2_5"
+      ],
+      "n": 54,
+      "wins": 36,
+      "losses": 18,
+      "accuracy": 0.6666666666666666,
+      "wilson_95": {
+        "low": 0.5336071462745029,
+        "high": 0.7775875647984964,
+        "center": 0.6555973555364997
+      },
+      "coverage": 0.24545454545454545,
+      "priced_n": 0,
+      "average_odds": null,
+      "roi": null,
+      "max_drawdown": 0.0,
+      "longest_losing_streak": 0,
+      "fold_stats": [
+        {
+          "fold": 1,
+          "n": 9,
+          "accuracy": 0.6666666666666666
+        },
+        {
+          "fold": 2,
+          "n": 38,
+          "accuracy": 0.7105263157894737
+        },
+        {
+          "fold": 3,
+          "n": 7,
+          "accuracy": 0.42857142857142855
+        }
+      ],
+      "mean_fold_accuracy": 0.601921470342523,
+      "worst_fold_accuracy": 0.42857142857142855,
+      "fold_stability_range": 0.2819548872180451,
+      "league_concentration_top_share": 0.2037037037037037,
+      "league_top": [
+        [
+          "one_deild",
+          11
+        ],
+        [
+          "conference_league",
+          10
+        ],
+        [
+          "one_lyga",
+          7
+        ]
+      ],
+      "remove_one_win": {
+        "base_accuracy": 0.6666666666666666,
+        "min_after_remove_1": 0.660377358490566,
+        "drop_pp": 0.0062893081761006275,
+        "collapses": false
+      },
+      "bootstrap_95": {
+        "low": 0.5555555555555556,
+        "high": 0.7777777777777778,
+        "mean": 0.6675925925925926
+      },
+      "overfit_risk": "MEDIUM",
+      "label": "OU25_DIAGNOSTIC_RULE",
+      "complexity": 3
+    },
+    "best_n50": {
+      "config_hash": "a9b936ed77c42d26",
+      "side": "over_2_5",
+      "name": "over_lambda_ge_2_5_prob_ge_60",
+      "conditions": [
+        "total_lambda>=2.5",
+        "over_probability>=0.60",
+        "selected=over_2_5"
+      ],
+      "n": 54,
+      "wins": 36,
+      "losses": 18,
+      "accuracy": 0.6666666666666666,
+      "wilson_95": {
+        "low": 0.5336071462745029,
+        "high": 0.7775875647984964,
+        "center": 0.6555973555364997
+      },
+      "coverage": 0.24545454545454545,
+      "priced_n": 0,
+      "average_odds": null,
+      "roi": null,
+      "max_drawdown": 0.0,
+      "longest_losing_streak": 0,
+      "fold_stats": [
+        {
+          "fold": 1,
+          "n": 9,
+          "accuracy": 0.6666666666666666
+        },
+        {
+          "fold": 2,
+          "n": 38,
+          "accuracy": 0.7105263157894737
+        },
+        {
+          "fold": 3,
+          "n": 7,
+          "accuracy": 0.42857142857142855
+        }
+      ],
+      "mean_fold_accuracy": 0.601921470342523,
+      "worst_fold_accuracy": 0.42857142857142855,
+      "fold_stability_range": 0.2819548872180451,
+      "league_concentration_top_share": 0.2037037037037037,
+      "league_top": [
+        [
+          "one_deild",
+          11
+        ],
+        [
+          "conference_league",
+          10
+        ],
+        [
+          "one_lyga",
+          7
+        ]
+      ],
+      "remove_one_win": {
+        "base_accuracy": 0.6666666666666666,
+        "min_after_remove_1": 0.660377358490566,
+        "drop_pp": 0.0062893081761006275,
+        "collapses": false
+      },
+      "bootstrap_95": {
+        "low": 0.5555555555555556,
+        "high": 0.7777777777777778,
+        "mean": 0.6675925925925926
+      },
+      "overfit_risk": "MEDIUM",
+      "label": "OU25_DIAGNOSTIC_RULE",
+      "complexity": 3
+    },
+    "best_n100": null,
+    "robust_ou_edge_exists": false,
+    "promising_research_rules": 5,
+    "program_label": "OU25_PROMISING_RESEARCH_RULE",
+    "raw_ecse_direction_accuracy": 0.5297619047619048,
+    "best_filtered_ecse": {
+      "name": "home_only_agree",
+      "conditions": [
+        "ecse=home",
+        "ecse==wde"
+      ],
+      "config_hash": "9a02728fca939a93",
+      "n": 62,
+      "coverage": 0.36904761904761907,
+      "hits": 45,
+      "misses": 17,
+      "accuracy": 0.7258064516129032,
+      "wilson_95": {
+        "low": 0.6040722415667276,
+        "high": 0.8211908140090788,
+        "center": 0.7126315277879032
+      },
+      "mean_fold_accuracy": 0.7213488266119845,
+      "worst_fold_accuracy": 0.631578947368421,
+      "side_breakdown": {
+        "home_win": 62
+      }
+    },
+    "exact_top5": {
+      "n": 168,
+      "hits": 76,
+      "misses": 92,
+      "accuracy": 0.4523809523809524,
+      "wilson_95": {
+        "low": 0.37901896797822315,
+        "high": 0.5278720293123049,
+        "center": 0.45344549864526407
+      }
+    },
+    "official_priced_n": 0,
+    "current_tf_n": 168
+  },
+  "safety": {
+    "NOT_DEPLOYED": true,
+    "CANONICAL_UNCHANGED": true,
+    "WDE_UNCHANGED": true,
+    "ECSE_UNCHANGED": true,
+    "FREEZES_UNCHANGED": true,
+    "NO_PREDICTIONS_REGENERATED": true,
+    "NO_AUTO_PROMOTION": true,
+    "NO_RESULT_LEAKAGE": true,
+    "eval_db_sha256_before": "3be9a8c9f4aff11dee89eb99a1a6b6f8eb45eb7bd5720bca6c1049866a6c5dc8",
+    "eval_db_sha256_after": "3be9a8c9f4aff11dee89eb99a1a6b6f8eb45eb7bd5720bca6c1049866a6c5dc8"
+  }
+}
