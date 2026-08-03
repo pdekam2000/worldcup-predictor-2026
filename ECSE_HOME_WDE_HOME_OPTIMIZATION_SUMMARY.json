@@ -1,0 +1,402 @@
+{
+  "program": "ECSE_HOME_WDE_HOME_72_RULE_FORENSIC_AND_OPTIMIZATION",
+  "run_id": "20260803T195411Z",
+  "status": "ECSE_HOME_RULE_NO_ROBUST_IMPROVEMENT",
+  "decision": "A",
+  "decision_text": "No robust improvement exists.",
+  "artifact_dir": "artifacts\\ecse_home_wde_home_optimization\\20260803T195411Z",
+  "created_at_utc": "2026-08-03T19:54:11.306980+00:00",
+  "base_n": 62,
+  "wins": 45,
+  "losses": 17,
+  "candidates_tested": 97,
+  "passing": 0,
+  "safety": {
+    "NOT_DEPLOYED": true,
+    "CANONICAL_UNCHANGED": true,
+    "WDE_UNCHANGED": true,
+    "ECSE_UNCHANGED": true,
+    "FREEZES_UNCHANGED": true,
+    "NO_PREDICTIONS_REGENERATED": true,
+    "NO_AUTO_PROMOTION": true,
+    "NO_RESULT_LEAKAGE": true,
+    "eval_db_sha256_before": "3be9a8c9f4aff11dee89eb99a1a6b6f8eb45eb7bd5720bca6c1049866a6c5dc8",
+    "eval_db_sha256_after": "3be9a8c9f4aff11dee89eb99a1a6b6f8eb45eb7bd5720bca6c1049866a6c5dc8"
+  },
+  "final": {
+    "program": "ECSE_HOME_WDE_HOME_72_RULE_FORENSIC_AND_OPTIMIZATION",
+    "decision": "A",
+    "decision_text": "No robust improvement exists.",
+    "status": "ECSE_HOME_RULE_NO_ROBUST_IMPROVEMENT",
+    "base_rule": {
+      "rule": [
+        "ecse_direction=home_win",
+        "wde_decision=home_win"
+      ],
+      "n": 62,
+      "wins": 45,
+      "losses": 17,
+      "accuracy": 0.7258064516129032,
+      "coverage_of_universe": 0.36904761904761907,
+      "worst_fold": 0.5909090909090909,
+      "wilson_95": {
+        "low": 0.6040722415667276,
+        "high": 0.8211908140090788,
+        "center": 0.7126315277879032
+      }
+    },
+    "superior_rule": null,
+    "why": "Some filters reach >=75% accuracy but violate N/coverage/worst-fold/concentration/stability constraints. The base 72.6% rule remains the strongest robust rule.",
+    "universe_n": 168,
+    "dataset_manifest": {
+      "eval_db": "data\\evaluation\\forward_prediction_tracking.db",
+      "universe_n": 168,
+      "rule_base": "ecse_direction=home_win AND wde_decision=home_win",
+      "ecse_direction_definition": "Top1 exact-score side from frozen exact_score_rankings / ecse payload"
+    },
+    "top_near_misses": [
+      {
+        "name": "BASE+total_lambda_ge_2_4",
+        "conditions": [
+          "ecse_direction=home_win",
+          "wde_decision=home_win",
+          "total_lambda>=2.4"
+        ],
+        "config_hash": "455628b01a6efc61",
+        "n": 40,
+        "wins": 33,
+        "losses": 7,
+        "accuracy": 0.825,
+        "wilson_95": {
+          "low": 0.6804970794560756,
+          "high": 0.9125469700311692,
+          "center": 0.7965220247436224
+        },
+        "coverage_of_universe": 0.23809523809523808,
+        "coverage_of_base62": 0.6451612903225806,
+        "worst_fold": 0.7142857142857143,
+        "mean_fold": 0.8278388278388279,
+        "fold_stats": [
+          {
+            "fold": 1,
+            "n": 13,
+            "accuracy": 0.8461538461538461
+          },
+          {
+            "fold": 2,
+            "n": 13,
+            "accuracy": 0.9230769230769231
+          },
+          {
+            "fold": 3,
+            "n": 14,
+            "accuracy": 0.7142857142857143
+          }
+        ],
+        "league_concentration": 0.25,
+        "month_concentration": 1.0,
+        "remove_one_win": {
+          "base_accuracy": 0.825,
+          "min_after_remove_1": 0.8205128205128205,
+          "drop_pp": 0.004487179487179471,
+          "collapses": false
+        },
+        "leave_two_win_min_accuracy": 0.8157894736842105,
+        "bootstrap_95": {
+          "low": 0.675,
+          "high": 0.95,
+          "mean": 0.81825
+        },
+        "priced": {
+          "priced_n": 1,
+          "average_odds": 1.4,
+          "roi": 0.3999999999999999,
+          "max_drawdown": 0.0,
+          "profit_factor": Infinity
+        },
+        "passes_optimization_constraints": false,
+        "stability": "MEDIUM",
+        "extra_filter_hash": "054a61c970abe2cc",
+        "perturbation": {
+          "applicable": false
+        }
+      },
+      {
+        "name": "BASE+total_lambda_ge_2_2",
+        "conditions": [
+          "ecse_direction=home_win",
+          "wde_decision=home_win",
+          "total_lambda>=2.2"
+        ],
+        "config_hash": "9377ea80c122aa66",
+        "n": 48,
+        "wins": 37,
+        "losses": 11,
+        "accuracy": 0.7708333333333334,
+        "wilson_95": {
+          "low": 0.6346046409154885,
+          "high": 0.8669230897101096,
+          "center": 0.750763865312799
+        },
+        "coverage_of_universe": 0.2857142857142857,
+        "coverage_of_base62": 0.7741935483870968,
+        "worst_fold": 0.625,
+        "mean_fold": 0.7708333333333334,
+        "fold_stats": [
+          {
+            "fold": 1,
+            "n": 16,
+            "accuracy": 0.8125
+          },
+          {
+            "fold": 2,
+            "n": 16,
+            "accuracy": 0.875
+          },
+          {
+            "fold": 3,
+            "n": 16,
+            "accuracy": 0.625
+          }
+        ],
+        "league_concentration": 0.22916666666666666,
+        "month_concentration": 1.0,
+        "remove_one_win": {
+          "base_accuracy": 0.7708333333333334,
+          "min_after_remove_1": 0.7659574468085106,
+          "drop_pp": 0.004875886524822737,
+          "collapses": false
+        },
+        "leave_two_win_min_accuracy": 0.7608695652173914,
+        "bootstrap_95": {
+          "low": 0.6458333333333334,
+          "high": 0.875,
+          "mean": 0.774375
+        },
+        "priced": {
+          "priced_n": 1,
+          "average_odds": 1.4,
+          "roi": 0.3999999999999999,
+          "max_drawdown": 0.0,
+          "profit_factor": Infinity
+        },
+        "passes_optimization_constraints": false,
+        "stability": "MEDIUM",
+        "extra_filter_hash": "d2d987993da99a35",
+        "perturbation": {
+          "applicable": false
+        }
+      },
+      {
+        "name": "BASE+wde_home_p_ge_40",
+        "conditions": [
+          "ecse_direction=home_win",
+          "wde_decision=home_win",
+          "wde_home_p>=0.4"
+        ],
+        "config_hash": "381dd55486c3b3de",
+        "n": 56,
+        "wins": 42,
+        "losses": 14,
+        "accuracy": 0.75,
+        "wilson_95": {
+          "low": 0.6230710799856808,
+          "high": 0.8448308477702616,
+          "center": 0.7339509638779712
+        },
+        "coverage_of_universe": 0.3333333333333333,
+        "coverage_of_base62": 0.9032258064516129,
+        "worst_fold": 0.6,
+        "mean_fold": 0.7555555555555555,
+        "fold_stats": [
+          {
+            "fold": 1,
+            "n": 18,
+            "accuracy": 0.8888888888888888
+          },
+          {
+            "fold": 2,
+            "n": 18,
+            "accuracy": 0.7777777777777778
+          },
+          {
+            "fold": 3,
+            "n": 20,
+            "accuracy": 0.6
+          }
+        ],
+        "league_concentration": 0.14285714285714285,
+        "month_concentration": 1.0,
+        "remove_one_win": {
+          "base_accuracy": 0.75,
+          "min_after_remove_1": 0.7454545454545455,
+          "drop_pp": 0.004545454545454519,
+          "collapses": false
+        },
+        "leave_two_win_min_accuracy": 0.7407407407407407,
+        "bootstrap_95": {
+          "low": 0.6428571428571429,
+          "high": 0.8571428571428571,
+          "mean": 0.7451190476190476
+        },
+        "priced": {
+          "priced_n": 1,
+          "average_odds": 1.4,
+          "roi": 0.3999999999999999,
+          "max_drawdown": 0.0,
+          "profit_factor": Infinity
+        },
+        "passes_optimization_constraints": false,
+        "stability": "MEDIUM",
+        "extra_filter_hash": "2a4ec858c63cbb3f",
+        "perturbation": {
+          "applicable": false
+        }
+      },
+      {
+        "name": "BASE+ecse_home_mass_ge_40",
+        "conditions": [
+          "ecse_direction=home_win",
+          "wde_decision=home_win",
+          "ecse_home_mass>=0.4"
+        ],
+        "config_hash": "2b1174015c68a74a",
+        "n": 56,
+        "wins": 42,
+        "losses": 14,
+        "accuracy": 0.75,
+        "wilson_95": {
+          "low": 0.6230710799856808,
+          "high": 0.8448308477702616,
+          "center": 0.7339509638779712
+        },
+        "coverage_of_universe": 0.3333333333333333,
+        "coverage_of_base62": 0.9032258064516129,
+        "worst_fold": 0.6,
+        "mean_fold": 0.7555555555555555,
+        "fold_stats": [
+          {
+            "fold": 1,
+            "n": 18,
+            "accuracy": 0.8888888888888888
+          },
+          {
+            "fold": 2,
+            "n": 18,
+            "accuracy": 0.7777777777777778
+          },
+          {
+            "fold": 3,
+            "n": 20,
+            "accuracy": 0.6
+          }
+        ],
+        "league_concentration": 0.14285714285714285,
+        "month_concentration": 1.0,
+        "remove_one_win": {
+          "base_accuracy": 0.75,
+          "min_after_remove_1": 0.7454545454545455,
+          "drop_pp": 0.004545454545454519,
+          "collapses": false
+        },
+        "leave_two_win_min_accuracy": 0.7407407407407407,
+        "bootstrap_95": {
+          "low": 0.6428571428571429,
+          "high": 0.8571428571428571,
+          "mean": 0.7451190476190476
+        },
+        "priced": {
+          "priced_n": 1,
+          "average_odds": 1.4,
+          "roi": 0.3999999999999999,
+          "max_drawdown": 0.0,
+          "profit_factor": Infinity
+        },
+        "passes_optimization_constraints": false,
+        "stability": "MEDIUM",
+        "extra_filter_hash": "1bf585fb44a8df2a",
+        "perturbation": {
+          "applicable": false
+        }
+      },
+      {
+        "name": "BASE+ecse_home_gap_ge_30",
+        "conditions": [
+          "ecse_direction=home_win",
+          "wde_decision=home_win",
+          "ecse_home_gap>=0.3"
+        ],
+        "config_hash": "58b11a368d32f8de",
+        "n": 52,
+        "wins": 39,
+        "losses": 13,
+        "accuracy": 0.75,
+        "wilson_95": {
+          "low": 0.6179328224079476,
+          "high": 0.8476698823856114,
+          "center": 0.7328013523967795
+        },
+        "coverage_of_universe": 0.30952380952380953,
+        "coverage_of_base62": 0.8387096774193549,
+        "worst_fold": 0.5555555555555556,
+        "mean_fold": 0.7538126361655774,
+        "fold_stats": [
+          {
+            "fold": 1,
+            "n": 17,
+            "accuracy": 0.9411764705882353
+          },
+          {
+            "fold": 2,
+            "n": 17,
+            "accuracy": 0.7647058823529411
+          },
+          {
+            "fold": 3,
+            "n": 18,
+            "accuracy": 0.5555555555555556
+          }
+        ],
+        "league_concentration": 0.1346153846153846,
+        "month_concentration": 1.0,
+        "remove_one_win": {
+          "base_accuracy": 0.75,
+          "min_after_remove_1": 0.7450980392156863,
+          "drop_pp": 0.004901960784313708,
+          "collapses": false
+        },
+        "leave_two_win_min_accuracy": 0.74,
+        "bootstrap_95": {
+          "low": 0.6346153846153846,
+          "high": 0.8653846153846154,
+          "mean": 0.7472435897435897
+        },
+        "priced": {
+          "priced_n": 1,
+          "average_odds": 1.4,
+          "roi": 0.3999999999999999,
+          "max_drawdown": 0.0,
+          "profit_factor": Infinity
+        },
+        "passes_optimization_constraints": false,
+        "stability": "MEDIUM",
+        "extra_filter_hash": "bfc7ba9201788ee8",
+        "perturbation": {
+          "applicable": false
+        }
+      }
+    ],
+    "safety": {
+      "NOT_DEPLOYED": true,
+      "CANONICAL_UNCHANGED": true,
+      "WDE_UNCHANGED": true,
+      "ECSE_UNCHANGED": true,
+      "FREEZES_UNCHANGED": true,
+      "NO_PREDICTIONS_REGENERATED": true,
+      "NO_AUTO_PROMOTION": true,
+      "NO_RESULT_LEAKAGE": true,
+      "eval_db_sha256_before": "3be9a8c9f4aff11dee89eb99a1a6b6f8eb45eb7bd5720bca6c1049866a6c5dc8",
+      "eval_db_sha256_after": "3be9a8c9f4aff11dee89eb99a1a6b6f8eb45eb7bd5720bca6c1049866a6c5dc8"
+    }
+  }
+}
