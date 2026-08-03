@@ -1,0 +1,487 @@
+{
+  "program": "TRUE_FORWARD_472_COMPLETE_EVALUATION_AUDIT",
+  "status": "TRUE_FORWARD_472_EVALUATION_PARTIAL_RESULTS_PENDING",
+  "artifact": "artifacts/true_forward_472_evaluation/20260803T163043Z",
+  "headline": {
+    "raw_472_meaning": "472 frozen_predictions rows in forward_prediction_tracking.db; each row is a prematch freeze bundle (WDE+ECSE+BTTS+OU), not one independent fixture evidence unit. 316 unique fixtures; 156 extra rows from multi-freeze snapshots/reuses.",
+    "unique_fixtures": 316,
+    "finished_unique_fixtures": 168,
+    "evaluated_unique_fixtures": 168,
+    "wde": {
+      "hits": 82,
+      "misses": 86,
+      "accuracy": 0.4880952380952381,
+      "n": 168
+    },
+    "ecse_direction": {
+      "hits": 89,
+      "misses": 79,
+      "accuracy": 0.5297619047619048,
+      "n": 168
+    },
+    "strict_shortlist": {
+      "hits": 0,
+      "misses": 0,
+      "accuracy": null,
+      "n": 0
+    },
+    "exact": {
+      "n": 168,
+      "top1_hits": 26,
+      "top3_hits": 53,
+      "top5_hits": 76,
+      "top10_hits": null,
+      "top1_rate": 0.15476190476190477,
+      "top3_rate": 0.31547619047619047,
+      "top5_rate": 0.4523809523809524,
+      "top10_rate": null,
+      "avg_top5_mass": 0.49004699999999995,
+      "avg_top10_mass": 0.8327056845238096,
+      "avg_entropy": 1.5947196666666665,
+      "rank_distribution": {
+        "TOP1": 26,
+        "OUTSIDE_TOP5": 92,
+        "TOP3": 14,
+        "TOP5": 13,
+        "TOP4": 10,
+        "TOP2": 13
+      },
+      "note": "Store persists Top1-Top5 only; Top6-Top10 unavailable without payload expansion"
+    },
+    "btts": {
+      "n": 168,
+      "hits": 87,
+      "misses": 81,
+      "accuracy": 0.5178571428571429,
+      "wilson_95": {
+        "low": 0.44274583327172734,
+        "high": 0.5921700427443248,
+        "center": 0.5174579380080261
+      },
+      "line": null,
+      "selected_sides": {
+        "no": 127,
+        "yes": 41
+      }
+    },
+    "ou25": {
+      "n": 168,
+      "hits": 94,
+      "misses": 74,
+      "accuracy": 0.5595238095238095,
+      "wilson_95": {
+        "low": 0.4839541120643287,
+        "high": 0.6324321413225114,
+        "center": 0.55819312669342
+      },
+      "line": 2.5,
+      "selected_sides": {
+        "over_2_5": 84,
+        "under_2_5": 84
+      }
+    },
+    "best_accuracy_model": {
+      "model": "canonical_ecse_direction",
+      "n": 168,
+      "hits": 89,
+      "misses": 79,
+      "accuracy": 0.5297619047619048,
+      "wilson_95": {
+        "low": 0.4544674219942754,
+        "high": 0.6037257046991444,
+        "center": 0.52909656334671
+      },
+      "selected_n": 168,
+      "abstained_n": 0,
+      "coverage": 1.0,
+      "balanced_accuracy": 0.4497960413479813,
+      "per_class": {
+        "home_win": {
+          "precision": 0.6595744680851063,
+          "recall": 0.7294117647058823,
+          "support_actual": 85,
+          "support_predicted": 94
+        },
+        "draw": {
+          "precision": 0.18421052631578946,
+          "recall": 0.19444444444444445,
+          "support_actual": 36,
+          "support_predicted": 38
+        },
+        "away_win": {
+          "precision": 0.5555555555555556,
+          "recall": 0.425531914893617,
+          "support_actual": 47,
+          "support_predicted": 36
+        }
+      },
+      "monthly": {
+        "2026-07": {
+          "n": 168,
+          "hits": 89,
+          "misses": 79,
+          "accuracy": 0.5297619047619048,
+          "wilson_95": {
+            "low": 0.4544674219942754,
+            "high": 0.6037257046991444,
+            "center": 0.52909656334671
+          }
+        }
+      },
+      "league": {
+        "conference_league": {
+          "n": 28,
+          "hits": 17,
+          "misses": 11,
+          "accuracy": 0.6071428571428571,
+          "wilson_95": {
+            "low": 0.42408726034906297,
+            "high": 0.7643454817241996,
+            "center": 0.5942163710366313
+          }
+        },
+        "champions_league": {
+          "n": 26,
+          "hits": 13,
+          "misses": 13,
+          "accuracy": 0.5,
+          "wilson_95": {
+            "low": 0.3206030631500208,
+            "high": 0.6793969368499793,
+            "center": 0.5
+          }
+        },
+        "primera_nacional": {
+          "n": 16,
+          "hits": 8,
+          "misses": 8,
+          "accuracy": 0.5,
+          "wilson_95": {
+            "low": 0.27999237611350836,
+            "high": 0.7200076238864916,
+            "center": 0.5
+          }
+        },
+        "eliteserien": {
+          "n": 15,
+          "hits": 10,
+          "misses": 5,
+          "accuracy": 0.6666666666666666,
+          "wilson_95": {
+            "low": 0.4171312515121297,
+            "high": 0.8482389930530876,
+            "center": 0.6326851222826086
+          }
+        },
+        "allsvenskan": {
+          "n": 14,
+          "hits": 7,
+          "misses": 7,
+          "accuracy": 0.5,
+          "wilson_95": {
+            "low": 0.2679886791947528,
+            "high": 0.7320113208052472,
+            "center": 0.5
+          }
+        },
+        "one_deild": {
+          "n": 14,
+          "hits": 8,
+          "misses": 6,
+          "accuracy": 0.5714285714285714,
+          "wilson_95": {
+            "low": 0.3259026690286936,
+            "high": 0.7861949006959948,
+            "center": 0.5560487848623442
+          }
+        },
+        "superettan": {
+          "n": 11,
+          "hits": 3,
+          "misses": 8,
+          "accuracy": 0.2727272727272727,
+          "wilson_95": {
+            "low": 0.09745880573921467,
+            "high": 0.5656502930102463,
+            "center": 0.33155454937473045
+          }
+        },
+        "one_lyga": {
+          "n": 9,
+          "hits": 6,
+          "misses": 3,
+          "accuracy": 0.6666666666666666,
+          "wilson_95": {
+            "low": 0.3541973474990897,
+            "high": 0.8794184013172571,
+            "center": 0.6168078744081734
+          }
+        },
+        "veikkausliiga": {
+          "n": 9,
+          "hits": 4,
+          "misses": 5,
+          "accuracy": 0.4444444444444444,
+          "wilson_95": {
+            "low": 0.188775429471914,
+            "high": 0.7333526542559703,
+            "center": 0.4610640418639422
+          }
+        },
+        "urvalsdeild": {
+          "n": 7,
+          "hits": 3,
+          "misses": 4,
+          "accuracy": 0.42857142857142855,
+          "wilson_95": {
+            "low": 0.15821692226262685,
+            "high": 0.7495457695909742,
+            "center": 0.4538813459268005
+          }
+        },
+        "europa_league": {
+          "n": 6,
+          "hits": 3,
+          "misses": 3,
+          "accuracy": 0.5,
+          "wilson_95": {
+            "low": 0.18761280689940874,
+            "high": 0.8123871931005913,
+            "center": 0.5
+          }
+        },
+        "virsliga": {
+          "n": 5,
+          "hits": 4,
+          "misses": 1,
+          "accuracy": 0.8,
+          "wilson_95": {
+            "low": 0.3755282641185388,
+            "high": 0.9637768390302125,
+            "center": 0.6696525515743756
+          }
+        },
+        "a_lyga": {
+          "n": 3,
+          "hits": 2,
+          "misses": 1,
+          "accuracy": 0.6666666666666666,
+          "wilson_95": {
+            "low": 0.20765495512648796,
+            "high": 0.9385096847238394,
+            "center": 0.5730823199251637
+          }
+        },
+        "world_cup_2026": {
+          "n": 3,
+          "hits": 0,
+          "misses": 3,
+          "accuracy": 0.0,
+          "wilson_95": {
+            "low": 0.0,
+            "high": 0.5615060804490177,
+            "center": 0.28075304022450887
+          }
+        },
+        "challenge_league": {
+          "n": 2,
+          "hits": 1,
+          "misses": 1,
+          "accuracy": 0.5,
+          "wilson_95": {
+            "low": 0.09452865480086614,
+            "high": 0.9054713451991339,
+            "center": 0.5
+          }
+        }
+      },
+      "by_snapshot_stage": {
+        "LATE": {
+          "n": 88,
+          "hits": 51,
+          "misses": 37,
+          "accuracy": 0.5795454545454546,
+          "wilson_95": {
+            "low": 0.4752056286962684,
+            "high": 0.6772307400081098,
+            "center": 0.5762181843521891
+          }
+        },
+        "MID": {
+          "n": 45,
+          "hits": 19,
+          "misses": 26,
+          "accuracy": 0.4222222222222222,
+          "wilson_95": {
+            "low": 0.2896848798168781,
+            "high": 0.566994672040555,
+            "center": 0.4283397759287165
+          }
+        },
+        "EARLY": {
+          "n": 33,
+          "hits": 18,
+          "misses": 15,
+          "accuracy": 0.5454545454545454,
+          "wilson_95": {
+            "low": 0.3798565794374957,
+            "high": 0.701573108741085,
+            "center": 0.5407148440892904
+          }
+        },
+        "FINAL_PREMATCH": {
+          "n": 2,
+          "hits": 1,
+          "misses": 1,
+          "accuracy": 0.5,
+          "wilson_95": {
+            "low": 0.09452865480086614,
+            "high": 0.9054713451991339,
+            "center": 0.5
+          }
+        }
+      },
+      "mean_brier": 0.6577070952380952,
+      "mean_log_loss": 1.125345431567029,
+      "calibration_buckets": {
+        "0.8-1.0": 44,
+        "0.4-0.6": 17,
+        "0.2-0.4": 44,
+        "0.0-0.2": 46,
+        "0.6-0.8": 17
+      },
+      "odds_bucket": {
+        "2.00-3.00": {
+          "n": 1,
+          "hits": 1,
+          "misses": 0,
+          "accuracy": 1.0,
+          "wilson_95": {
+            "low": 0.2065432914738929,
+            "high": 1.0,
+            "center": 0.6032716457369465
+          }
+        },
+        "<1.50": {
+          "n": 1,
+          "hits": 1,
+          "misses": 0,
+          "accuracy": 1.0,
+          "wilson_95": {
+            "low": 0.2065432914738929,
+            "high": 1.0,
+            "center": 0.6032716457369465
+          }
+        },
+        ">=3.00": {
+          "n": 1,
+          "hits": 0,
+          "misses": 1,
+          "accuracy": 0.0,
+          "wilson_95": {
+            "low": 0.0,
+            "high": 0.7934567085261071,
+            "center": 0.39672835426305353
+          }
+        }
+      }
+    },
+    "best_roi_model": {
+      "model": "canonical_wde_raw_argmax",
+      "priced_n": 3,
+      "wins": 3,
+      "losses": 0,
+      "average_odds": 1.7733333333333334,
+      "median_odds": 1.87,
+      "total_stake": 3.0,
+      "total_return": 5.32,
+      "net_profit": 2.3200000000000003,
+      "roi": 0.7733333333333334,
+      "profit_factor": Infinity,
+      "max_drawdown": 0.0,
+      "longest_winning_streak": 3,
+      "longest_losing_streak": 0,
+      "cumulative_bankroll": [
+        0.4,
+        1.27,
+        2.32
+      ],
+      "warning": "PRICED_N_TOO_SMALL_FOR_TRUSTED_ROI"
+    },
+    "any_valid_ge_75_n30": false,
+    "any_ge_75_any_n": false,
+    "gate_A_passed": true,
+    "gate_B_passed": true,
+    "gate_C_passed": false,
+    "statistical_trust": "MODERATE",
+    "next_step": "Gate A/B already met on evaluated unique fixtures; continue accumulating until Gate C (\u2265250). Do not treat raw 472 as evidence. Capture prematch odds on freezes (priced N is currently tiny). Optionally backfill market_evaluations for 26 finished-but-unevaluated freezes via the official evaluator (no prediction regen)."
+  },
+  "decomposition": {
+    "raw_records": 472,
+    "valid_tf_records": 472,
+    "unique_fixture_model_records": 1891,
+    "unique_fixture_model_snapshot_records": 2300,
+    "unique_fixtures": 316,
+    "finished_unique_fixtures": 168,
+    "evaluated_unique_fixtures": 168,
+    "pending_or_unresolved_unique_fixtures": 148,
+    "multi_freeze_extra_rows": 156,
+    "fixtures_with_multi_freeze": 62,
+    "percent_of_raw": {
+      "unique_fixtures": 66.95,
+      "evaluated_unique_fixtures": 35.59,
+      "multi_freeze_extras": 33.05
+    },
+    "cause_breakdown": {
+      "multiple_models_per_row": "Each of 472 rows embeds WDE+ECSE+BTTS+OU (not separate rows)",
+      "multiple_snapshot_freezes": 156,
+      "duplicate_content_hash_rows": 0,
+      "shadow_candidate_tables_excluded_from_472": true
+    }
+  },
+  "gate": {
+    "raw_record_n": 472,
+    "unique_fixture_n": 316,
+    "finished_unique_fixture_n": 168,
+    "evaluated_unique_fixture_n": 168,
+    "Gate_A": {
+      "threshold": 30,
+      "denominator": "EVALUATED_UNIQUE_FIXTURES",
+      "value": 168,
+      "passed": true
+    },
+    "Gate_B": {
+      "threshold": 100,
+      "denominator": "EVALUATED_UNIQUE_FIXTURES",
+      "value": 168,
+      "passed": true
+    },
+    "Gate_C": {
+      "threshold": 250,
+      "denominator": "EVALUATED_UNIQUE_FIXTURES",
+      "value": 168,
+      "passed": false
+    },
+    "model_specific_evaluated_n": {
+      "canonical_wde_decision": 168,
+      "canonical_wde_raw_argmax": 168,
+      "canonical_ecse_direction": 168,
+      "btts": 168,
+      "ou25": 168
+    },
+    "raw_472_does_not_pass_gates": true,
+    "note": "Gates use evaluated unique fixtures, never raw record count"
+  },
+  "safety": {
+    "NOT_DEPLOYED": true,
+    "CANONICAL_UNCHANGED": true,
+    "WDE_UNCHANGED": true,
+    "ECSE_UNCHANGED": true,
+    "FREEZES_UNCHANGED": true,
+    "NO_PREDICTIONS_REGENERATED": true,
+    "NO_AUTO_PROMOTION": true,
+    "NO_RESULT_LEAKAGE": true,
+    "eval_db_sha256_before": "3be9a8c9f4aff11dee89eb99a1a6b6f8eb45eb7bd5720bca6c1049866a6c5dc8",
+    "eval_db_sha256_after": "3be9a8c9f4aff11dee89eb99a1a6b6f8eb45eb7bd5720bca6c1049866a6c5dc8"
+  }
+}
